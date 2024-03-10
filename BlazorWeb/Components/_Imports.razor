@@ -1,0 +1,47 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using BlazorWeb.Identity
+<<<<<<< HEAD:BlazorWeb/Components/_Imports.razor
+@using BlazorWeb.Managers.Interceptors
+@using BlazorWeb.Managers.Preferences
+=======
+@* @using BlazorWeb.Managers.Interceptors
+ *@@using BlazorWeb.Managers.Preferences
+>>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/_Imports.razor
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using BlazorWeb
+@using BlazorWeb.Components
+@using BlazorWeb.Components.Layout
+@using MudBlazor
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@using BlazorWeb.Components.Pages.Authentication
+@using Microsoft.AspNetCore.Authorization
+@using Blazored.FluentValidation
+@using BlazorWeb.Components.Shared
+@using BlazorWebApi.Constants.Storage
+@using System.Security.Claims
+
+@attribute [Authorize]
+@inject UserStateProvider _stateProvider
+@inject NavigationManager _navigationManager
+@inject ISnackbar _snackBar
+@inject IJSRuntime _jsRuntime
+@inject ISnackbar _snackBar
+@inject IDialogService _dialogService
+@* @inject IHttpInterceptorManager _interceptor *@
+@inject IClientPreferenceManager _clientPreferenceManager
+<<<<<<< HEAD:BlazorWeb/Components/_Imports.razor
+@inject ILocalStorageService _localStorage
+=======
+@inject ILocalStorageService _localStorageService
+@inject HttpClient _httpClient
+>>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/_Imports.razor
+@inject IAuthenticationManager _authenticationManager

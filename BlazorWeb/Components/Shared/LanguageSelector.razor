@@ -1,0 +1,36 @@
+﻿@using BlazorWeb.Localization
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<LanguageSelector> _localizer
+
+<MudMenu Icon="@Icons.Material.Outlined.Translate" Color="Color.Inherit" Dense="true">
+    @foreach (var language in LocalizationConstants.SupportedLanguages)
+    {
+        <MudMenuItem OnClick="(()=> ChangeLanguageAsync(language.Code))">@_localizer[language.DisplayName]</MudMenuItem>
+    }
+</MudMenu>
+
+@code {
+
+    private async Task ChangeLanguageAsync(string languageCode)
+    {
+
+        var result = await _clientPreferenceManager.ChangeLanguageAsync(languageCode);
+
+        if (result.Success)
+        {
+            _snackBar.Add(result.ErrorMessages[0], Severity.Success);
+
+            _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
+        }
+        else
+        {
+            foreach (var item in result.ErrorMessages)
+            {
+                _snackBar.Add(item, Severity.Error);
+            }
+        }
+
+    }
+
+}

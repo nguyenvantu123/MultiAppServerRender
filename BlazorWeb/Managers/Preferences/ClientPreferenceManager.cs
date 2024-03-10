@@ -1,0 +1,106 @@
+﻿using System.Collections.Generic;
+using Blazored.LocalStorage;
+using MudBlazor;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
+using Shared.Settings;
+using Wrapper;
+using BlazorWeb.Settings;
+using BlazorWebApi.Constants.Storage;
+<<<<<<< HEAD:BlazorWeb/Managers/Preferences/ClientPreferenceManager.cs
+=======
+//using IResult = Wrapper.IResult;
+>>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Managers/Preferences/ClientPreferenceManager.cs
+using BlazorWeb.Managers.Preferences;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+
+namespace BlazorWeb.Manager.Preferences
+{
+    public class ClientPreferenceManager : IClientPreferenceManager
+    {
+        private readonly ILocalStorageService _localStorageService;
+        private readonly IStringLocalizer<ClientPreferenceManager> _localizer;
+
+        public ClientPreferenceManager(
+            ILocalStorageService localStorageService,
+            IStringLocalizer<ClientPreferenceManager> localizer)
+        {
+            _localStorageService = localStorageService;
+            _localizer = localizer;
+        }
+
+        public async Task<bool> ToggleDarkModeAsync()
+        {
+            var preference = await GetPreference() as ClientPreference;
+            if (preference != null)
+            {
+                preference.IsDarkMode = !preference.IsDarkMode;
+                await SetPreference(preference);
+                return !preference.IsDarkMode;
+            }
+
+            return false;
+        }
+        public async Task<bool> ToggleLayoutDirection()
+        {
+            var preference = await GetPreference() as ClientPreference;
+            if (preference != null)
+            {
+                preference.IsRTL = !preference.IsRTL;
+                await SetPreference(preference);
+                return preference.IsRTL;
+            }
+            return false;
+        }
+
+        public async Task<IResultBase<string>> ChangeLanguageAsync(string languageCode)
+        {
+            var preference = await GetPreference() as ClientPreference;
+            if (preference != null)
+            {
+                preference.LanguageCode = languageCode;
+                await SetPreference(preference);
+                return new ResultBase<string>
+                {
+                    Success = true,
+                    ErrorMessages = new List<string> { _localizer["Client Language has been changed"] }
+                };
+            }
+
+            return new ResultBase<string>
+            {
+                Success = false,
+                ErrorMessages = new List<string> { _localizer["Failed to get client preferences"] }
+            };
+        }
+
+        public async Task<MudTheme> GetCurrentThemeAsync()
+        {
+            var preference = await GetPreference() as ClientPreference;
+            if (preference != null)
+            {
+                if (preference.IsDarkMode == true) return UserTheme.DarkTheme;
+            }
+            return UserTheme.DefaultTheme;
+        }
+        public async Task<bool> IsRTL()
+        {
+            var preference = await GetPreference() as ClientPreference;
+            if (preference != null)
+            {
+                if (preference.IsDarkMode == true) return false;
+            }
+            return false;
+        }
+
+        public async Task<ClientPreference> GetPreference()
+        {
+            return (await _localStorageService.GetItemAsync<ClientPreference>(StorageConstants.Local.Preference)) as ClientPreference ?? new ClientPreference();
+        }
+
+        public async Task SetPreference(ClientPreference preference)
+        {
+            await _localStorageService.SetItemAsync(StorageConstants.Local.Preference, preference as ClientPreference);
+        }
+    }
+}
