@@ -1,9 +1,6 @@
 ﻿using BlazorWebApi.Bff.Wrapper;
 using Newtonsoft.Json;
-<<<<<<< HEAD
-=======
 using Swashbuckle.Swagger;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -33,11 +30,7 @@ namespace BlazorWebApi.Bff
 
             var response = await base.SendAsync(request, cancellationToken);
 
-<<<<<<< HEAD
-            //string data = await response.Content.ReadAsStringAsync();
-=======
             string data = await response.Content.ReadAsStringAsync();
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
 
             return response;
 

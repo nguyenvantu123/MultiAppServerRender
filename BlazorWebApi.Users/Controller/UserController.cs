@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using MultiAppServer.ServiceDefaults.Wrapper;
 using System.Runtime.Serialization;
 using System.Security.Claims;
-using Wrapper;
 
 namespace BlazorWebApi.Users.Controller
 {
@@ -36,7 +35,6 @@ namespace BlazorWebApi.Users.Controller
             UserId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)?.ToGuid() ?? Guid.Empty;
         }
 
-<<<<<<< HEAD
         //[HttpPost]
         //[Route("/user/register")]
         //public async Task<IResult> Register(RegisterUserRequest model)
@@ -46,18 +44,6 @@ namespace BlazorWebApi.Users.Controller
         //    {
         //        return await Result.FailAsync("User Name Is Existed.");
         //    }
-=======
-        [HttpPost]
-        [Route("/user/register")]
-        public async Task<Wrapper.IResult> Register(RegisterUserRequest model)
-        {
-            var user = await _userManager.FindByNameAsync(model.UserName);
-            if (user != null)
-            {
-                return await Result.FailAsync("User Name Is Existed.");
-            }
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
-
         //    user = await _userManager.FindByEmailAsync(model.Email);
 
         //    if (user != null)
@@ -97,14 +83,8 @@ namespace BlazorWebApi.Users.Controller
 
         [HttpGet]
         [Route("/user/me")]
-<<<<<<< HEAD
         public async Task<UserProfileResponse> GetUserProfile()
         {
-=======
-        public async Task<IResult<UserProfileResponse>> GetUserProfile()
-        {
-
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
             var user = await _userManager.FindByIdAsync(UserId.ToString());
 
             var result = _mapper.Map<UserProfileResponse>(user);

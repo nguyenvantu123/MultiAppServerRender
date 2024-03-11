@@ -4,12 +4,7 @@ using BlazorWebApi.Identity;
 using BlazorWebApi.Users.Configurations;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Localization;
-<<<<<<< HEAD
-=======
 using BlazorWebApi.Users.Mappings;
-using BlazorWebApi.Users.Response.User;
-using BlazorWebApi.Users.Wrapper;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
 using Grpc.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -81,12 +76,6 @@ builder.Services.AddSwaggerGen(c =>
     //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     //c.IncludeXmlComments(xmlPath);
 });
-
-var config = builder.Configuration;
-
-var applicationSettingsConfiguration = config.GetSection(nameof(AppConfiguration));
-
-builder.Services.Configure<AppConfiguration>(applicationSettingsConfiguration);
 
 var config = builder.Configuration;
 

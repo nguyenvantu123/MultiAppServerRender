@@ -1,10 +1,6 @@
-﻿using MudBlazor;
+﻿using BlazorWeb.Wrapper;
+using MudBlazor;
 using Shared.Settings;
-using Wrapper;
-<<<<<<< HEAD:BlazorWeb/Managers/Preferences/IClientPreferenceManager.cs
-=======
-//using IResult = Wrapper.IResult;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Managers/Preferences/IClientPreferenceManager.cs
 
 namespace BlazorWeb.Managers.Preferences
 {

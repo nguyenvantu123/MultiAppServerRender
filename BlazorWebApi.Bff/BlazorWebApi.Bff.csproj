@@ -17,11 +17,8 @@
     <PackageReference Include="Refit" Version="7.0.0" />
     <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-<<<<<<< HEAD
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
-=======
     <PackageReference Include="Swashbuckle.Core" Version="5.6.0" />
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
   </ItemGroup>
 
   <ItemGroup>

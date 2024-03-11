@@ -1,9 +1,9 @@
 ﻿using BlazorWeb.Identity;
+using BlazorWeb.Wrapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
-using Wrapper;
 
 namespace BlazorWeb.Response.ResponseApiBase
 {

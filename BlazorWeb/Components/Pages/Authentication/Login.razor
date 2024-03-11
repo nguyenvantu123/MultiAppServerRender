@@ -67,11 +67,7 @@
 
         if (state != new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())))
         {
-<<<<<<< HEAD:BlazorWeb/Components/Pages/Authentication/Login.razor
-=======
-            string data = await _authenticationManager.TryRefreshToken();
-
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/Pages/Authentication/Login.razor
+            // string data = await _authenticationManager.TryRefreshToken();
             _navigationManager.NavigateTo("/");
         }
     }
@@ -84,20 +80,10 @@
 
             if (result.Success)
             {
-<<<<<<< HEAD:BlazorWeb/Components/Pages/Authentication/Login.razor
-                await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
-=======
                 if (_tokenModel.IsRemember)
                 {
-
-                    await _localStorageService.SetItemAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
-                    await _localStorageService.SetItemAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
-                    await _localStorageService.SetItemAsync(StorageConstants.Local.ExpireIn, result.Result.ExpireIn);
-
-                    await ((UserStateProvider)this._stateProvider).StateChangedAsync();
+                    await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
                 }
-
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/Pages/Authentication/Login.razor
             }
             else
             {

@@ -7,14 +7,9 @@ namespace BlazorWebApi.Bff.ApiClients
 {
     public interface IUserApiClient
     {
-<<<<<<< HEAD
+
         [Get("/user/me")]
         public Task<dynamic> UserProfile();
-=======
-        [System.Web.Http.Authorize]
-        [Get("/user/me")]
-        public Task<ResultBase<UserProfile>> UserProfile();
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
 
     }
 

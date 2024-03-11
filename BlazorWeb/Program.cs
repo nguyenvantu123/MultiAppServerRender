@@ -2,34 +2,17 @@ using Blazored.LocalStorage;
 using BlazorWeb;
 using BlazorWeb.Components;
 using BlazorWeb.Components.Pages.Authentication;
-<<<<<<< HEAD:BlazorWeb/Program.cs
 using BlazorWeb.Constants.Application;
-using BlazorWeb.Extensions;
 using BlazorWeb.Hubs;
 using BlazorWeb.Identity;
 using BlazorWeb.Manager.Preferences;
 using BlazorWeb.Managers.Authentication;
-using BlazorWeb.Managers.Interceptors;
-=======
-using BlazorWeb.Identity;
-using BlazorWeb.Manager.Preferences;
-using BlazorWeb.Managers.Authentication;
-//using BlazorWeb.Managers.Interceptors;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Program.cs
 using BlazorWeb.Managers.Preferences;
 using BlazorWeb.Response.ResponseApiBase;
 using BlazorWeb.Services.BffApiClients;
 using BlazorWebApi.Users.Configurations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
-<<<<<<< HEAD:BlazorWeb/Program.cs
-using MudBlazor;
-using MudBlazor.Services;
-using Newtonsoft.Json;
-using Polly;
-using Refit;
-using System.Net;
-=======
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor;
@@ -40,7 +23,6 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Program.cs
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,13 +33,6 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-<<<<<<< HEAD:BlazorWeb/Program.cs
-//builder.Services.AddControllers()
-//           .AddJsonOptions(options =>
-//           {
-//               options.JsonSerializerOptions.WriteIndented = true;
-//               options.JsonSerializerOptions.Converters.Add(new CustomJsonConverterForType());
-//           });
 
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -85,7 +60,6 @@ builder.Services.AddTransient<IAuthenticationManager, AuthenManager>();
 builder.Services.AddSingleton<SignalRHub>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, UserStateProvider>();
-=======
 builder.Services.AddTransient<IAuthenticationManager, AuthenManager>();
 
 builder.Services.AddTransient<AuthenticationHeaderHandler>();
@@ -102,7 +76,6 @@ builder.Services.AddRefitClient<IBffApiClients>().ConfigureHttpClient(c => c.Bas
 //builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("IBffApiClients"));
 
 builder.Services.AddTransient<IResponseApiBase, ResponseApiBase>();
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Program.cs
 
 builder.Services.AddMudServices();
 builder.Services.AddTransient<IClientPreferenceManager, ClientPreferenceManager>();
@@ -120,12 +93,9 @@ builder.Services.AddMudServices(configuration =>
 });
 
 builder.ConfigureJwtBearToken();
-<<<<<<< HEAD:BlazorWeb/Program.cs
-=======
 
 builder.Services.AddAuthentication();
 
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Program.cs
 builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, BlazorAuthorizationMiddlewareResultHandler>();
 builder.Services.AddLocalization(options =>
 {
@@ -133,14 +103,9 @@ builder.Services.AddLocalization(options =>
 })
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<ClientPreferenceManager>();
-<<<<<<< HEAD:BlazorWeb/Program.cs
-//.AddScoped<UserStateProvider>()
-//.AddScoped<AuthenticationStateProvider, UserStateProvider>()
-//.AddTransient<AuthenticationHeaderHandler>();
 
 builder.Services.AddBlazoredLocalStorage().AddScoped<UserStateProvider>();
-=======
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Program.cs
+
 
 builder.Services.AddHttpClientInterceptor();
 
@@ -186,10 +151,6 @@ app.MapHub<SignalRHub>(ApplicationConstants.SignalR.HubUrl);
 
 app.UseAuthorization();
 app.UseAuthentication();
-<<<<<<< HEAD:BlazorWeb/Program.cs
-=======
-
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Program.cs
 app.Run();
 
 //IAsyncPolicy<HttpResponseMessage> GetTokenRefresher(IServiceProvider provider)

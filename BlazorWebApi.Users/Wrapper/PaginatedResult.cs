@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wrapper;
 
-namespace MultiAppServer.ServiceDefaults.Wrapper
+namespace BlazorWebApi.Users.Wrapper
 {
     public class PaginatedResult<T> : ResultBase<T>
     {

@@ -1,4 +1,5 @@
-﻿using Wrapper;
+﻿
+using BlazorWeb.Wrapper;
 
 namespace BlazorWeb.Response.ResponseApiBase
 {

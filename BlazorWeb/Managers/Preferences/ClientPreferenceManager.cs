@@ -4,15 +4,11 @@ using MudBlazor;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Shared.Settings;
-using Wrapper;
 using BlazorWeb.Settings;
 using BlazorWebApi.Constants.Storage;
-<<<<<<< HEAD:BlazorWeb/Managers/Preferences/ClientPreferenceManager.cs
-=======
-//using IResult = Wrapper.IResult;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Managers/Preferences/ClientPreferenceManager.cs
 using BlazorWeb.Managers.Preferences;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using BlazorWeb.Wrapper;
 
 namespace BlazorWeb.Manager.Preferences
 {

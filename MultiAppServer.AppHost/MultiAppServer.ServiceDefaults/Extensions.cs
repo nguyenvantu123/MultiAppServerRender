@@ -10,10 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MultiAppServer.ServiceDefaults.Configurations;
-<<<<<<< HEAD
-=======
 using MultiAppServer.ServiceDefaults.Wrapper;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
 using Newtonsoft.Json;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -22,11 +19,9 @@ using System.Net;
 using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
-<<<<<<< HEAD
-using Wrapper;
-=======
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
+
 using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -114,7 +109,6 @@ public static class Extensions
                         var endpoint = c.HttpContext.GetEndpoint();
 
                         if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
-<<<<<<< HEAD
                         {
                             // if endpoint has AllowAnonymous doesn't validate the token expiration
                             return Task.CompletedTask;
@@ -141,16 +135,10 @@ public static class Extensions
                                                                                             var result = JsonConvert.SerializeObject(Result.Fail(localizer["An unhandled error has occurred."]));
                                                                                             return c.Response.WriteAsync(result);
 #endif
-                        }
-                        //return Task.CompletedTask;
-=======
-                        {
-                            // if endpoint has AllowAnonymous doesn't validate the token expiration
-                            return Task.CompletedTask;
+
                         }
 
                         return Task.CompletedTask;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
                     },
                     OnChallenge = context =>
                     {
@@ -158,12 +146,8 @@ public static class Extensions
 
                         if (!context.Response.HasStarted)
                         {
-<<<<<<< HEAD
                             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                             context.Response.ContentType = "application/json";
-                            //var result = JsonConvert.SerializeObject(Result.Fail("You are not Authorized.", 401));
-=======
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
 
                             var result = new ResultBase<bool>(401, "You are not Authorized.");
                             return context.Response.WriteAsJsonAsync(result);

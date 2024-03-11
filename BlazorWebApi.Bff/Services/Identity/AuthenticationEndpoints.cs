@@ -2,10 +2,6 @@
 using BlazorWebApi.Bff.ApiClients;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-<<<<<<< HEAD
-=======
-//using IResult = BlazorWebApi.Bff.Wrapper.IResult;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
 
 namespace BlazorWebApi.Bff.Services.Identity
 {
@@ -31,11 +27,7 @@ namespace BlazorWebApi.Bff.Services.Identity
             return result;
         }
 
-<<<<<<< HEAD
-        private static async Task<dynamic> RefreshToken(IIdentityApiClient identityApiClient, RefreshRequest refreshTokenRequest)
-=======
         private static async Task<ResultBase<TokenResponse>> RefreshToken(IIdentityApiClient identityApiClient, RefreshRequest refreshTokenRequest)
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b
         {
             var result = await identityApiClient.RefreshTokenAsync(refreshTokenRequest);
 

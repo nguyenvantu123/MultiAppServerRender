@@ -21,14 +21,10 @@ namespace BlazorWeb.Components.Pages.Authentication
 {
     public class AuthenticationHeaderHandler : DelegatingHandler
     {
-        private readonly SignalRHub _signalRHub;
         //private ILocalStorageService _localStorageService;
 
-        public AuthenticationHeaderHandler(
-           SignalRHub signalRHub
-           )
+        public AuthenticationHeaderHandler()
         {
-            _signalRHub = signalRHub;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
@@ -41,7 +37,6 @@ namespace BlazorWeb.Components.Pages.Authentication
 
             if (data.StatusCode == (int)HttpStatusCode.Unauthorized)
             {
-                await _signalRHub.RegenerateTokensAsync();
             }
             return response;
 

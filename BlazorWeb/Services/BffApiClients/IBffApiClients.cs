@@ -8,27 +8,27 @@ using Polly.Retry;
 using Polly;
 using Refit;
 using System.Net;
-using Wrapper;
 using Microsoft.Extensions.Configuration;
+using BlazorWeb.Wrapper;
 
 namespace BlazorWeb.Services.BffApiClients
 {
     public interface IBffApiClients
     {
         [Post("/identity/token")]
-        Task<Wrapper.ResultBase<TokenResponse>> LoginAsync([Body] TokenRequest tokenRequest);
+        Task<ResultBase<TokenResponse>> LoginAsync([Body] TokenRequest tokenRequest);
 
         [Post("/identity/refreshToken")]
-        Task<Wrapper.ResultBase<TokenResponse>> RefreshTokenAsync([Body] RefreshTokenRequest tokenRequest);
+        Task<ResultBase<TokenResponse>> RefreshTokenAsync([Body] RefreshTokenRequest tokenRequest);
 
         [Get("/user/me")]
-        Task<Wrapper.ResultBase<UserProfileResponse>> UserProfile([Header("Authorization")] string authorization);
+        Task<ResultBase<UserProfileResponse>> UserProfile([Header("Authorization")] string authorization);
 
         [Post("/user/roles")]
-        Task<Wrapper.ResultBase<UserRolesResponse>> GetRolesAsync();
+        Task<ResultBase<UserRolesResponse>> GetRolesAsync();
 
         [Post("/roles")]
-        Task<Wrapper.ResultBase<List<RoleResponse>>> GetAllRole();
+        Task<ResultBase<List<RoleResponse>>> GetAllRole();
 
     }
 }

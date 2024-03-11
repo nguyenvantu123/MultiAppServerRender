@@ -1,19 +1,14 @@
-<<<<<<<< HEAD:BlazorWeb/Wrapper/PaginatedResult.cs
-﻿using Wrapper;
+
 using System;
-========
-﻿using System;
->>>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:MultiAppServer.AppHost/MultiAppServer.ServiceDefaults/Wrapper/PaginatedResult.cs
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-<<<<<<<< HEAD:BlazorWeb/Wrapper/PaginatedResult.cs
-namespace Wrapper
-========
-namespace MultiAppServer.ServiceDefaults.Wrapper
->>>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:MultiAppServer.AppHost/MultiAppServer.ServiceDefaults/Wrapper/PaginatedResult.cs
+
+namespace BlazorWeb.Wrapper
+
 {
     public class PaginatedResult<T> : ResultBase<T>
     {
@@ -28,21 +23,12 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
         {
             Data = data;
             CurrentPage = page;
-            succeeded = succeeded;
+            Success = succeeded;
             PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             TotalCount = count;
         }
 
-        public static PaginatedResult<T> Failure(List<string> messages)
-        {
-            return new PaginatedResult<T>(false, default, messages);
-        }
-
-        public static PaginatedResult<T> Success(List<T> data, int count, int page, int pageSize)
-        {
-            return new PaginatedResult<T>(true, data, null, count, page, pageSize);
-        }
 
         public int CurrentPage { get; set; }
 

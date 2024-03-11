@@ -15,20 +15,8 @@ using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 using MudBlazor;
-<<<<<<< HEAD:BlazorWeb/Components/Layout/MainBody.razor.cs
-=======
 using MultiAppServer.ServiceDefaults.Wrapper;
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/Layout/MainBody.razor.cs
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Refit;
-using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Wrapper;
+
 
 namespace BlazorWeb.Components.Layout
 {
@@ -42,16 +30,6 @@ namespace BlazorWeb.Components.Layout
 
         private bool _drawerOpen = true;
         [Inject] private IBffApiClients _bffApiClients { get; set; }
-
-<<<<<<< HEAD:BlazorWeb/Components/Layout/MainBody.razor.cs
-        [Inject] private IAuthenticationManager authenticationManager { get; set; }
-
-        //[Inject] private IResponseApiBase _iResponseApiBase { get; set; }
-=======
-        [Inject] private IResponseApiBase _iResponseApiBase { get; set; }
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/Layout/MainBody.razor.cs
-
-        //[Inject] private IBffApiClients _bffApiClients { get; set; }
 
         private string CurrentUserId { get; set; }
         private string ImageDataUrl { get; set; }
@@ -68,12 +46,10 @@ namespace BlazorWeb.Components.Layout
         protected override async Task OnInitializedAsync()
         {
 
-<<<<<<< HEAD:BlazorWeb/Components/Layout/MainBody.razor.cs
-            hubConnection = hubConnection.TryInitialize(_navigationManager, _localStorage);
-=======
+
             hubConnection = hubConnection.TryInitialize(_navigationManager, _localStorageService);
             await hubConnection.StartAsync();
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/Layout/MainBody.razor.cs
+
             hubConnection.On<string, string, string>(ApplicationConstants.SignalR.ReceiveChatNotification, (message, receiverUserId, senderUserId) =>
             {
                 if (CurrentUserId == receiverUserId)
@@ -108,13 +84,8 @@ namespace BlazorWeb.Components.Layout
                         _navigationManager.NavigateTo("/");
                     }
 
-<<<<<<< HEAD:BlazorWeb/Components/Layout/MainBody.razor.cs
                     var data = await _stateProvider.RefreshToken();
                     if (!string.IsNullOrEmpty(data.AccessToken))
-=======
-                    var data = await _authenticationManager.TryRefreshToken();
-                    if (!string.IsNullOrEmpty(data))
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/Layout/MainBody.razor.cs
                     {
                         await _stateProvider.Login(data.AccessToken, data.RefreshToken);
                         _snackBar.Add(_localizer["Refreshed Token."], Severity.Success);
@@ -181,115 +152,10 @@ namespace BlazorWeb.Components.Layout
         private async Task LoadDataAsync()
         {
 
-<<<<<<< HEAD:BlazorWeb/Components/Layout/MainBody.razor.cs
-            var token = await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
-
-            var state = await _bffApiClients.UserProfile(authorization: token);
-
-            //if (state.Success)
-=======
             var token = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
 
             var state = await _bffApiClients.UserProfile(authorization: token);
-
-            var httpResponse = JsonConvert.DeserializeObject<ResultBase<bool>>(await state.Content.ReadAsStringAsync());
-
-            if (httpResponse.StatusCode == (int)HttpStatusCode.Unauthorized)
-            {
-
-                var refreshToken = await _authenticationManager.RefreshToken();
-
-                if (string.IsNullOrEmpty(refreshToken))
-                {
-                    await _authenticationManager.Logout();
-
-                }
-            }
-
-            if (httpResponse.StatusCode == (int)HttpStatusCode.OK)
-            {
-                var responseReturn = JsonConvert.DeserializeObject<ResultBase<UserProfileResponse>>(await state.Content.ReadAsStringAsync());
-
-                if (responseReturn.Success)
-                {
-                    FirstName = responseReturn.Result.FirstName;
-                    if (FirstName.Length > 0)
-                    {
-                        FirstLetterOfName = FirstName[0];
-                    }
-
-                    SecondName = responseReturn.Result.LastName;
-                    Email = responseReturn.Result.Email;
-                }
-                else
-                {
-                    foreach (var item in responseReturn.ErrorMessages)
-                    {
-                        _snackBar.Add(
-                            _localizer[item],
-                            Severity.Error);
-                    }
-                }
-            }
-
-            //else
-            //{
-            //    for
-            //}
-
-            //CurrentUserId = state.id();
-
-            //var imageResponse = await _accountManager.GetProfilePictureAsync(CurrentUserId);
-            //if (imageResponse.Succeeded)
->>>>>>> 3c6e47b79da1d67715f3c930762656f0a6a8fe2b:BlazorWeb/BlazorWeb/Components/Layout/MainBody.razor.cs
-            //{
-            //    FirstName = state.Result.FirstName;
-            //    if (FirstName.Length > 0)
-            //    {
-            //        FirstLetterOfName = FirstName[0];
-            //    }
-
-            //    SecondName = state.Result.LastName;
-            //    Email = state.Result.Email;
-            //}
-            //else
-            //{
-            //    foreach (var item in state.ErrorMessages)
-            //    {
-            //        _snackBar.Add(
-            //            _localizer[item],
-            //            Severity.Error);
-            //    }
-            //}
         }
-
-        //else
-        //{
-        //    for
-        //}
-
-        //CurrentUserId = state.id();
-
-        //var imageResponse = await _accountManager.GetProfilePictureAsync(CurrentUserId);
-        //if (imageResponse.Succeeded)
-        //{
-        //    ImageDataUrl = imageResponse.Data;
-        //}
-
-        //var currentUserResult = await _userManager.GetAsync(CurrentUserId);
-        //if (!currentUserResult.Succeeded || currentUserResult.Data == null)
-        //{
-        //    _snackBar.Add(
-        //        _localizer["You are logged out because the user with your Token has been deleted."],
-        //        Severity.Error);
-        //    CurrentUserId = string.Empty;
-        //    ImageDataUrl = string.Empty;
-        //    FirstName = string.Empty;
-        //    SecondName = string.Empty;
-        //    Email = string.Empty;
-        //    FirstLetterOfName = char.MinValue;
-        //    await _stateProvider.Logout();
-        //}
 
 
         private void DrawerToggle()
