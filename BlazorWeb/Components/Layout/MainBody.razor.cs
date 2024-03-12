@@ -150,9 +150,9 @@ namespace BlazorWeb.Components.Layout
         private async Task LoadDataAsync()
         {
 
-            var token = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
+            //var token = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
 
-            var state = await _bffApiClients.UserProfile(authorization: token);
+            var state = await _bffApiClients.UserProfile();
         }
 
 

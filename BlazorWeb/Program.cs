@@ -33,16 +33,20 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
+builder.Services.Addpre(options => options.Headers.Add("Authorization"));
+
 
 builder.Services.AddRefitClient<IBffApiClients>()
+       .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false })
        .ConfigureHttpClient(
        c => c.BaseAddress = new Uri("http://blazorwebapi.bff"))
     .AddPolicyHandler((provider, _) => GetTokenRefresher(provider))
-    //.AddPolicyHandler(
-    // Policy<HttpResponseMessage>
-    //     .HandleResult(r => r.StatusCode == HttpStatusCode.Unauthorized
-    //      || r.StatusCode == HttpStatusCode.GatewayTimeout)
-    //     .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)))
+       //.AddPolicyHandler(
+       // Policy<HttpResponseMessage>
+       //     .HandleResult(r => r.StatusCode == HttpStatusCode.Unauthorized
+       //      || r.StatusCode == HttpStatusCode.GatewayTimeout)
+       //     .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)))
+       .AddHeaderPropagation()
     .AddHttpMessageHandler<AuthenticationHeaderHandler>();
 
 //builder.Services.AddSingleton<IBffApiClients>();
@@ -157,5 +161,9 @@ IAsyncPolicy<HttpResponseMessage> GetTokenRefresher(IServiceProvider provider)
 {
     return Policy<HttpResponseMessage>
         .Handle<OutdatedTokenException>()
-        .RetryAsync(async (_, __) => await provider.GetRequiredService<UserStateProvider>().RefreshToken());
+         .RetryAsync(1, (request, retryCount, context) =>
+            {
+                var client = provider.GetRequiredService<UserStateProvider>().RefreshToken();
+                // refresh auth token.
+            });
 }

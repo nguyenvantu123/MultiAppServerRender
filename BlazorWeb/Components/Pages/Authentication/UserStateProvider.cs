@@ -124,8 +124,8 @@ namespace BlazorWeb.Components.Pages.Authentication
                 return new TokenResponse { AccessToken = "", RefreshToken = "" };
             }
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-
+            _appConfig.AccessToken = response.Result.AccessToken;
+            _appConfig.RefreshToken = response.Result.RefreshToken;
 
             return response.Result;
         }

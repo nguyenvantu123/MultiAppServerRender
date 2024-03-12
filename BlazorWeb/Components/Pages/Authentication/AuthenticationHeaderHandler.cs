@@ -21,51 +21,31 @@ namespace BlazorWeb.Components.Pages.Authentication
 {
     public class AuthenticationHeaderHandler : DelegatingHandler
     {
-        //private ILocalStorageService _localStorageService;
 
-        //private IBffApiClients _bffApiClients { get; set; }
-        //private AppConfiguration _appConfig;
+        public AppConfiguration Configuration { get; set; }
 
-
-        //public AuthenticationHeaderHandler(IBffApiClients bffApiClients, IOptions<AppConfiguration> appConfig)
-        //{
-        //    _bffApiClients = bffApiClients;
-        //    _appConfig = appConfig.Value;
-        //}
-
-        public AuthenticationHeaderHandler()
+        public AuthenticationHeaderHandler(IOptions<AppConfiguration> AppConfiguration)
         {
-                
+            Configuration = AppConfiguration.Value;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Configuration.AccessToken);
+
             var response = await base.SendAsync(request, cancellationToken);
+
+            var stringData = await response.Content.ReadAsStringAsync();
 
             var data = await response.ToResult();
 
             if (data.StatusCode == (int)HttpStatusCode.Unauthorized)
             {
+                throw new OutdatedTokenException();
 
-
-                //var newToken = await _bffApiClients.RefreshTokenAsync(new
-                //    Request.Identity.RefreshTokenRequest
-                //{
-                //    accessToken = _appConfig.AccessToken,
-                //    refreshToken = _appConfig.RefreshToken,
-                //});
-
-                //if (newToken.Success == true)
-                //{
-                //    _appConfig.AccessToken = newToken.Result.AccessToken;
-                //    _appConfig.RefreshToken = newToken.Result.RefreshToken;
-
-                //    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _appConfig.AccessToken);
-
-                //    response = await base.SendAsync(request, cancellationToken);
-                //}
             }
             return response;
 

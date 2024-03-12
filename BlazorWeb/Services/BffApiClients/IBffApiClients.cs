@@ -23,7 +23,7 @@ namespace BlazorWeb.Services.BffApiClients
         Task<ResultBase<TokenResponse>> RefreshTokenAsync([Body] RefreshTokenRequest tokenRequest);
 
         [Get("/user/me")]
-        Task<ResultBase<UserProfileResponse>> UserProfile([Header("Authorization")] string authorization);
+        Task<ResultBase<UserProfileResponse>> UserProfile();
 
         [Post("/user/roles")]
         Task<ResultBase<UserRolesResponse>> GetRolesAsync();
