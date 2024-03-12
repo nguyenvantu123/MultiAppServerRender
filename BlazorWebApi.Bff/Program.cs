@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Refit;
-using Swashbuckle.Swagger;
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;

@@ -59,7 +59,6 @@
     private TokenRequest _tokenModel { get; set; } = new TokenRequest { UserName = "adminstrator", Password = "Abc@12345" };
 
     private MudTheme _currentTheme { get; set; }
-    [Inject] IAuthenticationManager authenticationManager { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

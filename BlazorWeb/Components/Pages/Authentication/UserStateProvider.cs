@@ -69,9 +69,19 @@ namespace BlazorWeb.Components.Pages.Authentication
             var accessToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken));
 
             var refreshToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
+            //_appConfig.AccessToken = accessToken;
+            //_appConfig.RefreshToken = refreshToken;
 
-            _appConfig.AccessToken = accessToken;
-            _appConfig.RefreshToken = refreshToken;
+            if (!string.IsNullOrEmpty(_appConfig.AccessToken))
+            {
+                await _localStorage.SetItemAsStringAsync(StorageConstants.Local.AuthToken, _appConfig.AccessToken);
+                await _localStorage.SetItemAsStringAsync(StorageConstants.Local.RefreshToken, _appConfig.RefreshToken);
+            }
+            else
+            {
+                _appConfig.AccessToken = accessToken;
+                _appConfig.RefreshToken = refreshToken;
+            }
 
             if (string.IsNullOrEmpty(accessToken))
             {
@@ -114,13 +124,9 @@ namespace BlazorWeb.Components.Pages.Authentication
                 return new TokenResponse { AccessToken = "", RefreshToken = "" };
             }
 
-            token = response.Result.AccessToken;
-            refreshToken = response.Result.RefreshToken;
-            await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, token);
-            await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, refreshToken);
-            //await _localStorage.SetItemAsync(StorageConstants.Local.ExpireIn, refreshToken);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             return response.Result;
         }
 
@@ -128,7 +134,9 @@ namespace BlazorWeb.Components.Pages.Authentication
         {
             await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, accessToken);
             await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, refreshToken);
-            //await _localStorage.SetItemAsync(StorageConstants.Local.ExpireIn, result.Result.ExpireIn);
+
+            _appConfig.AccessToken = accessToken;
+            _appConfig.RefreshToken = refreshToken;
 
             await StateChangedAsync();
 

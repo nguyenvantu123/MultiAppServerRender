@@ -1,6 +1,5 @@
 ﻿using BlazorWebApi.Bff.Wrapper;
 using Newtonsoft.Json;
-using Swashbuckle.Swagger;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;

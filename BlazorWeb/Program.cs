@@ -4,11 +4,8 @@ using BlazorWeb.Components;
 using BlazorWeb.Components.Pages.Authentication;
 using BlazorWeb.Constants.Application;
 using BlazorWeb.Hubs;
-using BlazorWeb.Identity;
 using BlazorWeb.Manager.Preferences;
-using BlazorWeb.Managers.Authentication;
 using BlazorWeb.Managers.Preferences;
-using BlazorWeb.Response.ResponseApiBase;
 using BlazorWeb.Services.BffApiClients;
 using BlazorWebApi.Users.Configurations;
 using Microsoft.AspNetCore.Authorization;
@@ -36,6 +33,22 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
+
+builder.Services.AddRefitClient<IBffApiClients>()
+       .ConfigureHttpClient(
+       c => c.BaseAddress = new Uri("http://blazorwebapi.bff"))
+    .AddPolicyHandler((provider, _) => GetTokenRefresher(provider))
+    //.AddPolicyHandler(
+    // Policy<HttpResponseMessage>
+    //     .HandleResult(r => r.StatusCode == HttpStatusCode.Unauthorized
+    //      || r.StatusCode == HttpStatusCode.GatewayTimeout)
+    //     .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)))
+    .AddHttpMessageHandler<AuthenticationHeaderHandler>();
+
+//builder.Services.AddSingleton<IBffApiClients>();
+
+//builder.Services.AddSingleton<IBffApiClients, BffApiClients>();
+
 builder.Services.AddTransient<AuthenticationHeaderHandler>();
 
 var config = builder.Configuration;
@@ -43,39 +56,34 @@ var config = builder.Configuration;
 var applicationSettingsConfiguration = config.GetSection(nameof(AppConfiguration));
 
 builder.Services.Configure<AppConfiguration>(applicationSettingsConfiguration);
+//builder.Services.AddHttpClient<IBffApiClients>();
 
-builder.Services.AddRefitClient<IBffApiClients>().ConfigureHttpClient(
-    c => c.BaseAddress = new Uri("http://blazorwebapi.bff"))
-    //.AddPolicyHandler((provider, _) => GetTokenRefresher(provider))
-    .AddHttpMessageHandler<AuthenticationHeaderHandler>();
+
 //.AddPolicyHandler(
 //    Policy<HttpResponseMessage>
 //        .HandleResult(r => r.StatusCode == HttpStatusCode.Unauthorized
 //         || r.StatusCode == HttpStatusCode.GatewayTimeout)
 //        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
-
-builder.Services.AddTransient<IAuthenticationManager, AuthenManager>();
+//builder.Services.AddTransient<IAuthenticationManager, AuthenManager>();
 //builder.Services.AddScoped<IAuthenticationManager>();
 
 builder.Services.AddSingleton<SignalRHub>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, UserStateProvider>();
-builder.Services.AddTransient<IAuthenticationManager, AuthenManager>();
+//builder.Services.AddTransient<IAuthenticationManager, AuthenManager>();
 
-builder.Services.AddTransient<AuthenticationHeaderHandler>();
+//builder.Services.AddTransient<AuthenticationHeaderHandler>();
 
-builder.Services.AddRefitClient<IBffApiClients>().ConfigureHttpClient(c => c.BaseAddress = new Uri("http://blazorwebapi.users"))
-    .AddHttpMessageHandler<AuthenticationHeaderHandler>().AddPolicyHandler(
-        Policy<HttpResponseMessage>
-            .HandleResult(r => r.StatusCode == System.Net.HttpStatusCode.Unauthorized
-             || r.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable
-             || r.StatusCode == HttpStatusCode.GatewayTimeout)
-            .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
+//builder.Services.AddRefitClient<IBffApiClients>().ConfigureHttpClient(c => c.BaseAddress = new Uri("http://blazorwebapi.users"))
+//    .AddHttpMessageHandler<AuthenticationHeaderHandler>().AddPolicyHandler(
+//        Policy<HttpResponseMessage>
+//            .HandleResult(r => r.StatusCode == System.Net.HttpStatusCode.Unauthorized
+//             || r.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable
+//             || r.StatusCode == HttpStatusCode.GatewayTimeout)
+//            .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 //builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("IBffApiClients"));
-
-builder.Services.AddTransient<IResponseApiBase, ResponseApiBase>();
 
 builder.Services.AddMudServices();
 builder.Services.AddTransient<IClientPreferenceManager, ClientPreferenceManager>();
@@ -109,12 +117,6 @@ builder.Services.AddBlazoredLocalStorage().AddScoped<UserStateProvider>();
 
 builder.Services.AddHttpClientInterceptor();
 
-//builder.Services.AddControllers().AddJsonOptions(o =>
-//{
-//    o.JsonSerializerOptions.Converters.Add(new SystemTextJsonExceptionConverter());
-//    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-//});
-
 builder.Services.AddScoped<UserStateProvider>();
 
 builder.Services.AddAuthorization();
@@ -124,11 +126,9 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -153,9 +153,9 @@ app.UseAuthorization();
 app.UseAuthentication();
 app.Run();
 
-//IAsyncPolicy<HttpResponseMessage> GetTokenRefresher(IServiceProvider provider)
-//{
-//    return Policy<HttpResponseMessage>
-//        .Handle<OutdatedTokenException>()
-//        .RetryAsync(async (_, __) => await provider.GetRequiredService<UserStateProvider>().RefreshToken());
-//}
+IAsyncPolicy<HttpResponseMessage> GetTokenRefresher(IServiceProvider provider)
+{
+    return Policy<HttpResponseMessage>
+        .Handle<OutdatedTokenException>()
+        .RetryAsync(async (_, __) => await provider.GetRequiredService<UserStateProvider>().RefreshToken());
+}
