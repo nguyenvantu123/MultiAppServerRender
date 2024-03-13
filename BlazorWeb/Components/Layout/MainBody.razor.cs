@@ -46,7 +46,7 @@ namespace BlazorWeb.Components.Layout
 
 
             hubConnection = hubConnection.TryInitialize(_navigationManager, _localStorageService);
-            await hubConnection.StartAsync();
+            //await hubConnection.StartAsync();
 
             hubConnection.On<string, string, string>(ApplicationConstants.SignalR.ReceiveChatNotification, (message, receiverUserId, senderUserId) =>
             {
@@ -153,6 +153,11 @@ namespace BlazorWeb.Components.Layout
             //var token = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
 
             var state = await _bffApiClients.UserProfile();
+
+            if (state != null) 
+            {
+                await _stateProvider.Logout();
+            }
         }
 
 

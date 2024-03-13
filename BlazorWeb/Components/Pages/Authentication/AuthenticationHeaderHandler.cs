@@ -34,7 +34,7 @@ namespace BlazorWeb.Components.Pages.Authentication
             CancellationToken cancellationToken)
         {
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Configuration.AccessToken);
+            request.Headers.Add("Authorization", Configuration.AccessToken);
 
             var response = await base.SendAsync(request, cancellationToken);
 

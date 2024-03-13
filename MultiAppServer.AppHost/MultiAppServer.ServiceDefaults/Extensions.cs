@@ -138,7 +138,7 @@ public static class Extensions
 
                         }
 
-                        return Task.CompletedTask;
+                        //return Task.CompletedTask;
                     },
                     OnChallenge = context =>
                     {
