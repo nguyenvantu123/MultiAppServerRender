@@ -152,12 +152,15 @@ namespace BlazorWeb.Components.Layout
 
             //var token = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
 
-            var state = await _bffApiClients.UserProfile();
-
-            if (state != null) 
+            try
+            {
+                var state = await _bffApiClients.UserProfile();
+            }
+            catch (Exception ex)
             {
                 await _stateProvider.Logout();
             }
+
         }
 
 

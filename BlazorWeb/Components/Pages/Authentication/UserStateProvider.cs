@@ -109,7 +109,7 @@ namespace BlazorWeb.Components.Pages.Authentication
         {
             await _localStorage.RemoveItemAsync(StorageConstants.Local.AuthToken);
             await _localStorage.RemoveItemAsync(StorageConstants.Local.RefreshToken);
-            await _localStorage.RemoveItemAsync(StorageConstants.Local.ExpireIn);
+            //await _localStorage.RemoveItemAsync(StorageConstants.Local.ExpireIn);
 
             MarkUserAsLoggedOut();
         }

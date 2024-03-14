@@ -35,7 +35,6 @@ builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
 //builder.Services.Addpre(options => options.Headers.Add("Authorization"));
 
-
 builder.Services.AddRefitClient<IBffApiClients>()
        //.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false })
        .ConfigureHttpClient(
@@ -164,6 +163,7 @@ IAsyncPolicy<HttpResponseMessage> GetTokenRefresher(IServiceProvider provider)
          .RetryAsync(1, (request, retryCount, context) =>
             {
                 var client = provider.GetRequiredService<UserStateProvider>().RefreshToken();
+
                 // refresh auth token.
             });
 }
