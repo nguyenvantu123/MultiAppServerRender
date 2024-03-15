@@ -9,7 +9,7 @@ namespace BlazorWebApi.Bff.ApiClients
     {
 
         [Get("/user/me")]
-        public Task<dynamic> UserProfile();
+        public Task<object> UserProfile();
 
     }
 

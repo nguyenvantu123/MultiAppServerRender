@@ -20,14 +20,14 @@ namespace BlazorWebApi.Bff.Services.Identity
             return builder;
         }
 
-        private static async Task<ResultBase<TokenResponse>> LoginAsync(IIdentityApiClient identityApiClient, LoginRequest loginRequest)
+        private static async Task<object> LoginAsync(IIdentityApiClient identityApiClient, LoginRequest loginRequest)
         {
             var result = await identityApiClient.LoginAsync(loginRequest);
 
             return result;
         }
 
-        private static async Task<ResultBase<TokenResponse>> RefreshToken(IIdentityApiClient identityApiClient, RefreshRequest refreshTokenRequest)
+        private static async Task<object> RefreshToken(IIdentityApiClient identityApiClient, RefreshRequest refreshTokenRequest)
         {
             var result = await identityApiClient.RefreshTokenAsync(refreshTokenRequest);
 

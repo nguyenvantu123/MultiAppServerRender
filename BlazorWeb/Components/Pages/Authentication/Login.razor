@@ -1,14 +1,19 @@
 ﻿@page "/login"
 @layout MainLayout
 @using BlazorWeb.Components.Layout
+@using BlazorWeb.Extensions
 @using BlazorWeb.Request.Identity
+@using BlazorWeb.Response.Identity
 @using BlazorWeb.Services.BffApiClients
 @using BlazorWeb.Settings
+@using BlazorWeb.Wrapper
 @using BlazorWebApi.Users.Configurations
 @using Microsoft.Extensions.Options
 @attribute [AllowAnonymous]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Login> _localizer
 @inject IBffApiClients bffApiClients
+@* @rendermode InteractiveServer
+ *@@* @inject HttpClient HttpClient*@
 
 <EditForm Model="_tokenModel" FormName="loginForm" OnValidSubmit="SubmitAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
@@ -60,14 +65,45 @@
 
     private MudTheme _currentTheme { get; set; }
 
+    private bool _passwordVisibility;
+    private InputType _passwordInput = InputType.Password;
+    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+
     protected override async Task OnInitializedAsync()
     {
         var state = await _stateProvider.GetAuthenticationStateAsync();
 
-        if (state != new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())))
+        if (state.Equals(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))))
         {
-            // string data = await _authenticationManager.TryRefreshToken();
-            _navigationManager.NavigateTo("/");
+            var availableToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken);
+
+            var availableRefreshToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
+
+            var user = state.User;
+            var exp = user.FindFirst(c => c.Type.Equals("exp"))?.Value;
+            var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
+            var timeUTC = DateTime.UtcNow;
+            var diff = expTime - timeUTC;
+            if (diff.TotalMinutes <= 10)
+            {
+                var response = await bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { accessToken = availableToken, refreshToken = availableRefreshToken });
+
+                var result = await response.ToResult<TokenResponse>();
+
+                if (result.Success)
+                {
+                    await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
+
+                }
+                else
+                {
+                    await _stateProvider.Logout();
+                }
+
+            }
+
+            _navigationManager.NavigateTo(_navigationManager.Uri.ToString());
         }
     }
 
@@ -75,14 +111,16 @@
     {
         try
         {
-            var result = await bffApiClients.LoginAsync(_tokenModel);
+            var httpresponse = await bffApiClients.LoginAsync(_tokenModel);
+
+            var result = await httpresponse.ToResult<TokenResponse>();
+
 
             if (result.Success)
             {
-                if (_tokenModel.IsRemember)
-                {
-                    await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
-                }
+
+                await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
+                _navigationManager.NavigateTo(_navigationManager.Uri.ToString());
             }
             else
             {
@@ -97,10 +135,6 @@
             throw ex;
         }
     }
-
-    private bool _passwordVisibility;
-    private InputType _passwordInput = InputType.Password;
-    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
 
     void TogglePasswordVisibility()
     {

@@ -7,7 +7,7 @@ namespace BlazorWebApi.Bff.ApiClients
     public interface IRoleApiClient
     {
         [Post("/user/roles")]
-        public Task<dynamic> GetRoleAsync();
+        public Task<object> GetRoleAsync();
 
     }
 

@@ -8,10 +8,10 @@ namespace BlazorWeb.Extensions
 {
     public static class ResultExtensions
     {
-        public static async Task<IResultBase<T>> ToResult<T>(this HttpResponseMessage response)
+        public static async Task<ResultBase<T>> ToResult<T>(this HttpResponseMessage response)
         {
             var responseAsString = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonSerializer.Deserialize<IResultBase<T>>(responseAsString, new JsonSerializerOptions
+            var responseObject = JsonSerializer.Deserialize<ResultBase<T>>(responseAsString, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
                 ReferenceHandler = ReferenceHandler.Preserve

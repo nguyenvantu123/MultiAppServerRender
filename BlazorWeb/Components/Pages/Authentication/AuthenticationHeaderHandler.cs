@@ -6,9 +6,13 @@ using BlazorWeb.Services.BffApiClients;
 using BlazorWebApi.Constants.Storage;
 using BlazorWebApi.Users.Configurations;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
+using Polly;
+using Polly.Retry;
 using Refit;
 using System.Diagnostics;
 using System.Net;
@@ -19,14 +23,26 @@ using System.Threading.Tasks;
 
 namespace BlazorWeb.Components.Pages.Authentication
 {
+    //public interface ITokenManager
+    //{
+    //    Task<string> GetTokenAsync(string TokenKey);
+
+    //    Task SetTokenAsync(string TokenKey, string token);
+
+    //    Task RefreshTokenAsync();
+    //}
+
     public class AuthenticationHeaderHandler : DelegatingHandler
     {
 
-        public AppConfiguration Configuration { get; set; }
+        //private readonly ITokenManager _tokenManager;
+        //private readonly IJSRuntime _jsRuntime;
 
-        public AuthenticationHeaderHandler(IOptions<AppConfiguration> AppConfiguration)
+        public AuthenticationHeaderHandler(
+            //ITokenManager tokenManager
+            )
         {
-            Configuration = AppConfiguration.Value;
+            //_tokenManager = tokenManager;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
@@ -34,28 +50,46 @@ namespace BlazorWeb.Components.Pages.Authentication
             CancellationToken cancellationToken)
         {
 
-            if (!request.Headers.Contains("Authorization"))
-            {
-                if (Configuration != null)
-                {
-                    request.Headers.Add("Authorization", Configuration.AccessToken);
-                }
-            }
-
             var response = await base.SendAsync(request, cancellationToken);
 
-            var stringData = await response.Content.ReadAsStringAsync();
-
-            var data = await response.ToResult();
-
-            if (data.StatusCode == (int)HttpStatusCode.Unauthorized)
-            {
-                throw new OutdatedTokenException();
-
-            }
+            //var result = await response.ToResult();
             return response;
 
         }
     }
 
+    //public class TokenManager : ITokenManager
+    //{
+    //    private readonly ILocalStorageService _sessionStorage;
+    //    private string TokenKey = StorageConstants.Local.AuthToken;
+    //    private string RefreshTokenKey = StorageConstants.Local.RefreshToken;
+
+
+    //    public TokenManager(ILocalStorageService sessionStorage)
+    //    {
+    //        _sessionStorage = sessionStorage;
+    //    }
+
+    //    public async Task<string> GetTokenAsync(string TokenKey)
+    //    {
+    //        return await _sessionStorage.GetItemAsync<string>(TokenKey);
+    //    }
+
+    //    public async Task SetTokenAsync(string TokenKey, string token)
+    //    {
+    //        await _sessionStorage.SetItemAsStringAsync(TokenKey, token);
+    //    }
+
+    //    public async Task RefreshTokenAsync()
+    //    {
+    //        // Implement token refresh logic here
+    //        // Retrieve the current token from session state
+    //        var currentToken = await GetTokenAsync(TokenKey);
+    //        var currentRefreshToken = await GetTokenAsync(RefreshTokenKey);
+
+    //        // Perform token refresh operation and update the token in session state
+    //        var refreshedToken = "new_token_value"; // Example new token value
+    //        await SetTokenAsync(TokenKey, refreshedToken);
+    //    }
+    //}
 }

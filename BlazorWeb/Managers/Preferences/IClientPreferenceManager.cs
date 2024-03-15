@@ -10,7 +10,7 @@ namespace BlazorWeb.Managers.Preferences
 
         Task<bool> ToggleLayoutDirection();
 
-        Task<IResultBase<string>> ChangeLanguageAsync(string languageCode);
+        Task<ResultBase<string>> ChangeLanguageAsync(string languageCode);
 
         Task<MudTheme> GetCurrentThemeAsync();
 

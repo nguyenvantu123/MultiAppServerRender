@@ -28,7 +28,7 @@ namespace BlazorWebApi.Bff.Services.User
             return builder;
         }
 
-        private static async Task<dynamic> GetUserProfile(IUserApiClient identityApiClient)
+        private static async Task<object> GetUserProfile(IUserApiClient identityApiClient)
         {
 
             var result = await identityApiClient.UserProfile();

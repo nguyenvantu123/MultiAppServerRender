@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using BlazorWeb.Constants.Permission;
+using BlazorWeb.Extensions;
 using BlazorWeb.Request.Identity;
 using BlazorWeb.Response.Identity;
 using BlazorWeb.Services.BffApiClients;
@@ -8,6 +9,7 @@ using BlazorWebApi.Users.Configurations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using System;
@@ -24,18 +26,27 @@ namespace BlazorWeb.Components.Pages.Authentication
     public class UserStateProvider : AuthenticationStateProvider
     {
 
-        private readonly ILocalStorageService _localStorage;
-        private readonly HttpClient _httpClient;
-        private readonly IBffApiClients _bffApiClients;
-        private readonly AppConfiguration _appConfig;
+        public ILocalStorageService _localStorage;
+        //public HttpClient _httpClient;
+        //private readonly IBffApiClients _bffApiClients;
+        private readonly NavigationManager _navigationManager;
+
+        //private readonly AppConfiguration _appConfig;
 
         public UserStateProvider(
-            ILocalStorageService localStorage, HttpClient httpClient, IBffApiClients bffApiClients, IOptions<AppConfiguration> appConfig)
+            ILocalStorageService localStorage,
+            //HttpClient httpClient,
+            //IBffApiClients bffApiClients,
+            NavigationManager navigationManager
+            //, IOptions<AppConfiguration> appConfig
+            )
         {
             _localStorage = localStorage;
-            _httpClient = httpClient;
-            _bffApiClients = bffApiClients;
-            _appConfig = appConfig.Value;
+            //_httpClient = httpClient;
+            //_bffApiClients = bffApiClients;
+            _navigationManager = navigationManager;
+
+            //_appConfig = appConfig.Value;
         }
 
         public async Task StateChangedAsync()
@@ -68,21 +79,6 @@ namespace BlazorWeb.Components.Pages.Authentication
 
             var accessToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken));
 
-            var refreshToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
-            //_appConfig.AccessToken = accessToken;
-            //_appConfig.RefreshToken = refreshToken;
-
-            if (!string.IsNullOrEmpty(_appConfig.AccessToken))
-            {
-                await _localStorage.SetItemAsStringAsync(StorageConstants.Local.AuthToken, _appConfig.AccessToken);
-                await _localStorage.SetItemAsStringAsync(StorageConstants.Local.RefreshToken, _appConfig.RefreshToken);
-            }
-            else
-            {
-                _appConfig.AccessToken = accessToken;
-                _appConfig.RefreshToken = refreshToken;
-            }
-
             if (string.IsNullOrEmpty(accessToken))
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
@@ -90,7 +86,7 @@ namespace BlazorWeb.Components.Pages.Authentication
             var state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(GetClaimsFromJwt(accessToken), "jwt")));
             AuthenticationStateUser = state.User;
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
 
             return state;
         }
@@ -109,36 +105,50 @@ namespace BlazorWeb.Components.Pages.Authentication
         {
             await _localStorage.RemoveItemAsync(StorageConstants.Local.AuthToken);
             await _localStorage.RemoveItemAsync(StorageConstants.Local.RefreshToken);
-            //await _localStorage.RemoveItemAsync(StorageConstants.Local.ExpireIn);
+
+            _navigationManager.NavigateTo("/login");
 
             MarkUserAsLoggedOut();
+
         }
 
-        public async Task<TokenResponse> RefreshToken()
-        {
-            var token = _appConfig.AccessToken;
-            var refreshToken = _appConfig.RefreshToken;
+        //public async Task<bool> RefreshToken()
+        //{
+        //    //var token = _appConfig.AccessToken;
+        //    //var refreshToken = _appConfig.RefreshToken;
 
-            var response = await _bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { accessToken = token, refreshToken = refreshToken });
+        //    var accessToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken));
 
-            if (!response.Success)
-            {
-                return new TokenResponse { AccessToken = "", RefreshToken = "" };
-            }
+        //    var refreshToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
 
-            _appConfig.AccessToken = response.Result.AccessToken;
-            _appConfig.RefreshToken = response.Result.RefreshToken;
+        //    //var response = await _bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { accessToken = accessToken, refreshToken = refreshToken });
 
-            return response.Result;
-        }
+        //    var result = await response.ToResult<TokenResponse>();
+
+        //    if (!result.Success)
+        //    {
+        //        await Logout();
+
+        //        return false;
+        //    }
+
+        //    await _localStorage.SetItemAsStringAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
+        //    await _localStorage.SetItemAsStringAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
+
+        //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+
+        //    return true;
+        //}
 
         public async Task<bool> Login(string accessToken, string refreshToken)
         {
             await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, accessToken);
             await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, refreshToken);
 
-            _appConfig.AccessToken = accessToken;
-            _appConfig.RefreshToken = refreshToken;
+            //_appConfig.AccessToken = accessToken;
+            //_appConfig.RefreshToken = refreshToken;
+
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
 
             await StateChangedAsync();
 

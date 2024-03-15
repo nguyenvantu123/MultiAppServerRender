@@ -8,11 +8,11 @@ namespace BlazorWebApi.Bff.ApiClients
     public interface IIdentityApiClient
     {
         [Post("/identity/token")]
-        public Task<ResultBase<TokenResponse>> LoginAsync([FromBody] LoginRequest loginRequest);
+        public Task<object> LoginAsync([FromBody] LoginRequest loginRequest);
 
         [AllowAnonymous]
         [Post("/identity/refreshToken")]
-        public Task<ResultBase<TokenResponse>> RefreshTokenAsync([FromBody] RefreshRequest refreshRequest);
+        public Task<object> RefreshTokenAsync([FromBody] RefreshRequest refreshRequest);
 
     }
 

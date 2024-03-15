@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BlazorWeb.Wrapper
 {
-    public class ResultBase<T> : IResultBase<T>
+    public class ResultBase<T>
     {
         public ResultBase()
         {

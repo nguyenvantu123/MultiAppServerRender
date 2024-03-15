@@ -49,7 +49,7 @@ namespace BlazorWeb.Manager.Preferences
             return false;
         }
 
-        public async Task<IResultBase<string>> ChangeLanguageAsync(string languageCode)
+        public async Task<ResultBase<string>> ChangeLanguageAsync(string languageCode)
         {
             var preference = await GetPreference() as ClientPreference;
             if (preference != null)

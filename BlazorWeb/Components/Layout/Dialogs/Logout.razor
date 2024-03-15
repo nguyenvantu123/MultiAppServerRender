@@ -1,6 +1,7 @@
 ﻿@using BlazorWeb.Constants.Application
 @using BlazorWebApi.Constants.Storage
 @using Microsoft.AspNetCore.SignalR.Client
+@inject UserStateProvider UserState
 @namespace BlazorWeb.Components.Layout.Dialogs
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Logout> localizer
 <MudDialog>
@@ -37,8 +38,8 @@
         await _localStorageService.RemoveItemAsync(StorageConstants.Local.AuthToken);
         await _localStorageService.RemoveItemAsync(StorageConstants.Local.RefreshToken);
         await _localStorageService.RemoveItemAsync(StorageConstants.Local.UserImageURL);
-        // ((UserStateProvider)_stateProvider).MarkUserAsLoggedOut();
-        // _httpClient.DefaultRequestHeaders.Authorization = null;
+        ((UserStateProvider)_stateProvider).MarkUserAsLoggedOut();
+        // UserState._httpClient.DefaultRequestHeaders.Authorization = null;
         _navigationManager.NavigateTo("/login");
         MudDialog.Close(DialogResult.Ok(true));
     }

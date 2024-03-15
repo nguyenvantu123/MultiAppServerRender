@@ -119,7 +119,7 @@ public static class Extensions
                             c.Response.StatusCode = (int)HttpStatusCode.OK;
                             c.Response.ContentType = "application/json";
 
-                            var result = new ResultBase<bool>(401, "The Token is expired.");
+                            var result = new ResultBase<bool> { StatusCode = 401, ErrorMessages = new List<string> { "The Token is expired." }, Success = false };
                             return c.Response.WriteAsJsonAsync(result);
                         }
                         else
@@ -149,7 +149,9 @@ public static class Extensions
                             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                             context.Response.ContentType = "application/json";
 
-                            var result = new ResultBase<bool>(401, "You are not Authorized.");
+                            var result = new ResultBase<bool>
+                            { StatusCode = 401, ErrorMessages = new List<string> { "You are not Authorized." }, Success = false };
+
                             return context.Response.WriteAsJsonAsync(result);
                             //return context.Response.WriteAsync(result);
                         }
@@ -161,7 +163,8 @@ public static class Extensions
                         context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                         context.Response.ContentType = "application/json";
 
-                        var result = new ResultBase<bool>(403, "You are not authorized to access this resource.");
+
+                        var result = new ResultBase<bool> { StatusCode = 403, ErrorMessages = new List<string> { "You are not authorized to access this resource." }, Success = false };
 
                         //var result = JsonConvert.SerializeObject(Result.Fail("You are not authorized to access this resource.", 403));
                         return context.Response.WriteAsJsonAsync(result);

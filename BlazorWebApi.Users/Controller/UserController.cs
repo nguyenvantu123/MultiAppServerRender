@@ -83,11 +83,13 @@ namespace BlazorWebApi.Users.Controller
 
         [HttpGet]
         [Route("/user/me")]
-        public async Task<UserProfileResponse> GetUserProfile()
+        public async Task<ResultBase<UserProfileResponse>> GetUserProfile()
         {
             var user = await _userManager.FindByIdAsync(UserId.ToString());
 
-            var result = _mapper.Map<UserProfileResponse>(user);
+            var result = new ResultBase<UserProfileResponse>();
+
+            result.Result = _mapper.Map<UserProfileResponse>(user);
 
             return result;
         }

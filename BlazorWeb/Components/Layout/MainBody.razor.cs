@@ -3,6 +3,7 @@ using BlazorWeb.Components.Pages.Authentication;
 using BlazorWeb.Constants.Application;
 using BlazorWeb.Extensions;
 using BlazorWeb.Request.Identity;
+using BlazorWeb.Response.Identity;
 using BlazorWeb.Response.User;
 using BlazorWeb.Services.BffApiClients;
 using BlazorWebApi.Constants.Storage;
@@ -14,6 +15,11 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 using MudBlazor;
 using MultiAppServer.ServiceDefaults.Wrapper;
+using Refit;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace BlazorWeb.Components.Layout
@@ -27,14 +33,19 @@ namespace BlazorWeb.Components.Layout
         public EventCallback OnDarkModeToggle { get; set; }
 
         private bool _drawerOpen = true;
-        [Inject] private IBffApiClients _bffApiClients { get; set; }
 
         private string CurrentUserId { get; set; }
         private string ImageDataUrl { get; set; }
         private string FirstName { get; set; }
         private string SecondName { get; set; }
         private string Email { get; set; }
-        private char FirstLetterOfName { get; set; }
+        private string FirstLetterOfName { get; set; }
+
+        private bool IsLoading { get; set; }
+
+        //[Inject] private MyService myService { get; set; }
+
+        [Inject] private IBffApiClients bff { get; set; }
 
         public async Task ToggleDarkMode()
         {
@@ -68,62 +79,62 @@ namespace BlazorWeb.Components.Layout
                     });
                 }
             });
-            hubConnection.On(ApplicationConstants.SignalR.ReceiveRegenerateTokens, async () =>
-            {
-                try
-                {
-                    var token = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken));
-                    var refreshToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
+            //hubConnection.On(ApplicationConstants.SignalR.ReceiveRegenerateTokens, async () =>
+            //{
+            //    try
+            //    {
+            //        var token = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken));
+            //        var refreshToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
 
-                    if (string.IsNullOrEmpty(token))
-                    {
-                        _snackBar.Add(_localizer["You are Logged Out."], Severity.Error);
-                        await _stateProvider.Logout();
-                        _navigationManager.NavigateTo("/");
-                    }
+            //        if (string.IsNullOrEmpty(token))
+            //        {
+            //            _snackBar.Add(_localizer["You are Logged Out."], Severity.Error);
+            //            await _stateProvider.Logout();
+            //            _navigationManager.NavigateTo("/");
+            //        }
 
-                    var data = await _stateProvider.RefreshToken();
-                    if (!string.IsNullOrEmpty(data.AccessToken))
-                    {
-                        await _stateProvider.Login(data.AccessToken, data.RefreshToken);
-                        _snackBar.Add(_localizer["Refreshed Token."], Severity.Success);
-                        //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    }
-                    else
-                    {
-                        _snackBar.Add(_localizer["You are Logged Out."], Severity.Error);
-                        await _stateProvider.Logout();
-                        _navigationManager.NavigateTo("/");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    _snackBar.Add(_localizer["You are Logged Out."], Severity.Error);
-                    await _stateProvider.Logout();
-                    _navigationManager.NavigateTo("/");
-                }
-            });
+            //        var data = await _stateProvider.RefreshToken();
+            //        if (data)
+            //        {
+            //            //await _stateProvider.Login(data.AccessToken, data.RefreshToken);
+            //            _snackBar.Add(_localizer["Refreshed Token."], Severity.Success);
+            //            _stateProvider._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            //        }
+            //        else
+            //        {
+            //            _snackBar.Add(_localizer["You are Logged Out."], Severity.Error);
+            //            await _stateProvider.Logout();
+            //            _navigationManager.NavigateTo("/");
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.Message);
+            //        _snackBar.Add(_localizer["You are Logged Out."], Severity.Error);
+            //        await _stateProvider.Logout();
+            //        _navigationManager.NavigateTo("/");
+            //    }
+            //});
             hubConnection.On<string, string>(ApplicationConstants.SignalR.LogoutUsersByRole, async (userId, roleId) =>
             {
                 if (CurrentUserId != userId)
                 {
-                    var rolesResponse = await _bffApiClients.GetAllRole();
-                    if (rolesResponse.Success)
-                    {
-                        var role = rolesResponse.Result.FirstOrDefault(x => x.Id == roleId);
-                        if (role != null)
-                        {
-                            var currentUserRolesResponse = await _bffApiClients.GetRolesAsync();
-                            if (currentUserRolesResponse.Success && currentUserRolesResponse.Result.UserRoles.Any(x => x.RoleName == role.Name))
-                            {
-                                _snackBar.Add(_localizer["You are logged out because the Permissions of one of your Roles have been updated."], Severity.Error);
-                                await hubConnection.SendAsync(ApplicationConstants.SignalR.OnDisconnect, CurrentUserId);
-                                await _stateProvider.Logout();
-                                _navigationManager.NavigateTo("/login");
-                            }
-                        }
-                    }
+                    //var rolesResponse = await _bffApiClients.GetAllRole();
+                    //if (rolesResponse.Success)
+                    //{
+                    //    var role = rolesResponse.Result.FirstOrDefault(x => x.Id == roleId);
+                    //    if (role != null)
+                    //    {
+                    //        //var currentUserRolesResponse = await _bffApiClients.GetRolesAsync();
+                    //        //if (currentUserRolesResponse.Success && currentUserRolesResponse.Result.UserRoles.Any(x => x.RoleName == role.Name))
+                    //        //{
+                    //        //    _snackBar.Add(_localizer["You are logged out because the Permissions of one of your Roles have been updated."], Severity.Error);
+                    //        //    await hubConnection.SendAsync(ApplicationConstants.SignalR.OnDisconnect, CurrentUserId);
+                    //        //    await _stateProvider.Logout();
+                    //        //    _navigationManager.NavigateTo("/login");
+                    //        //}
+                    //    }
+                    //}
                 }
             });
             //hubConnection.On<string>(ApplicationConstants.SignalR.PingRequest, async (userName) =>
@@ -136,7 +147,6 @@ namespace BlazorWeb.Components.Layout
 
             await hubConnection.StartAsync();
 
-            _snackBar.Add(string.Format(_localizer["Welcome {0}"], FirstName), Severity.Success);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -149,18 +159,101 @@ namespace BlazorWeb.Components.Layout
 
         private async Task LoadDataAsync()
         {
-
-            //var token = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
+            //_stateProvider._httpClient.BaseAddress = new Uri("http://blazorwebapi.bff");
+            ////_stateProvider._httpClient. = new Uri("http://blazorwebapi.bff");
+            //var refitClient = RestService.For<IBffApiClients>(_stateProvider._httpClient);
 
             try
             {
-                var state = await _bffApiClients.UserProfile();
+                IsLoading = true;
+
+                var accessToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken));
+
+                var refreshToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
+
+                var response = await bff.UserProfile(accessToken);
+
+                var result = await response.ToResult();
+
+                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
+                {
+                    var responseRefresh = await bff.RefreshTokenAsync(new RefreshTokenRequest { accessToken = accessToken, refreshToken = refreshToken });
+
+                    var resultRefresh = await responseRefresh.ToResult();
+
+                    if (resultRefresh.Success)
+                    {
+                        var resultRefreshSuccess = await responseRefresh.ToResult<TokenResponse>();
+                        await _stateProvider.Login(resultRefreshSuccess.Result.AccessToken, resultRefreshSuccess.Result.RefreshToken);
+
+                        response = await bff.UserProfile(resultRefreshSuccess.Result.AccessToken);
+                    }
+                    else
+                    {
+                        await _stateProvider.Logout();
+                    }
+
+                }
+
+                if (result.StatusCode == (int)HttpStatusCode.OK)
+                {
+                    var newResult = await response.ToResult<UserProfileResponse>();
+
+                    if (newResult.Success)
+                    {
+                        FirstName = newResult.Result.FirstName;
+                        SecondName = newResult.Result.LastName;
+                        Email = newResult.Result.Email;
+                        FirstLetterOfName = newResult.Result.FirstName.Substring(0, 1);
+
+                        _snackBar.Add(string.Format(_localizer["Welcome {0}"], FirstName), Severity.Success);
+
+                    }
+
+                }
             }
             catch (Exception ex)
             {
-                await _stateProvider.Logout();
-            }
 
+                throw;
+            }
+            finally
+            {
+                IsLoading = false;
+            };
+
+
+
+            //var token = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
+
+
+            //if (!string.IsNullOrEmpty())
+            //{
+            //    var state = await _bffApiClients.UserProfile();
+
+            //    try
+            //    {
+            //        if (state.Success)
+            //        {
+            //            //ImageDataUrl 
+            //            FirstName = state.Result.FirstName;
+            //            SecondName = state.Result.LastName;
+            //            Email = state.Result.Email;
+            //            FirstLetterOfName = state.Result.FirstName.Substring(0, 1);
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+
+            //        throw;
+            //    }
+
+
+            //}
+            //else
+            //{
+            //    await _stateProvider.Logout();
+            //}
         }
 
 

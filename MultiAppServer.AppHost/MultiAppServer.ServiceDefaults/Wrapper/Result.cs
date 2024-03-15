@@ -1,5 +1,5 @@
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +13,8 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
         {
             StatusCode = 200;
             ErrorMessages = new List<string>();
+            Success = true;
+
         }
 
         public ResultBase(T result)
@@ -23,12 +25,12 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
             StatusCode = 200;
         }
 
-        public ResultBase(int statusCode, params string[] errors)
-        {
-            Success = false;
-            ErrorMessages = errors.ToList();
-            StatusCode = statusCode;
-        }
+        //public ResultBase(int statusCode, params string[] errors)
+        //{
+        //    Success = true;
+        //    ErrorMessages = errors.ToList();
+        //    StatusCode = statusCode;
+        //}
 
         public int StatusCode { get; set; }
         public bool Success { get; set; }
