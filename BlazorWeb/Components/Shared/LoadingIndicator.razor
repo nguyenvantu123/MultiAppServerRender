@@ -1,12 +1,26 @@
-﻿<!-- LoadingIndicator.razor -->
-@if (IsLoading)
-{
-    <div class="loading-overlay">
-        <div class="loading-spinner"></div>
-    </div>
-}
+﻿@using BlazorWeb.Services
+<MudDialog Loading="@IsLoading" DisableBackdropClick="true" DisableEscapeKeyDown="true">
+    <!-- Your loading content here -->
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+</MudDialog>
 
 @code {
-    [Parameter]
-    public bool IsLoading { get; set; }
+    [Inject] private ILoadingService LoadingService { get; set; }
+    private bool IsLoading { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadingService.OnLoadingChanged += HandleLoadingChanged;
+    }
+
+    private void HandleLoadingChanged(bool isLoading)
+    {
+        IsLoading = isLoading;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        LoadingService.OnLoadingChanged -= HandleLoadingChanged;
+    }
 }

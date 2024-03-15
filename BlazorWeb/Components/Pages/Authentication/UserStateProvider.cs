@@ -103,12 +103,7 @@ namespace BlazorWeb.Components.Pages.Authentication
 
         public async Task Logout()
         {
-            await _localStorage.RemoveItemAsync(StorageConstants.Local.AuthToken);
-            await _localStorage.RemoveItemAsync(StorageConstants.Local.RefreshToken);
-
-            _navigationManager.NavigateTo("/login");
-
-            MarkUserAsLoggedOut();
+          
 
         }
 

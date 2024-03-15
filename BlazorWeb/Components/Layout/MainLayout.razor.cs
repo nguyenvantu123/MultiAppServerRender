@@ -1,6 +1,7 @@
 ﻿using BlazorWeb.Constants.Application;
 using BlazorWeb.Extensions;
 using BlazorWeb.Request.Identity;
+using BlazorWeb.Services;
 using BlazorWeb.Services.BffApiClients;
 using BlazorWeb.Settings;
 using BlazorWebApi.Constants.Storage;
@@ -23,6 +24,8 @@ namespace BlazorWeb.Components.Layout
     {
         private MudTheme _currentTheme;
 
+        [Inject] ILoadingService LoadingService { get; set; }
+
         //public void Dispose()
         //{
         //    _interceptor.DisposeEvent();
@@ -30,9 +33,14 @@ namespace BlazorWeb.Components.Layout
 
         protected override async Task OnInitializedAsync()
         {
+            LoadingService.ShowLoading();
+
             _currentTheme = UserTheme.DefaultTheme;
 
             _currentTheme = await _clientPreferenceManager.GetCurrentThemeAsync();
+
+            LoadingService.HideLoading();
+
         }
 
         private async Task DarkMode()

@@ -6,6 +6,7 @@ using BlazorWeb.Constants.Application;
 using BlazorWeb.Hubs;
 using BlazorWeb.Manager.Preferences;
 using BlazorWeb.Managers.Preferences;
+using BlazorWeb.Services;
 using BlazorWeb.Services.BffApiClients;
 using BlazorWebApi.Users.Configurations;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +32,7 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-
+builder.Services.AddScoped<ILoadingService, LoadingService>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
 //builder.Services.AddScoped<ITokenManager, TokenManager>();

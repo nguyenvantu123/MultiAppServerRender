@@ -4,6 +4,7 @@
 @using BlazorWeb.Extensions
 @using BlazorWeb.Request.Identity
 @using BlazorWeb.Response.Identity
+@using BlazorWeb.Services
 @using BlazorWeb.Services.BffApiClients
 @using BlazorWeb.Settings
 @using BlazorWeb.Wrapper
@@ -68,10 +69,13 @@
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    @inject ILoadingService LoadingService
 
 
     protected override async Task OnInitializedAsync()
     {
+        LoadingService.ShowLoading();
+
         var state = await _stateProvider.GetAuthenticationStateAsync();
 
         if (state.Equals(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))))
@@ -105,12 +109,16 @@
 
             _navigationManager.NavigateTo(_navigationManager.Uri.ToString());
         }
+
+        LoadingService.HideLoading();
     }
 
     private async Task SubmitAsync()
     {
         try
         {
+            LoadingService.ShowLoading();
+
             var httpresponse = await bffApiClients.LoginAsync(_tokenModel);
 
             var result = await httpresponse.ToResult<TokenResponse>();
@@ -120,10 +128,16 @@
             {
 
                 await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
-                _navigationManager.NavigateTo(_navigationManager.Uri.ToString());
+
+                LoadingService.HideLoading();
+
+                _navigationManager.NavigateTo(_navigationManager.Uri.ToString(), true);
             }
             else
             {
+
+                LoadingService.HideLoading();
+
                 foreach (var message in result.ErrorMessages)
                 {
                     _snackBar.Add(message, Severity.Error);
