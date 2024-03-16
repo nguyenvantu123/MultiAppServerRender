@@ -16,6 +16,10 @@
 @* @rendermode InteractiveServer
  *@@* @inject HttpClient HttpClient*@
 
+@* <MudProgressCircular Color="Color.Success" Indeterminate="true" />
+ *@
+
+<!-- Your loading content here -->
 <EditForm Model="_tokenModel" FormName="loginForm" OnValidSubmit="SubmitAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
     <MudGrid>
@@ -69,13 +73,11 @@
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
-    @inject ILoadingService LoadingService
+    @inject LoadingService loadingService
 
 
     protected override async Task OnInitializedAsync()
     {
-        LoadingService.ShowLoading();
-
         var state = await _stateProvider.GetAuthenticationStateAsync();
 
         if (state.Equals(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))))
@@ -109,15 +111,13 @@
 
             _navigationManager.NavigateTo(_navigationManager.Uri.ToString());
         }
-
-        LoadingService.HideLoading();
     }
 
     private async Task SubmitAsync()
     {
         try
         {
-            LoadingService.ShowLoading();
+            loadingService.ShowLoading();
 
             var httpresponse = await bffApiClients.LoginAsync(_tokenModel);
 
@@ -129,14 +129,14 @@
 
                 await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
 
-                LoadingService.HideLoading();
+                loadingService.HideLoading();
 
                 _navigationManager.NavigateTo(_navigationManager.Uri.ToString(), true);
             }
             else
             {
 
-                LoadingService.HideLoading();
+                loadingService.HideLoading();
 
                 foreach (var message in result.ErrorMessages)
                 {

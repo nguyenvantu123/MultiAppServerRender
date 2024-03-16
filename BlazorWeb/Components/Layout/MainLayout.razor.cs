@@ -24,7 +24,7 @@ namespace BlazorWeb.Components.Layout
     {
         private MudTheme _currentTheme;
 
-        [Inject] ILoadingService LoadingService { get; set; }
+        //[Inject] ILoadingService LoadingService { get; set; }
 
         //public void Dispose()
         //{
@@ -33,13 +33,13 @@ namespace BlazorWeb.Components.Layout
 
         protected override async Task OnInitializedAsync()
         {
-            LoadingService.ShowLoading();
+            //LoadingService.ShowLoading();
 
             _currentTheme = UserTheme.DefaultTheme;
 
             _currentTheme = await _clientPreferenceManager.GetCurrentThemeAsync();
 
-            LoadingService.HideLoading();
+            //LoadingService.HideLoading();
 
         }
 

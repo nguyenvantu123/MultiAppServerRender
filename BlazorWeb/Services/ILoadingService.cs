@@ -1,25 +1,11 @@
 ﻿namespace BlazorWeb.Services
 {
-    public interface ILoadingService
-    {
-        event Action<bool> OnLoadingChanged;
-
-        void ShowLoading();
-        void HideLoading();
-    }
-
-    public class LoadingService : ILoadingService
+    public class LoadingService
     {
         public event Action<bool> OnLoadingChanged;
 
-        public void ShowLoading()
-        {
-            OnLoadingChanged?.Invoke(true);
-        }
+        public void ShowLoading() => OnLoadingChanged?.Invoke(true);
 
-        public void HideLoading()
-        {
-            OnLoadingChanged?.Invoke(false);
-        }
+        public void HideLoading() => OnLoadingChanged?.Invoke(false);
     }
 }
