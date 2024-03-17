@@ -13,15 +13,11 @@
 @attribute [AllowAnonymous]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Login> _localizer
 @inject IBffApiClients bffApiClients
-@* @rendermode InteractiveServer
- *@@* @inject HttpClient HttpClient*@
+@inject ILoadingService LoadingService
 
-@* <MudProgressCircular Color="Color.Success" Indeterminate="true" />
- *@
-
-<!-- Your loading content here -->
 <EditForm Model="_tokenModel" FormName="loginForm" OnValidSubmit="SubmitAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
+
     <MudGrid>
         <MudItem xs="12">
             <div class="d-flex justify-center">
@@ -73,8 +69,7 @@
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
-    @inject LoadingService loadingService
-
+    private bool isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,9 +110,12 @@
 
     private async Task SubmitAsync()
     {
+
+        var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = false };
+
+        var dialogRef = _dialogService.Show<GlobalLoadingIndicator>("", options);
         try
         {
-            loadingService.ShowLoading();
 
             var httpresponse = await bffApiClients.LoginAsync(_tokenModel);
 
@@ -129,14 +127,12 @@
 
                 await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
 
-                loadingService.HideLoading();
-
                 _navigationManager.NavigateTo(_navigationManager.Uri.ToString(), true);
             }
             else
             {
+                dialogRef.Close();
 
-                loadingService.HideLoading();
 
                 foreach (var message in result.ErrorMessages)
                 {
@@ -147,6 +143,11 @@
         catch (Exception ex)
         {
             throw ex;
+        }
+
+        finally
+        {
+            dialogRef.Close();
         }
     }
 

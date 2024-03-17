@@ -24,6 +24,8 @@ namespace BlazorWeb.Components.Layout
     {
         private MudTheme _currentTheme;
 
+        bool isLoading = false;
+
         //[Inject] ILoadingService LoadingService { get; set; }
 
         //public void Dispose()
@@ -49,6 +51,12 @@ namespace BlazorWeb.Components.Layout
             _currentTheme = isDarkMode
                 ? UserTheme.DefaultTheme
                 : UserTheme.DarkTheme;
+        }
+
+        void SetLoadingState(bool loading)
+        {
+            isLoading = loading;
+            StateHasChanged();
         }
     }
 }

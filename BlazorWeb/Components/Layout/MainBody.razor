@@ -77,11 +77,10 @@
     private string Email { get; set; }
     private string FirstLetterOfName { get; set; }
 
-    // @inject ILoadingService LoadingService
-
-    //[Inject] private MyService myService { get; set; }
-
     [Inject] private IBffApiClients bff { get; set; }
+
+    // [Inject] private ILocalStorageService _localService { get; set; }
+
 
     public async Task ToggleDarkMode()
     {
@@ -201,59 +200,60 @@
 
         try
         {
-            // LoadingService.ShowLoading();
 
-            var accessToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken));
+            // var accessToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken));
 
-            var refreshToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
+            // var refreshToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
 
-            var response = await bff.UserProfile(accessToken);
+            // var response = await bff.UserProfile(accessToken);
 
-            var result = await response.ToResult();
+            // var result = await response.ToResult();
 
-            if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-            {
-                var responseRefresh = await bff.RefreshTokenAsync(new RefreshTokenRequest { accessToken = accessToken, refreshToken = refreshToken });
+            // if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
+            // {
+            //     var responseRefresh = await bff.RefreshTokenAsync(new RefreshTokenRequest { accessToken = accessToken, refreshToken = refreshToken });
 
-                var resultRefresh = await responseRefresh.ToResult();
+            //     var resultRefresh = await responseRefresh.ToResult();
 
-                if (resultRefresh.Success)
-                {
-                    var resultRefreshSuccess = await responseRefresh.ToResult<TokenResponse>();
-                    await _stateProvider.Login(resultRefreshSuccess.Result.AccessToken, resultRefreshSuccess.Result.RefreshToken);
+            //     if (resultRefresh.Success)
+            //     {
+            //         var resultRefreshSuccess = await responseRefresh.ToResult<TokenResponse>();
+            //         await _stateProvider.Login(resultRefreshSuccess.Result.AccessToken, resultRefreshSuccess.Result.RefreshToken);
 
-                    response = await bff.UserProfile(resultRefreshSuccess.Result.AccessToken);
-                }
-                else
-                {
+            //         response = await bff.UserProfile(resultRefreshSuccess.Result.AccessToken);
+            //     }
+            //     else
+            //     {
 
-                    await _localStorageService.RemoveItemAsync(StorageConstants.Local.AuthToken);
-                    await _localStorageService.RemoveItemAsync(StorageConstants.Local.RefreshToken);
+            //         await _localStorageService.RemoveItemAsync(StorageConstants.Local.AuthToken);
+            //         await _localStorageService.RemoveItemAsync(StorageConstants.Local.RefreshToken);
 
-                    _navigationManager.NavigateTo("/", true);
+            //         _stateProvider.MarkUserAsLoggedOut();
 
-                    _stateProvider.MarkUserAsLoggedOut();
-                    //await _stateProvider.Logout();^
-                }
+            //         _navigationManager.NavigateTo("/", true);
 
-            }
+            //         //
+            //         //await _stateProvider.Logout();^
+            //     }
 
-            if (result.StatusCode == (int)HttpStatusCode.OK)
-            {
-                var newResult = await response.ToResult<UserProfileResponse>();
+            // }
 
-                if (newResult.Success)
-                {
-                    FirstName = newResult.Result.FirstName;
-                    SecondName = newResult.Result.LastName;
-                    Email = newResult.Result.Email;
-                    FirstLetterOfName = newResult.Result.FirstName.Substring(0, 1);
+            // if (result.StatusCode == (int)HttpStatusCode.OK)
+            // {
+            //     var newResult = await response.ToResult<UserProfileResponse>();
 
-                    _snackBar.Add(string.Format(_localizer["Welcome {0}"], FirstName), Severity.Success);
+            //     if (newResult.Success)
+            //     {
+            //         FirstName = newResult.Result.FirstName;
+            //         SecondName = newResult.Result.LastName;
+            //         Email = newResult.Result.Email;
+            //         FirstLetterOfName = newResult.Result.FirstName.Substring(0, 1);
 
-                }
+            //         _snackBar.Add(string.Format(_localizer["Welcome {0}"], FirstName), Severity.Success);
 
-            }
+            //     }
+
+            // }
         }
         catch (Exception ex)
         {

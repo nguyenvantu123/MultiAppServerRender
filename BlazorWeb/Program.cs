@@ -32,8 +32,8 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddSingleton<LoadingService>();
-//builder.Services.AddScoped<ILoadingService, LoadingService>();
+//builder.Services.AddSingleton<LoadingService>();
+builder.Services.AddScoped<ILoadingService, LoadingService>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
 //builder.Services.AddScoped<ITokenManager, TokenManager>();
