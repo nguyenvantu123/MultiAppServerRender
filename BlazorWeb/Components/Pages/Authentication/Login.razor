@@ -71,6 +71,17 @@
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
     private bool isLoading = false;
 
+    [SupplyParameterFromQuery]
+    public string? returnUrl { get; set; }
+
+
+    string GetQueryParm(string parmName)
+    {
+        var uriBuilder = new UriBuilder(_navigationManager.Uri);
+        var q = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        return q[parmName] ?? "";
+    }
+
     protected override async Task OnInitializedAsync()
     {
         var state = await _stateProvider.GetAuthenticationStateAsync();
@@ -104,14 +115,16 @@
 
             }
 
-            _navigationManager.NavigateTo(_navigationManager.Uri.ToString());
+            string url = GetQueryParm("returnUrl");
+
+            _navigationManager.NavigateTo($"/{url}", true);
         }
     }
 
     private async Task SubmitAsync()
     {
 
-        var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = false };
+        var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = false, NoHeader = true };
 
         var dialogRef = _dialogService.Show<GlobalLoadingIndicator>("", options);
         try

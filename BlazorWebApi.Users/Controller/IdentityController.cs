@@ -61,33 +61,37 @@ namespace BlazorWebApi.Users.Controller
             if (user == null)
             {
                 result.ErrorMessages.Add("User Not Found.");
+                return result;
             }
             if (!user.IsActive)
             {
                 result.ErrorMessages.Add("User Not Active. Please contact the administrator.");
+                return result;
             }
             if (!user.EmailConfirmed)
             {
                 result.ErrorMessages.Add("User Not Active. Please contact the administrator.");
+                return result;
             }
             var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
             if (!passwordValid)
             {
                 result.ErrorMessages.Add("Invalid Credentials.");
-            }
-
-            if (result.ErrorMessages.Count > 0)
-            {
-                result.Success = false;
-
                 return result;
             }
+
+            //if (result.ErrorMessages.Count > 0)
+            //{
+            //    result.Success = false;
+
+            //    return result;
+            //}
 
             user.RefreshToken = GenerateRefreshToken();
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
             await _userManager.UpdateAsync(user);
 
-            DateTime expireTime = DateTime.UtcNow.AddHours(1);
+            DateTime expireTime = DateTime.UtcNow.AddMinutes(5);
             var token = await GenerateJwtAsync(user, expireTime);
             var response = new TokenResponse { AccessToken = token, RefreshToken = user.RefreshToken, ExpireIn = expireTime };
 

@@ -1,7 +1,13 @@
-﻿.dialog-content {
+﻿/* YourDialogComponent.razor.css */
+.dialog-content {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 100%;
+    align-items: center;
+    height: 100%; /* You might need to adjust this according to your layout */
+}
+
+
+.progress-circular {
+    width: 120%;
+    height: 120%;
 }

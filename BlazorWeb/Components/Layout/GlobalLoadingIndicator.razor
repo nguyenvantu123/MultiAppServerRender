@@ -3,10 +3,10 @@
 @using BlazorWeb.Services
 @using MudBlazor
 
-<MudDialog DisableBackdropClick="true" DisableEscapeKeyDown="true">
+<MudDialog DisableTitle="true" DisableHeader="true" DisableBackdropClick="true" DisableEscapeKeyDown="true">
     <DialogContent>
         <div class="dialog-content">
-            <MudProgressCircular Indeterminate="true" />
+            <MudProgressCircular Indeterminate="true" Class="progress-circular" />
         </div>
     </DialogContent>
 </MudDialog>

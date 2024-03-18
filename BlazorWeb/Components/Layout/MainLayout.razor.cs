@@ -24,24 +24,12 @@ namespace BlazorWeb.Components.Layout
     {
         private MudTheme _currentTheme;
 
-        bool isLoading = false;
-
-        //[Inject] ILoadingService LoadingService { get; set; }
-
-        //public void Dispose()
-        //{
-        //    _interceptor.DisposeEvent();
-        //}
-
         protected override async Task OnInitializedAsync()
         {
-            //LoadingService.ShowLoading();
 
             _currentTheme = UserTheme.DefaultTheme;
 
             _currentTheme = await _clientPreferenceManager.GetCurrentThemeAsync();
-
-            //LoadingService.HideLoading();
 
         }
 
@@ -51,12 +39,6 @@ namespace BlazorWeb.Components.Layout
             _currentTheme = isDarkMode
                 ? UserTheme.DefaultTheme
                 : UserTheme.DarkTheme;
-        }
-
-        void SetLoadingState(bool loading)
-        {
-            isLoading = loading;
-            StateHasChanged();
         }
     }
 }
