@@ -188,6 +188,35 @@
     {
         if (firstRender)
         {
+            //     var availableToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken);
+
+            //     var availableRefreshToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
+
+            //     var user = state.User;
+            //     var exp = user.FindFirst(c => c.Type.Equals("exp"))?.Value;
+            //     var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
+            //     var timeUTC = DateTime.UtcNow;
+            //     var diff = expTime - timeUTC;
+            //     if (diff.TotalMinutes <= 10)
+            //     {
+            //         var response = await bff.RefreshTokenAsync(new RefreshTokenRequest { accessToken = availableToken, refreshToken = availableRefreshToken });
+
+            //         var result = await response.ToResult<TokenResponse>();
+
+            //         if (result.Success)
+            //         {
+            //             await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
+
+            //         }
+            //         else
+            //         {
+            //             await _stateProvider.Logout();
+            //         }
+
+            //         _navigationManager.NavigateTo($"/home?returnUrl={_navigationManager.Uri.ToString().Replace(_navigationManager.BaseUri, "")}", true);
+
+            //     }
+
             await LoadDataAsync();
         }
     }
@@ -215,7 +244,7 @@
 
                 // _stateProvider.MarkUserAsLoggedOut();
 
-                _navigationManager.NavigateTo($"/login?returnUrl={_navigationManager.Uri.ToString().Replace(_navigationManager.BaseUri, "")}", true);
+                // _navigationManager.NavigateTo($"refreshToken?returnUrl={_navigationManager.Uri.ToString().Replace(_navigationManager.BaseUri, "")}", true);
 
                 // accessToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken));
 

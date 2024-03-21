@@ -1,0 +1,54 @@
+﻿@page "/refreshToken"
+@using BlazorWeb.Components.Layout
+@using BlazorWeb.Extensions
+@using BlazorWeb.Request.Identity
+@using BlazorWeb.Response.Identity
+@using BlazorWeb.Services
+@using BlazorWeb.Services.BffApiClients
+@using BlazorWeb.Settings
+@using BlazorWeb.Wrapper
+@using BlazorWebApi.Users.Configurations
+@using Microsoft.Extensions.Options
+@inject Microsoft.Extensions.Localization.IStringLocalizer<RefreshTokenPage> _localizer
+@inject IBffApiClients bffApiClients
+@inject ILoadingService LoadingService
+@attribute [Authorize]
+
+@code {
+
+    [SupplyParameterFromQuery]
+    public string? returnUrl { get; set; }
+
+
+    string GetQueryParm(string parmName)
+    {
+        var uriBuilder = new UriBuilder(_navigationManager.Uri);
+        var q = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        return q[parmName] ?? "";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var availableToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken);
+
+        var availableRefreshToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
+
+        var response = await bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { accessToken = availableToken, refreshToken = availableRefreshToken });
+
+        var result = await response.ToResult<TokenResponse>();
+
+        if (result.Success)
+        {
+            await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
+
+            var returnUrl = GetQueryParm("returnUrl");
+
+            _navigationManager.NavigateTo($"/{returnUrl}", true);
+
+        }
+        else
+        {
+            await _stateProvider.Logout();
+        }
+    }
+}

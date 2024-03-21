@@ -71,8 +71,8 @@
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
     private bool isLoading = false;
 
-    [SupplyParameterFromQuery]
-    public string? returnUrl { get; set; }
+    // [SupplyParameterFromQuery]
+    // public string? returnUrl { get; set; }
 
 
     string GetQueryParm(string parmName)
@@ -88,36 +88,10 @@
 
         if (state.Equals(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))))
         {
-            var availableToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken);
 
-            var availableRefreshToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
+            var returnUrl = GetQueryParm("returnUrl");
 
-            var user = state.User;
-            var exp = user.FindFirst(c => c.Type.Equals("exp"))?.Value;
-            var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
-            var timeUTC = DateTime.UtcNow;
-            var diff = expTime - timeUTC;
-            if (diff.TotalMinutes <= 10)
-            {
-                var response = await bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { accessToken = availableToken, refreshToken = availableRefreshToken });
-
-                var result = await response.ToResult<TokenResponse>();
-
-                if (result.Success)
-                {
-                    await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
-
-                }
-                else
-                {
-                    await _stateProvider.Logout();
-                }
-
-            }
-
-            string url = GetQueryParm("returnUrl");
-
-            _navigationManager.NavigateTo($"/{url}", true);
+            _navigationManager.NavigateTo($"{returnUrl}", true);
         }
     }
 
