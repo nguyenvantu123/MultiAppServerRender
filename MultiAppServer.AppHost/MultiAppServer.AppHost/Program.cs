@@ -1,3 +1,5 @@
+using Aspire.Hosting;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var sqlIndentity = builder.AddSqlServer("sql")
@@ -10,5 +12,6 @@ var bff = builder.AddProject<Projects.BlazorWebApi_Bff>("blazorwebapi.bff").With
 builder.AddProject<Projects.BlazorWebApi_Files>("blazorwebapi.files");
 
 builder.AddProject<Projects.BlazorWeb>("blazorweb").WithReference(user).WithReference(bff);
+
 
 builder.Build().Run();

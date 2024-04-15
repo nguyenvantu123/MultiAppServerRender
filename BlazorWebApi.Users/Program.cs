@@ -1,3 +1,6 @@
+using Aspire.Minio.Client;
+using Aspire.MongoDb.Driver;
+using Aspire.RabbitMQ.Client;
 using BlazorHero.CleanArchitecture.Server.Middlewares;
 using BlazorWebApi.Data;
 using BlazorWebApi.Identity;
@@ -91,6 +94,12 @@ builder.Services.AddProblemDetails();
 builder.Services.AddAutoMapper(typeof(UserAutoMapper));
 
 builder.AddSqlServerDbContext<UserDBContext>("identitydb");
+
+builder.AddRabbitMQ("messaging");
+
+builder.AddMongoDBClient("mongodbconnection");
+
+builder.AddMinIOClient("minioconnection");
 
 builder.Services.AddSingleton<IdentityDbInitializer>();
 

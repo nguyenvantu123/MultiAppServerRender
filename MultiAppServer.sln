@@ -36,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.MongoDb.Driver", "As
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.RabbitMQ.Client", "Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj", "{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.Minio.Client", "Aspire.Minio.Client\Aspire.Minio.Client.csproj", "{3331583A-51B2-48C1-8A94-6778691A35B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3331583A-51B2-48C1-8A94-6778691A35B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3331583A-51B2-48C1-8A94-6778691A35B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3331583A-51B2-48C1-8A94-6778691A35B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3331583A-51B2-48C1-8A94-6778691A35B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{77D6D5B2-5F5C-4033-BF37-4DE394A28864} = {4D14E91C-D074-4152-B491-82FE9A265BB8}
 		{919D49DA-12A0-4BC5-997B-F2ECA920A4C8} = {3846F3FA-15AF-4992-B78A-B2F4D2667E59}
 		{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500} = {3846F3FA-15AF-4992-B78A-B2F4D2667E59}
+		{3331583A-51B2-48C1-8A94-6778691A35B2} = {3846F3FA-15AF-4992-B78A-B2F4D2667E59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4FA7497E-3838-4B13-B2FC-ECD9310A2C14}
