@@ -95,11 +95,11 @@ builder.Services.AddAutoMapper(typeof(UserAutoMapper));
 
 builder.AddSqlServerDbContext<UserDBContext>("identitydb");
 
-builder.AddRabbitMQ("messaging");
+builder.AddRabbitMQ("message");
 
-builder.AddMongoDBClient("mongodbconnection");
+//builder.AddMongoDBClient("mongodbconnection");
 
-builder.AddMinIOClient("minioconnection");
+//builder.AddMinIOClient("minioconnection");
 
 builder.Services.AddSingleton<IdentityDbInitializer>();
 
