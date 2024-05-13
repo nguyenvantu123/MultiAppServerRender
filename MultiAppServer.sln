@@ -34,9 +34,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAppServer.AppHost", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.MongoDb.Driver", "Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj", "{919D49DA-12A0-4BC5-997B-F2ECA920A4C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.RabbitMQ.Client", "Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj", "{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.RabbitMQ.Client", "Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj", "{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.Minio.Client", "Aspire.Minio.Client\Aspire.Minio.Client.csproj", "{3331583A-51B2-48C1-8A94-6778691A35B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.Minio.Client", "Aspire.Minio.Client\Aspire.Minio.Client.csproj", "{3331583A-51B2-48C1-8A94-6778691A35B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.StackExchange.Redis.DistributedCaching", "Aspire.StackExchange.Redis.DistributedCaching\Aspire.StackExchange.Redis.DistributedCaching.csproj", "{8342D102-8008-4A10-AB62-D3275DC75BF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.StackExchange.Redis", "Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj", "{2F2A94D3-A0A9-42DB-9423-C930941F8428}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,6 +88,14 @@ Global
 		{3331583A-51B2-48C1-8A94-6778691A35B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3331583A-51B2-48C1-8A94-6778691A35B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3331583A-51B2-48C1-8A94-6778691A35B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8342D102-8008-4A10-AB62-D3275DC75BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8342D102-8008-4A10-AB62-D3275DC75BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8342D102-8008-4A10-AB62-D3275DC75BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8342D102-8008-4A10-AB62-D3275DC75BF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F2A94D3-A0A9-42DB-9423-C930941F8428}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F2A94D3-A0A9-42DB-9423-C930941F8428}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F2A94D3-A0A9-42DB-9423-C930941F8428}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F2A94D3-A0A9-42DB-9423-C930941F8428}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +109,8 @@ Global
 		{919D49DA-12A0-4BC5-997B-F2ECA920A4C8} = {3846F3FA-15AF-4992-B78A-B2F4D2667E59}
 		{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500} = {3846F3FA-15AF-4992-B78A-B2F4D2667E59}
 		{3331583A-51B2-48C1-8A94-6778691A35B2} = {3846F3FA-15AF-4992-B78A-B2F4D2667E59}
+		{8342D102-8008-4A10-AB62-D3275DC75BF6} = {3846F3FA-15AF-4992-B78A-B2F4D2667E59}
+		{2F2A94D3-A0A9-42DB-9423-C930941F8428} = {3846F3FA-15AF-4992-B78A-B2F4D2667E59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4FA7497E-3838-4B13-B2FC-ECD9310A2C14}

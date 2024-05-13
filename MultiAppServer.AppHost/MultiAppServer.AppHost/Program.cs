@@ -5,8 +5,9 @@ var builder = DistributedApplication.CreateBuilder(args);
 var sqlIndentity = builder.AddSqlServer("sql")
                  .AddDatabase("MultiAppServer.Users");
 
-var messaging = builder.AddRabbitMQ("rabbitmqconnection");
+var messaging = builder.AddRabbitMQ("messaging");
 
+var fileCache = builder.AddRedis("fileCache");
 
 var user = builder.AddProject<Projects.BlazorWebApi_Users>("blazorwebapi.users").WithReference(sqlIndentity).WithReference(messaging);
 
