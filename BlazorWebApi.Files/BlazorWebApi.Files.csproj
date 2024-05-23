@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj" />
     <ProjectReference Include="..\MultiAppServer.AppHost\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
   </ItemGroup>
 

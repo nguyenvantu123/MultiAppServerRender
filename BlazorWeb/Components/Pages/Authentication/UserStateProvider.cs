@@ -26,27 +26,19 @@ namespace BlazorWeb.Components.Pages.Authentication
     public class UserStateProvider : AuthenticationStateProvider
     {
 
-        public ILocalStorageService _localStorage;
         //public HttpClient _httpClient;
         //private readonly IBffApiClients _bffApiClients;
-        private readonly NavigationManager _navigationManager;
+        //private readonly NavigationManager _navigationManager;
+        private readonly ILocalStorageService _localStorage;
 
         //private readonly AppConfiguration _appConfig;
 
         public UserStateProvider(
-            ILocalStorageService localStorage,
-            //HttpClient httpClient,
-            //IBffApiClients bffApiClients,
-            NavigationManager navigationManager
-            //, IOptions<AppConfiguration> appConfig
+
+            ILocalStorageService localStorage
             )
         {
             _localStorage = localStorage;
-            //_httpClient = httpClient;
-            //_bffApiClients = bffApiClients;
-            _navigationManager = navigationManager;
-
-            //_appConfig = appConfig.Value;
         }
 
         public async Task StateChangedAsync()
@@ -89,65 +81,6 @@ namespace BlazorWeb.Components.Pages.Authentication
             //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
 
             return state;
-        }
-
-        public async Task<string> GetCurrentToken()
-        {
-
-            var accessToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken));
-
-            return accessToken;
-        }
-
-
-
-        public async Task Logout()
-        {
-          
-
-        }
-
-        //public async Task<bool> RefreshToken()
-        //{
-        //    //var token = _appConfig.AccessToken;
-        //    //var refreshToken = _appConfig.RefreshToken;
-
-        //    var accessToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken));
-
-        //    var refreshToken = (await _localStorage.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
-
-        //    //var response = await _bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { accessToken = accessToken, refreshToken = refreshToken });
-
-        //    var result = await response.ToResult<TokenResponse>();
-
-        //    if (!result.Success)
-        //    {
-        //        await Logout();
-
-        //        return false;
-        //    }
-
-        //    await _localStorage.SetItemAsStringAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
-        //    await _localStorage.SetItemAsStringAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
-
-        //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
-
-        //    return true;
-        //}
-
-        public async Task<bool> Login(string accessToken, string refreshToken)
-        {
-            await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, accessToken);
-            await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, refreshToken);
-
-            //_appConfig.AccessToken = accessToken;
-            //_appConfig.RefreshToken = refreshToken;
-
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
-
-            await StateChangedAsync();
-
-            return true;
         }
 
         private IEnumerable<Claim> GetClaimsFromJwt(string jwt)

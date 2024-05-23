@@ -21,7 +21,7 @@ namespace BlazorWeb.Services.BffApiClients
         Task<HttpResponseMessage> LoginAsync([Body] TokenRequest tokenRequest);
 
         [Post("/identity/refreshToken")]
-        Task<HttpResponseMessage> RefreshTokenAsync([Body] RefreshTokenRequest tokenRequest);
+        Task<HttpResponseMessage> RefreshTokenAsync([Body] RefreshTokenRequest tokenRequest , [Header("Authorization")] string authorization);
 
         [Get("/user/me")]
         Task<HttpResponseMessage> UserProfile([Header("Authorization")] string authorization);

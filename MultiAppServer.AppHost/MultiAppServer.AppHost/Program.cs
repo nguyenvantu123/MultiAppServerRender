@@ -17,5 +17,4 @@ var file = builder.AddProject<Projects.BlazorWebApi_Files>("blazorwebapi.files")
 
 builder.AddProject<Projects.BlazorWeb>("blazorweb").WithReference(user).WithReference(bff);
 
-
 builder.Build().Run();

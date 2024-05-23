@@ -80,13 +80,6 @@ namespace BlazorWebApi.Users.Controller
                 return result;
             }
 
-            //if (result.ErrorMessages.Count > 0)
-            //{
-            //    result.Success = false;
-
-            //    return result;
-            //}
-
             user.RefreshToken = GenerateRefreshToken();
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
             await _userManager.UpdateAsync(user);
@@ -108,7 +101,6 @@ namespace BlazorWebApi.Users.Controller
             return token;
         }
 
-        [AllowAnonymous]
         [HttpPost]
         [Route("/identity/refreshToken")]
         public async Task<ResultBase<TokenResponse>> RefreshTokenAsync([FromBody] RefreshTokenRequest model)

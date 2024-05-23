@@ -52,7 +52,6 @@ namespace BlazorWeb.Components.Pages.Authentication
 
             var response = await base.SendAsync(request, cancellationToken);
 
-            //var result = await response.ToResult();
             return response;
 
         }

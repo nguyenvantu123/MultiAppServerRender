@@ -75,7 +75,7 @@
     private string FirstName { get; set; }
     private string SecondName { get; set; }
     private string Email { get; set; }
-    private string FirstLetterOfName { get; set; }
+    private char FirstLetterOfName { get; set; }
 
     [Inject] private IBffApiClients bff { get; set; }
 
@@ -188,149 +188,32 @@
     {
         if (firstRender)
         {
-            //     var availableToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken);
-
-            //     var availableRefreshToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
-
-            //     var user = state.User;
-            //     var exp = user.FindFirst(c => c.Type.Equals("exp"))?.Value;
-            //     var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
-            //     var timeUTC = DateTime.UtcNow;
-            //     var diff = expTime - timeUTC;
-            //     if (diff.TotalMinutes <= 10)
-            //     {
-            //         var response = await bff.RefreshTokenAsync(new RefreshTokenRequest { accessToken = availableToken, refreshToken = availableRefreshToken });
-
-            //         var result = await response.ToResult<TokenResponse>();
-
-            //         if (result.Success)
-            //         {
-            //             await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
-
-            //         }
-            //         else
-            //         {
-            //             await _stateProvider.Logout();
-            //         }
-
-            //         _navigationManager.NavigateTo($"/home?returnUrl={_navigationManager.Uri.ToString().Replace(_navigationManager.BaseUri, "")}", true);
-
-            //     }
-
             await LoadDataAsync();
         }
     }
 
     private async Task LoadDataAsync()
     {
-        var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = false, NoHeader = true };
+        var state = await _stateProvider.GetAuthenticationStateAsync();
 
-        var dialogRef = _dialogService.Show<GlobalLoadingIndicator>("", options);
-        try
+        var user = state.User;
+        if (user == null) return;
+
+        if (user.Identity?.IsAuthenticated == true)
         {
-
-            var accessToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken));
-
-            var refreshToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
-
-            var response = await bff.UserProfile(accessToken);
-
-            var result = await response.ToResult();
-
-            if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
+            if (string.IsNullOrEmpty(CurrentUserId))
             {
-                // await _localStorageService.RemoveItemAsync(StorageConstants.Local.AuthToken);
-                // await _localStorageService.RemoveItemAsync(StorageConstants.Local.RefreshToken);
-
-                // _stateProvider.MarkUserAsLoggedOut();
-
-                // _navigationManager.NavigateTo($"refreshToken?returnUrl={_navigationManager.Uri.ToString().Replace(_navigationManager.BaseUri, "")}", true);
-
-                // accessToken = (await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken));
-
-                // var responseRefresh = await bff.RefreshTokenAsync(new RefreshTokenRequest { accessToken = accessToken, refreshToken = refreshToken });
-
-                // var resultRefresh = await responseRefresh.ToResult();
-
-                // if (resultRefresh.Success)
-                // {
-                //     var resultRefreshSuccess = await responseRefresh.ToResult<TokenResponse>();
-                //     await _stateProvider.Login(resultRefreshSuccess.Result.AccessToken, resultRefreshSuccess.Result.RefreshToken);
-
-                //     response = await bff.UserProfile(resultRefreshSuccess.Result.AccessToken);
-                // }
-                // else
-                // {
-
-                //     await _localStorageService.SetItemAsStringAsync(StorageConstants.Local.AuthToken, "");
-                //     await _localStorageService.SetItemAsStringAsync(StorageConstants.Local.RefreshToken, "");
-
-                //     _stateProvider.MarkUserAsLoggedOut();
-
-                //     _navigationManager.NavigateTo("/", true);
-
-                // }
-
-            }
-
-            if (result.StatusCode == (int)HttpStatusCode.OK)
-            {
-
-                var newResult = await response.ToResult<UserProfileResponse>();
-
-                if (newResult.Success)
+                CurrentUserId = user.GetUserId();
+                FirstName = user.GetFirstName();
+                if (FirstName.Length > 0)
                 {
-                    FirstName = newResult.Result.FirstName;
-                    SecondName = newResult.Result.LastName;
-                    Email = newResult.Result.Email;
-                    FirstLetterOfName = newResult.Result.FirstName.Substring(0, 1);
-
-                    _snackBar.Add(string.Format(_localizer["Welcome {0}"], FirstName), Severity.Success);
+                    FirstLetterOfName = FirstName[0];
                 }
 
+                SecondName = user.GetLastName();
+                Email = user.GetEmail();
             }
         }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
-
-        finally
-        {
-            dialogRef.Close();
-        }
-
-
-        //var token = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken) ?? "";
-
-
-        //if (!string.IsNullOrEmpty())
-        //{
-        //    var state = await _bffApiClients.UserProfile();
-
-        //    try
-        //    {
-        //        if (state.Success)
-        //        {
-        //            //ImageDataUrl
-        //            FirstName = state.Result.FirstName;
-        //            SecondName = state.Result.LastName;
-        //            Email = state.Result.Email;
-        //            FirstLetterOfName = state.Result.FirstName.Substring(0, 1);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        throw;
-        //    }
-
-
-        //}
-        //else
-        //{
-        //    await _stateProvider.Logout();
-        //}
     }
 
 

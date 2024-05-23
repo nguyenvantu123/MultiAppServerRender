@@ -88,6 +88,23 @@
 
         if (state.Equals(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))))
         {
+            var expireIn = await _localStorage.GetItemAsync<DateTime>(StorageConstants.Local.ExpireIn);
+            var accessToken = await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken);
+            var refreshToken = await _localStorage.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
+
+
+            if (expireIn <= DateTime.Now)
+            {
+                var httpresponse = await bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { refreshToken = refreshToken, accessToken = accessToken }, authorization: accessToken);
+
+                var result = await httpresponse.ToResult<TokenResponse>();
+
+                await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
+                await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
+                await _localStorage.SetItemAsync(StorageConstants.Local.ExpireIn, result.Result.ExpireIn.AddHours(-1));
+
+                await _stateProvider.StateChangedAsync();
+            }
 
             var returnUrl = GetQueryParm("returnUrl");
 
@@ -112,7 +129,11 @@
             if (result.Success)
             {
 
-                await _stateProvider.Login(result.Result.AccessToken, result.Result.RefreshToken);
+                await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
+                await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
+                await _localStorage.SetItemAsync(StorageConstants.Local.ExpireIn, result.Result.ExpireIn.AddHours(-1));
+
+                await _stateProvider.StateChangedAsync();
 
                 _navigationManager.NavigateTo(_navigationManager.Uri.ToString(), true);
             }

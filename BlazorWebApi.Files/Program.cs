@@ -1,3 +1,4 @@
+using Aspire.RabbitMQ.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
@@ -17,6 +18,8 @@ builder.Services.AddSwaggerGen();
 
 
 builder.ConfigureJwtBearToken();
+
+builder.AddRabbitMQ("messaging");
 
 builder.Services.AddAuthorization();
 
