@@ -35,52 +35,6 @@ namespace BlazorWebApi.Users.Controller
             UserId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)?.ToGuid() ?? Guid.Empty;
         }
 
-        //[HttpPost]
-        //[Route("/user/register")]
-        //public async Task<IResult> Register(RegisterUserRequest model)
-        //{
-        //    var user = await _userManager.FindByNameAsync(model.UserName);
-        //    if (user != null)
-        //    {
-        //        return await Result.FailAsync("User Name Is Existed.");
-        //    }
-        //    user = await _userManager.FindByEmailAsync(model.Email);
-
-        //    if (user != null)
-        //    {
-        //        return await Result.FailAsync(message: "Email Is Existed.");
-        //    }
-
-        //    user = await _userManager.Users.Where(x => x.PhoneNumber == model.PhoneNumber).FirstOrDefaultAsync();
-
-        //    if (user != null)
-        //    {
-        //        return await Result.FailAsync("Phone Number Is Existed.");
-        //    }
-
-        //    if (model.Password != model.VerifyPassword)
-        //    {
-        //        return await Result.FailAsync("Password and verify password are not match.");
-        //    }
-
-        //    var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
-        //    if (!passwordValid)
-        //    {
-        //        return await Result.FailAsync("Password required length 8 digit, at least 1 uppercase and 1 special character.");
-        //    }
-
-        //    //await _userManager.CreateAsync(model);
-
-        //    var userCreate = _mapper.Map<User>(model);
-
-        //    await _userManager.CreateAsync(userCreate, model.Password);
-
-        //    var role = await _userManager.AddToRoleAsync(userCreate, RoleConstants.BasicUserRole);
-
-
-        //    return await Result.SuccessAsync(message: "Success");
-        //}
-
         [HttpGet]
         [Route("/user/me")]
         public async Task<ResultBase<UserProfileResponse>> GetUserProfile()
@@ -90,6 +44,19 @@ namespace BlazorWebApi.Users.Controller
             var result = new ResultBase<UserProfileResponse>();
 
             result.Result = _mapper.Map<UserProfileResponse>(user);
+
+            return result;
+        }
+
+        [HttpGet]
+        [Route("")]
+        public async Task<ResultBase<GetListUserResponse>> GetUser(GetListUserRequest getListUserRequest)
+        {
+            var user = await _userManager.getli();
+
+            var result = new ResultBase<GetListUserResponse>();
+
+            result.Result = _mapper.Map<GetListUserResponse>(user);
 
             return result;
         }

@@ -97,13 +97,24 @@
             {
                 var httpresponse = await bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { refreshToken = refreshToken, accessToken = accessToken }, authorization: accessToken);
 
-                var result = await httpresponse.ToResult<TokenResponse>();
+                if (httpresponse.IsSuccessStatusCode)
+                {
+                    var result = await httpresponse.ToResult<TokenResponse>();
 
-                await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
-                await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
-                await _localStorage.SetItemAsync(StorageConstants.Local.ExpireIn, result.Result.ExpireIn.AddHours(-1));
+                    await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
+                    await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
+                    await _localStorage.SetItemAsync(StorageConstants.Local.ExpireIn, result.Result.ExpireIn.AddHours(-1));
+
+                }
+                else
+                {
+                    await _localStorage.RemoveItemAsync(StorageConstants.Local.AuthToken);
+                    await _localStorage.RemoveItemAsync(StorageConstants.Local.RefreshToken);
+                    await _localStorage.RemoveItemAsync(StorageConstants.Local.ExpireIn);
+                }
 
                 await _stateProvider.StateChangedAsync();
+
             }
 
             var returnUrl = GetQueryParm("returnUrl");

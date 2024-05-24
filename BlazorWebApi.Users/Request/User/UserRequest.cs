@@ -21,4 +21,13 @@
         public string PhoneNumber { get; set; }
 
     }
+
+    public class GetListUserRequest
+    {
+        public string SearchText { get; set; }
+
+        public List<Guid> RoleIds { get; set; }
+
+        public bool? IsActive { get; set; }
+    }
 }

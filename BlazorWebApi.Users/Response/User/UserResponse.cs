@@ -1,4 +1,6 @@
-﻿namespace BlazorWebApi.Users.Response.User
+﻿using OpenTelemetry.Metrics;
+
+namespace BlazorWebApi.Users.Response.User
 {
     public class UserResponse
     {
@@ -30,5 +32,27 @@
         public string RoleName { get; set; }
         public string RoleDescription { get; set; }
         public bool Selected { get; set; }
+    }
+
+    public class GetListUserResponse
+    {
+        public string UserName { get; set; }
+
+        public string Email { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string RoleName { get; set; }
+
+        public DateTime? CreationTime { get;set; }
+
+        public bool IsAdmin { get; set; }
+
+        public bool IsActive { get; set; }
+
     }
 }

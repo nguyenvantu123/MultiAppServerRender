@@ -68,11 +68,11 @@ namespace BlazorWebApi.Users.Controller
                 result.ErrorMessages.Add("User Not Active. Please contact the administrator.");
                 return result;
             }
-            if (!user.EmailConfirmed)
-            {
-                result.ErrorMessages.Add("User Not Active. Please contact the administrator.");
-                return result;
-            }
+            //if (!user.EmailConfirmed)
+            //{
+            //    result.ErrorMessages.Add("User Not Active. Please contact the administrator.");
+            //    return result;
+            //}
             var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
             if (!passwordValid)
             {
