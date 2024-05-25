@@ -23,11 +23,23 @@ namespace BlazorWeb.Wrapper
         {
             Data = data;
             CurrentPage = page;
-            Success = succeeded;
+            Succeeded = succeeded;
             PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             TotalCount = count;
         }
+
+        public static PaginatedResult<T> Failure(List<string> messages)
+        {
+            return new PaginatedResult<T>(false, default, messages);
+        }
+
+        public static PaginatedResult<T> Success(List<T> data, int count, int page, int pageSize)
+        {
+            return new PaginatedResult<T>(true, data, null, count, page, pageSize);
+        }
+
+        public bool Succeeded { get; set; }
 
 
         public int CurrentPage { get; set; }

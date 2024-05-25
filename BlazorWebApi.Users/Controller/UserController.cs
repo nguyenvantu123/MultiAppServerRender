@@ -4,6 +4,7 @@ using BlazorWebApi.Identity.RoleConst;
 using BlazorWebApi.Identity.UserConst;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Helper;
+using BlazorWebApi.Users.Queries;
 using BlazorWebApi.Users.Request.User;
 using BlazorWebApi.Users.Response.User;
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +18,8 @@ using System.Security.Claims;
 namespace BlazorWebApi.Users.Controller
 {
     [Authorize]
-    public class UserController : ControllerBase
+    public class UserController :BaseApiController<UserController>
     {
-
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<UserRole> _roleManager;
         private readonly IMapper _mapper;
@@ -50,11 +50,10 @@ namespace BlazorWebApi.Users.Controller
 
         [HttpGet]
         [Route("")]
-        public async Task<ResultBase<GetListUserResponse>> GetUser(GetListUserRequest getListUserRequest)
+        public async Task<PaginatedResult<ListUserResponse>> GetUser(GetAllUserQuery getListUserRequest)
         {
-            var user = await _userManager.getli();
+            var user = await _mediator.Send(getListUserRequest);
 
-            var result = new ResultBase<GetListUserResponse>();
 
             result.Result = _mapper.Map<GetListUserResponse>(user);
 

@@ -11,7 +11,6 @@ namespace BlazorWebApi.Users.Response.User
 
         public string Email { get; set; }
 
-
         public string FirstName { get; set; }
 
         public string PhoneNumber { get; set; }
@@ -34,8 +33,11 @@ namespace BlazorWebApi.Users.Response.User
         public bool Selected { get; set; }
     }
 
-    public class GetListUserResponse
+
+    public class ListUserResponse
     {
+
+        public Guid Id { get; set; }
         public string UserName { get; set; }
 
         public string Email { get; set; }
@@ -48,7 +50,7 @@ namespace BlazorWebApi.Users.Response.User
 
         public string RoleName { get; set; }
 
-        public DateTime? CreationTime { get;set; }
+        public DateTime? CreationTime { get; set; }
 
         public bool IsAdmin { get; set; }
 

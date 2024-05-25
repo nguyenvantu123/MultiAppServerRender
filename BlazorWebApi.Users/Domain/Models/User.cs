@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BlazorWebApi.Users.Domain.Models
 {
 
-    public class User : IdentityUser<string>
+    public class User : IdentityUser<Guid>
     {
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

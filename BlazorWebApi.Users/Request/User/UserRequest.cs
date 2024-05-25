@@ -1,4 +1,7 @@
-﻿namespace BlazorWebApi.Users.Request.User
+﻿using BlazorWebApi.Users.Wrapper;
+using MediatR;
+
+namespace BlazorWebApi.Users.Request.User
 {
     public class CreateUserRequest
     {
@@ -20,14 +23,5 @@
 
         public string PhoneNumber { get; set; }
 
-    }
-
-    public class GetListUserRequest
-    {
-        public string SearchText { get; set; }
-
-        public List<Guid> RoleIds { get; set; }
-
-        public bool? IsActive { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
         {
             Data = data;
             CurrentPage = page;
-            succeeded = succeeded;
+            Succeeded = succeeded;
             PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             TotalCount = count;
@@ -42,6 +42,8 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
 
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
+
+        public bool Succeeded { get; set; }
 
         public bool HasPreviousPage => CurrentPage > 1;
 
