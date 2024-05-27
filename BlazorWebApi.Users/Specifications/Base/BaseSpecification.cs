@@ -1,4 +1,5 @@
-﻿using BlazorWebApi.Users.Specifications.Base;
+﻿using BlazorWebApi.Users.Extensions;
+using BlazorWebApi.Users.Specifications.Base;
 using Shared.Contracts;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace BlazorHero.CleanArchitecture.Application.Specifications.Base
 {
-    public abstract class UserSpecification<T> : ISpecification<T> where T : class, IEntity
+    public abstract class BaseSpecification<T> : ISpecification<T> where T : class, IEntity
     {
         public Expression<Func<T, bool>> Criteria { get; set; }
         public List<Expression<Func<T, object>>> Includes { get; } = new();
@@ -32,5 +33,7 @@ namespace BlazorHero.CleanArchitecture.Application.Specifications.Base
         {
             return Criteria = Criteria == null ? query : Criteria.Or(query);
         }
+
+
     }
 }

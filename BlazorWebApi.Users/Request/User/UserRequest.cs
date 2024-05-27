@@ -1,5 +1,4 @@
-﻿using BlazorWebApi.Users.Wrapper;
-using MediatR;
+﻿using MediatR;
 
 namespace BlazorWebApi.Users.Request.User
 {

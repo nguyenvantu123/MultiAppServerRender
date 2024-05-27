@@ -26,7 +26,7 @@ namespace BlazorWebApi.Identity
             {
                 //Resolve ASP .NET Core Identity with DI help
                 var userManager = (UserManager<User>)scope.ServiceProvider.GetService(typeof(UserManager<User>));
-                var roleManager = (RoleManager<UserRole>)scope.ServiceProvider.GetService(typeof(RoleManager<UserRole>));
+                var roleManager = (RoleManager<Role>)scope.ServiceProvider.GetService(typeof(RoleManager<Role>));
 
 
                 var dbContext = scope.ServiceProvider.GetRequiredService<UserDBContext>();
@@ -48,11 +48,11 @@ namespace BlazorWebApi.Identity
         }
 
 
-        private async Task SeedAsync(UserManager<User> userManager, RoleManager<UserRole> roleManager)
+        private async Task SeedAsync(UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             logger.LogInformation("Seeding database");
 
-            var adminRole = new UserRole
+            var adminRole = new Role
             {
                 Name = RoleConstants.SuperAdministratorRole,
                 Description = "Administrator role with full permissions",
@@ -102,7 +102,7 @@ namespace BlazorWebApi.Identity
                 }
             }
 
-            var basicRole = new UserRole
+            var basicRole = new Role
             {
                 Name = RoleConstants.BasicUserRole,
                 Description = "User role",

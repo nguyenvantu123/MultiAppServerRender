@@ -1,13 +1,16 @@
 ﻿using Amazon.Runtime.Documents;
 using AutoMapper;
-using BlazorWeb.Wrapper;
+using BlazorHero.CleanArchitecture.Application.Specifications.Base;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Extensions;
 using BlazorWebApi.Users.Repository;
 using BlazorWebApi.Users.Request.User;
 using BlazorWebApi.Users.Response.User;
+using BlazorWebApi.Users.Specifications;
 using LazyCache;
 using MediatR;
+using Microsoft.IdentityModel.Tokens;
+using MultiAppServer.ServiceDefaults.Wrapper;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -21,13 +24,13 @@ namespace BlazorWebApi.Users.Queries
 
         public bool? IsActive { get; set; }
 
-        public int? PageSize { get; set; }
+        public int PageSize { get; set; }
 
-        public int? PageNumber { get; set; }
+        public int PageNumber { get; set; }
 
         public string[] OrderBy { get; set; }
 
-        public GetAllUserQuery(string searchText, List<Guid> roleIds, bool? isActive, int? pageSize, int? pageNumber, string orderBy)
+        public GetAllUserQuery(string searchText, List<Guid> roleIds, bool? isActive, int pageSize, int pageNumber, string orderBy)
         {
             SearchText = searchText;
             RoleIds = roleIds;
@@ -38,9 +41,7 @@ namespace BlazorWebApi.Users.Queries
             {
                 OrderBy = orderBy.Split(',');
             };
- 
         }
-
     }
 
     internal class GetAllUserQueryHandler : IRequestHandler<GetAllUserQuery, PaginatedResult<ListUserResponse>>
@@ -68,10 +69,11 @@ namespace BlazorWebApi.Users.Queries
                 LastName = e.LastName,
                 PhoneNumber = e.PhoneNumber,
                 CreationTime = e.CreatedOn,
-                IsActive = e.IsActive
+                IsActive = e.IsActive,
+                RoleName = string.Join(";", e.UserRoles.Select(x => x.Role.Name).ToList()),
             };
 
-            var userFilterSpec =
+            var userFilterSpec = new UserSpecification(request);
 
             if (request.OrderBy?.Any() != true)
             {

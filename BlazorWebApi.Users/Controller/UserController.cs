@@ -18,15 +18,15 @@ using System.Security.Claims;
 namespace BlazorWebApi.Users.Controller
 {
     [Authorize]
-    public class UserController :BaseApiController<UserController>
+    public class UserController : BaseApiController<UserController>
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<UserRole> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
 
         public Guid UserId { get; set; }
 
-        public UserController(UserManager<User> userManager, RoleManager<UserRole> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor
+        public UserController(UserManager<User> userManager, RoleManager<Role> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor
 )
         {
             _userManager = userManager;
@@ -54,10 +54,7 @@ namespace BlazorWebApi.Users.Controller
         {
             var user = await _mediator.Send(getListUserRequest);
 
-
-            result.Result = _mapper.Map<GetListUserResponse>(user);
-
-            return result;
+            return user;
         }
 
         [HttpGet("roles")]
