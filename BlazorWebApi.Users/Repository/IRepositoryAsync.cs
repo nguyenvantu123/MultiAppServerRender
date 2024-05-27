@@ -1,12 +1,12 @@
-﻿using Shared.Contracts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorWeb.Contracts;
 
 
 namespace BlazorWebApi.Users.Repository
 {
-    public interface IRepositoryAsync<T, in TId> where T : class, IEntity<TId>
+    public interface IRepositoryAsync<T, in TId> where T : class
     {
         IQueryable<T> Entities { get; }
 

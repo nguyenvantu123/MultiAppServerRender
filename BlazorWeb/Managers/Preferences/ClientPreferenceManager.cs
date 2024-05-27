@@ -2,10 +2,9 @@
 using Blazored.LocalStorage;
 using MudBlazor;
 using System.Threading.Tasks;
+using BlazorWeb.Constants.Storage;
 using Microsoft.Extensions.Localization;
-using Shared.Settings;
 using BlazorWeb.Settings;
-using BlazorWebApi.Constants.Storage;
 using BlazorWeb.Managers.Preferences;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using BlazorWeb.Wrapper;

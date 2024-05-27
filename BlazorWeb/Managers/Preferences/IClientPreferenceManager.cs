@@ -1,6 +1,6 @@
-﻿using BlazorWeb.Wrapper;
+﻿using BlazorWeb.Settings;
+using BlazorWeb.Wrapper;
 using MudBlazor;
-using Shared.Settings;
 
 namespace BlazorWeb.Managers.Preferences
 {

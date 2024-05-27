@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Azure;
-using BlazorWebApi.Identity.RoleConst;
-using BlazorWebApi.Identity.UserConst;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Helper;
 using BlazorWebApi.Users.Request.User;

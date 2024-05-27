@@ -1,19 +1,9 @@
 ﻿using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
-namespace BlazorHero.CleanArchitecture.Server.Middlewares
+namespace BlazorWebApi.Users.Middlewares
 {
-    public class RequestCultureMiddleware
+    public class RequestCultureMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public RequestCultureMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
         public async Task InvokeAsync(HttpContext context)
         {
             var cultureQuery = context.Request.Query["culture"];
@@ -36,7 +26,7 @@ namespace BlazorHero.CleanArchitecture.Server.Middlewares
                 }
             }
 
-            await _next(context);
+            await next(context);
         }
     }
 }

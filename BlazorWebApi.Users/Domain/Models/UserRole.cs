@@ -1,26 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-
 namespace BlazorWebApi.Users.Domain.Models
 {
-    public class UserRole : IdentityRole
+    public class UserRole : IdentityUserRole<Guid>
     {
-        public string Description { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public string LastModifiedBy { get; set; }
-        public DateTime? LastModifiedOn { get; set; }
-        public virtual ICollection<UserRoleClaim> RoleClaims { get; set; }
 
-        public UserRole() : base()
-        {
-            RoleClaims = new HashSet<UserRoleClaim>();
-        }
+        public virtual User User { get; set; }
 
-        public UserRole(string roleName, string roleDescription = null) : base(roleName)
-        {
-            RoleClaims = new HashSet<UserRoleClaim>();
-            Description = roleDescription;
-        }
+        public virtual Role Role { get; set; }
     }
 }

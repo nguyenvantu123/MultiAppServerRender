@@ -1,12 +1,9 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Request.User;
 using BlazorWebApi.Users.Response.User;
-using System.Net;
 
-namespace BlazorWebApi.Users.Mappings
+namespace BlazorWebApi.Users.Mapping
 {
     public class UserAutoMapper : Profile
     {

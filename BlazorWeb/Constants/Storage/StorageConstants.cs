@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApi.Constants.Storage
+﻿namespace BlazorWeb.Constants.Storage
 {
     public static class StorageConstants
     {

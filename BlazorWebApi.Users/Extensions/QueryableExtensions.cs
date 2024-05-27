@@ -1,12 +1,11 @@
-﻿using BlazorHero.CleanArchitecture.Application.Specifications.Base;
-using BlazorWeb.Wrapper;
-using BlazorWebApi.Users.Exceptions;
+﻿using BlazorWebApi.Users.Exceptions;
 using BlazorWebApi.Users.Specifications.Base;
 using Microsoft.EntityFrameworkCore;
-using Shared.Contracts;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorWeb.Contracts;
+using MultiAppServer.ServiceDefaults.Wrapper;
 
 namespace BlazorWebApi.Users.Extensions
 {
@@ -23,7 +22,7 @@ namespace BlazorWebApi.Users.Extensions
             return PaginatedResult<T>.Success(items, count, pageNumber, pageSize);
         }
 
-        public static IQueryable<T> Specify<T>(this IQueryable<T> query, ISpecification<T> spec) where T : class, IEntity
+        public static IQueryable<T> Specify<T>(this IQueryable<T> query, ISpecification<T> spec) where T : class
         {
             var queryableResultWithIncludes = spec.Includes
                 .Aggregate(query,

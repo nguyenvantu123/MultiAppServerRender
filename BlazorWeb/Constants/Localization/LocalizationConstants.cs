@@ -1,8 +1,6 @@
 ﻿
 
-using BlazorWeb.Constants.Localization;
-
-namespace BlazorWeb.Localization
+namespace BlazorWeb.Constants.Localization
 {
     public static class LocalizationConstants
     {

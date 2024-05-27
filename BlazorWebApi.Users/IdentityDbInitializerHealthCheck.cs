@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace BlazorWebApi.Identity
+namespace BlazorWebApi.Users
 {
     internal sealed class IdentityDbInitializerHealthCheck(IdentityDbInitializer dbInitializer) : IHealthCheck
     {

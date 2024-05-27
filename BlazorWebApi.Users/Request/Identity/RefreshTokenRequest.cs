@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApi.Requests.Identity
+﻿namespace BlazorWebApi.Users.Request.Identity
 {
     public class RefreshTokenRequest
     {

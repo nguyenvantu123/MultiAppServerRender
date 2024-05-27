@@ -1,6 +1,4 @@
-﻿using BlazorWebApi.Users.Enums;
-
-namespace BlazorWebApi.Request.Identity
+﻿namespace BlazorWebApi.Users.Request.Identity
 {
     public class TokenRequest
     {

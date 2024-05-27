@@ -1,18 +1,13 @@
 ﻿#nullable enable
-using System;
-using Shared.Enums;
-
-namespace Shared.Contracts
+namespace BlazorWeb.Contracts
 {
     public interface IEntityExtendedAttribute<TId, TEntityId, TEntity>
-        : IEntityExtendedAttribute<TEntityId, TEntity>, IEntity<TId>
-            where TEntity : IEntity<TEntityId>
+        : IEntityExtendedAttribute<TEntityId, TEntity>
     {
     }
 
     public interface IEntityExtendedAttribute<TEntityId, TEntity>
         : IEntityExtendedAttribute
-            where TEntity : IEntity<TEntityId>
     {
         /// <summary>
         /// External attribute's entity id
@@ -20,13 +15,8 @@ namespace Shared.Contracts
         public TEntityId EntityId { get; set; }
     }
 
-    public interface IEntityExtendedAttribute : IEntity
+    public interface IEntityExtendedAttribute
     {
-        /// <summary>
-        /// Extended attribute value type
-        /// </summary>
-        //public EntityExtendedAttributeType Type { get; set; }
-
         /// <summary>
         /// Extended attribute key
         /// </summary>

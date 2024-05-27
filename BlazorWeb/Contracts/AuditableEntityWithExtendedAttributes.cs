@@ -1,16 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Shared.Contracts
+﻿namespace BlazorWeb.Contracts
 {
-    public abstract class AuditableEntityWithExtendedAttributes<TId, TEntityId, TEntity, TExtendedAttribute> 
-        : AuditableEntity<TEntityId>, IEntityWithExtendedAttributes<TExtendedAttribute>
-            where TEntity : IEntity<TEntityId>
+    public sealed class AuditableEntityWithExtendedAttributes<TId, TEntityId, TEntity, TExtendedAttribute>
     {
-        public virtual ICollection<TExtendedAttribute> ExtendedAttributes { get; set; }
-
-        public AuditableEntityWithExtendedAttributes()
-        {
-            ExtendedAttributes = new HashSet<TExtendedAttribute>();
-        }
+        public ICollection<TExtendedAttribute> ExtendedAttributes { get; set; } = new HashSet<TExtendedAttribute>();
     }
 }

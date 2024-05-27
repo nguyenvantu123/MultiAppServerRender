@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
+using BlazorWeb.Contracts;
 
 namespace BlazorWebApi.Users.Domain.Models
 {
 
-    public class User : IdentityUser<Guid>
+    public class User : IdentityUser<Guid>, IAuditableEntity
     {
 
         public string FirstName { get; set; }
@@ -15,7 +16,7 @@ namespace BlazorWebApi.Users.Domain.Models
         [Column(TypeName = "text")]
         public string ProfilePictureDataUrl { get; set; }
 
-        public DateTime? CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
 
         public string LastModifiedBy { get; set; }
 
@@ -27,7 +28,9 @@ namespace BlazorWebApi.Users.Domain.Models
         public bool IsActive { get; set; }
         public string RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
-        //public virtual ICollection<ChatHistory<BlazorHeroUser>> ChatHistoryFromUsers { get; set; }
+
+        public virtual ICollection<UserRole> UserRoles { get; set; }
+
         //public virtual ICollection<ChatHistory<BlazorHeroUser>> ChatHistoryToUsers { get; set; }
 
         //public User()

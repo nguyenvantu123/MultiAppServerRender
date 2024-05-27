@@ -1,6 +1,4 @@
-﻿using BlazorWebApi.Request.Identity;
-using BlazorWebApi.Requests.Identity;
-using BlazorWebApi.Users.Configurations;
+﻿using BlazorWebApi.Users.Configurations;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Helper;
 using BlazorWebApi.Users.Response.Identity;
@@ -19,31 +17,26 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using BlazorWebApi.Users.Request.Identity;
 
 namespace BlazorWebApi.Users.Controller
 {
 
     [Authorize]
-    public class IdentityController : ControllerBase
+    public class IdentityController(
+        UserManager<User> userManager,
+        RoleManager<UserRole> roleManager,
+        IOptions<AppConfiguration> appConfig,
+        SignInManager<User> signInManager)
+        : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<UserRole> _roleManager;
-        private readonly AppConfiguration _appConfig;
-        private readonly SignInManager<User> _signInManager;
+        private readonly AppConfiguration _appConfig = appConfig.Value;
+        private readonly SignInManager<User> _signInManager = signInManager;
 
         //private readonly IStringLocalizer<IdentityControllerBase> _localizer;
 
-        public IdentityController(UserManager<User> userManager, RoleManager<UserRole> roleManager,
-            IOptions<AppConfiguration> appConfig, SignInManager<User> signInManager
-            //,IStringLocalizer<IdentityControllerBase> localizer
-            )
-        {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _appConfig = appConfig.Value;
-            _signInManager = signInManager;
-            //_localizer = localizer;
-        }
+        //,IStringLocalizer<IdentityControllerBase> localizer
+        //_localizer = localizer;
 
         /// <summary>
         /// Login admin page.
@@ -54,7 +47,7 @@ namespace BlazorWebApi.Users.Controller
         [Route("/identity/token")]
         public async Task<ResultBase<TokenResponse>> LoginAsync([FromBody] TokenRequest model)
         {
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await userManager.FindByNameAsync(model.UserName);
 
             var result = new ResultBase<TokenResponse>();
 
@@ -63,17 +56,19 @@ namespace BlazorWebApi.Users.Controller
                 result.ErrorMessages.Add("User Not Found.");
                 return result;
             }
+
             if (!user.IsActive)
             {
                 result.ErrorMessages.Add("User Not Active. Please contact the administrator.");
                 return result;
             }
+
             //if (!user.EmailConfirmed)
             //{
             //    result.ErrorMessages.Add("User Not Active. Please contact the administrator.");
             //    return result;
             //}
-            var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
+            var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
             if (!passwordValid)
             {
                 result.ErrorMessages.Add("Invalid Credentials.");
@@ -82,11 +77,12 @@ namespace BlazorWebApi.Users.Controller
 
             user.RefreshToken = GenerateRefreshToken();
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-            await _userManager.UpdateAsync(user);
+            await userManager.UpdateAsync(user);
 
             DateTime expireTime = DateTime.UtcNow.AddMinutes(5);
             var token = await GenerateJwtAsync(user, expireTime);
-            var response = new TokenResponse { AccessToken = token, RefreshToken = user.RefreshToken, ExpireIn = expireTime };
+            var response = new TokenResponse
+                { AccessToken = token, RefreshToken = user.RefreshToken, ExpireIn = expireTime };
 
             result.Success = true;
             result.Result = response;
@@ -113,44 +109,57 @@ namespace BlazorWebApi.Users.Controller
                 //result.ErrorMessages.Add("Invalid Client Token.");
                 result.ErrorMessages.Add("Invalid Client Token.");
             }
-            var userPrincipal = GetPrincipalFromExpiredToken(model.AccessToken);
-            var userEmail = userPrincipal.FindFirstValue(ClaimTypes.Email);
-            var user = await _userManager.FindByEmailAsync(userEmail);
-            if (user == null)
-                result.ErrorMessages.Add("User Not Found.");
-            //return await ResultBase<TokenResponse>.FailAsync("User Not Found.");
-            if (user.RefreshToken != model.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
-                //return await ResultBase<TokenResponse>.FailAsync("Invalid Client Token.");
-                result.ErrorMessages.Add("Invalid Client Token.");
 
-            if (result.ErrorMessages.Count() > 0)
+            if (model != null)
             {
-                result.Success = false;
+                var userPrincipal = GetPrincipalFromExpiredToken(model.AccessToken);
+                var userEmail = userPrincipal.FindFirstValue(ClaimTypes.Email);
+                if (userEmail != null)
+                {
+                    var user = await userManager.FindByEmailAsync(userEmail);
+                    if (user == null)
+                        result.ErrorMessages.Add("User Not Found.");
+                    //return await ResultBase<TokenResponse>.FailAsync("User Not Found.");
+                    if (user != null && (user.RefreshToken != model.RefreshToken ||
+                                         user.RefreshTokenExpiryTime <= DateTime.Now))
+                        //return await ResultBase<TokenResponse>.FailAsync("Invalid Client Token.");
+                        result.ErrorMessages.Add("Invalid Client Token.");
 
-                return result;
+                    if (result.ErrorMessages.Any())
+                    {
+                        result.Success = false;
+
+                        return result;
+                    }
+
+                    DateTime expireTime = DateTime.UtcNow.AddHours(1);
+                    var token = GenerateEncryptedToken(GetSigningCredentials(), await GetClaimsAsync(user), expireTime);
+                    user.RefreshToken = GenerateRefreshToken();
+                    await userManager.UpdateAsync(user);
+
+                    var response = new TokenResponse
+                    {
+                        AccessToken = token, RefreshToken = user.RefreshToken,
+                        ExpireIn = user.RefreshTokenExpiryTime.Value
+                    };
+
+                    result.Success = true;
+                    result.Result = response;
+                }
             }
-
-            DateTime expireTime = DateTime.UtcNow.AddHours(1);
-            var token = GenerateEncryptedToken(GetSigningCredentials(), await GetClaimsAsync(user), expireTime);
-            user.RefreshToken = GenerateRefreshToken();
-            await _userManager.UpdateAsync(user);
-
-            var response = new TokenResponse { AccessToken = token, RefreshToken = user.RefreshToken, ExpireIn = user.RefreshTokenExpiryTime.Value };
-
-            result.Success = true;
-            result.Result = response;
 
             return result;
 
         }
 
         [NonAction]
-        private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims, DateTime expireTime)
+        private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims,
+            DateTime expireTime)
         {
             var token = new JwtSecurityToken(
-               claims: claims,
-               expires: expireTime,
-               signingCredentials: signingCredentials);
+                claims: claims,
+                expires: expireTime,
+                signingCredentials: signingCredentials);
             var tokenHandler = new JwtSecurityTokenHandler();
             var encryptedToken = tokenHandler.WriteToken(token);
             return encryptedToken;
@@ -171,8 +180,9 @@ namespace BlazorWebApi.Users.Controller
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCultureIgnoreCase))
+            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(
+                    SecurityAlgorithms.HmacSha256,
+                    StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new SecurityTokenException("Invalid token");
             }
@@ -199,32 +209,31 @@ namespace BlazorWebApi.Users.Controller
         [NonAction]
         private async Task<IEnumerable<Claim>> GetClaimsAsync(User user)
         {
-            var userClaims = await _userManager.GetClaimsAsync(user);
-            var roles = await _userManager.GetRolesAsync(user);
+            var userClaims = await userManager.GetClaimsAsync(user);
+            var roles = await userManager.GetRolesAsync(user);
             var roleClaims = new List<Claim>();
             var permissionClaims = new List<Claim>();
             foreach (var role in roles)
             {
                 roleClaims.Add(new Claim(ClaimTypes.Role, role));
-                var thisRole = await _roleManager.FindByNameAsync(role);
-                var allPermissionsForThisRoles = await _roleManager.GetClaimsAsync(thisRole);
+                var thisRole = await roleManager.FindByNameAsync(role);
+                var allPermissionsForThisRoles = await roleManager.GetClaimsAsync(thisRole!);
                 permissionClaims.AddRange(allPermissionsForThisRoles);
             }
+            
+                var claims = new List<Claim>
+                    {
+                        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new(ClaimTypes.Email, user.Email!),
+                        new(ClaimTypes.Name, user.FirstName),
+                        new(ClaimTypes.Surname, user.LastName),
+                        new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
+                    }
+                    .Union(userClaims)
+                    .Union(roleClaims)
+                    .Union(permissionClaims);
 
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.NameIdentifier, user.Id),
-                new(ClaimTypes.Email, user.Email),
-                new(ClaimTypes.Name, user.FirstName),
-                new(ClaimTypes.Surname, user.LastName),
-                new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
+                return claims;
             }
-            .Union(userClaims)
-            .Union(roleClaims)
-            .Union(permissionClaims);
-
-            return claims;
-        }
-
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApi.Files.Shared.Constants.Role
+﻿namespace BlazorWeb.Constants.Role
 {
     public static class RoleConstants
     {

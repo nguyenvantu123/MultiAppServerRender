@@ -1,7 +1,7 @@
 ﻿
-using BlazorWeb.Localization;
+using BlazorWeb.Constants.Localization;
 
-namespace Shared.Settings
+namespace BlazorWeb.Settings
 {
     public class ClientPreference
     {

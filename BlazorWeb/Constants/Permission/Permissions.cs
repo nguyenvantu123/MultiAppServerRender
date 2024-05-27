@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace BlazorWeb.Permission
+namespace BlazorWeb.Constants.Permission
 {
     public static class Permissions
     {

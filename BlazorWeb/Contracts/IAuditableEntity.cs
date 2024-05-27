@@ -1,13 +1,12 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Contracts
+namespace BlazorWeb.Contracts
 {
-    public interface IAuditableEntity<TId> : IAuditableEntity, IEntity<TId>
-    {
-    }
 
-    public interface IAuditableEntity : IEntity
+    public interface IAuditableEntity
     {
+        [Key]
+        public Guid Id { get; set; }
         string CreatedBy { get; set; }
 
         DateTime CreatedOn { get; set; }

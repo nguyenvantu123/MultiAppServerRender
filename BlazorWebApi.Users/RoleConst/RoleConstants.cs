@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApi.Identity.RoleConst
+﻿namespace BlazorWebApi.Users.RoleConst
 {
     public static class RoleConstants
     {

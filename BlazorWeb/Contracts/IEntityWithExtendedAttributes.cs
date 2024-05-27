@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Shared.Contracts
+﻿namespace BlazorWeb.Contracts
 {
     public interface IEntityWithExtendedAttributes<TExtendedAttribute>
     {

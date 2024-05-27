@@ -1,13 +1,12 @@
-﻿using BlazorWebApi.Data;
-using BlazorWebApi.Identity.RoleConst;
-using BlazorWebApi.Identity.UserConst;
+﻿using System.Diagnostics;
+using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Domain.Models;
+using BlazorWebApi.Users.RoleConst;
+using BlazorWebApi.Users.UserConst;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
-using System.Diagnostics;
 
-namespace BlazorWebApi.Identity
+namespace BlazorWebApi.Users
 {
     internal sealed class IdentityDbInitializer(IServiceProvider serviceProvider, ILogger<IdentityDbInitializer> logger)
      : BackgroundService
@@ -26,10 +25,10 @@ namespace BlazorWebApi.Identity
             {
                 //Resolve ASP .NET Core Identity with DI help
                 var userManager = (UserManager<User>)scope.ServiceProvider.GetService(typeof(UserManager<User>));
-                var roleManager = (RoleManager<UserRole>)scope.ServiceProvider.GetService(typeof(RoleManager<UserRole>));
+                var roleManager = (RoleManager<Role>)scope.ServiceProvider.GetService(typeof(RoleManager<Role>));
 
 
-                var dbContext = scope.ServiceProvider.GetRequiredService<UserDBContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<UserDbContext>();
 
                 var strategy = dbContext.Database.CreateExecutionStrategy();
 
@@ -48,11 +47,11 @@ namespace BlazorWebApi.Identity
         }
 
 
-        private async Task SeedAsync(UserManager<User> userManager, RoleManager<UserRole> roleManager)
+        private async Task SeedAsync(UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             logger.LogInformation("Seeding database");
 
-            var adminRole = new UserRole
+            var adminRole = new Role
             {
                 Name = RoleConstants.SuperAdministratorRole,
                 Description = "Administrator role with full permissions",
@@ -102,7 +101,7 @@ namespace BlazorWebApi.Identity
                 }
             }
 
-            var basicRole = new UserRole
+            var basicRole = new Role
             {
                 Name = RoleConstants.BasicUserRole,
                 Description = "User role",

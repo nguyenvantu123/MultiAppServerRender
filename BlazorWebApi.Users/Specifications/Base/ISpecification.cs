@@ -1,12 +1,12 @@
-﻿using Shared.Contracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using BlazorWeb.Contracts;
 
 
 namespace BlazorWebApi.Users.Specifications.Base
 {
-    public interface ISpecification<T> where T : class, IEntity
+    public interface ISpecification<T> where T : class
     {
         Expression<Func<T, bool>> Criteria { get; }
         List<Expression<Func<T, object>>> Includes { get; }

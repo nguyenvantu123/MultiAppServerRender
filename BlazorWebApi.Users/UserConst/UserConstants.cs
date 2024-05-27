@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApi.Identity.UserConst
+﻿namespace BlazorWebApi.Users.UserConst
 {
     public static class UserConstants
     {

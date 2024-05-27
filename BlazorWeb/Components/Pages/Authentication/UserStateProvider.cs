@@ -4,7 +4,6 @@ using BlazorWeb.Extensions;
 using BlazorWeb.Request.Identity;
 using BlazorWeb.Response.Identity;
 using BlazorWeb.Services.BffApiClients;
-using BlazorWebApi.Constants.Storage;
 using BlazorWebApi.Users.Configurations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -20,6 +19,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
+using BlazorWeb.Constants.Storage;
 
 namespace BlazorWeb.Components.Pages.Authentication
 {

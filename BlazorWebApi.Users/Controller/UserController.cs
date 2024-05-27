@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Azure;
-using BlazorWebApi.Identity.RoleConst;
-using BlazorWebApi.Identity.UserConst;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Helper;
 using BlazorWebApi.Users.Queries;
@@ -18,15 +16,15 @@ using System.Security.Claims;
 namespace BlazorWebApi.Users.Controller
 {
     [Authorize]
-    public class UserController :BaseApiController<UserController>
+    public class UserController : BaseApiController<UserController>
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<UserRole> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
 
         public Guid UserId { get; set; }
 
-        public UserController(UserManager<User> userManager, RoleManager<UserRole> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor
+        public UserController(UserManager<User> userManager, RoleManager<Role> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor
 )
         {
             _userManager = userManager;
@@ -52,12 +50,9 @@ namespace BlazorWebApi.Users.Controller
         [Route("")]
         public async Task<PaginatedResult<ListUserResponse>> GetUser(GetAllUserQuery getListUserRequest)
         {
-            var user = await _mediator.Send(getListUserRequest);
+            var user = await Mediator.Send(getListUserRequest);
 
-
-            result.Result = _mapper.Map<GetListUserResponse>(user);
-
-            return result;
+            return user;
         }
 
         [HttpGet("roles")]

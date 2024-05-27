@@ -1,13 +1,9 @@
 using Aspire.Minio.Client;
 using Aspire.MongoDb.Driver;
 using Aspire.RabbitMQ.Client;
-using BlazorHero.CleanArchitecture.Server.Middlewares;
-using BlazorWebApi.Data;
-using BlazorWebApi.Identity;
 using BlazorWebApi.Users.Configurations;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Localization;
-using BlazorWebApi.Users.Mappings;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +24,9 @@ using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using BlazorWebApi.Users;
+using BlazorWebApi.Users.Data;
+using BlazorWebApi.Users.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,7 +92,7 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddAutoMapper(typeof(UserAutoMapper));
 
-builder.AddSqlServerDbContext<UserDBContext>("identitydb");
+builder.AddSqlServerDbContext<UserDbContext>("identitydb");
 
 builder.AddRabbitMQ("message");
 
@@ -112,7 +111,7 @@ builder.Services.AddIdentity<User, UserRole>(options =>
     options.Password.RequireUppercase = true;
     options.User.RequireUniqueEmail = true;
 })
-.AddEntityFrameworkStores<UserDBContext>()
+.AddEntityFrameworkStores<UserDbContext>()
 .AddDefaultTokenProviders();
 
 builder.Services.AddHealthChecks()
