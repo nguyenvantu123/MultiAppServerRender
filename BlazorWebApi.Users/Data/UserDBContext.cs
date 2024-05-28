@@ -6,10 +6,12 @@ using Microsoft.EntityFrameworkCore;
 namespace BlazorWebApi.Users.Data
 {
 
-    public partial class UserDbContext(DbContextOptions<UserDbContext> options)
-        : IdentityDbContext<User, Role, Guid, IdentityUserClaim<Guid>, UserRole, IdentityUserLogin<Guid>,
-            UserRoleClaim, IdentityUserToken<Guid>>(options)
+    public partial class UserDbContext : IdentityDbContext<User, Role, Guid, IdentityUserClaim<Guid>, UserRole, IdentityUserLogin<Guid>, UserRoleClaim, IdentityUserToken<Guid>>
     {
+
+        public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+        { }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
@@ -39,7 +41,7 @@ namespace BlazorWebApi.Users.Data
             {
                 entity.ToTable(name: "Roles", "Identity");
             });
-            builder.Entity<IdentityUserRole<Guid>>(entity =>
+            builder.Entity<UserRole>(entity =>
             {
                 entity.ToTable("UserRoles", "Identity");
             });
