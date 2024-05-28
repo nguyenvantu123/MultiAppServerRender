@@ -115,10 +115,10 @@ builder.Services.AddIdentity<User, Role>(options =>
 builder.Services.AddHealthChecks()
     .AddCheck<IdentityDbInitializerHealthCheck>("DbInitializer", null);
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly);
-});
+//builder.Services.AddMediatR(cfg =>
+//{
+//    cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+//});
 
 builder.Services.TryAddTransient(typeof(IStringLocalizer<>), typeof(ServerLocalizer<>));
 
