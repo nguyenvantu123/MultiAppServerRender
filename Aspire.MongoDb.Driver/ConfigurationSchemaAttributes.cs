@@ -1,7 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace Aspire;
+namespace Aspire.MongoDb.Driver;
 
 /// <summary>
 /// Attribute used to automatically generate a JSON schema for a component's configuration.
@@ -36,15 +36,10 @@ internal sealed class ConfigurationSchemaAttribute : Attribute
 /// Provides information to describe the logging categories produced by a component.
 /// </summary>
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
-internal sealed class LoggingCategoriesAttribute : Attribute
+internal sealed class LoggingCategoriesAttribute(params string[] categories) : Attribute
 {
-    public LoggingCategoriesAttribute(params string[] categories)
-    {
-        Categories = categories;
-    }
-
     /// <summary>
     /// The list of log categories produced by the component. These categories will show up under the Logging:LogLevel section in appsettings.json.
     /// </summary>
-    public string[] Categories { get; set; }
+    public string[] Categories { get; set; } = categories;
 }

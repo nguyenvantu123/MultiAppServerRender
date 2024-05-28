@@ -24,9 +24,11 @@ using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 using BlazorWebApi.Users;
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Mapping;
+using BlazorWebApi.Users.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,13 +98,9 @@ builder.AddSqlServerDbContext<UserDbContext>("identitydb");
 
 builder.AddRabbitMQ("message");
 
-//builder.AddMongoDBClient("mongodbconnection");
-
-//builder.AddMinIOClient("minioconnection");
-
 builder.Services.AddSingleton<IdentityDbInitializer>();
 
-builder.Services.AddIdentity<User, UserRole>(options =>
+builder.Services.AddIdentity<User, Role>(options =>
 {
     options.Password.RequiredLength = 8;
     options.Password.RequireDigit = true;
@@ -125,6 +123,10 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.TryAddTransient(typeof(IStringLocalizer<>), typeof(ServerLocalizer<>));
 
 builder.Services.AddHostedService(sp => sp.GetRequiredService<IdentityDbInitializer>());
+
+builder.Services
+    .AddTransient(typeof(IRepositoryAsync<,>), typeof(RepositoryAsync<,>))
+    .AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 
 builder.ConfigureJwtBearToken();
 

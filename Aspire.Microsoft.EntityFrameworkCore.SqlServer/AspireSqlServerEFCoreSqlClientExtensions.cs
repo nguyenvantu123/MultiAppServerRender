@@ -2,24 +2,22 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
-using Aspire;
-using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry;
+using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace Microsoft.Extensions.Hosting;
+namespace Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 
 /// <summary>
 /// Extension methods for configuring EntityFrameworkCore DbContext to Azure SQL, MS SQL server 
 /// </summary>
-public static class AspireSqlServerEFCoreSqlClientExtensions
+public static class AspireSqlServerEfCoreSqlClientExtensions
 {
     private const string DefaultConfigSectionName = "Aspire:Microsoft:EntityFrameworkCore:SqlServer";
-    private const DynamicallyAccessedMemberTypes RequiredByEF = DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties;
+    private const DynamicallyAccessedMemberTypes RequiredByEf = DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties;
 
     /// <summary>
     /// Registers the given <see cref="DbContext" /> as a service in the services provided by the <paramref name="builder"/>.
@@ -33,7 +31,7 @@ public static class AspireSqlServerEFCoreSqlClientExtensions
     /// <remarks>Reads the configuration from "Aspire:Microsoft:EntityFrameworkCore:SqlServer:{typeof(TContext).Name}" config section, or "Aspire:Microsoft:EntityFrameworkCore:SqlServer" if former does not exist.</remarks>
     /// <exception cref="ArgumentNullException">Thrown if mandatory <paramref name="builder"/> is null.</exception>
     /// <exception cref="InvalidOperationException">Thrown when mandatory <see cref="MicrosoftEntityFrameworkCoreSqlServerSettings.ConnectionString"/> is not provided.</exception>
-    public static void AddSqlServerDbContext<[DynamicallyAccessedMembers(RequiredByEF)] TContext>(
+    public static void AddSqlServerDbContext<[DynamicallyAccessedMembers(RequiredByEf)] TContext>(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<MicrosoftEntityFrameworkCoreSqlServerSettings>? configureSettings = null,

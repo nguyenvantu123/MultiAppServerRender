@@ -10,11 +10,11 @@ using System.Net;
 
 namespace Aspire.Minio.Client
 {
-    public static class MinIOExtensions
+    public static class MinIoExtensions
     {
 
-        public static void AddMinIOClient(this IHostApplicationBuilder builder, string connectionName, Action<MinIOClientSettings>? configureSettings = null)
-           => AddMinIoClient(builder, connectionName, configureSettings);
+        // public static void AddMinIoClient(this IHostApplicationBuilder builder, string connectionName, Action<MinIOClientSettings>? configureSettings = null)
+        //    => AddMinIoClient(builder, connectionName, configureSettings);
 
         //public static void AddMinIOClient(this IHostApplicationBuilder builder, string configurationSectionName, Action<MinIOClientSettings>? configureSettings = null)
         // => AddMinIoClient(builder, configurationSectionName, configureSettings);
@@ -23,13 +23,13 @@ namespace Aspire.Minio.Client
         private static void AddMinIoClient(
          IHostApplicationBuilder builder,
          string configurationSectionName,
-         Action<MinIOClientSettings>? configureSettings)
+         Action<MinIoClientSettings>? configureSettings)
         {
             ArgumentNullException.ThrowIfNull(builder);
 
             var configSection = builder.Configuration.GetSection(configurationSectionName);
 
-            var settings = new MinIOClientSettings();
+            var settings = new MinIoClientSettings();
             configSection.Bind(settings);
 
 

@@ -9,14 +9,14 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
 {
     public class PaginatedResult<T> : ResultBase<T>
     {
-        public PaginatedResult(List<T> data)
+        public PaginatedResult(List<T>? data)
         {
             Data = data;
         }
 
-        public List<T> Data { get; set; }
+        public List<T>? Data { get; set; }
 
-        internal PaginatedResult(bool succeeded, List<T> data = default, List<string> messages = null, int count = 0, int page = 1, int pageSize = 10)
+        private PaginatedResult(bool succeeded, List<T>? data = default, List<string>? messages = null, int count = 0, int page = 1, int pageSize = 10)
         {
             Data = data;
             CurrentPage = page;
@@ -26,12 +26,12 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
             TotalCount = count;
         }
 
-        public static PaginatedResult<T> Failure(List<string> messages)
+        public static PaginatedResult<T> Failure(List<string>? messages)
         {
             return new PaginatedResult<T>(false, default, messages);
         }
 
-        public static PaginatedResult<T> Success(List<T> data, int count, int page, int pageSize)
+        public new static PaginatedResult<T> Success(List<T>? data, int count, int page, int pageSize)
         {
             return new PaginatedResult<T>(true, data, null, count, page, pageSize);
         }

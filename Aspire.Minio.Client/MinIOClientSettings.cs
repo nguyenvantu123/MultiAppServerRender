@@ -2,10 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 
+namespace Aspire.Minio.Client;
+
 /// <summary>
 /// Provides the client configuration settings for connecting to a RabbitMQ message broker.
 /// </summary>
-public sealed class MinIOClientSettings
+public sealed class MinIoClientSettings
 {
     /// <summary>
     /// Gets or sets the connection string of the RabbitMQ server to connect to.

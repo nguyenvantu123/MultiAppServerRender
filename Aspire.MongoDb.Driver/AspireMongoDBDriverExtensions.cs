@@ -10,7 +10,7 @@ using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 
 namespace Aspire.MongoDb.Driver
 {
-    public static class AspireMongoDBDriverExtensions
+    public static class AspireMongoDbDriverExtensions
     {
         private const string DefaultConfigSectionName = "Aspire:MongoDB:Driver";
         private const string ActivityNameSource = "MongoDB.Driver.Core.Extensions.DiagnosticSources";
@@ -23,13 +23,13 @@ namespace Aspire.MongoDb.Driver
         /// <param name="configureSettings">An optional delegate that can be used for customizing options. It's invoked after the settings are read from the configuration.</param>
         /// <remarks>Reads the configuration from "Aspire:MongoDB:Driver" section.</remarks>
         /// <param name="configureClientSettings">An optional delegate that can be used for customizing MongoClientSettings.</param>
-        /// <exception cref="InvalidOperationException">Thrown when mandatory <see cref="MongoDBSettings.ConnectionString"/> is not provided.</exception>
-        public static void AddMongoDBClient(
+        /// <exception cref="InvalidOperationException">Thrown when mandatory <see cref="MongoDbSettings.ConnectionString"/> is not provided.</exception>
+        public static void AddMongoDbClient(
             this IHostApplicationBuilder builder,
             string connectionName,
-            Action<MongoDBSettings>? configureSettings = null,
+            Action<MongoDbSettings>? configureSettings = null,
             Action<MongoClientSettings>? configureClientSettings = null)
-            => builder.AddMongoDBClient(DefaultConfigSectionName, configureSettings, configureClientSettings, connectionName, serviceKey: null);
+            => builder.AddMongoDbClient(DefaultConfigSectionName, configureSettings, configureClientSettings, connectionName, serviceKey: null);
 
         /// <summary>
         /// Registers <see cref="IMongoClient"/> and <see cref="IMongoDatabase"/> instances for connecting MongoDB database with MongoDB.Driver client.
@@ -40,16 +40,16 @@ namespace Aspire.MongoDb.Driver
         /// <remarks>Reads the configuration from "Aspire:MongoDB:Driver:{name}" section.</remarks>
         /// <param name="configureClientSettings">An optional delegate that can be used for customizing MongoClientSettings.</param>
         /// <exception cref="ArgumentNullException">Thrown if mandatory <paramref name="builder"/> is null.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when mandatory <see cref="MongoDBSettings.ConnectionString"/> is not provided.</exception>
-        public static void AddKeyedMongoDBClient(
+        /// <exception cref="InvalidOperationException">Thrown when mandatory <see cref="MongoDbSettings.ConnectionString"/> is not provided.</exception>
+        public static void AddKeyedMongoDbClient(
             this IHostApplicationBuilder builder,
             string name,
-            Action<MongoDBSettings>? configureSettings = null,
+            Action<MongoDbSettings>? configureSettings = null,
             Action<MongoClientSettings>? configureClientSettings = null)
         {
             ArgumentException.ThrowIfNullOrEmpty(name);
 
-            builder.AddMongoDBClient(
+            builder.AddMongoDbClient(
                 $"{DefaultConfigSectionName}:{name}",
                 configureSettings,
                 configureClientSettings,
@@ -57,17 +57,17 @@ namespace Aspire.MongoDb.Driver
                 serviceKey: name);
         }
 
-        private static void AddMongoDBClient(
+        private static void AddMongoDbClient(
             this IHostApplicationBuilder builder,
             string configurationSectionName,
-            Action<MongoDBSettings>? configureSettings,
+            Action<MongoDbSettings>? configureSettings,
             Action<MongoClientSettings>? configureClientSettings,
             string connectionName,
             object? serviceKey)
         {
             ArgumentNullException.ThrowIfNull(builder);
 
-            var settings = builder.GetMongoDBSettings(
+            var settings = builder.GetMongoDbSettings(
                 connectionName,
                 configurationSectionName,
                 configureSettings);
@@ -94,7 +94,7 @@ namespace Aspire.MongoDb.Driver
 
         private static void AddMongoClient(
             this IHostApplicationBuilder builder,
-            MongoDBSettings mongoDbSettings,
+            MongoDbSettings mongoDbSettings,
             string connectionName,
             string configurationSectionName,
             Action<MongoClientSettings>? configureClientSettings,
@@ -153,7 +153,7 @@ namespace Aspire.MongoDb.Driver
         private static void AddHealthCheck(
             this IHostApplicationBuilder builder,
             string healthCheckName,
-            MongoDBSettings settings)
+            MongoDbSettings settings)
         {
             if (!settings.HealthChecks || string.IsNullOrWhiteSpace(settings.ConnectionString))
             {
@@ -174,7 +174,7 @@ namespace Aspire.MongoDb.Driver
             this IServiceProvider serviceProvider,
             string connectionName,
             string configurationSectionName,
-            MongoDBSettings mongoDbSettings,
+            MongoDbSettings mongoDbSettings,
             Action<MongoClientSettings>? configureClientSettings)
         {
             mongoDbSettings.ValidateSettings(connectionName, configurationSectionName);
@@ -193,13 +193,13 @@ namespace Aspire.MongoDb.Driver
             return new MongoClient(clientSettings);
         }
 
-        private static MongoDBSettings GetMongoDBSettings(
+        private static MongoDbSettings GetMongoDbSettings(
             this IHostApplicationBuilder builder,
             string connectionName,
             string configurationSectionName,
-            Action<MongoDBSettings>? configureSettings)
+            Action<MongoDbSettings>? configureSettings)
         {
-            var settings = new MongoDBSettings();
+            var settings = new MongoDbSettings();
 
             builder.Configuration
                 .GetSection(configurationSectionName)
@@ -216,7 +216,7 @@ namespace Aspire.MongoDb.Driver
         }
 
         private static void ValidateSettings(
-            this MongoDBSettings settings,
+            this MongoDbSettings settings,
             string connectionName,
             string configurationSectionName)
         {

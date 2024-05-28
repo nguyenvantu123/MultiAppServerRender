@@ -6,7 +6,7 @@ namespace Aspire.MongoDB.Driver;
 /// <summary>
 /// Provides the client configuration settings for connecting to a MongoDB database using MongoDB driver.
 /// </summary>
-public sealed class MongoDBSettings
+public sealed class MongoDbSettings
 {
     /// <summary>
     /// Gets or sets the connection string of the MongoDB database to connect to.

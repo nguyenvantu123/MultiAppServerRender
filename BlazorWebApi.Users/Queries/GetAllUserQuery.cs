@@ -43,7 +43,7 @@ namespace BlazorWebApi.Users.Queries
         }
     }
 
-    internal class GetAllUserQueryHandler(IUnitOfWork<Guid> unitOfWork, IMapper mapper, IAppCache cache)
+    public class GetAllUserQueryHandler(IUnitOfWork<Guid> unitOfWork, IMapper mapper, IAppCache cache)
         : IRequestHandler<GetAllUserQuery, PaginatedResult<ListUserResponse>>
     {
         private readonly IAppCache _cache = cache;
