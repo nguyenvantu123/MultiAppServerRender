@@ -75,6 +75,17 @@ namespace BlazorWeb.Components.Pages.Authentication
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
+
+            var claims = GetClaimsFromJwt(accessToken);
+
+            var expiry = claims.Where(claim => claim.Type.Equals("exp")).FirstOrDefault();
+
+            var datetime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expiry.Value));
+            if (datetime.UtcDateTime <= DateTime.UtcNow)
+            {
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            } 
+
             var state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(GetClaimsFromJwt(accessToken), "jwt")));
             AuthenticationStateUser = state.User;
 
