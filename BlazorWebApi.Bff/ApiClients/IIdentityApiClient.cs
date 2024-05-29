@@ -10,10 +10,8 @@ namespace BlazorWebApi.Bff.ApiClients
         [Post("/identity/token")]
         public Task<object> LoginAsync([FromBody] LoginRequest loginRequest);
 
-        [AllowAnonymous]
         [Post("/identity/refreshToken")]
         public Task<object> RefreshTokenAsync([FromBody] RefreshRequest refreshRequest);
-
     }
 
 

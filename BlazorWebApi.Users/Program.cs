@@ -29,6 +29,10 @@ using BlazorWebApi.Users;
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Mapping;
 using BlazorWebApi.Users.Repository;
+using Microsoft.AspNetCore.Mvc;
+using LazyCache.Providers;
+using LazyCache;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -127,6 +131,15 @@ builder.Services.AddHostedService(sp => sp.GetRequiredService<IdentityDbInitiali
 builder.Services
     .AddTransient(typeof(IRepositoryAsync<,>), typeof(RepositoryAsync<,>))
     .AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+
+builder.Services.AddApiVersioning(config =>
+{
+    config.DefaultApiVersion = new ApiVersion(1, 0);
+    config.AssumeDefaultVersionWhenUnspecified = true;
+    config.ReportApiVersions = true;
+});
+
+builder.Services.AddLazyCache();
 
 builder.ConfigureJwtBearToken();
 

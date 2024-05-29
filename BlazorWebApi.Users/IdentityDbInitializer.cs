@@ -38,7 +38,7 @@ namespace BlazorWebApi.Users
 
                 await strategy.ExecuteAsync(() => dbContext.Database.MigrateAsync(cancellationToken));
 
-                await SeedAsync(userManager, roleManager);
+                //await SeedAsync(userManager, roleManager);
 
                 logger.LogInformation("Database initialization completed after {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
 
@@ -58,7 +58,8 @@ namespace BlazorWebApi.Users
                 CreatedBy = "Super Admin",
                 CreatedOn = DateTime.UtcNow,
                 LastModifiedBy = "Super Admin",
-                LastModifiedOn = DateTime.UtcNow
+                LastModifiedOn = DateTime.UtcNow,
+                Id = Guid.NewGuid(),
             };
             var adminRoleInDb = await roleManager.FindByNameAsync(RoleConstants.SuperAdministratorRole);
             if (adminRoleInDb == null)
@@ -81,7 +82,8 @@ namespace BlazorWebApi.Users
                 CreatedBy = "Super Admin",
                 LastModifiedBy = "Super Admin",
                 LastModifiedOn = DateTime.UtcNow,
-                ProfilePictureDataUrl = ""
+                ProfilePictureDataUrl = "",
+                Id = Guid.NewGuid()
             };
             var superUserInDb = await userManager.FindByEmailAsync(superUser.Email);
             if (superUserInDb == null)
@@ -108,7 +110,8 @@ namespace BlazorWebApi.Users
                 CreatedBy = "Super Admin",
                 CreatedOn = DateTime.UtcNow,
                 LastModifiedBy = "Super Admin",
-                LastModifiedOn = DateTime.UtcNow
+                LastModifiedOn = DateTime.UtcNow,
+                Id = Guid.NewGuid()
             };
             var basicRoleInDb = await roleManager.FindByNameAsync(RoleConstants.BasicUserRole);
             if (basicRoleInDb == null)

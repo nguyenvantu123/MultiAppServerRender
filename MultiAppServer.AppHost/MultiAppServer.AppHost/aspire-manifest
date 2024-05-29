@@ -1,0 +1,107 @@
+{
+  "resources": {
+    "sql": {
+      "type": "sqlserver.server.v1"
+    },
+    "MultiAppServer.Users": {
+      "type": "sqlserver.database.v1",
+      "parent": "sql"
+    },
+    "messaging": {
+      "type": "rabbitmq.server.v0"
+    },
+    "fileCache": {
+      "type": "redis.v0"
+    },
+    "blazorwebapi.users": {
+      "type": "project.v0",
+      "path": "../../BlazorWebApi.Users/BlazorWebApi.Users.csproj",
+      "env": {
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "ConnectionStrings__MultiAppServer.Users": "{MultiAppServer.Users.connectionString}",
+        "ConnectionStrings__messaging": "{messaging.connectionString}"
+      },
+      "bindings": {
+        "http": {
+          "scheme": "http",
+          "protocol": "tcp",
+          "transport": "http"
+        },
+        "https": {
+          "scheme": "https",
+          "protocol": "tcp",
+          "transport": "http"
+        }
+      }
+    },
+    "blazorwebapi.bff": {
+      "type": "project.v0",
+      "path": "../../BlazorWebApi.Bff/BlazorWebApi.Bff.csproj",
+      "env": {
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "ConnectionStrings__messaging": "{messaging.connectionString}",
+        "services__blazorwebapi.users__0": "{blazorwebapi.users.bindings.http.url}",
+        "services__blazorwebapi.users__1": "{blazorwebapi.users.bindings.https.url}"
+      },
+      "bindings": {
+        "http": {
+          "scheme": "http",
+          "protocol": "tcp",
+          "transport": "http"
+        },
+        "https": {
+          "scheme": "https",
+          "protocol": "tcp",
+          "transport": "http"
+        }
+      }
+    },
+    "blazorwebapi.files": {
+      "type": "project.v0",
+      "path": "../../BlazorWebApi.Files/BlazorWebApi.Files.csproj",
+      "env": {
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "ConnectionStrings__messaging": "{messaging.connectionString}"
+      },
+      "bindings": {
+        "http": {
+          "scheme": "http",
+          "protocol": "tcp",
+          "transport": "http"
+        },
+        "https": {
+          "scheme": "https",
+          "protocol": "tcp",
+          "transport": "http"
+        }
+      }
+    },
+    "blazorweb": {
+      "type": "project.v0",
+      "path": "../../BlazorWeb/BlazorWeb.csproj",
+      "env": {
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "services__blazorwebapi.users__0": "{blazorwebapi.users.bindings.http.url}",
+        "services__blazorwebapi.users__1": "{blazorwebapi.users.bindings.https.url}",
+        "services__blazorwebapi.bff__0": "{blazorwebapi.bff.bindings.http.url}",
+        "services__blazorwebapi.bff__1": "{blazorwebapi.bff.bindings.https.url}"
+      },
+      "bindings": {
+        "http": {
+          "scheme": "http",
+          "protocol": "tcp",
+          "transport": "http"
+        },
+        "https": {
+          "scheme": "https",
+          "protocol": "tcp",
+          "transport": "http"
+        }
+      }
+    }
+  }
+}

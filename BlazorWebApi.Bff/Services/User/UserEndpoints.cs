@@ -18,12 +18,7 @@ namespace BlazorWebApi.Bff.Services.User
             user.MapGet("/me", async ([FromServices] IUserApiClient userApiClient) => await GetUserProfile(userApiClient));
 
 
-            //login.MapPost("/refreshToken", async ([FromBody] RefreshRequest loginRequest, [FromServices] IMediator mediator, CancellationToken cancellationToken) =>
-            //{
-            //    var result = await mediator.Send(login, cancellationToken);
-
-            //    return Results.Ok(result);
-            //});
+            user.MapGet("", async ([FromBody] GetAllUserQuery getAllUserQuery, [FromServices] IUserApiClient userApiClient) => await GetAllUser(userApiClient, getAllUserQuery));
 
             return builder;
         }
@@ -32,6 +27,14 @@ namespace BlazorWebApi.Bff.Services.User
         {
 
             var result = await identityApiClient.UserProfile();
+
+            return result;
+        }
+
+        private static async Task<object> GetAllUser(IUserApiClient identityApiClient, [FromBody] GetAllUserQuery getAllUserQuery)
+        {
+
+            var result = await identityApiClient.GetAllUser(getAllUserQuery);
 
             return result;
         }

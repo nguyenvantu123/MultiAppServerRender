@@ -6,7 +6,7 @@ namespace BlazorWebApi.Bff.ApiClients
 {
     public interface IRoleApiClient
     {
-        [Post("/user/roles")]
+        [Post("/role")]
         public Task<object> GetRoleAsync();
 
     }
@@ -14,7 +14,7 @@ namespace BlazorWebApi.Bff.ApiClients
 
     public record class RoleResponse
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }

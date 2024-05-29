@@ -71,8 +71,10 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Get
 builder.Services.AddRefitClient<IIdentityApiClient>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://blazorwebapi.users"))
                 .AddHttpMessageHandler<AuthenticationHeaderHandler>();
+
 builder.Services.AddRefitClient<IUserApiClient>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://blazorwebapi.users")).AddHttpMessageHandler<AuthenticationHeaderHandler>();
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://blazorwebapi.users"))
+                .AddHttpMessageHandler<AuthenticationHeaderHandler>();
 
 builder.Services.AddTransient<AuthenticationHeaderHandler>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();

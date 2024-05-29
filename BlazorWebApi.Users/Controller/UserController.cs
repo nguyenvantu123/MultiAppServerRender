@@ -47,43 +47,12 @@ namespace BlazorWebApi.Users.Controller
         }
 
         [HttpGet]
-        [Route("")]
-        public async Task<PaginatedResult<ListUserResponse>> GetUser(GetAllUserQuery getListUserRequest)
+        [Route("/user")]
+        public async Task<PaginatedResult<ListUserResponse>> User([FromBody] GetAllUserQuery getListUserRequest)
         {
             var user = await Mediator.Send(getListUserRequest);
 
             return user;
         }
-
-        [HttpGet("roles")]
-        public async Task<UserRolesResponse> GetRolesAsync()
-        {
-            var viewModel = new List<UserRoleModel>();
-
-            var user = await _userManager.FindByIdAsync(UserId.ToString());
-            var roles = await _roleManager.Roles.ToListAsync();
-
-            foreach (var role in roles)
-            {
-                var userRolesViewModel = new UserRoleModel
-                {
-                    RoleName = role.Name,
-                    RoleDescription = role.Description
-                };
-                if (await _userManager.IsInRoleAsync(user, role.Name))
-                {
-                    userRolesViewModel.Selected = true;
-                }
-                else
-                {
-                    userRolesViewModel.Selected = false;
-                }
-                viewModel.Add(userRolesViewModel);
-            }
-            var result = new UserRolesResponse { UserRoles = viewModel };
-
-            return result;
-        }
-
     }
 }

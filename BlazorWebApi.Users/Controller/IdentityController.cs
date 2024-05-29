@@ -28,7 +28,7 @@ namespace BlazorWebApi.Users.Controller
         RoleManager<UserRole> roleManager,
         IOptions<AppConfiguration> appConfig,
         SignInManager<User> signInManager)
-        : ControllerBase
+        : BaseApiController<IdentityController>
     {
         private readonly AppConfiguration _appConfig = appConfig.Value;
         private readonly SignInManager<User> _signInManager = signInManager;
@@ -79,10 +79,10 @@ namespace BlazorWebApi.Users.Controller
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
             await userManager.UpdateAsync(user);
 
-            DateTime expireTime = DateTime.UtcNow.AddMinutes(5);
+            DateTime expireTime = DateTime.UtcNow.AddHours(3);
             var token = await GenerateJwtAsync(user, expireTime);
             var response = new TokenResponse
-                { AccessToken = token, RefreshToken = user.RefreshToken, ExpireIn = expireTime };
+            { AccessToken = token, RefreshToken = user.RefreshToken, ExpireIn = expireTime };
 
             result.Success = true;
             result.Result = response;
@@ -139,7 +139,8 @@ namespace BlazorWebApi.Users.Controller
 
                     var response = new TokenResponse
                     {
-                        AccessToken = token, RefreshToken = user.RefreshToken,
+                        AccessToken = token,
+                        RefreshToken = user.RefreshToken,
                         ExpireIn = user.RefreshTokenExpiryTime.Value
                     };
 
@@ -220,8 +221,8 @@ namespace BlazorWebApi.Users.Controller
                 var allPermissionsForThisRoles = await roleManager.GetClaimsAsync(thisRole!);
                 permissionClaims.AddRange(allPermissionsForThisRoles);
             }
-            
-                var claims = new List<Claim>
+
+            var claims = new List<Claim>
                     {
                         new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new(ClaimTypes.Email, user.Email!),
@@ -229,11 +230,11 @@ namespace BlazorWebApi.Users.Controller
                         new(ClaimTypes.Surname, user.LastName),
                         new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
                     }
-                    .Union(userClaims)
-                    .Union(roleClaims)
-                    .Union(permissionClaims);
+                .Union(userClaims)
+                .Union(roleClaims)
+                .Union(permissionClaims);
 
-                return claims;
-            }
+            return claims;
+        }
     }
 }
