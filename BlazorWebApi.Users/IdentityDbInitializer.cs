@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BlazorWebApi.Users
 {
     internal sealed class IdentityDbInitializer(IServiceProvider serviceProvider, ILogger<IdentityDbInitializer> logger)
-     : BackgroundService
+        : BackgroundService
     {
         public const string ActivitySourceName = "Migrations";
 
@@ -18,7 +18,6 @@ namespace BlazorWebApi.Users
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-
             //var dbContext = scope.ServiceProvider.GetRequiredService<UserDBContext>();
 
             using (var scope = serviceProvider.CreateScope())
@@ -38,9 +37,10 @@ namespace BlazorWebApi.Users
 
                 await strategy.ExecuteAsync(() => dbContext.Database.MigrateAsync(cancellationToken));
 
-                //await SeedAsync(userManager, roleManager);
+                await SeedAsync(userManager, roleManager);
 
-                logger.LogInformation("Database initialization completed after {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
+                logger.LogInformation("Database initialization completed after {ElapsedMilliseconds}ms",
+                    sw.ElapsedMilliseconds);
 
                 //InitializeDatabaseAsync(userManager, roleManager);
             }
@@ -61,13 +61,16 @@ namespace BlazorWebApi.Users
                 LastModifiedOn = DateTime.UtcNow,
                 Id = Guid.NewGuid(),
             };
-            var adminRoleInDb = await roleManager.FindByNameAsync(RoleConstants.SuperAdministratorRole);
+            var adminRoleInDb =
+                await roleManager.FindByNameAsync(adminRole.Name);
+
             if (adminRoleInDb == null)
             {
                 await roleManager.CreateAsync(adminRole);
-                adminRoleInDb = await roleManager.FindByNameAsync(RoleConstants.SuperAdministratorRole);
+                // adminRoleInDb = await roleManager.FindByNameAsync(RoleConstants.SuperAdministratorRole);
                 logger.LogInformation("Seeded Administrator Role.");
             }
+
             //Check if User Exists
             var superUser = new User
             {
@@ -119,7 +122,6 @@ namespace BlazorWebApi.Users
                 await roleManager.CreateAsync(basicRole);
                 logger.LogInformation("Seeded Basic User Role.");
             }
-
         }
     }
 }

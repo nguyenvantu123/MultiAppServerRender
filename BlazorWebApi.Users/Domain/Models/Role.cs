@@ -11,6 +11,7 @@ namespace BlazorWebApi.Users.Domain.Models
         public string LastModifiedBy { get; set; }
         public DateTime? LastModifiedOn { get; set; }
         public virtual ICollection<UserRoleClaim> RoleClaims { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
 
         public Role() : base()
         {

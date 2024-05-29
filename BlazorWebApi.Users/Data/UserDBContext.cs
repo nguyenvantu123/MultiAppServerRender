@@ -35,11 +35,20 @@ namespace BlazorWebApi.Users.Data
             {
                 entity.ToTable(name: "Users", "Identity");
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.HasMany(e => e.UserRoles)
+                    .WithOne(e => e.User)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
             });
 
             builder.Entity<Role>(entity =>
             {
                 entity.ToTable(name: "Roles", "Identity");
+                entity.HasMany(e => e.UserRoles)
+                    .WithOne(e => e.Role)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
             });
             builder.Entity<UserRole>(entity =>
             {

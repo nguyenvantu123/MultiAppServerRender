@@ -25,7 +25,7 @@ namespace BlazorWebApi.Users.Controller
     [Authorize]
     public class IdentityController(
         UserManager<User> userManager,
-        RoleManager<UserRole> roleManager,
+        RoleManager<Role> roleManager,
         IOptions<AppConfiguration> appConfig,
         SignInManager<User> signInManager)
         : BaseApiController<IdentityController>
