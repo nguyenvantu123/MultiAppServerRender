@@ -48,7 +48,7 @@ namespace BlazorWebApi.Users.Controller
 
         [HttpGet]
         [Route("/user")]
-        public async Task<PaginatedResult<ListUserResponse>> User([FromBody] GetAllUserQuery getListUserRequest)
+        public async Task<PaginatedResult<ListUserResponse>> User([FromQuery] GetAllUserQuery getListUserRequest)
         {
             var user = await Mediator.Send(getListUserRequest);
 
