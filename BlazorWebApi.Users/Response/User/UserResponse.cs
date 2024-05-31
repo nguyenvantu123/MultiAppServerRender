@@ -49,6 +49,8 @@ namespace BlazorWebApi.Users.Response.User
         public string PhoneNumber { get; set; }
 
         public string RoleName { get; set; }
+        
+        public List<Guid> RoleIds { get; set; }
 
         public DateTime? CreationTime { get; set; }
 

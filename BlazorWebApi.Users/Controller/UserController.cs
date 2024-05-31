@@ -22,7 +22,11 @@ namespace BlazorWebApi.Users.Controller
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
-        public Guid UserId { get; set; }
+        private Guid _userId;
+
+        private Guid GetUserId() => _userId;
+
+        private void SetUserId(Guid value) => _userId = value;
 
         public UserController(
             UserManager<User> userManager,
@@ -31,17 +35,19 @@ namespace BlazorWebApi.Users.Controller
         )
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _mapper = mapper;
 
-            UserId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)?.ToGuid() ??
-                     Guid.Empty;
+            if (httpContextAccessor.HttpContext != null)
+                SetUserId(httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)?.ToGuid() ??
+                          Guid.Empty);
         }
 
         [HttpGet]
         [Route("/user/me")]
         public async Task<ResultBase<UserProfileResponse>> GetUserProfile()
         {
-            var user = await _userManager.FindByIdAsync(UserId.ToString());
+            var user = await _userManager.FindByIdAsync(GetUserId().ToString());
 
             var result = new ResultBase<UserProfileResponse>();
 
@@ -56,6 +62,19 @@ namespace BlazorWebApi.Users.Controller
         {
             // getListUserRequest ??= new GetAllUserQuery();
             var user = await Mediator.Send(getListUserRequest);
+
+            return user;
+        }
+
+        [HttpGet]
+        [Route("/user/{id}")]
+        public async Task<ListUserResponse> GetUserById([FromRoute] Guid userId)
+        {
+            var getUserById = new GetUserByIdQuery
+            {
+                Id = userId
+            };
+            var user = await Mediator.Send(getUserById);
 
             return user;
         }

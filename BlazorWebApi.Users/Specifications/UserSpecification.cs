@@ -26,4 +26,14 @@ namespace BlazorWebApi.Users.Specifications
             }
         }
     }
+    
+    public class UserIdSpecification : BaseSpecification<User>
+    {
+        public UserIdSpecification(GetUserByIdQuery getUserByIdQuery)
+        {
+
+            Includes.Add(x => x.UserRoles);
+            Criteria = p => p.Id == getUserByIdQuery.Id;
+        }
+    }
 }
