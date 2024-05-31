@@ -55,7 +55,6 @@ builder.Services.AddSwaggerGen(c =>
             Name = "MIT",
             Url = new Uri("https://github.com/ignaciojvig/ChatAPI/blob/master/LICENSE")
         }
-
     });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -67,22 +66,19 @@ builder.Services.AddSwaggerGen(c =>
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
-     {
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
                 {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
-     });
-    //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    //c.IncludeXmlComments(xmlPath);
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 var config = builder.Configuration;
@@ -105,24 +101,21 @@ builder.AddRabbitMQ("message");
 builder.Services.AddSingleton<IdentityDbInitializer>();
 
 builder.Services.AddIdentity<User, Role>(options =>
-{
-    options.Password.RequiredLength = 8;
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequireUppercase = true;
-    options.User.RequireUniqueEmail = true;
-})
-.AddEntityFrameworkStores<UserDbContext>()
-.AddDefaultTokenProviders();
+    {
+        options.Password.RequiredLength = 8;
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequireUppercase = true;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<UserDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddHealthChecks()
     .AddCheck<IdentityDbInitializerHealthCheck>("DbInitializer", null);
 
-//builder.Services.AddMediatR(cfg =>
-//{
-//    cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly);
-//});
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 builder.Services.TryAddTransient(typeof(IStringLocalizer<>), typeof(ServerLocalizer<>));
 
@@ -197,4 +190,3 @@ app.MapControllers();
 //app.MapRazorPages();
 
 app.Run();
-

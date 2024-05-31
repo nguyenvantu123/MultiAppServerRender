@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using MultiAppServer.ServiceDefaults.Wrapper;
 using System.Runtime.Serialization;
 using System.Security.Claims;
+using MediatR;
 
 namespace BlazorWebApi.Users.Controller
 {
@@ -21,16 +22,19 @@ namespace BlazorWebApi.Users.Controller
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
-
         public Guid UserId { get; set; }
 
-        public UserController(UserManager<User> userManager, RoleManager<Role> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor
-)
+        public UserController(
+            UserManager<User> userManager,
+            RoleManager<Role> roleManager,
+            IMapper mapper, IHttpContextAccessor httpContextAccessor
+        )
         {
             _userManager = userManager;
             _mapper = mapper;
 
-            UserId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)?.ToGuid() ?? Guid.Empty;
+            UserId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)?.ToGuid() ??
+                     Guid.Empty;
         }
 
         [HttpGet]
@@ -48,8 +52,9 @@ namespace BlazorWebApi.Users.Controller
 
         [HttpGet]
         [Route("/user")]
-        public async Task<PaginatedResult<ListUserResponse>> User([FromQuery] GetAllUserQuery getListUserRequest)
+        public async Task<PaginatedResult<ListUserResponse>> GetUser([FromQuery] GetAllUserQuery getListUserRequest)
         {
+            // getListUserRequest ??= new GetAllUserQuery();
             var user = await Mediator.Send(getListUserRequest);
 
             return user;

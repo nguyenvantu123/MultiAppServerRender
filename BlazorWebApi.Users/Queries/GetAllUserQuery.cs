@@ -29,18 +29,18 @@ namespace BlazorWebApi.Users.Queries
 
         public string[] OrderBy { get; set; }
 
-        public GetAllUserQuery(string searchText, List<Guid> roleIds, bool? isActive, int pageSize, int pageNumber, string orderBy)
-        {
-            SearchText = searchText;
-            RoleIds = roleIds;
-            IsActive = isActive;
-            PageNumber = pageNumber;
-            PageSize = pageSize;
-            if (!string.IsNullOrWhiteSpace(orderBy))
-            {
-                OrderBy = orderBy.Split(',');
-            };
-        }
+        // public GetAllUserQuery(string searchText, List<Guid> roleIds, bool? isActive, int pageSize, int pageNumber, string orderBy)
+        // {
+        //     SearchText = searchText;
+        //     RoleIds = roleIds;
+        //     IsActive = isActive;
+        //     PageNumber = pageNumber;
+        //     PageSize = pageSize;
+        //     if (!string.IsNullOrWhiteSpace(orderBy))
+        //     {
+        //         OrderBy = orderBy.Split(',');
+        //     };
+        // }
     }
 
     public class GetAllUserQueryHandler(IUnitOfWork<Guid> unitOfWork, IMapper mapper, IAppCache cache)
