@@ -10,7 +10,7 @@ namespace BlazorWebApi.Users.Specifications
         {
 
             Includes.Add(x => x.UserRoles);
-
+ 
             if (!string.IsNullOrEmpty(searchQuery.SearchText))
             {
                 Criteria = p => p.UserName.Contains(searchQuery.SearchText) || p.PhoneNumber.Contains(searchQuery.SearchText) || p.Email.Contains(searchQuery.SearchText);

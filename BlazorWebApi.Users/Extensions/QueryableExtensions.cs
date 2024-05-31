@@ -19,7 +19,7 @@ namespace BlazorWebApi.Users.Extensions
             int count = await source.CountAsync();
             pageNumber = pageNumber <= 0 ? 1 : pageNumber;
             List<T> items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-            return PaginatedResult<T>.Success(items, count, pageNumber, pageSize);
+            return PaginatedResult<T>.Succeeded(items, count, pageNumber, pageSize);
         }
 
         public static IQueryable<T> Specify<T>(this IQueryable<T> query, ISpecification<T> spec) where T : class
@@ -30,6 +30,10 @@ namespace BlazorWebApi.Users.Extensions
             var secondaryResult = spec.IncludeStrings
                 .Aggregate(queryableResultWithIncludes,
                     (current, include) => current.Include(include));
+            if (spec.Criteria== null)
+            {
+                return secondaryResult;
+            }
             return secondaryResult.Where(spec.Criteria);
         }
     }

@@ -7,23 +7,22 @@ using System.Threading.Tasks;
 
 namespace MultiAppServer.ServiceDefaults.Wrapper
 {
-    public class PaginatedResult<T> : ResultBase<T>
+    public class PaginatedResult<T> : IResultBase
     {
-        public PaginatedResult(List<T>? data)
+        public PaginatedResult(List<T>? result)
         {
-            Data = data;
+            Result = result;
         }
-
-        public List<T>? Data { get; set; }
-
-        private PaginatedResult(bool succeeded, List<T>? data = default, List<string>? messages = null, int count = 0, int page = 1, int pageSize = 10)
+        
+        public List<T>? Result { get; set; }
+        private PaginatedResult(bool succeeded, List<T>? result = default, List<string>? messages = null, int count = 0, int page = 1, int pageSize = 10)
         {
-            Data = data;
+            Result = result;
             CurrentPage = page;
-            Succeeded = succeeded;
             PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             TotalCount = count;
+            Success = succeeded;
         }
 
         public static PaginatedResult<T> Failure(List<string>? messages)
@@ -31,7 +30,7 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
             return new PaginatedResult<T>(false, default, messages);
         }
 
-        public new static PaginatedResult<T> Success(List<T>? data, int count, int page, int pageSize)
+        public new static PaginatedResult<T> Succeeded(List<T>? data, int count, int page, int pageSize)
         {
             return new PaginatedResult<T>(true, data, null, count, page, pageSize);
         }
@@ -42,11 +41,11 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
 
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
-
-        public bool Succeeded { get; set; }
-
         public bool HasPreviousPage => CurrentPage > 1;
 
         public bool HasNextPage => CurrentPage < TotalPages;
+        public int StatusCode { get; set; }
+        public bool Success { get; set; }
+        public List<string> ErrorMessages { get; set; }
     }
 }

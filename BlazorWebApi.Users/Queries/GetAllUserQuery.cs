@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using MultiAppServer.ServiceDefaults.Wrapper;
 using System.Linq;
 using System.Linq.Expressions;
+using BlazorWebApi.Users.RoleConst;
 
 namespace BlazorWebApi.Users.Queries
 {
@@ -62,11 +63,12 @@ namespace BlazorWebApi.Users.Queries
                 CreationTime = e.CreatedOn,
                 IsActive = e.IsActive,
                 RoleName = string.Join(";", e.UserRoles.Select(x => x.Role.Name).ToList()),
+                IsAdmin = e.UserRoles.FirstOrDefault(x=>x.Role.Name == RoleConstants.SuperAdministratorRole) != null? true: false
             };
 
             var userFilterSpec = new UserSpecification(request);
 
-            if (request.OrderBy?.Any() != true)
+            if (request.OrderBy == null)
             {
                 var data = await unitOfWork.Repository<User>().Entities
                    .Specify(userFilterSpec)

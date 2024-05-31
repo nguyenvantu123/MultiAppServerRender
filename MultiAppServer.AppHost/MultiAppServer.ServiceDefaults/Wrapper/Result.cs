@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MultiAppServer.ServiceDefaults.Wrapper
 {
-    public class ResultBase<T> : IResultBase<T>
+    public class ResultBase<T> : IResultBase
     {
         public ResultBase()
         {
@@ -16,6 +16,8 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
             Success = true;
 
         }
+        
+        public T Result { get; set; }
 
         public ResultBase(T result)
         {
@@ -34,7 +36,7 @@ namespace MultiAppServer.ServiceDefaults.Wrapper
 
         public int StatusCode { get; set; }
         public bool Success { get; set; }
-        public T Result { get; set; }
+        // public T Result { get; set; }
         public List<string> ErrorMessages { get; set; }
 
     }

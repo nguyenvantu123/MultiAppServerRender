@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace MultiAppServer.ServiceDefaults.Wrapper
 {
-    public interface IResultBase<T>
+    public interface IResultBase
     {
         int StatusCode { get; set; }
         bool Success { get; set; }
         List<string> ErrorMessages { get; set; }
-        T Result { get; set; }
+        // T Result { get; set; }
     }
 }
 
