@@ -35,6 +35,7 @@
     <ProjectReference Include="..\Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj" />
     <ProjectReference Include="..\BlazorWeb\BlazorWeb.csproj" />
     <ProjectReference Include="..\MultiAppServer.AppHost\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\MultiAppServer\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>

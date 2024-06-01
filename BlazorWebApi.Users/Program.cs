@@ -33,6 +33,7 @@ using Microsoft.AspNetCore.Mvc;
 using LazyCache.Providers;
 using LazyCache;
 using Microsoft.Extensions.Caching.Memory;
+using MultiAppServer.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 

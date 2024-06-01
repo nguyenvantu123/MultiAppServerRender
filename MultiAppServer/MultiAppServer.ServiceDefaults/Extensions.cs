@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MultiAppServer.ServiceDefaults.Configurations;
 using MultiAppServer.ServiceDefaults.Wrapper;
-using Newtonsoft.Json;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
@@ -20,10 +20,7 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
 
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-
-namespace Microsoft.Extensions.Hosting;
+namespace MultiAppServer.ServiceDefaults;
 
 public static class Extensions
 {
@@ -63,7 +60,7 @@ public static class Extensions
     public static IHostApplicationBuilder ConfigureJwtBearToken(this IHostApplicationBuilder builder)
     {
 
-        var cs = GetAppConfiguration(builder);
+        var cs = builder.GetAppConfiguration();
 
         var key = Encoding.UTF8.GetBytes(cs.Secret);
         builder.Services

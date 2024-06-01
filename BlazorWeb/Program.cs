@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor;
 using MudBlazor.Services;
+using MultiAppServer.ServiceDefaults;
 using Polly;
 using Refit;
 using System.Net;
