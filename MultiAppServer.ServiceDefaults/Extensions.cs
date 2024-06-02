@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -20,7 +19,10 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
 
-namespace MultiAppServer.ServiceDefaults;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+
+namespace Microsoft.Extensions.Hosting;
 
 public static class Extensions
 {
@@ -38,7 +40,7 @@ public static class Extensions
             http.AddStandardResilienceHandler();
 
             // Turn on service discovery by default
-            http.UseServiceDiscovery();
+            //http.UseServiceDiscovery();
         });
 
         return builder;
@@ -60,7 +62,7 @@ public static class Extensions
     public static IHostApplicationBuilder ConfigureJwtBearToken(this IHostApplicationBuilder builder)
     {
 
-        var cs = builder.GetAppConfiguration();
+        var cs = GetAppConfiguration(builder);
 
         var key = Encoding.UTF8.GetBytes(cs.Secret);
         builder.Services
@@ -195,7 +197,7 @@ public static class Extensions
                 }
 
                 tracing.AddAspNetCoreInstrumentation()
-                       .AddGrpcClientInstrumentation()
+                       //.AddGrpcClientInstrumentation()
                        .AddHttpClientInstrumentation();
             });
 

@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>4dfa8d67-2960-4d31-a666-20315a85e144</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.MongoDB" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
+    <ProjectReference Include="..\Aspire.Minio.Client\Aspire.Minio.Client.csproj" />
+    <ProjectReference Include="..\Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj" />
+    <ProjectReference Include="..\Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj" />
+    <ProjectReference Include="..\Aspire.StackExchange.Redis.DistributedCaching\Aspire.StackExchange.Redis.DistributedCaching.csproj" />
+    <ProjectReference Include="..\Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj" />
+    <ProjectReference Include="..\BlazorWebApi.Bff\BlazorWebApi.Bff.csproj" />
+    <ProjectReference Include="..\BlazorWebApi.Files\BlazorWebApi.Files.csproj" />
+    <ProjectReference Include="..\BlazorWebApi.Users\BlazorWebApi.Users.csproj" />
+    <ProjectReference Include="..\BlazorWeb\BlazorWeb.csproj" />
+    <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

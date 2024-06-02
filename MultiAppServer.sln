@@ -38,9 +38,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.StackExchange.Redis.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.StackExchange.Redis", "Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj", "{2F2A94D3-A0A9-42DB-9423-C930941F8428}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiAppServer.AppHost", "MultiAppServer\MultiAppServer.AppHost\MultiAppServer.AppHost.csproj", "{E03EBFBB-C822-4289-8638-22BDA10B7E9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiAppServer.AppHost", "MultiAppServer.AppHost\MultiAppServer.AppHost.csproj", "{869044D8-312E-42F5-AAF3-0E9583E11E63}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAppServer.ServiceDefaults", "MultiAppServer\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj", "{CC2CC438-7F0D-41C5-9DAC-BC30187F740F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiAppServer.ServiceDefaults", "MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj", "{5C2DB493-A4BF-43E8-9057-69B04D7E8436}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,14 +88,14 @@ Global
 		{2F2A94D3-A0A9-42DB-9423-C930941F8428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F2A94D3-A0A9-42DB-9423-C930941F8428}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F2A94D3-A0A9-42DB-9423-C930941F8428}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E03EBFBB-C822-4289-8638-22BDA10B7E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E03EBFBB-C822-4289-8638-22BDA10B7E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E03EBFBB-C822-4289-8638-22BDA10B7E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E03EBFBB-C822-4289-8638-22BDA10B7E9F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC2CC438-7F0D-41C5-9DAC-BC30187F740F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC2CC438-7F0D-41C5-9DAC-BC30187F740F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC2CC438-7F0D-41C5-9DAC-BC30187F740F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC2CC438-7F0D-41C5-9DAC-BC30187F740F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869044D8-312E-42F5-AAF3-0E9583E11E63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869044D8-312E-42F5-AAF3-0E9583E11E63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869044D8-312E-42F5-AAF3-0E9583E11E63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869044D8-312E-42F5-AAF3-0E9583E11E63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C2DB493-A4BF-43E8-9057-69B04D7E8436}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C2DB493-A4BF-43E8-9057-69B04D7E8436}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C2DB493-A4BF-43E8-9057-69B04D7E8436}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C2DB493-A4BF-43E8-9057-69B04D7E8436}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

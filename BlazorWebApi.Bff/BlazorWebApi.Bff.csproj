@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MultiAppServer\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

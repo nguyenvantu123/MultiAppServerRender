@@ -1,5 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+
 var sqlIndentity = builder.AddSqlServer("sql")
                  .AddDatabase("MultiAppServer.Users");
 
@@ -14,6 +15,4 @@ var bff = builder.AddProject<Projects.BlazorWebApi_Bff>("blazorwebapi.bff").With
 var file = builder.AddProject<Projects.BlazorWebApi_Files>("blazorwebapi.files").WithReference(messaging);
 
 builder.AddProject<Projects.BlazorWeb>("blazorweb").WithReference(user).WithReference(bff);
-
-
 builder.Build().Run();
