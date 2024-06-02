@@ -85,7 +85,7 @@ builder.Services.AddSingleton<SignalRHub>();
 
 builder.Services.AddScoped<UserStateProvider>();
 
-builder.Services.AddScoped<AuthenticationStateProvider, UserStateProvider>();
+//builder.Services.AddScoped<AuthenticationStateProvider, UserStateProvider>();
 
 builder.Services.AddMudServices();
 builder.Services.AddTransient<IClientPreferenceManager, ClientPreferenceManager>();
@@ -152,10 +152,3 @@ app.MapHub<SignalRHub>(ApplicationConstants.SignalR.HubUrl);
 app.UseAuthorization();
 app.UseAuthentication();
 app.Run();
-
-//IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-//{
-//    return Policy.Handle<HttpRequestException>()
-//                 .OrResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
-//                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-//}

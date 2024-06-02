@@ -23,14 +23,16 @@ namespace BlazorWeb.Components.Layout
     {
         private MudTheme _currentTheme;
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (firstRender)
+            {
+                _currentTheme = UserTheme.DefaultTheme;
 
-            _currentTheme = UserTheme.DefaultTheme;
-
-            _currentTheme = await _clientPreferenceManager.GetCurrentThemeAsync();
-
+                _currentTheme = await _clientPreferenceManager.GetCurrentThemeAsync();
+            }
         }
+
 
         private async Task DarkMode()
         {

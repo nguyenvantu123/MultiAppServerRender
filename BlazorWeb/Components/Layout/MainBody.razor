@@ -7,7 +7,7 @@
 @using System.Net
 @using Microsoft.AspNetCore.SignalR.Client
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MainLayout> _localizer
-
+@inject UserStateProvider _stateProvider
 <MudAppBar Elevation="25">
     <MudIcon Icon="@CustomIcons.BlazorHero" Size="Size.Large" ViewBox="0 0 500 500" />
     <MudText Typo="Typo.h6" Class="ml-4">MultiApp</MudText>

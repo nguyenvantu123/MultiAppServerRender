@@ -15,7 +15,7 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Login> _localizer
 @inject IBffApiClients bffApiClients
 @inject ILoadingService LoadingService
-
+@inject UserStateProvider _stateProvider
 <EditForm Model="_tokenModel" FormName="loginForm" OnValidSubmit="SubmitAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
 
@@ -83,46 +83,55 @@
         return q[parmName] ?? "";
     }
 
-    protected override async Task OnInitializedAsync()
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var state = await _stateProvider.GetAuthenticationStateAsync();
-
-        if (state.Equals(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))))
+        if (firstRender)
         {
-            var expireIn = await _localStorage.GetItemAsync<DateTime>(StorageConstants.Local.ExpireIn);
-            var accessToken = await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken);
-            var refreshToken = await _localStorage.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
+            var state = await _stateProvider.GetAuthenticationStateAsync();
 
-
-            if (expireIn <= DateTime.Now)
+            if (state.Equals(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))))
             {
-                var httpresponse = await bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { refreshToken = refreshToken, accessToken = accessToken }, authorization: accessToken);
+                var expireIn = await _localStorage.GetItemAsync<DateTime>(StorageConstants.Local.ExpireIn);
+                var accessToken = await _localStorage.GetItemAsync<string>(StorageConstants.Local.AuthToken);
+                var refreshToken = await _localStorage.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
 
-                if (httpresponse.IsSuccessStatusCode)
+
+                if (expireIn <= DateTime.Now)
                 {
-                    var result = await httpresponse.ToResult<TokenResponse>();
+                    var httpresponse = await bffApiClients.RefreshTokenAsync(new RefreshTokenRequest { refreshToken = refreshToken, accessToken = accessToken }, authorization: accessToken);
 
-                    await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
-                    await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
-                    await _localStorage.SetItemAsync(StorageConstants.Local.ExpireIn, result.Result.ExpireIn.AddHours(-1));
+                    if (httpresponse.IsSuccessStatusCode)
+                    {
+                        var result = await httpresponse.ToResult<TokenResponse>();
+
+                        await _localStorage.SetItemAsync(StorageConstants.Local.AuthToken, result.Result.AccessToken);
+                        await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, result.Result.RefreshToken);
+                        await _localStorage.SetItemAsync(StorageConstants.Local.ExpireIn, result.Result.ExpireIn.AddHours(-1));
+
+                    }
+                    else
+                    {
+                        await _localStorage.RemoveItemAsync(StorageConstants.Local.AuthToken);
+                        await _localStorage.RemoveItemAsync(StorageConstants.Local.RefreshToken);
+                        await _localStorage.RemoveItemAsync(StorageConstants.Local.ExpireIn);
+                    }
+
+                    await _stateProvider.StateChangedAsync();
 
                 }
-                else
-                {
-                    await _localStorage.RemoveItemAsync(StorageConstants.Local.AuthToken);
-                    await _localStorage.RemoveItemAsync(StorageConstants.Local.RefreshToken);
-                    await _localStorage.RemoveItemAsync(StorageConstants.Local.ExpireIn);
-                }
 
-                await _stateProvider.StateChangedAsync();
+                var returnUrl = GetQueryParm("returnUrl");
 
+                _navigationManager.NavigateTo($"{returnUrl}", true);
             }
-
-            var returnUrl = GetQueryParm("returnUrl");
-
-            _navigationManager.NavigateTo($"{returnUrl}", true);
         }
     }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+
+    // }
 
     private async Task SubmitAsync()
     {
