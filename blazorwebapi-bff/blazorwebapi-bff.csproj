@@ -7,6 +7,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <UserSecretsId>e9054977-a48a-43e2-ba5f-db46d7565ce5</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RootNamespace>BlazorWebApi.Bff</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

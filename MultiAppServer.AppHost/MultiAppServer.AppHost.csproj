@@ -24,10 +24,10 @@
     <ProjectReference Include="..\Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj" />
     <ProjectReference Include="..\Aspire.StackExchange.Redis.DistributedCaching\Aspire.StackExchange.Redis.DistributedCaching.csproj" />
     <ProjectReference Include="..\Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj" />
-    <ProjectReference Include="..\BlazorWebApi.Bff\BlazorWebApi.Bff.csproj" />
-    <ProjectReference Include="..\BlazorWebApi.Files\BlazorWebApi.Files.csproj" />
-    <ProjectReference Include="..\BlazorWebApi.Users\BlazorWebApi.Users.csproj" />
-    <ProjectReference Include="..\BlazorWeb\BlazorWeb.csproj" />
+    <ProjectReference Include="..\blazorwebapi-bff\blazorwebapi-bff.csproj" />
+    <ProjectReference Include="..\blazorwebapi-files\blazorwebapi-files.csproj" />
+    <ProjectReference Include="..\blazorwebapi-users\blazorwebapi-users.csproj" />
+    <ProjectReference Include="..\webfrontend\webfrontend.csproj" />
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
   </ItemGroup>
 
