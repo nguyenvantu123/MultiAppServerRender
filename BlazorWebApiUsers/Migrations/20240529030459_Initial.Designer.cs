@@ -25,7 +25,7 @@ namespace BlazorWebApi.Users.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("blazorwebapi-users.Domain.Models.Role", b =>
+            modelBuilder.Entity("BlazorWebApiUsers.Domain.Models.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -68,7 +68,7 @@ namespace BlazorWebApi.Users.Migrations
                     b.ToTable("Roles", "Identity");
                 });
 
-            modelBuilder.Entity("blazorwebapi-users.Domain.Models.User", b =>
+            modelBuilder.Entity("BlazorWebApiUsers.Domain.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,7 +170,7 @@ namespace BlazorWebApi.Users.Migrations
                     b.ToTable("Users", "Identity");
                 });
 
-            modelBuilder.Entity("blazorwebapi-users.Domain.Models.UserRole", b =>
+            modelBuilder.Entity("BlazorWebApiUsers.Domain.Models.UserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -195,7 +195,7 @@ namespace BlazorWebApi.Users.Migrations
                     b.ToTable("UserRoles", "Identity");
                 });
 
-            modelBuilder.Entity("blazorwebapi-users.Domain.Models.UserRoleClaim", b =>
+            modelBuilder.Entity("BlazorWebApiUsers.Domain.Models.UserRoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -301,25 +301,25 @@ namespace BlazorWebApi.Users.Migrations
                     b.ToTable("UserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("blazorwebapi-users.Domain.Models.UserRole", b =>
+            modelBuilder.Entity("BlazorWebApiUsers.Domain.Models.UserRole", b =>
                 {
-                    b.HasOne("blazorwebapi-users.Domain.Models.Role", null)
+                    b.HasOne("BlazorWebApiUsers.Domain.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("blazorwebapi-users.Domain.Models.Role", "Role")
+                    b.HasOne("BlazorWebApiUsers.Domain.Models.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId1");
 
-                    b.HasOne("blazorwebapi-users.Domain.Models.User", null)
+                    b.HasOne("BlazorWebApiUsers.Domain.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("blazorwebapi-users.Domain.Models.User", "User")
+                    b.HasOne("BlazorWebApiUsers.Domain.Models.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId1");
 
@@ -328,9 +328,9 @@ namespace BlazorWebApi.Users.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("blazorwebapi-users.Domain.Models.UserRoleClaim", b =>
+            modelBuilder.Entity("BlazorWebApiUsers.Domain.Models.UserRoleClaim", b =>
                 {
-                    b.HasOne("blazorwebapi-users.Domain.Models.Role", "Role")
+                    b.HasOne("BlazorWebApiUsers.Domain.Models.Role", "Role")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -341,7 +341,7 @@ namespace BlazorWebApi.Users.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("blazorwebapi-users.Domain.Models.User", null)
+                    b.HasOne("BlazorWebApiUsers.Domain.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -350,7 +350,7 @@ namespace BlazorWebApi.Users.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("blazorwebapi-users.Domain.Models.User", null)
+                    b.HasOne("BlazorWebApiUsers.Domain.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -359,19 +359,19 @@ namespace BlazorWebApi.Users.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("blazorwebapi-users.Domain.Models.User", null)
+                    b.HasOne("BlazorWebApiUsers.Domain.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("blazorwebapi-users.Domain.Models.Role", b =>
+            modelBuilder.Entity("BlazorWebApiUsers.Domain.Models.Role", b =>
                 {
                     b.Navigation("RoleClaims");
                 });
 
-            modelBuilder.Entity("blazorwebapi-users.Domain.Models.User", b =>
+            modelBuilder.Entity("BlazorWebApiUsers.Domain.Models.User", b =>
                 {
                     b.Navigation("UserRoles");
                 });

@@ -8,11 +8,20 @@ var messaging = builder.AddRabbitMQ("messaging");
 
 var fileCache = builder.AddRedis("fileCache");
 
-var user = builder.AddProject<Projects.BlazorWebApi_Users>("users-api").WithReference(sqlIndentity).WithReference(messaging);
+// builder.AddProject<Projects.webfrontend>("webfrontend");
 
-var bff = builder.AddProject<Projects.BlazorWebApi_Bff>("bff").WithReference(user).WithReference(messaging);
+//builder.AddProject<Projects.BlazorWebApiBff>("blazorwebapibff");
 
-var file = builder.AddProject<Projects.BlazorWebApi_Files>("files-api").WithReference(messaging);
+//builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles");
 
-builder.AddProject<Projects.BlazorWeb>("blazorweb").WithReference(user).WithReference(bff);
+//builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers");
+
+var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers").WithReference(sqlIndentity).WithReference(messaging);
+
+var bff = builder.AddProject<Projects.BlazorWebApiBff>("blazorwebapibff").WithReference(user).WithReference(messaging);
+
+var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles").WithReference(messaging);
+
+builder.AddProject<Projects.webfrontend>("webfrontend").WithReference(user).WithReference(bff);
+
 builder.Build().Run();
