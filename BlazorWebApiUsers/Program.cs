@@ -1,7 +1,6 @@
 using Aspire.Minio.Client;
 using Aspire.MongoDb.Driver;
 using Aspire.RabbitMQ.Client;
-using BlazorWebApi.Users.Configurations;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Localization;
 using Grpc.Core;
@@ -33,7 +32,7 @@ using Microsoft.AspNetCore.Mvc;
 using LazyCache.Providers;
 using LazyCache;
 using Microsoft.Extensions.Caching.Memory;
-using MultiAppServer.ServiceDefaults;
+using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 

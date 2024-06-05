@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using AutoMapper;
-using BlazorWeb.Constants.Role;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Extensions;
 using BlazorWebApi.Users.Repository;
@@ -36,7 +35,7 @@ public class GetUserByIdQueryHandler(IUnitOfWork<Guid> unitOfWork, IMapper mappe
             PhoneNumber = e.PhoneNumber,
             CreationTime = e.CreatedOn,
             IsActive = e.IsActive,
-            RoleIds =  e.UserRoles.Select(x => x.Role.Id).ToList(),
+            RoleIds = e.UserRoles.Select(x => x.Role.Id).ToList(),
             IsAdmin = e.UserRoles.FirstOrDefault(x => x.Role.Name == RoleConstants.SuperAdministratorRole) != null
                 ? true
                 : false

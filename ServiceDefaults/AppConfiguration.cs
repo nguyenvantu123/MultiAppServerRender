@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiAppServer.ServiceDefaults.Configurations
+namespace ServiceDefaults
 {
     public class AppConfiguration
     {

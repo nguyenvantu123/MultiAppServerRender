@@ -1,5 +1,4 @@
-﻿using BlazorWebApi.Users.Configurations;
-using BlazorWebApi.Users.Domain.Models;
+﻿using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.Helper;
 using BlazorWebApi.Users.Response.Identity;
 using MediatR;
@@ -11,13 +10,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using MultiAppServer.ServiceDefaults.Wrapper;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using BlazorWebApi.Users.Request.Identity;
+using ServiceDefaults;
 
 namespace BlazorWebApi.Users.Controller
 {

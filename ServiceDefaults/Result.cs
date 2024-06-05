@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiAppServer.ServiceDefaults.Wrapper
+namespace ServiceDefaults
 {
     public class ResultBase<T> : IResultBase
     {

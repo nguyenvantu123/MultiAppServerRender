@@ -9,10 +9,10 @@ using BlazorWebApi.Users.Specifications;
 using LazyCache;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
-using MultiAppServer.ServiceDefaults.Wrapper;
 using System.Linq;
 using System.Linq.Expressions;
 using BlazorWebApi.Users.RoleConst;
+using ServiceDefaults;
 
 namespace BlazorWebApi.Users.Queries
 {

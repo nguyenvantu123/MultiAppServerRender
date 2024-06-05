@@ -1,7 +1,6 @@
 using Aspire.RabbitMQ.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using MultiAppServer.ServiceDefaults;
 using System.Net;
 using System.Security.Claims;
 using System.Text;

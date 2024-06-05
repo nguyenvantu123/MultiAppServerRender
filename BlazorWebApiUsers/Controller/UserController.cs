@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MultiAppServer.ServiceDefaults.Wrapper;
 using System.Runtime.Serialization;
 using System.Security.Claims;
 using MediatR;
+using ServiceDefaults;
 
 namespace BlazorWebApi.Users.Controller
 {

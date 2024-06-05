@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ServiceDefaults;
 using System.ComponentModel.DataAnnotations.Schema;
-using BlazorWeb.Contracts;
+//using BlazorWeb.Contracts;
 
 namespace BlazorWebApi.Users.Domain.Models
 {
