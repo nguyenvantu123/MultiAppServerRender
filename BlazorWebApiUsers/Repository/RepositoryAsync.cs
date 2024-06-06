@@ -9,9 +9,9 @@ namespace BlazorWebApi.Users.Repository
 {
     public class RepositoryAsync<T, TId> : IRepositoryAsync<T, TId> where T : class
     {
-        private readonly UserDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
-        public RepositoryAsync(UserDbContext dbContext)
+        public RepositoryAsync(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }

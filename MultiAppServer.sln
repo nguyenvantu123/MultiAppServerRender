@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebApiUsers", "Blazor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Component", "Component", "{3846F3FA-15AF-4992-B78A-B2F4D2667E59}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateway", "ApiGateway", "{7281C57C-E834-4E71-8418-39E42A1FFF72}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.Microsoft.EntityFrameworkCore.SqlServer", "Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj", "{CCBD4F76-3F24-4E38-89F6-4212272B4C62}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webfrontend", "webfrontend\webfrontend.csproj", "{77D6D5B2-5F5C-4033-BF37-4DE394A28864}"
@@ -27,9 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.StackExchange.Redis.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.StackExchange.Redis", "Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj", "{2F2A94D3-A0A9-42DB-9423-C930941F8428}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiAppServer", "MultiAppServer\MultiAppServer.csproj", "{73F72C23-62DF-4A5E-8A8F-0EC11F93033F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAppServer", "MultiAppServer\MultiAppServer.csproj", "{73F72C23-62DF-4A5E-8A8F-0EC11F93033F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDefaults", "ServiceDefaults\ServiceDefaults.csproj", "{77316C0A-7A7F-4545-BE6D-114DFE812FE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceDefaults", "ServiceDefaults\ServiceDefaults.csproj", "{77316C0A-7A7F-4545-BE6D-114DFE812FE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

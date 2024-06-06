@@ -27,7 +27,7 @@ namespace BlazorWebApi.Users
                 var roleManager = (RoleManager<Role>)scope.ServiceProvider.GetService(typeof(RoleManager<Role>));
 
 
-                var dbContext = scope.ServiceProvider.GetRequiredService<UserDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 var strategy = dbContext.Database.CreateExecutionStrategy();
 

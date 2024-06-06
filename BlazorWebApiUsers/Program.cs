@@ -33,160 +33,202 @@ using LazyCache.Providers;
 using LazyCache;
 using Microsoft.Extensions.Caching.Memory;
 using ServiceDefaults;
+using IdentityServer4.Services;
+using eShop.Identity.API;
+using eShop.Identity.API.Models;
+using eShop.Identity.API.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-// Add services to the container.
+builder.Services.AddControllersWithViews();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+
+// Apply database migration automatically. Note that this approach is not
+// recommended for production scenarios. Consider generating SQL scripts from
+// migrations instead.
+builder.Services.AddMigration<ApplicationDbContext, UsersSeed>();
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+
+builder.Services.AddIdentityServer(options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Bff MultiAppServer",
-        Description = "MultiAppServer",
-        License = new OpenApiLicense
-        {
-            Name = "MIT",
-            Url = new Uri("https://github.com/ignaciojvig/ChatAPI/blob/master/LICENSE")
-        }
-    });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = @"JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
+    options.IssuerUri = "null";
+    options.Authentication.CookieLifetime = TimeSpan.FromHours(2);
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
+    options.Events.RaiseErrorEvents = true;
+    options.Events.RaiseInformationEvents = true;
+    options.Events.RaiseFailureEvents = true;
+    options.Events.RaiseSuccessEvents = true;
 
-var config = builder.Configuration;
+    // TODO: Remove this line in production.
+    //options.KeyManagement.Enabled = false;
+})
+.AddInMemoryIdentityResources(Config.GetResources())
+.AddInMemoryApiScopes(Config.GetApiScopes())
+.AddInMemoryApiResources(Config.GetApis())
+.AddInMemoryClients(Config.GetClients(builder.Configuration))
+.AddAspNetIdentity<ApplicationUser>()
+// TODO: Not recommended for production - you need to store your key material somewhere secure
+.AddDeveloperSigningCredential();
 
-var applicationSettingsConfiguration = config.GetSection(nameof(AppConfiguration));
-
-builder.Services.Configure<AppConfiguration>(applicationSettingsConfiguration);
-
-builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing => tracing.AddSource(IdentityDbInitializer.ActivitySourceName));
-
-builder.Services.AddProblemDetails();
-
-builder.Services.AddAutoMapper(typeof(UserAutoMapper));
-
-builder.AddSqlServerDbContext<UserDbContext>("identitydb");
-
-builder.AddRabbitMQ("message");
-
-builder.Services.AddSingleton<IdentityDbInitializer>();
-
-builder.Services.AddIdentity<User, Role>(options =>
-    {
-        options.Password.RequiredLength = 8;
-        options.Password.RequireDigit = true;
-        options.Password.RequireLowercase = true;
-        options.Password.RequireNonAlphanumeric = true;
-        options.Password.RequireUppercase = true;
-        options.User.RequireUniqueEmail = true;
-    })
-    .AddEntityFrameworkStores<UserDbContext>()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddHealthChecks()
-    .AddCheck<IdentityDbInitializerHealthCheck>("DbInitializer", null);
-
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-
-builder.Services.TryAddTransient(typeof(IStringLocalizer<>), typeof(ServerLocalizer<>));
-
-builder.Services.AddHostedService(sp => sp.GetRequiredService<IdentityDbInitializer>());
-
-builder.Services
-    .AddTransient(typeof(IRepositoryAsync<,>), typeof(RepositoryAsync<,>))
-    .AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
-
-builder.Services.AddApiVersioning(config =>
-{
-    config.DefaultApiVersion = new ApiVersion(1, 0);
-    config.AssumeDefaultVersionWhenUnspecified = true;
-    config.ReportApiVersions = true;
-});
-
-builder.Services.AddLazyCache();
-
-builder.ConfigureJwtBearToken();
+builder.Services.AddTransient<IProfileService, ProfileService>();
+builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
+builder.Services.AddTransient<IRedirectService, RedirectService>();
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-app.MapDefaultControllerRoute();
+app.UseStaticFiles();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", typeof(Program).Assembly.GetName().Name);
-        options.RoutePrefix = "swagger";
-        options.DisplayRequestDuration();
-    });
-
-    app.UseDeveloperExceptionPage();
-}
-
-
-app.UseHttpsRedirection();
+app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 app.UseRouting();
-app.UseAuthentication();
+app.UseIdentityServer();
 app.UseAuthorization();
 
-var cs = builder.GetAppConfiguration();
-if (cs.BehindSSLProxy)
-{
-    app.UseCors();
-    app.UseForwardedHeaders();
-}
+app.MapDefaultControllerRoute();
 
-app.MapControllers();
+//var builder = WebApplication.CreateBuilder(args);
 
-//app.UseEndpoints(endpoints =>
+//builder.AddServiceDefaults();
+
+//// Add services to the container.
+
+//builder.Services.AddControllers();
+//// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen(c =>
 //{
-//    endpoints.MapControllerRoute(
-//        name: "default",
-//        pattern: "{controller=Home}/{action=Index}/{id?}");
+//    c.SwaggerDoc("v1", new OpenApiInfo
+//    {
+//        Version = "v1",
+//        Title = "Bff MultiAppServer",
+//        Description = "MultiAppServer",
+//        License = new OpenApiLicense
+//        {
+//            Name = "MIT",
+//            Url = new Uri("https://github.com/ignaciojvig/ChatAPI/blob/master/LICENSE")
+//        }
+//    });
+//    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//    {
+//        Description = @"JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+//        Name = "Authorization",
+//        In = ParameterLocation.Header,
+//        Type = SecuritySchemeType.ApiKey,
+//        Scheme = "Bearer"
+//    });
+
+//    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+//    {
+//        {
+//            new OpenApiSecurityScheme
+//            {
+//                Reference = new OpenApiReference
+//                {
+//                    Type = ReferenceType.SecurityScheme,
+//                    Id = "Bearer"
+//                }
+//            },
+//            Array.Empty<string>()
+//        }
+//    });
 //});
 
-//#pragma warning disable ASP0014
-//app.UseEndpoints(endpoints =>
+//var config = builder.Configuration;
+
+//var applicationSettingsConfiguration = config.GetSection(nameof(AppConfiguration));
+
+//builder.Services.Configure<AppConfiguration>(applicationSettingsConfiguration);
+
+//builder.Services.AddOpenTelemetry()
+//    .WithTracing(tracing => tracing.AddSource(IdentityDbInitializer.ActivitySourceName));
+
+//builder.Services.AddProblemDetails();
+
+//builder.Services.AddAutoMapper(typeof(UserAutoMapper));
+
+//builder.AddSqlServerDbContext<UserDbContext>("identitydb");
+
+//builder.AddRabbitMQ("message");
+
+//builder.Services.AddSingleton<IdentityDbInitializer>();
+
+//builder.Services.AddIdentity<User, Role>(options =>
+//    {
+//        options.Password.RequiredLength = 8;
+//        options.Password.RequireDigit = true;
+//        options.Password.RequireLowercase = true;
+//        options.Password.RequireNonAlphanumeric = true;
+//        options.Password.RequireUppercase = true;
+//        options.User.RequireUniqueEmail = true;
+//    })
+//    .AddEntityFrameworkStores<UserDbContext>()
+//    .AddDefaultTokenProviders();
+
+//builder.Services.AddHealthChecks()
+//    .AddCheck<IdentityDbInitializerHealthCheck>("DbInitializer", null);
+
+//builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+//builder.Services.TryAddTransient(typeof(IStringLocalizer<>), typeof(ServerLocalizer<>));
+
+//builder.Services.AddHostedService(sp => sp.GetRequiredService<IdentityDbInitializer>());
+
+//builder.Services
+//    .AddTransient(typeof(IRepositoryAsync<,>), typeof(RepositoryAsync<,>))
+//    .AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+
+//builder.Services.AddApiVersioning(config =>
 //{
-//    endpoints.MapRazorPages();
-//    endpoints.MapControllers();
-//    endpoints.MapFallbackToFile("index.html");
+//    config.DefaultApiVersion = new ApiVersion(1, 0);
+//    config.AssumeDefaultVersionWhenUnspecified = true;
+//    config.ReportApiVersions = true;
 //});
-//#pragma warning restore ASP0014
 
-//app.MapRazorPages();
+//builder.Services.AddLazyCache();
 
-app.Run();
+//builder.ConfigureJwtBearToken();
+
+//var app = builder.Build();
+
+//app.MapDefaultEndpoints();
+
+//app.MapDefaultControllerRoute();
+
+//// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI(options =>
+//    {
+//        options.SwaggerEndpoint("/swagger/v1/swagger.json", typeof(Program).Assembly.GetName().Name);
+//        options.RoutePrefix = "swagger";
+//        options.DisplayRequestDuration();
+//    });
+
+//    app.UseDeveloperExceptionPage();
+//}
+
+
+//app.UseHttpsRedirection();
+//app.UseRouting();
+//app.UseAuthentication();
+//app.UseAuthorization();
+
+//var cs = builder.GetAppConfiguration();
+//if (cs.BehindSSLProxy)
+//{
+//    app.UseCors();
+//    app.UseForwardedHeaders();
+//}
+
+//app.MapControllers();
+
+//app.Run();

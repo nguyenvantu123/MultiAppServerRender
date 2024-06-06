@@ -7,12 +7,12 @@ namespace BlazorWebApi.Users.Repository
 {
     public class UnitOfWork<TId> : IUnitOfWork<TId>
     {
-        private readonly UserDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         private bool disposed;
         private Hashtable _repositories;
         private readonly IAppCache _cache;
 
-        public UnitOfWork(UserDbContext dbContext, IAppCache cache)
+        public UnitOfWork(ApplicationDbContext dbContext, IAppCache cache)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _cache = cache;
