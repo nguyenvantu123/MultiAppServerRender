@@ -1,4 +1,4 @@
-﻿namespace eShop.Identity.API.Models.ConsentViewModels
+﻿namespace BlazorWebApi.Users.Models.ConsentViewModels
 {
     public class ScopeViewModel
     {

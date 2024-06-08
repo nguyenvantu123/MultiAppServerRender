@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using eShop.Identity.API.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace BlazorWebApi.Users.Domain.Models
 {
-    public class UserRole : IdentityUserRole<Guid>
+    public class ApplicationUserRole : IdentityUserRole<Guid>
     {
 
         public override Guid UserId { get; set; }
@@ -11,8 +12,8 @@ namespace BlazorWebApi.Users.Domain.Models
         public override Guid RoleId { get; set; }
         
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public virtual ApplicationUser User { get; set; }
         [ForeignKey("RoleId")]
-        public virtual Role Role { get; set; }
+        public virtual ApplicationRole Role { get; set; }
     }
 }

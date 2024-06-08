@@ -1,8 +1,5 @@
-﻿using BlazorWebApi.Users.Domain.Models;
+﻿
 using eShop.Identity.API.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlazorWebApi.Users.Data
 {

@@ -60,7 +60,7 @@ namespace eShop.Identity.API.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtClaimTypes.Subject, user.Id),
+                new Claim(JwtClaimTypes.Subject, user.Id.ToString()),
                 new Claim(JwtClaimTypes.PreferredUserName, user.UserName),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
             };

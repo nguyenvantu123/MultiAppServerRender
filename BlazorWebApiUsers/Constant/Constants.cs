@@ -1,6 +1,6 @@
 ﻿namespace BlazorWebApi.Users.RoleConst
 {
-    public static class RoleConstants
+    public static class Constants
     {
         public const string SuperAdministratorRole = "SuperAdministratorRole";
         public const string BasicUserRole = "BasicUserRole";
