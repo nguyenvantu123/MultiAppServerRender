@@ -1,11 +1,11 @@
 -- Migration Command
 
-add-migration InitDb -OutputDir  Data/Migrations  -StartupProject BlazorWebApi.Users
+add-migration InitDb -OutputDir  Data/Migrations  -StartupProject BlazorWebApiUsers
 
 -- Update Database
 
-update-database -StartupProject BlazorWebApi.Users 
+update-database -StartupProject BlazorWebApiUsers 
 
 -- Remove Migration
 
-remove-migration -StartupProject BlazorWebApi.Users 
+remove-migration -StartupProject BlazorWebApiUsers 

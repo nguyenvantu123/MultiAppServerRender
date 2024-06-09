@@ -1,4 +1,6 @@
-﻿namespace BlazorWebApi.Users.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace BlazorWebApi.Users.Models
 {
     public class ApplicationUserRoleClaim : IdentityRoleClaim<Guid>
     {
@@ -9,6 +11,9 @@
         public string LastModifiedBy { get; set; }
         public DateTime? LastModifiedOn { get; set; }
         public virtual ApplicationRole Role { get; set; }
+
+        public virtual ApplicationUser User { get; set; }
+
 
         public ApplicationUserRoleClaim() : base()
         {
