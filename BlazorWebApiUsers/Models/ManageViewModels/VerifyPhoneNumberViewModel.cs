@@ -1,4 +1,4 @@
-﻿namespace eShop.Identity.API.Models.ManageViewModels
+﻿namespace BlazorWebApi.Users.Models.ManageViewModels
 {
     public record VerifyPhoneNumberViewModel
     {

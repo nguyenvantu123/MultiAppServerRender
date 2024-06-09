@@ -1,4 +1,4 @@
-﻿using eShop.Identity.API.Models;
+﻿using BlazorWebApi.Users.Models;
 
 namespace eShop.Identity.API.Services
 {

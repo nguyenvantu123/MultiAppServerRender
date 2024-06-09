@@ -1,4 +1,4 @@
-﻿namespace eShop.Identity.API.Models.AccountViewModels
+﻿namespace BlazorWebApi.Users.Models.AccountViewModels
 {
     public record SendCodeViewModel
     {

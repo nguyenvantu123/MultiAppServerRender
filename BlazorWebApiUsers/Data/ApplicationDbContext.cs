@@ -1,5 +1,4 @@
-﻿using BlazorWebApi.Users.Domain.Models;
-using eShop.Identity.API.Models;
+﻿using BlazorWebApi.Users.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

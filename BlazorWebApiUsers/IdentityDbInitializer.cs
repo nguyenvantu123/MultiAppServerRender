@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics;
 using BlazorWebApi.Users.Data;
-using BlazorWebApi.Users.Domain.Models;
+using BlazorWebApi.Users.Models;
 using BlazorWebApi.Users.RoleConst;
-using eShop.Identity.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

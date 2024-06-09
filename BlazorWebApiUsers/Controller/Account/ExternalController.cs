@@ -1,4 +1,4 @@
-using eShop.Identity.API.Models;
+using BlazorWebApi.Users.Models;
 using IdentityServer4.Events;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;

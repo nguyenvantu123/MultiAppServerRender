@@ -1,8 +1,7 @@
-﻿
-using BlazorWebApi.Users.Data;
-using eShop.Identity.API.Models;
+﻿using BlazorWebApi.Users.Data;
+using BlazorWebApi.Users.Models;
 
-namespace eShop.Identity.API;
+namespace BlazorWebApi.Users;
 
 public class UsersSeed(ILogger<UsersSeed> logger, UserManager<ApplicationUser> userManager) : IDbSeeder<ApplicationDbContext>
 {

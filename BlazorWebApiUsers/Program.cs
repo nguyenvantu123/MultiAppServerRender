@@ -1,7 +1,6 @@
 using Aspire.Minio.Client;
 using Aspire.MongoDb.Driver;
 using Aspire.RabbitMQ.Client;
-using BlazorWebApi.Users.Domain.Models;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -25,6 +24,7 @@ using System.Text;
 using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 using BlazorWebApi.Users;
 using BlazorWebApi.Users.Data;
+using BlazorWebApi.Users.Models;
 using Microsoft.AspNetCore.Mvc;
 using LazyCache.Providers;
 using LazyCache;
@@ -32,7 +32,6 @@ using Microsoft.Extensions.Caching.Memory;
 using ServiceDefaults;
 using IdentityServer4.Services;
 using eShop.Identity.API;
-using eShop.Identity.API.Models;
 using eShop.Identity.API.Services;
 
 

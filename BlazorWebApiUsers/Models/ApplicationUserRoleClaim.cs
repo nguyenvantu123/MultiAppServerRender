@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace BlazorWebApi.Users.Domain.Models
+﻿namespace BlazorWebApi.Users.Models
 {
     public class ApplicationUserRoleClaim : IdentityRoleClaim<Guid>
     {
