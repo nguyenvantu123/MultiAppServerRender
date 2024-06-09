@@ -2,7 +2,7 @@
 
 namespace BlazorWebApi.Users.Domain.Models
 {
-    public class UserRoleClaim : IdentityRoleClaim<Guid>
+    public class ApplicationUserRoleClaim : IdentityRoleClaim<Guid>
     {
         public string Description { get; set; }
         public string Group { get; set; }
@@ -10,14 +10,14 @@ namespace BlazorWebApi.Users.Domain.Models
         public DateTime CreatedOn { get; set; }
         public string LastModifiedBy { get; set; }
         public DateTime? LastModifiedOn { get; set; }
-        public virtual Role Role { get; set; }
+        public virtual ApplicationRole Role { get; set; }
 
-        public UserRoleClaim() : base()
+        public ApplicationUserRoleClaim() : base()
         {
 
         }
 
-        public UserRoleClaim(string roleClaimDescription = null, string roleClaimGroup = null) : base()
+        public ApplicationUserRoleClaim(string roleClaimDescription = null, string roleClaimGroup = null) : base()
         {
             Description = roleClaimDescription;
             Group = roleClaimGroup;

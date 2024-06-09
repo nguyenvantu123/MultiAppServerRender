@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\**" />
+    <Compile Remove="UserConst\**" />
+    <Content Remove="Commands\**" />
+    <Content Remove="UserConst\**" />
+    <EmbeddedResource Remove="Commands\**" />
+    <EmbeddedResource Remove="UserConst\**" />
+    <None Remove="Commands\**" />
+    <None Remove="UserConst\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="IdentityServer4" Version="4.1.2" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
@@ -38,10 +49,6 @@
     <ProjectReference Include="..\Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj" />
     <ProjectReference Include="..\Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj" />
     <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Commands\" />
   </ItemGroup>
 
 </Project>

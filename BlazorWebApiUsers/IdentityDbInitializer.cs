@@ -2,7 +2,7 @@
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Domain.Models;
 using BlazorWebApi.Users.RoleConst;
-using BlazorWebApi.Users.UserConst;
+using eShop.Identity.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,8 +23,8 @@ namespace BlazorWebApi.Users
             using (var scope = serviceProvider.CreateScope())
             {
                 //Resolve ASP .NET Core Identity with DI help
-                var userManager = (UserManager<User>)scope.ServiceProvider.GetService(typeof(UserManager<User>));
-                var roleManager = (RoleManager<Role>)scope.ServiceProvider.GetService(typeof(RoleManager<Role>));
+                var userManager = (UserManager<ApplicationUser>)scope.ServiceProvider.GetService(typeof(UserManager<ApplicationUser>));
+                var roleManager = (RoleManager<ApplicationRole>)scope.ServiceProvider.GetService(typeof(RoleManager<ApplicationRole>));
 
 
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -47,13 +47,13 @@ namespace BlazorWebApi.Users
         }
 
 
-        private async Task SeedAsync(UserManager<User> userManager, RoleManager<Role> roleManager)
+        private async Task SeedAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
             logger.LogInformation("Seeding database");
 
-            var adminRole = new Role
+            var adminRole = new ApplicationRole
             {
-                Name = RoleConstants.SuperAdministratorRole,
+                Name = Constant.SuperAdministratorRole,
                 Description = "Administrator role with full permissions",
                 CreatedBy = "Super Admin",
                 CreatedOn = DateTime.UtcNow,
@@ -72,7 +72,7 @@ namespace BlazorWebApi.Users
             }
 
             //Check if User Exists
-            var superUser = new User
+            var superUser = new ApplicationUser
             {
                 FirstName = "Super",
                 LastName = "Admin",
@@ -85,14 +85,13 @@ namespace BlazorWebApi.Users
                 CreatedBy = "Super Admin",
                 LastModifiedBy = "Super Admin",
                 LastModifiedOn = DateTime.UtcNow,
-                ProfilePictureDataUrl = "",
                 Id = Guid.NewGuid()
             };
             var superUserInDb = await userManager.FindByEmailAsync(superUser.Email);
             if (superUserInDb == null)
             {
                 await userManager.CreateAsync(superUser, UserConstants.DefaultPassword);
-                var result = await userManager.AddToRoleAsync(superUser, RoleConstants.SuperAdministratorRole);
+                var result = await userManager.AddToRoleAsync(superUser, Constant.SuperAdministratorRole);
                 if (result.Succeeded)
                 {
                     logger.LogInformation("Seeded Default SuperAdmin User.");
@@ -106,9 +105,9 @@ namespace BlazorWebApi.Users
                 }
             }
 
-            var basicRole = new Role
+            var basicRole = new ApplicationRole
             {
-                Name = RoleConstants.BasicUserRole,
+                Name = Constant.BasicUserRole,
                 Description = "User role",
                 CreatedBy = "Super Admin",
                 CreatedOn = DateTime.UtcNow,
@@ -116,7 +115,7 @@ namespace BlazorWebApi.Users
                 LastModifiedOn = DateTime.UtcNow,
                 Id = Guid.NewGuid()
             };
-            var basicRoleInDb = await roleManager.FindByNameAsync(RoleConstants.BasicUserRole);
+            var basicRoleInDb = await roleManager.FindByNameAsync(Constant.BasicUserRole);
             if (basicRoleInDb == null)
             {
                 await roleManager.CreateAsync(basicRole);
