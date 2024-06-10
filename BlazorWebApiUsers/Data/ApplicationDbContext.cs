@@ -8,23 +8,20 @@ using System.Reflection.Emit;
 namespace BlazorWebApi.Users.Data
 {
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid,
+        IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
+        ApplicationRoleClaim, IdentityUserToken<Guid>>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+        public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
 
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
             foreach (var property in builder.Model.GetEntityTypes()
-            .SelectMany(t => t.GetProperties())
-            .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
+           .SelectMany(t => t.GetProperties())
+           .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
             {
                 property.SetColumnType("decimal(18,2)");
             }
@@ -74,6 +71,13 @@ namespace BlazorWebApi.Users.Data
                 entity.ToTable("UserTokens", "Identity");
                 entity.HasNoKey();
             });
+
+
+            base.OnModelCreating(builder);
+
+            // Customize the ASP.NET Identity model and override the defaults if needed.
+            // For example, you can rename the ASP.NET Identity table names and more.
+            // Add your customizations after calling base.OnModelCreating(builder);
 
         }
     }
