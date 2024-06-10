@@ -9,5 +9,11 @@ namespace BlazorWebApi.Users.Models
         
         public override Guid RoleId { get; set; }
 
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser User { get; set; }
+
+        [ForeignKey("RoleId")]
+        public virtual ApplicationRole Role { get; set; }
+
     }
 }

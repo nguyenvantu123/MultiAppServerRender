@@ -43,12 +43,14 @@ builder.Services.AddControllersWithViews();
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
+//builder.Services.AddDbContext<ApplicationDbContext>();
+
 // Apply database migration automatically. Note that this approach is not
 // recommended for production scenarios. Consider generating SQL scripts from
 // migrations instead.
 builder.Services.AddMigration<ApplicationDbContext, UsersSeed>();
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
