@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorWebApi.Users.Models
 {
+    [Table("ApplicationRoleClaim")]
     public class ApplicationRoleClaim : IdentityRoleClaim<Guid>
     {
         public string Description { get; set; }

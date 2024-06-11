@@ -2,6 +2,7 @@
 
 namespace BlazorWebApi.Users.Models
 {
+    [Table("ApplicationUserRole")]
     public class ApplicationUserRole : IdentityUserRole<Guid>
     {
         public new Guid Id { get; set; }

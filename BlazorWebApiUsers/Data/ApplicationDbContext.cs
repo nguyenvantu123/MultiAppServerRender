@@ -21,6 +21,8 @@ namespace BlazorWebApi.Users.Data
 
             base.OnModelCreating(builder);
 
+            builder.HasDefaultSchema("Identity");
+
             foreach (var property in builder.Model.GetEntityTypes()
            .SelectMany(t => t.GetProperties())
            .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))

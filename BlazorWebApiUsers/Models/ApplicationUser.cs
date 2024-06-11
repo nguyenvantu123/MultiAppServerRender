@@ -1,6 +1,9 @@
-﻿namespace BlazorWebApi.Users.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BlazorWebApi.Users.Models
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
+    [Table("ApplicationUser")]
     public class ApplicationUser : IdentityUser<Guid>
     {
         public new Guid Id { get; set; }
