@@ -14,6 +14,8 @@ var bff = builder.AddProject<Projects.BlazorWebApiBff>("blazorwebapibff").WithRe
 
 var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles").WithReference(messaging);
 
-builder.AddProject<Projects.webfrontend>("webfrontend").WithReference(user).WithReference(bff);
+
+builder.AddProject<Projects.WebApp>("webapp");
+
 
 builder.Build().Run();

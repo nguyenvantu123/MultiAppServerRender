@@ -33,6 +33,8 @@ using ServiceDefaults;
 using IdentityServer4.Services;
 using eShop.Identity.API;
 using eShop.Identity.API.Services;
+using IdentityServer4.Stores;
+using IdentityServer4.EntityFramework.Stores;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,6 +84,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
 //builder.Services.AddDbContext<ApplicationDbContext>();
@@ -115,6 +118,7 @@ builder.Services.AddIdentityServer(options =>
 .AddAspNetIdentity<ApplicationUser>()
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
+//.Services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
@@ -132,6 +136,8 @@ app.UseIdentityServer();
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
+
+app.Run();
 
 //var builder = WebApplication.CreateBuilder(args);
 
@@ -270,4 +276,3 @@ app.MapDefaultControllerRoute();
 
 //app.MapControllers();
 
-//app.Run();

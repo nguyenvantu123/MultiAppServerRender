@@ -80,8 +80,6 @@ var applicationSettingsConfiguration = config.GetSection(nameof(AppConfiguration
 
 builder.Services.Configure<AppConfiguration>(applicationSettingsConfiguration);
 
-builder.Services.AddSingleton<SignalRHub>();
-
 builder.Services.AddScoped<UserStateProvider>();
 
 //builder.Services.AddScoped<AuthenticationStateProvider, UserStateProvider>();
@@ -146,7 +144,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-app.MapHub<SignalRHub>(ApplicationConstants.SignalR.HubUrl);
 
 app.UseAuthorization();
 app.UseAuthentication();

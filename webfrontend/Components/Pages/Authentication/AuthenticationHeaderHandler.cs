@@ -1,8 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using BlazorWeb.Constants.Application;
 using BlazorWeb.Extensions;
-using BlazorWeb.Hubs;
-using BlazorWeb.Services.BffApiClients;
 using BlazorWebApi.Users.Configurations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
