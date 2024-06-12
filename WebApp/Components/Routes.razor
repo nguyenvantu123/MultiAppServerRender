@@ -5,6 +5,10 @@
                 <NotAuthorized>
                     <Login />
                 </NotAuthorized>
+                <Authorizing>
+                    <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
+                    <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+                </Authorizing>
             </AuthorizeRouteView>
         </Found>
         <NotFound>

@@ -45,44 +45,6 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Bff MultiAppServer",
-        Description = "MultiAppServer",
-        License = new OpenApiLicense
-        {
-            Name = "MIT",
-            Url = new Uri("https://github.com/ignaciojvig/ChatAPI/blob/master/LICENSE")
-        }
-    });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = @"JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
 
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
@@ -94,7 +56,15 @@ builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 // migrations instead.
 builder.Services.AddMigration<ApplicationDbContext, UsersSeed>();
 
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = false;
+    options.SignIn.RequireConfirmedEmail = false;
+})
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
@@ -123,6 +93,8 @@ builder.Services.AddIdentityServer(options =>
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
+
+builder.Services.AddSingleton<CustomAuthService>();
 
 var app = builder.Build();
 
