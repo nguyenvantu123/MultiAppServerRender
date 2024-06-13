@@ -3,6 +3,11 @@
 @layout MainLayout
 @attribute [AllowAnonymous]
 @inject NavigationManager Nav
+@inject UserManager<IdentityUser> userManager
+@inject IUserStore<IdentityUser> userStore
+@inject RoleManager<IdentityRole> roleManager
+@inject SignInManager<IdentityUser> signInManager
+
 
 <EditForm Model="@_tokenModel" OnValidSubmit="SubmitAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
@@ -65,16 +70,33 @@
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var returnUrl = ReturnUrl ?? "/";
-        var url = new Uri(returnUrl, UriKind.RelativeOrAbsolute);
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     // var returnUrl = ReturnUrl ?? "/";
+    //     // var url = new Uri(returnUrl, UriKind.RelativeOrAbsolute);
 
-        Nav.NavigateTo(url.IsAbsoluteUri ? "/" : returnUrl);
-    }
+    //     // Nav.NavigateTo(url.IsAbsoluteUri ? "/" : returnUrl);
+    // }
 
     private async Task SubmitAsync()
     {
+        IdentityUser identityUser = new IdentityUser();
+        var setUserName = await userManager.SetUserNameAsync(identityUser, _tokenModel.Email);
+
+        var emailStore = (IUserEmailStore<IdentityUser>)userStore;
+
+        await emailStore.SetEmailAsync(identityUser, _tokenModel.Email, CancellationToken.None);
+
+        var result = await signInManager.PasswordSignInAsync(identityUser, _tokenModel.Password, false, lockoutOnFailure: false);
+
+        if (result.Succeeded)
+        {
+
+                var returnUrl = ReturnUrl ?? "/";
+                var url = new Uri(returnUrl, UriKind.RelativeOrAbsolute);
+
+                Nav.NavigateTo(url.IsAbsoluteUri ? "/" : returnUrl);
+        }
         // var result = await _authenticationManager.Login(_tokenModel);
         // if (!result.Succeeded)
         // {
