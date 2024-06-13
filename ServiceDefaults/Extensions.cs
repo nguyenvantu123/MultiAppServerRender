@@ -110,120 +110,120 @@ namespace Microsoft.Extensions.Hosting
             return config;
         }
 
-        public static IHostApplicationBuilder ConfigureJwtBearToken(this IHostApplicationBuilder builder)
-        {
+//        public static IHostApplicationBuilder ConfigureJwtBearToken(this IHostApplicationBuilder builder)
+//        {
 
-            var cs = GetAppConfiguration(builder);
+//            var cs = GetAppConfiguration(builder);
 
-            var key = Encoding.UTF8.GetBytes(cs.Secret);
-            builder.Services
-                .AddAuthentication(authentication =>
-                {
-                    authentication.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    authentication.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(
-                bearer =>
-                {
-                    bearer.RequireHttpsMetadata = false;
-                    bearer.SaveToken = true;
-                    //bearer.TokenValidationParameters.ValidateLifetime = false;
-                    bearer.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        RoleClaimType = ClaimTypes.Role,
-                        ClockSkew = TimeSpan.Zero
-                    };
-                    bearer.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            var accessToken = context.Request.Query["access_token"];
+//            var key = Encoding.UTF8.GetBytes(cs.Secret);
+//            builder.Services
+//                .AddAuthentication(authentication =>
+//                {
+//                    authentication.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//                    authentication.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//                })
+//                .AddJwtBearer(
+//                bearer =>
+//                {
+//                    bearer.RequireHttpsMetadata = false;
+//                    bearer.SaveToken = true;
+//                    //bearer.TokenValidationParameters.ValidateLifetime = false;
+//                    bearer.TokenValidationParameters = new TokenValidationParameters
+//                    {
+//                        ValidateIssuerSigningKey = true,
+//                        IssuerSigningKey = new SymmetricSecurityKey(key),
+//                        ValidateIssuer = false,
+//                        ValidateAudience = false,
+//                        RoleClaimType = ClaimTypes.Role,
+//                        ClockSkew = TimeSpan.Zero
+//                    };
+//                    bearer.Events = new JwtBearerEvents
+//                    {
+//                        OnMessageReceived = context =>
+//                        {
+//                            var accessToken = context.Request.Query["access_token"];
 
-                            // If the request is for our hub...
-                            var path = context.HttpContext.Request.Path;
-                            //if (!string.IsNullOrEmpty(accessToken) &&
-                            //    (path.StartsWithSegments(ApplicationConstants.SignalR.HubUrl)))
-                            //{
-                            //    // Read the token out of the query string
-                            //    context.Token = accessToken;
-                            //}
-                            return Task.CompletedTask;
-                        },
-                        OnAuthenticationFailed = c =>
-                        {
+//                            // If the request is for our hub...
+//                            var path = context.HttpContext.Request.Path;
+//                            //if (!string.IsNullOrEmpty(accessToken) &&
+//                            //    (path.StartsWithSegments(ApplicationConstants.SignalR.HubUrl)))
+//                            //{
+//                            //    // Read the token out of the query string
+//                            //    context.Token = accessToken;
+//                            //}
+//                            return Task.CompletedTask;
+//                        },
+//                        OnAuthenticationFailed = c =>
+//                        {
 
-                            var endpoint = c.HttpContext.GetEndpoint();
+//                            var endpoint = c.HttpContext.GetEndpoint();
 
-                            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
-                            {
-                                // if endpoint has AllowAnonymous doesn't validate the token expiration
-                                return Task.CompletedTask;
-                            }
+//                            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
+//                            {
+//                                // if endpoint has AllowAnonymous doesn't validate the token expiration
+//                                return Task.CompletedTask;
+//                            }
 
-                            if (c.Exception is SecurityTokenExpiredException)
-                            {
-                                c.Response.StatusCode = (int)HttpStatusCode.OK;
-                                c.Response.ContentType = "application/json";
+//                            if (c.Exception is SecurityTokenExpiredException)
+//                            {
+//                                c.Response.StatusCode = (int)HttpStatusCode.OK;
+//                                c.Response.ContentType = "application/json";
 
-                                var result = new ResultBase<bool> { StatusCode = 401, ErrorMessages = new List<string> { "The Token is expired." }, Success = false };
-                                return c.Response.WriteAsJsonAsync(result);
-                            }
-                            else
-                            {
-#if DEBUG
-                                c.NoResult();
-                                c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                c.Response.ContentType = "text/plain";
-                                return c.Response.WriteAsync(c.Exception.ToString());
-#else
-                                                                                            c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                                                                            c.Response.ContentType = "application/json";
-                                                                                            var result = JsonConvert.SerializeObject(Result.Fail(localizer["An unhandled error has occurred."]));
-                                                                                            return c.Response.WriteAsync(result);
-#endif
+//                                var result = new ResultBase<bool> { StatusCode = 401, ErrorMessages = new List<string> { "The Token is expired." }, Success = false };
+//                                return c.Response.WriteAsJsonAsync(result);
+//                            }
+//                            else
+//                            {
+//#if DEBUG
+//                                c.NoResult();
+//                                c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+//                                c.Response.ContentType = "text/plain";
+//                                return c.Response.WriteAsync(c.Exception.ToString());
+//#else
+//                                                                                            c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+//                                                                                            c.Response.ContentType = "application/json";
+//                                                                                            var result = JsonConvert.SerializeObject(Result.Fail(localizer["An unhandled error has occurred."]));
+//                                                                                            return c.Response.WriteAsync(result);
+//#endif
 
-                            }
+//                            }
 
-                            //return Task.CompletedTask;
-                        },
-                        OnChallenge = context =>
-                        {
-                            context.HandleResponse();
+//                            //return Task.CompletedTask;
+//                        },
+//                        OnChallenge = context =>
+//                        {
+//                            context.HandleResponse();
 
-                            if (!context.Response.HasStarted)
-                            {
-                                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                                context.Response.ContentType = "application/json";
+//                            if (!context.Response.HasStarted)
+//                            {
+//                                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+//                                context.Response.ContentType = "application/json";
 
-                                var result = new ResultBase<bool>
-                                { StatusCode = 401, ErrorMessages = new List<string> { "You are not Authorized." }, Success = false };
+//                                var result = new ResultBase<bool>
+//                                { StatusCode = 401, ErrorMessages = new List<string> { "You are not Authorized." }, Success = false };
 
-                                return context.Response.WriteAsJsonAsync(result);
-                                //return context.Response.WriteAsync(result);
-                            }
+//                                return context.Response.WriteAsJsonAsync(result);
+//                                //return context.Response.WriteAsync(result);
+//                            }
 
-                            return Task.CompletedTask;
-                        },
-                        OnForbidden = context =>
-                        {
-                            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                            context.Response.ContentType = "application/json";
+//                            return Task.CompletedTask;
+//                        },
+//                        OnForbidden = context =>
+//                        {
+//                            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+//                            context.Response.ContentType = "application/json";
 
 
-                            var result = new ResultBase<bool> { StatusCode = 403, ErrorMessages = new List<string> { "You are not authorized to access this resource." }, Success = false };
+//                            var result = new ResultBase<bool> { StatusCode = 403, ErrorMessages = new List<string> { "You are not authorized to access this resource." }, Success = false };
 
-                            //var result = JsonConvert.SerializeObject(Result.Fail("You are not authorized to access this resource.", 403));
-                            return context.Response.WriteAsJsonAsync(result);
-                        },
-                    };
-                });
+//                            //var result = JsonConvert.SerializeObject(Result.Fail("You are not authorized to access this resource.", 403));
+//                            return context.Response.WriteAsJsonAsync(result);
+//                        },
+//                    };
+//                });
 
-            return builder;
-        }
+//            return builder;
+//        }
 
 
         public static IHostApplicationBuilder AddDefaultHealthChecks(this IHostApplicationBuilder builder)

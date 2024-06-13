@@ -1,27 +1,58 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider />
+<MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<AuthorizeView>
+    <NotAuthorized>
+        <MudAppBar Elevation="4" Color="Color.Primary">
+            <MudSpacer />
+        </MudAppBar>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center" Style="height: 100vh;">
+            <MudPaper Elevation="25" Class="pa-8" Style="width: 500px;">
+                @Body
+            </MudPaper>
+        </MudContainer>
+    </NotAuthorized>
+    <Authorized>
+        <MudLayout>
+            Authorized
+            @*  <MainBody>
             @Body
-        </article>
-    </main>
-</div>
+            </MainBody> *@
+        </MudLayout>
+    </Authorized>
+</AuthorizeView>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+@code {
+
+    private MudTheme _currentTheme;
+
+    //Gets context that contains auth state
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    //Injects Nav Man to redirect
+    [Inject] private NavigationManager? NavMan { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _currentTheme = BlazorHeroTheme.DefaultTheme;
+
+        // //Check if user is logged in
+        // if (HttpContext == null || HttpContext.User.Identity.IsAuthenticated == false && (HttpContext.Request.Path != "/" || HttpContext.Request.Path == "/login"))
+        // {
+        //     //Redirects if not logged in
+        //     NavMan!.NavigateTo("Login", true);
+        // }
+
+        // StateHasChanged();
+
+        await Task.CompletedTask;
+
+    }
+}
