@@ -2,11 +2,6 @@
 
 @layout MainLayout
 @attribute [AllowAnonymous]
-@inject NavigationManager Nav
-@inject NavigationManager navigationManager
-@inject AuthenticationStateProvider authStateProvider
-
-@inject AppState appState
 
 <AuthorizeView Context="AuthorizeContext">
 
@@ -71,19 +66,6 @@
             {
                 <br />
                 <MudCard Elevation="2">
-                    <MudCardHeader>
-                        <CardHeaderContent>
-                            @if (!loginViewModel.EnableLocalLogin)
-                            {
-                                <MudIconButton Icon="@Icons.Material.Filled.Home" Class="ml-auto" Link="/" />
-                                <div class="logo">
-                                    <a href="/" title="@appState.AppName Home"><img src=@($"{Module.ContentPath}/images/logo.svg") style="width:100px;" title="@appState.AppName Home" alt="@appState.AppName" /><br />@appState.AppName</a>
-                                    <br />
-                                </div>
-                            }
-                            <MudText Typo="Typo.h5" Align="Align.Center">@L["Sign in with"]</MudText>
-                        </CardHeaderContent>
-                    </MudCardHeader>
                     <MudCardContent Class="d-flex align-center flex-column">
                         @foreach (var provider in loginViewModel.VisibleExternalProviders)
                         {
@@ -130,49 +112,65 @@
 
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
+    [Inject] NavigationManager navigationManager { get; set; }
+    [Inject] AuthenticationStateProvider authStateProvider { get; set; }
+
+
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
 
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
 
+    private IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+
     protected override async Task OnInitializedAsync()
     {
-        // if (Nav.TryGetQueryString("ReturnUrl", out string url))
-        //     ReturnUrl = url;
+        if (navigationManager.TryGetQueryString("ReturnUrl", out string url))
+            ReturnUrl = url;
 
-        // var user = (await authenticationStateTask).User;
+        var user = (await authenticationStateTask).User;
 
-        // if (user.Identity.IsAuthenticated)
-        //     Nav.NavigateTo(ReturnUrl ?? "/");
-        // else
-        // {
-        // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+        if (user.Identity.IsAuthenticated)
+            navigationManager.NavigateTo(ReturnUrl ?? "/");
+        else
+        {
+            identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
 
-        // try
-        // {
-        //     var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
+            try
+            {
+                var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
 
-        //     if (apiResponse.IsSuccessStatusCode)
-        //     {
-        //         loginViewModel = apiResponse.Result;
+                if (apiResponse.IsSuccessStatusCode)
+                {
+                    loginViewModel = apiResponse.Result;
 
-        //         if (loginViewModel.IsExternalLoginOnly)
-        //         {
-        //             if (!string.IsNullOrEmpty(ReturnUrl))
-        //                 ReturnUrl = Uri.EscapeDataString(ReturnUrl);
-        //             // we only have one option for logging in and it's an external provider
-        //             navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
-        //         }
-        //     }
-        //     else
-        //         viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["LoginFailed"]);
-        // }
-        // catch (Exception ex)
-        // {
-        //     viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
-        // }
-        // }
+                    if (loginViewModel.IsExternalLoginOnly)
+                    {
+                        if (!string.IsNullOrEmpty(ReturnUrl))
+                            ReturnUrl = Uri.EscapeDataString(ReturnUrl);
+                        // we only have one option for logging in and it's an external provider
+                        navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
+                    }
+                }
+                else
+                    viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["LoginFailed"]);
+            }
+            catch (Exception ex)
+            {
+                viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
+            }
+        }
+
     }
 
+    protected void SignInWith(ExternalProvider provider)
+    {
+        if (!string.IsNullOrEmpty(ReturnUrl))
+            ReturnUrl = Uri.EscapeDataString(ReturnUrl);
+
+        // navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{provider.AuthenticationScheme}/{ReturnUrl}", true);
+    }
 
     private async Task SubmitAsync()
     {
