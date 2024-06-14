@@ -2,17 +2,40 @@
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+
+                <Authorizing>
+                    <AuthorizingInProgress />
+                </Authorizing>
+
                 <NotAuthorized>
-                    <Login />
+                    @if (!context.User.Identity.IsAuthenticated)
+                    {
+                        <RedirectToLogin />
+                    }
+                    else
+                    {
+                        <UserNotAuthorized />
+                    }
+
                 </NotAuthorized>
             </AuthorizeRouteView>
         </Found>
+
         <NotFound>
             <CascadingAuthenticationState>
-                <LayoutView Layout="@typeof(NotFoundLayout)">
-                    <p>Sorry, there's nothing at this address.</p>
+                <LayoutView Layout="typeof(MainLayout)">
+                    <NotFoundLayout />
                 </LayoutView>
             </CascadingAuthenticationState>
         </NotFound>
+
+
+        @*   <NotFound>
+        <CascadingAuthenticationState>
+        <LayoutView Layout="@typeof(NotFoundLayout)">
+        <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+        </CascadingAuthenticationState>
+        </NotFound> *@
     </Router>
 </Error>

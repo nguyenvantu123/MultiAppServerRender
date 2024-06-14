@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
@@ -16,21 +18,37 @@ builder.Services.AddMudServices();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidation>();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-})
-    .AddIdentityCookies();
-
 builder.Services.AddSingleton<CookieEvents>();
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.EventsType = typeof(CookieEvents);
 });
 
-//builder.Services.ConfigureAuthentication()
+var authConfigName = "OidcSettings";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddOpenIdConnect(options =>
+{
+    options.Authority = builder.Configuration[$"{authConfigName}:Authority"];
+    options.ClientId = builder.Configuration[$"{authConfigName}:ClientId"];
+    options.ClientSecret = builder.Configuration[$"{authConfigName}:ClientSecret"];
+    options.ResponseType = builder.Configuration[$"{authConfigName}:ResponseType"];
+    options.Scope.Add("APIAccess");
+
+    options.SaveTokens = true;
+
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.SignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
+
+    options.RequireHttpsMetadata = false;
+});
+
 
 var app = builder.Build();
 
@@ -48,6 +66,9 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
