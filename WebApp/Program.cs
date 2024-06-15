@@ -16,39 +16,13 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddMudServices();
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidation>();
+//builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidation>();
 
-builder.Services.AddSingleton<CookieEvents>();
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.EventsType = typeof(CookieEvents);
-});
-
-var authConfigName = "OidcSettings";
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-})
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-.AddOpenIdConnect(options =>
-{
-    options.Authority = builder.Configuration[$"{authConfigName}:Authority"];
-    options.ClientId = builder.Configuration[$"{authConfigName}:ClientId"];
-    options.ClientSecret = builder.Configuration[$"{authConfigName}:ClientSecret"];
-    options.ResponseType = builder.Configuration[$"{authConfigName}:ResponseType"];
-    options.Scope.Add("APIAccess");
-
-    options.SaveTokens = true;
-
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.SignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
-
-    options.RequireHttpsMetadata = false;
-});
-
+//builder.Services.AddSingleton<CookieEvents>();
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//    options.EventsType = typeof(CookieEvents);
+//});
 
 var app = builder.Build();
 

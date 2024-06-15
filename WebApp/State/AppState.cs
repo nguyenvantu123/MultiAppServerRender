@@ -1,10 +1,12 @@
-﻿using BlazorBoilerplate.Shared.Dto.Db;
-using BlazorBoilerplate.Shared.Interfaces;
-using BlazorBoilerplate.Shared.Localizer;
+﻿
 using Humanizer;
 using Microsoft.Extensions.Localization;
+using ServiceDefaults;
+using WebApp.Interfaces;
+using WebApp.Localizer;
+using WebApp.Models;
 
-namespace BlazorBoilerplate.Shared.Services
+namespace WebApp.Services
 {
     public class AppState
     {
@@ -12,7 +14,7 @@ namespace BlazorBoilerplate.Shared.Services
 
         public event Action OnChange;
 
-        private readonly IApiClient _apiClient;
+        private readonly IAccountApiClient _apiClient;
         private UserProfile _userProfile { get; set; }
 
         private readonly IStringLocalizer<Global> L;
@@ -20,7 +22,7 @@ namespace BlazorBoilerplate.Shared.Services
         public readonly string AppName = string.Empty;
         public readonly string AppShortName = string.Empty;
 
-        public AppState(IApiClient apiClient, IStringLocalizer<Global> l)
+        public AppState(IAccountApiClient apiClient, IStringLocalizer<Global> l)
         {
             L = l;
             AppName = L["AppName"].ToString().Humanize(LetterCasing.Title);
@@ -46,7 +48,7 @@ namespace BlazorBoilerplate.Shared.Services
 
         public async Task UpdateUserProfile()
         {
-            await _apiClient.SaveChanges();
+            //await _apiClient.SaveChanges();
         }
 
         public void ClearUserProfile()

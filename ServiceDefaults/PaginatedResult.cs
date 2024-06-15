@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ServiceDefaults
 {
-    public class PaginatedResult<T> : IResultBase
+    public class PaginatedResult<T> 
     {
         public PaginatedResult(List<T>? result)
         {

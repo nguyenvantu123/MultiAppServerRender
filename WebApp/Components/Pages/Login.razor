@@ -112,6 +112,8 @@
 
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
+
+
     [Inject] NavigationManager navigationManager { get; set; }
     [Inject] AuthenticationStateProvider authStateProvider { get; set; }
 
@@ -122,7 +124,11 @@
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
 
+    [Inject] protected HttpClient httpClient { get; set; }
+
     private IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+
+    [Inject] IViewNotifier viewNotifier { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,7 +137,7 @@
 
         var user = (await authenticationStateTask).User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user.Identity!.IsAuthenticated)
             navigationManager.NavigateTo(ReturnUrl ?? "/");
         else
         {
@@ -141,7 +147,7 @@
             {
                 var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
 
-                if (apiResponse.IsSuccessStatusCode)
+                if (apiResponse.Success)
                 {
                     loginViewModel = apiResponse.Result;
 
@@ -154,11 +160,11 @@
                     }
                 }
                 else
-                    viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["LoginFailed"]);
+                    viewNotifier.Show(string.Join(", ", apiResponse.ErrorMessages), ViewNotifierType.Error, "LoginFailed");
             }
             catch (Exception ex)
             {
-                viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
+                viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, "LoginFailed");
             }
         }
 
@@ -169,7 +175,7 @@
         if (!string.IsNullOrEmpty(ReturnUrl))
             ReturnUrl = Uri.EscapeDataString(ReturnUrl);
 
-        // navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{provider.AuthenticationScheme}/{ReturnUrl}", true);
+        navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{provider.AuthenticationScheme}/{ReturnUrl}", true);
     }
 
     private async Task SubmitAsync()
