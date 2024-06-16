@@ -129,8 +129,22 @@
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
 
+
+    [Inject] NavigationManager navigationManager { get; set; }
+    [Inject] AuthenticationStateProvider authStateProvider { get; set; }
+
+
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
+
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
+
+    [Inject] protected HttpClient httpClient { get; set; }
+
+    private IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+
+    [Inject] IViewNotifier viewNotifier { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -169,12 +183,16 @@
         //     viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
         // }
         // }
-    }
+        }
 
+    }
 
     private async Task SubmitAsync()
     {
+        if (!string.IsNullOrEmpty(ReturnUrl))
+            ReturnUrl = Uri.EscapeDataString(ReturnUrl);
 
+        navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{provider.AuthenticationScheme}/{ReturnUrl}", true);
     }
 
     private async Task SignInWith(ExternalProvider externalProvider)

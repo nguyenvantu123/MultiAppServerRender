@@ -35,9 +35,16 @@ namespace ServiceDefaults
         //    StatusCode = statusCode;
         //}
 
+        [DataMember(EmitDefaultValue = false)]
+        public T Result { get; set; }
+
+        [DataMember]
         public int StatusCode { get; set; }
+
+        [DataMember]
         public bool Success { get; set; }
-        // public T Result { get; set; }
+
+        [DataMember]
         public List<string> ErrorMessages { get; set; }
 
     }
