@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_currentTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<AuthorizeView>
+    <NotAuthorized>   
+        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center" Style="height: 100vh;">
+            <MudPaper Elevation="25" Class="pa-8" Style="width: 500px;">
+                @Body
+            </MudPaper>
+        </MudContainer>
+    </NotAuthorized>
+    <Authorized>
+        <MudLayout>
+            Authorized
+            @*  <MainBody>
+            @Body
+            </MainBody> *@
+        </MudLayout>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+    private MudTheme _currentTheme;
+
+    //Gets context that contains auth state
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    //Injects Nav Man to redirect
+    [Inject] private NavigationManager? NavMan { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _currentTheme = BlazorHeroTheme.DefaultTheme;
+        await Task.CompletedTask;
+
+    }
+}

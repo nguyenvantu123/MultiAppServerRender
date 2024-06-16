@@ -1,3 +1,5 @@
+using IdentityModel;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 
@@ -8,12 +10,35 @@ var messaging = builder.AddRabbitMQ("messaging");
 
 var fileCache = builder.AddRedis("fileCache");
 
-var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers").WithReference(sqlIndentity).WithReference(messaging);
+//var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers").WithReference(sqlIndentity).WithReference(messaging);
 
-var bff = builder.AddProject<Projects.BlazorWebApiBff>("blazorwebapibff").WithReference(user).WithReference(messaging); ;
+var launchProfileName = ShouldUseHttpForEndpoints() ? "http" : "https";
+
+var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers", launchProfileName)
+    .WithExternalHttpEndpoints()
+    .WithReference(sqlIndentity);
+
+var identityEndpoint = user.GetEndpoint(launchProfileName);
 
 var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles").WithReference(messaging);
 
-builder.AddProject<Projects.webfrontend>("webfrontend").WithReference(user).WithReference(bff);
+//builder.AddProject<Projects.WebApp>("webapp").WithReference(user);
+
+var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
+    .WithExternalHttpEndpoints().WithEnvironment("IdentityUrl", identityEndpoint);
+
+
+webApp.WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
+
 
 builder.Build().Run();
+
+
+static bool ShouldUseHttpForEndpoints()
+{
+    const string EnvVarName = "ESHOP_USE_HTTP_ENDPOINTS";
+    var envValue = Environment.GetEnvironmentVariable(EnvVarName);
+
+    // Attempt to parse the environment variable value; return true if it's exactly "1".
+    return int.TryParse(envValue, out int result) && result == 1;
+}

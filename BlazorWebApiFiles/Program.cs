@@ -17,7 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.ConfigureJwtBearToken();
+//builder.ConfigureJwtBearToken();
 
 builder.AddRabbitMQ("messaging");
 

@@ -1,0 +1,231 @@
+﻿@page "/login"
+
+@layout MainLayout
+@attribute [AllowAnonymous]
+@inject NavigationManager Nav
+@inject NavigationManager navigationManager
+@inject AuthenticationStateProvider authStateProvider
+
+<AuthorizeView Context="AuthorizeContext">
+
+    <Authorized>
+        <LoadingBackground>
+            <label>Loading</label>
+        </LoadingBackground>
+    </Authorized>
+    <NotAuthorized>
+
+        @if (loginViewModel == null)
+        {
+            <LoadingBackground />
+        }
+        else
+        {
+            @if (loginViewModel.EnableLocalLogin)
+            {
+                <EditForm Model="@_tokenModel" OnValidSubmit="SubmitAsync">
+                    <FluentValidationValidator @ref="_fluentValidationValidator" />
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <div class="d-flex justify-center">
+                                <MudIcon Icon="@CustomIcons.BlazorHero" Color="Color.Primary" Size="Size.Large" ViewBox="0 0 500 500" Style="width: 100px; height: 100px;" />
+                            </div>
+                        </MudItem>
+                        <DataAnnotationsValidator />
+                        <MudItem xs="12">
+                            <div class="d-flex justify-center">
+                                <MudText Typo="Typo.h4">Title</MudText>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <div class="d-flex justify-center">
+                                <MudText>Description</MudText>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <div class="d-flex justify-center">
+                                <MudText>Don't have an account? <MudLink Href="/register">Register here</MudLink></MudText>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField T="string" Label="E-mail" Variant="Variant.Outlined"
+                                          @bind-Value="_tokenModel.Email" For="@(() => _tokenModel.Email)" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField Label="Password" Variant="Variant.Outlined"
+                                          @bind-Value="_tokenModel.Password" For="@(() => _tokenModel.Password)"
+                                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-space-between align-center">
+                            <MudCheckBox T="bool" Label="Remember me?" Color="Color.Primary" Class="ml-n1"></MudCheckBox> <MudLink Href="/account/forgot-password">Forgot password?</MudLink>
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-center">
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Disabled="@(!Validated)" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign In</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </EditForm>
+            }
+            @if (loginViewModel.VisibleExternalProviders.Any())
+            {
+                <br />
+                <MudCard Elevation="2">
+                    @*    <MudCardHeader>
+            <CardHeaderContent>
+            @if (!loginViewModel.EnableLocalLogin)
+            {
+            <MudIconButton Icon="@Icons.Material.Filled.Home" Class="ml-auto" Link="/" />
+            <div class="logo">
+            <a href="/" title="@appState.AppName Home"><img src=@($"{Module.ContentPath}/images/logo.svg") style="width:100px;" title="@appState.AppName Home" alt="@appState.AppName" /><br />@appState.AppName</a>
+            <br />
+            </div>
+            }
+            <MudText Typo="Typo.h5" Align="Align.Center">@L["Sign in with"]</MudText>
+            </CardHeaderContent>
+            </MudCardHeader> *@
+                    <MudCardContent Class="d-flex align-center flex-column">
+                        @foreach (var provider in loginViewModel.VisibleExternalProviders)
+                        {
+                            @switch (provider.AuthenticationScheme)
+                            {
+                                case "Google":
+                                case "Facebook":
+                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))"><img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg" /></MudButton>
+                                    break;
+                                case "Twitter":
+                                case "Microsoft":
+                                case "Apple":
+                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))"><img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg" />&nbsp;@provider.DisplayName</MudButton>
+                                    break;
+                                default:
+                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))">@provider.DisplayName</MudButton>
+                                    break;
+                            }
+                        }
+                    </MudCardContent>
+                </MudCard>
+            }
+            @if (!loginViewModel.EnableLocalLogin && !loginViewModel.VisibleExternalProviders.Any())
+            {
+                <MudAlert Severity="Severity.Warning">
+                    <strong>Invalid login request</strong>
+                    There are no login schemes configured for this client.
+                </MudAlert>
+            }
+
+        }
+
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    private FluentValidationValidator _fluentValidationValidator;
+    private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
+    private TokenRequest _tokenModel = new();
+
+    protected LoginViewModel loginViewModel;
+
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // if (Nav.TryGetQueryString("ReturnUrl", out string url))
+        //     ReturnUrl = url;
+
+        // var user = (await authenticationStateTask).User;
+
+        // if (user.Identity.IsAuthenticated)
+        //     Nav.NavigateTo(ReturnUrl ?? "/");
+        // else
+        // {
+        // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+
+        // try
+        // {
+        //     var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
+
+        //     if (apiResponse.IsSuccessStatusCode)
+        //     {
+        //         loginViewModel = apiResponse.Result;
+
+        //         if (loginViewModel.IsExternalLoginOnly)
+        //         {
+        //             if (!string.IsNullOrEmpty(ReturnUrl))
+        //                 ReturnUrl = Uri.EscapeDataString(ReturnUrl);
+        //             // we only have one option for logging in and it's an external provider
+        //             navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
+        //         }
+        //     }
+        //     else
+        //         viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["LoginFailed"]);
+        // }
+        // catch (Exception ex)
+        // {
+        //     viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
+        // }
+        // }
+    }
+
+
+    private async Task SubmitAsync()
+    {
+
+    }
+
+    private async Task SignInWith(ExternalProvider externalProvider)
+    {
+
+    }
+
+    private bool _passwordVisibility;
+    private InputType _passwordInput = InputType.Password;
+    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void TogglePasswordVisibility()
+    {
+        if (_passwordVisibility)
+        {
+            _passwordVisibility = false;
+            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+            _passwordInput = InputType.Password;
+        }
+        else
+        {
+            _passwordVisibility = true;
+            _passwordInputIcon = Icons.Material.Filled.Visibility;
+            _passwordInput = InputType.Text;
+        }
+    }
+
+    public class TokenRequest
+    {
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+    }
+
+    [ExcludeFromCodeCoverage]
+    public class CustomIcons
+    {
+        public static string BlazorHero { get; } = "<path d=\"M 37.00,90.00 C 37.00,90.00 328.90,90.00 328.90,90.00 328.90,90.00 328.90,410.00 328.90,410.00 328.90,410.00 37.00,410.00 37.00,410.00 37.00,410.00 37.00,90.00 37.00,90.00 Z M 381.49,90.75 C 381.49,90.75 464.00,90.75 464.00,90.75 464.00,90.75 464.00,410.00 464.00,410.00 464.00,410.00 381.49,410.00 381.49,410.00 381.49,410.00 381.49,280.80 381.49,280.80 381.49,280.80 337.37,280.80 337.37,280.80 337.37,280.80 337.37,220.44 337.37,220.44 337.37,220.44 381.49,220.44 381.49,220.44 381.49,220.44 381.49,90.75 381.49,90.75 Z M 119.51,150.36 C 119.51,150.36 119.51,220.44 119.51,220.44 119.51,220.44 236.91,220.44 236.91,220.44 236.91,220.44 236.91,280.80 236.91,280.80 236.91,280.80 119.51,280.80 119.51,280.80 119.51,280.80 119.51,349.64 119.51,349.64 119.51,349.64 246.39,349.64 246.39,349.64 246.39,349.64 246.39,150.36 246.39,150.36 246.39,150.36 119.51,150.36 119.51,150.36 Z\"/>";
+    }
+
+    // private void FillAdministratorCredentials()
+    // {
+    //     _tokenModel.Email = "mukesh@blazorhero.com";
+    //     _tokenModel.Password = "123Pa$$word!";
+    // }
+
+    // private void FillBasicUserCredentials()
+    // {
+    //     _tokenModel.Email = "john@blazorhero.com";
+    //     _tokenModel.Password = "123Pa$$word!";
+    // }
+}

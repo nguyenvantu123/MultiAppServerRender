@@ -33,6 +33,8 @@ using ServiceDefaults;
 using IdentityServer4.Services;
 using eShop.Identity.API;
 using eShop.Identity.API.Services;
+using IdentityServer4.Stores;
+using IdentityServer4.EntityFramework.Stores;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,14 +43,28 @@ builder.AddServiceDefaults();
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+
+//builder.Services.AddDbContext<ApplicationDbContext>();
 
 // Apply database migration automatically. Note that this approach is not
 // recommended for production scenarios. Consider generating SQL scripts from
 // migrations instead.
 builder.Services.AddMigration<ApplicationDbContext, UsersSeed>();
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = false;
+    options.SignIn.RequireConfirmedEmail = false;
+})
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
@@ -72,10 +88,13 @@ builder.Services.AddIdentityServer(options =>
 .AddAspNetIdentity<ApplicationUser>()
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
+//.Services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
+
+builder.Services.AddSingleton<CustomAuthService>();
 
 var app = builder.Build();
 
@@ -89,6 +108,8 @@ app.UseIdentityServer();
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
+
+app.Run();
 
 //var builder = WebApplication.CreateBuilder(args);
 
@@ -227,4 +248,3 @@ app.MapDefaultControllerRoute();
 
 //app.MapControllers();
 
-//app.Run();

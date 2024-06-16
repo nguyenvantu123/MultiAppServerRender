@@ -79,7 +79,7 @@ builder.Services.AddRefitClient<IUserApiClient>()
 builder.Services.AddTransient<AuthenticationHeaderHandler>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
-builder.ConfigureJwtBearToken();
+//builder.ConfigureJwtBearToken();
 
 builder.Services.AddAuthorization();
 

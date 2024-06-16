@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ServiceDefaults
 {
-    public class ResultBase<T> : IResultBase
+    public class ApiResponseDto<T> 
     {
-        public ResultBase()
+        public ApiResponseDto()
         {
             StatusCode = 200;
             ErrorMessages = new List<string>();
@@ -19,7 +20,7 @@ namespace ServiceDefaults
         
         public T Result { get; set; }
 
-        public ResultBase(T result)
+        public ApiResponseDto(T result)
         {
             Success = true;
             Result = result;
@@ -39,5 +40,10 @@ namespace ServiceDefaults
         // public T Result { get; set; }
         public List<string> ErrorMessages { get; set; }
 
+    }
+
+    [DataContract]
+    public class ApiResponseDto : ApiResponseDto<object>
+    {
     }
 }
