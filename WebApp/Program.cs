@@ -17,7 +17,6 @@ using WebApp.Settings;
 using static BlazorBoilerplate.Constants.PasswordPolicy;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using BlazorBoilerplate.Server.Extensions;
-using BlazorBoilerplate.Shared.Providers;
 using BlazorBoilerplate.Shared.Interfaces;
 using BlazorBoilerplate.Shared.Services;
 

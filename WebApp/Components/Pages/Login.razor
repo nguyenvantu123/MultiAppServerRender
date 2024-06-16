@@ -146,53 +146,13 @@
 
     [Inject] IViewNotifier viewNotifier { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        // if (Nav.TryGetQueryString("ReturnUrl", out string url))
-        //     ReturnUrl = url;
-
-        // var user = (await authenticationStateTask).User;
-
-        // if (user.Identity.IsAuthenticated)
-        //     Nav.NavigateTo(ReturnUrl ?? "/");
-        // else
-        // {
-        // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
-
-        // try
-        // {
-        //     var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
-
-        //     if (apiResponse.IsSuccessStatusCode)
-        //     {
-        //         loginViewModel = apiResponse.Result;
-
-        //         if (loginViewModel.IsExternalLoginOnly)
-        //         {
-        //             if (!string.IsNullOrEmpty(ReturnUrl))
-        //                 ReturnUrl = Uri.EscapeDataString(ReturnUrl);
-        //             // we only have one option for logging in and it's an external provider
-        //             navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
-        //         }
-        //     }
-        //     else
-        //         viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["LoginFailed"]);
-        // }
-        // catch (Exception ex)
-        // {
-        //     viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
-        // }
-        // }
-        }
-
-    }
 
     private async Task SubmitAsync()
     {
         if (!string.IsNullOrEmpty(ReturnUrl))
             ReturnUrl = Uri.EscapeDataString(ReturnUrl);
 
-        navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{provider.AuthenticationScheme}/{ReturnUrl}", true);
+        // navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{provider.AuthenticationScheme}/{ReturnUrl}", true);
     }
 
     private async Task SignInWith(ExternalProvider externalProvider)
@@ -246,4 +206,43 @@
     //     _tokenModel.Email = "john@blazorhero.com";
     //     _tokenModel.Password = "123Pa$$word!";
     // }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // if (Nav.TryGetQueryString("ReturnUrl", out string url))
+        //     ReturnUrl = url;
+
+        // var user = (await authenticationStateTask).User;
+
+        // if (user.Identity.IsAuthenticated)
+        //     Nav.NavigateTo(ReturnUrl ?? "/");
+        // else
+        // {
+        // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+
+        // try
+        // {
+        //     var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
+
+        //     if (apiResponse.IsSuccessStatusCode)
+        //     {
+        //         loginViewModel = apiResponse.Result;
+
+        //         if (loginViewModel.IsExternalLoginOnly)
+        //         {
+        //             if (!string.IsNullOrEmpty(ReturnUrl))
+        //                 ReturnUrl = Uri.EscapeDataString(ReturnUrl);
+        //             // we only have one option for logging in and it's an external provider
+        //             navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
+        //         }
+        //     }
+        //     else
+        //         viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["LoginFailed"]);
+        // }
+        // catch (Exception ex)
+        // {
+        //     viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
+        // }
+        // }
+    }
 }
