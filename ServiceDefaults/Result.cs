@@ -18,8 +18,6 @@ namespace ServiceDefaults
 
         }
         
-        public T Result { get; set; }
-
         public ApiResponseDto(T result)
         {
             Success = true;

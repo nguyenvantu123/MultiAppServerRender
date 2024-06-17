@@ -17,8 +17,14 @@ using WebApp.Settings;
 using static BlazorBoilerplate.Constants.PasswordPolicy;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using BlazorBoilerplate.Server.Extensions;
-using BlazorBoilerplate.Shared.Interfaces;
-using BlazorBoilerplate.Shared.Services;
+using WebApp.Interfaces;
+using BlazorBoilerplate.Theme.Material.Services;
+using eShop.ServiceDefaults;
+using Breeze.AspNetCore;
+using Breeze.Core;
+using Newtonsoft.Json.Serialization;
+using WebApp.Localizer;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,14 +53,16 @@ var configuration = builder.Configuration;
 
 string projectName = nameof(WebApp);
 
-
 //builder.Services.AddAuthorization();
-builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
 
 var authBuilder = builder.Services.AddAuthentication(options =>
         {
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            //options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         }).AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(60));
 
 builder.Services.AddScoped<EntityPermissions>();
@@ -87,7 +95,32 @@ builder.Services.Configure<IdentityOptions>(options =>
     }
 });
 
+builder.Services.AddMvc().AddNewtonsoftJson(opt =>
+{
+    // Set Breeze defaults for entity serialization
+    var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
+    if (ss.ContractResolver is DefaultContractResolver resolver)
+    {
+        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
+    }
+})   // Add Breeze exception filter to send errors back to the client
+           .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
+           .AddViewLocalization().AddDataAnnotationsLocalization(options =>
+           {
+               options.DataAnnotationLocalizerProvider = (type, factory) =>
+               {
+                   return factory.Create(typeof(Global));
+               };
+           });
+//.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LocalizationRecordValidator>());
+
+builder.Services.AddFluentValidationAutoValidation();
+
+//builder.Services.AddSingleton<AccountApiClient>();
 builder.Services.AddScoped<IAccountApiClient, AccountApiClient>();
+
+builder.Services.AddHttpClient<AccountApiClient>(o => o.BaseAddress = new("http://blazorwebapiusers"))
+           .AddAuthToken();
 
 
 #region Cookies

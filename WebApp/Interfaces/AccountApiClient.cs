@@ -1,5 +1,7 @@
 ﻿using BlazorBoilerplate.Shared.Dto;
+using BlazorBoilerplate.Shared.Dto.Db;
 using BlazorBoilerplate.Shared.Dto.Email;
+using BlazorBoilerplate.Shared.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using ServiceDefaults;
@@ -12,12 +14,10 @@ namespace WebApp.Services
     public class AccountApiClient : IAccountApiClient
     {
         private readonly HttpClient _httpClient;
-        private readonly NavigationManager _navigationManager;
         private readonly IJSRuntime _jsRuntime;
 
-        public AccountApiClient(NavigationManager navigationManager, HttpClient httpClient, IJSRuntime jsRuntime)
+        public AccountApiClient( HttpClient httpClient, IJSRuntime jsRuntime)
         {
-            _navigationManager = navigationManager;
             _httpClient = httpClient;
             _jsRuntime = jsRuntime;
         }
@@ -74,13 +74,7 @@ namespace WebApp.Services
             {
                 var logoutModel = new AccountFormModel() { ReturnUrl = returnUrl };
 
-                if (AppState.Runtime == BlazorRuntime.WebAssembly)
-                {
-                    if (!string.IsNullOrEmpty(logoutModel.ReturnUrl))
-                        _navigationManager.NavigateTo(logoutModel.ReturnUrl, true);
-                }
-                else
-                    await SubmitServerForm("/server/logout/", logoutModel);
+                await SubmitServerForm("/server/logout/", logoutModel);
             }
 
             return response;

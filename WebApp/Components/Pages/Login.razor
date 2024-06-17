@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/Account/Login"
 
 @layout MainLayout
 @attribute [AllowAnonymous]
@@ -129,9 +129,10 @@
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
 
+    [Inject] protected IStringLocalizer<Global> L { get; set; }
 
-    [Inject] NavigationManager navigationManager { get; set; }
-    [Inject] AuthenticationStateProvider authStateProvider { get; set; }
+    // [Inject] NavigationManager navigationManager { get; set; }
+    // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
 
 
     [CascadingParameter]
@@ -209,40 +210,40 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // if (Nav.TryGetQueryString("ReturnUrl", out string url))
-        //     ReturnUrl = url;
+        if (navigationManager.TryGetQueryString("ReturnUrl", out string url))
+            ReturnUrl = url;
 
-        // var user = (await authenticationStateTask).User;
+        var user = (await authenticationStateTask).User;
 
-        // if (user.Identity.IsAuthenticated)
-        //     Nav.NavigateTo(ReturnUrl ?? "/");
-        // else
-        // {
-        // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+        if (user.Identity.IsAuthenticated)
+            navigationManager.NavigateTo(ReturnUrl ?? "/");
+        else
+        {
+            identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
 
-        // try
-        // {
-        //     var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
+            try
+            {
+                var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
 
-        //     if (apiResponse.IsSuccessStatusCode)
-        //     {
-        //         loginViewModel = apiResponse.Result;
+                if (apiResponse.Success)
+                {
+                    loginViewModel = apiResponse.Result;
 
-        //         if (loginViewModel.IsExternalLoginOnly)
-        //         {
-        //             if (!string.IsNullOrEmpty(ReturnUrl))
-        //                 ReturnUrl = Uri.EscapeDataString(ReturnUrl);
-        //             // we only have one option for logging in and it's an external provider
-        //             navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
-        //         }
-        //     }
-        //     else
-        //         viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["LoginFailed"]);
-        // }
-        // catch (Exception ex)
-        // {
-        //     viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
-        // }
-        // }
+                    if (loginViewModel.IsExternalLoginOnly)
+                    {
+                        if (!string.IsNullOrEmpty(ReturnUrl))
+                            ReturnUrl = Uri.EscapeDataString(ReturnUrl);
+                        // we only have one option for logging in and it's an external provider
+                        navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
+                    }
+                }
+                else
+                    viewNotifier.Show(string.Join(",", apiResponse.ErrorMessages), ViewNotifierType.Error, L["LoginFailed"]);
+            }
+            catch (Exception ex)
+            {
+                viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["LoginFailed"]);
+            }
+        }
     }
 }

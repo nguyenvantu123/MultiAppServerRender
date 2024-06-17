@@ -28,7 +28,7 @@ var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
     .WithExternalHttpEndpoints().WithEnvironment("IdentityUrl", identityEndpoint);
 
 
-webApp.WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
+webApp.WithReference(user).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
 
 
 builder.Build().Run();
