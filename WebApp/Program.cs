@@ -25,6 +25,8 @@ using Breeze.Core;
 using Newtonsoft.Json.Serialization;
 using WebApp.Localizer;
 using FluentValidation.AspNetCore;
+using Microsoft.JSInterop;
+using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,7 +76,6 @@ builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandle
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
 
 
-
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = RequireDigit;
@@ -116,11 +117,10 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
 
 builder.Services.AddFluentValidationAutoValidation();
 
-//builder.Services.AddSingleton<AccountApiClient>();
-builder.Services.AddScoped<IAccountApiClient, AccountApiClient>();
-
-builder.Services.AddHttpClient<AccountApiClient>(o => o.BaseAddress = new("http://blazorwebapiusers"))
-           .AddAuthToken();
+builder.Services.AddHttpClient<IAccountApiClient, AccountApiClient>(httpClient =>
+{
+    httpClient.BaseAddress = new("http://blazorwebapiusers");
+}).AddAuthToken();
 
 
 #region Cookies
@@ -177,175 +177,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 #endregion
 
-//#region ExternalAuthProviders
-////https://github.com/dotnet/aspfSignInSchemenetcore/blob/master/src/Security/Authentication/samples/SocialSample/Startup.cs
-////https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins
-//if (Convert.ToBoolean(configuration["ExternalAuthProviders:Google:Enabled"] ?? "false"))
-//{
-//    authBuilder.AddGoogle(options =>
-//    {
-//        options.ClientId = configuration["ExternalAuthProviders:Google:ClientId"];
-//        options.ClientSecret = configuration["ExternalAuthProviders:Google:ClientSecret"];
-
-//        options.AuthorizationEndpoint += "?prompt=consent"; // Hack so we always get a refresh token, it only comes on the first authorization response
-//        options.AccessType = "offline";
-//        options.SaveTokens = true;
-//        options.Events = new OAuthEvents()
-//        {
-//            OnRemoteFailure = HandleOnRemoteFailure
-//        };
-//        options.ClaimActions.MapJsonSubKey("urn:google:image", "image", "url");
-//        options.ClaimActions.Remove(ClaimTypes.GivenName);
-//    });
-//}
-
-//if (Convert.ToBoolean(configuration["ExternalAuthProviders:Facebook:Enabled"] ?? "false"))
-//{
-//    // You must first create an app with Facebook and add its ID and Secret to your user-secrets.
-//    // https://developers.facebook.com/apps/
-//    // https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#login
-//    authBuilder.AddFacebook(options =>
-//    {
-//        options.AppId = Configuration["ExternalAuthProviders:Facebook:AppId"];
-//        options.AppSecret = Configuration["ExternalAuthProviders:Facebook:AppSecret"];
-
-//        options.Scope.Add("email");
-//        options.Fields.Add("name");
-//        options.Fields.Add("email");
-//        options.SaveTokens = true;
-//        options.Events = new OAuthEvents()
-//        {
-//            OnRemoteFailure = HandleOnRemoteFailure
-//        };
-//    });
-//}
-
-//if (Convert.ToBoolean(configuration["ExternalAuthProviders:Twitter:Enabled"] ?? "false"))
-//{
-//    // You must first create an app with Twitter and add its key and Secret to your user-secrets.
-//    // https://apps.twitter.com/
-//    // https://developer.twitter.com/en/docs/basics/authentication/api-reference/access_token
-//    authBuilder.AddTwitter(options =>
-//    {
-//        options.ConsumerKey = Configuration["ExternalAuthProviders:Twitter:ConsumerKey"];
-//        options.ConsumerSecret = Configuration["ExternalAuthProviders:Twitter:ConsumerSecret"];
-
-//        // http://stackoverflow.com/questions/22627083/can-we-get-email-id-from-twitter-oauth-api/32852370#32852370
-//        // http://stackoverflow.com/questions/36330675/get-users-email-from-twitter-api-for-external-login-authentication-asp-net-mvc?lq=1
-//        options.RetrieveUserDetails = true;
-//        options.SaveTokens = true;
-//        options.ClaimActions.MapJsonKey("urn:twitter:profilepicture", "profile_image_url", ClaimTypes.Uri);
-//        options.Events = new TwitterEvents()
-//        {
-//            OnRemoteFailure = HandleOnRemoteFailure
-//        };
-//    });
-//}
-
-////https://github.com/xamarin/Essentials/blob/master/Samples/Sample.Server.WebAuthenticator/Startup.cs
-//if (Convert.ToBoolean(configuration["ExternalAuthProviders:Apple:Enabled"] ?? "false"))
-//{
-//    authBuilder.AddApple(options =>
-//    {
-//        options.ClientId = Configuration["ExternalAuthProviders:Apple:ClientId"];
-//        options.KeyId = Configuration["ExternalAuthProviders:Apple:KeyId"];
-//        options.TeamId = Configuration["ExternalAuthProviders:Apple:TeamId"];
-
-//        options.UsePrivateKey(keyId
-//           => _environment.ContentRootFileProvider.GetFileInfo($"AuthKey_{keyId}.p8"));
-//        options.SaveTokens = true;
-//    });
-//}
-
-//// You must first create an app with Microsoft Account and add its ID and Secret to your user-secrets.
-//// https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
-//if (Convert.ToBoolean(configuration["ExternalAuthProviders:Microsoft:Enabled"] ?? "false"))
-//{
-//    authBuilder.AddMicrosoftAccount(options =>
-//    {
-//        options.ClientId = Configuration["ExternalAuthProviders:Microsoft:ClientId"];
-//        options.ClientSecret = Configuration["ExternalAuthProviders:Microsoft:ClientSecret"];
-
-//        options.SaveTokens = true;
-//        options.Scope.Add("offline_access");
-//        options.Events = new OAuthEvents()
-//        {
-//            OnRemoteFailure = HandleOnRemoteFailure
-//        };
-//    });
-//}
-//#endregion
-
-
-//(options =>
-//{
-//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-//})
-//.AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime))
-//.AddOpenIdConnect(options =>
-//{
-//    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.Authority = identityUrl;
-//    options.SignedOutRedirectUri = callBackUrl;
-//    options.ClientId = "webapp";
-//    options.ClientSecret = "secret";
-//    options.ResponseType = "code";
-//    options.SaveTokens = true;
-//    options.GetClaimsFromUserInfoEndpoint = true;
-//    options.RequireHttpsMetadata = false;
-//    options.Scope.Add("openid");
-//    options.Scope.Add("profile");
-//    options.Scope.Add("orders");
-//    options.Scope.Add("basket");
-//});
-
-
-//builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
-
 builder.Services.AddCascadingAuthenticationState();
-
-//var authConfigName = "OidcSettings";
-
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-//    options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-//    //options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-//})
-//.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-//.AddOpenIdConnect(options =>
-//{
-//    options.Authority = builder.Configuration[$"{authConfigName}:Authority"];
-//    options.ClientId = builder.Configuration[$"{authConfigName}:ClientId"];
-//    options.ClientSecret = builder.Configuration[$"{authConfigName}:ClientSecret"];
-//    options.ResponseType = builder.Configuration[$"{authConfigName}:ResponseType"];
-//    options.Scope.Add("APIAccess");
-
-//    options.SaveTokens = true;
-
-//    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.SignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
-
-//    options.RequireHttpsMetadata = false;
-//});
-
-
-//builder.Services.AddFluentValidationAutoValidation();
-
-//builder.Services.AddServerSideBlazor().AddCircuitOptions(o =>
-//{
-//    o.DetailedErrors = Convert.ToBoolean(Configuration[$"{projectName}:DetailedErrors"] ?? bool.FalseString);
-
-//    if (_environment.IsDevelopment())
-//    {
-//        o.DetailedErrors = true;
-//    }
-//}).AddHubOptions(o =>
-//{
-//    o.MaximumReceiveMessageSize = 131072;
-//});
-
 
 var app = builder.Build();
 
