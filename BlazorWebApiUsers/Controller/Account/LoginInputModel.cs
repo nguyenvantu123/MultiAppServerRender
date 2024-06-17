@@ -11,5 +11,26 @@ public class LoginInputModel
     [Required]
     public string Password { get; set; }
     public bool RememberLogin { get; set; }
-    public string ReturnUrl { get; set; }
+
+    private string returnUrl;
+
+    public string ReturnUrl
+    {
+        get => returnUrl ?? "/";
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                if (value.StartsWith("http"))
+                    value = new Uri(value).LocalPath;
+
+                if (!value.StartsWith("/"))
+                    value = $"/{value}";
+            }
+
+            returnUrl = value;
+        }
+    }
+
+    public string __RequestVerificationToken { get; set; }
 }
