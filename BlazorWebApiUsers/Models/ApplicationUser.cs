@@ -1,12 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using BlazorBoilerplate.Infrastructure.Storage.DataModels;
+using BlazorBoilerplate.Infrastructure.Storage.Permissions;
+using Finbuckle.MultiTenant;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorWebApi.Users.Models
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
     [Table("ApplicationUser")]
+    [MultiTenant]
+    [Permissions(Actions.CRUD)]
     public class ApplicationUser : IdentityUser<Guid>
     {
         public new Guid Id { get; set; }
+
         [Required]
         public string CardNumber { get; set; }
         [Required]
@@ -43,6 +49,15 @@ namespace BlazorWebApi.Users.Models
 
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
         public string FirstName { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
+
+        public ICollection<ApiLogItem> ApiLogItems { get; set; }
+
+        public UserProfile Profile { get; set; }
+
+        public virtual ICollection<Message> Messages { get; set; }
+
 
     }
 }

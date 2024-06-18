@@ -1,5 +1,10 @@
-﻿using BlazorWebApi.Users.Models;
+﻿using BlazorBoilerplate.Infrastructure.Storage.DataModels;
+using BlazorBoilerplate.Storage;
+using BlazorWebApi.Users.Models;
+using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.EntityFrameworkCore;
 using Grpc.Core;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -8,13 +13,26 @@ using System.Reflection.Emit;
 namespace BlazorWebApi.Users.Data
 {
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid,
+    public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
         ApplicationRoleClaim, IdentityUserToken<Guid>>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(TenantInfo tenantInfo, DbContextOptions<ApplicationDbContext> options, IUserSession userSession)
+         : base(tenantInfo ?? TenantStoreDbContext.DefaultTenant, options)
         {
+            TenantNotSetMode = TenantNotSetMode.Overwrite;
+            TenantMismatchMode = TenantMismatchMode.Overwrite;
+            UserSession = userSession;
         }
+
+        public DbSet<ApiLogItem> ApiLogs { get; set; }
+
+        public DbSet<UserProfile> UserProfiles { get; set; }
+
+        public DbSet<Message> Messages { get; set; }
+
+        private IUserSession UserSession { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -37,75 +55,60 @@ namespace BlazorWebApi.Users.Data
                 property.SetColumnType("nvarchar(128)");
             }
 
-            //builder.Entity<ApplicationUser>(entity =>
-            //{
-            //    entity.ToTable(name: "Users", "Identity");
-            //    entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            //});
 
-            //builder.Entity<ApplicationRole>(entity =>
-            //{
-            //    entity.ToTable(name: "Roles", "Identity");
-            //});
-            //builder.Entity<ApplicationUserRole>(entity =>
-            //{
-            //    entity.ToTable("UserRoles", "Identity");
-            //});
-
-            //builder.Entity<ApplicationUserClaim>(entity =>
-            //{
-            //    entity.ToTable("UserClaims", "Identity");
-            //});
-
-            //builder.Entity<IdentityUserLogin<Guid>>(entity =>
-            //{
-            //    entity.ToTable("UserLogins", "Identity");
-            //    entity.HasNoKey();
-            //});
-
-            //builder.Entity<ApplicationRoleClaim>(entity =>
-            //{
-            //    entity.ToTable(name: "RoleClaims", "Identity");
-            //    entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            //});
-
-            //builder.Entity<IdentityUserToken<Guid>>(entity =>
-            //{
-            //    entity.ToTable("UserTokens", "Identity");
-            //    entity.HasNoKey();
-            //});
 
             builder.Entity<ApplicationUser>(b =>
             {
                 // Each User can have many entries in the UserRole join table
-                b.HasMany(e => e.UserRoles)
+                builder.Entity<ApplicationUser>(b =>
+                {
+                    b.HasOne(a => a.Profile)
+                    .WithOne(b => b.ApplicationUser)
+                    .HasForeignKey<UserProfile>(b => b.UserId);
+
+                    b.HasMany(e => e.UserRoles)
                     .WithOne(e => e.User)
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired();
+                });
 
-                // Each User can have one entry in the JobTitle join table
-
-                // Each User can have many entries in the RefreshToken join table
-                //b.HasMany(e => e.RefreshTokens)
-                //    .WithOne(e => e.User)
-                //    .HasForeignKey(ur => ur.UserId)
-                //    .IsRequired();
             });
 
             builder.Entity<ApplicationRole>(b =>
             {
                 // Each Role can have many entries in the UserRole join table
-                b.HasMany(e => e.UserRoles)
-                    .WithOne(e => e.Role)
-                    .HasForeignKey(ur => ur.RoleId)
-                    .IsRequired();
+                //b.HasMany(e => e.UserRoles)
+                //    .WithOne(e => e.Role)
+                //    .HasForeignKey(ur => ur.RoleId)
+                //    .IsRequired();
 
-                // Each Role can have many entries in the RoleClaim join table
+                //// Each Role can have many entries in the RoleClaim join table
+                //b.HasMany(e => e.RoleClaims)
+                //    .WithOne(e => e.Role)
+                //    .HasForeignKey(ur => ur.RoleId)
+                //    .IsRequired();
+
+                b.HasMany(e => e.UserRoles)
+               .WithOne(e => e.Role)
+               .HasForeignKey(ur => ur.RoleId)
+               .IsRequired();
+
                 b.HasMany(e => e.RoleClaims)
                     .WithOne(e => e.Role)
                     .HasForeignKey(ur => ur.RoleId)
                     .IsRequired();
             });
+
+
+            builder.Entity<ApiLogItem>(b =>
+            {
+                b.HasOne(e => e.ApplicationUser)
+                    .WithMany(e => e.ApiLogItems)
+                    .HasForeignKey(e => e.ApplicationUserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<Message>().ToTable("Messages");
 
             //builder.Ignore<IdentityRole<Guid>>();
             //builder.Ignore<IdentityRoleClaim<Guid>>();
