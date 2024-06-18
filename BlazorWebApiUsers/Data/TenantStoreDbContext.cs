@@ -1,4 +1,5 @@
 ﻿using BlazorBoilerplate.Constants;
+using BlazorWebApi.Users.RoleConst;
 using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Stores;
 using Microsoft.EntityFrameworkCore;

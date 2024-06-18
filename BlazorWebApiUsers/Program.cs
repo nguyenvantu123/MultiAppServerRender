@@ -35,6 +35,14 @@ using eShop.Identity.API;
 using eShop.Identity.API.Services;
 using IdentityServer4.Stores;
 using IdentityServer4.EntityFramework.Stores;
+using AutoMapper.Configuration;
+using BlazorBoilerplate.Storage;
+using Finbuckle.MultiTenant;
+using BlazorWebApi.Users.RoleConst;
+using Breeze.AspNetCore;
+using Breeze.Core;
+using Newtonsoft.Json.Serialization;
+using BlazorBoilerplate.Shared.Localizer;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,8 +54,27 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+builder.Services.AddMvc().AddNewtonsoftJson(opt =>
+{
+    // Set Breeze defaults for entity serialization
+    var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
+    if (ss.ContractResolver is DefaultContractResolver resolver)
+    {
+        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
+    }
+})   // Add Breeze exception filter to send errors back to the client
+          .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
+          .AddViewLocalization().AddDataAnnotationsLocalization(options =>
+          {
+              options.DataAnnotationLocalizerProvider = (type, factory) =>
+              {
+                  return factory.Create(typeof(Global));
+              };
+          });
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+
+builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -90,6 +117,20 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 //builder.Services.AddDbContext<ApplicationDbContext>();
+
+builder.Services.AddScoped<ApplicationPersistenceManager>();
+
+builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<TenantInfo>), typeof(TenantResolver<TenantInfo>), ServiceLifetime.Scoped));
+
+builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<TenantInfo>>(), ServiceLifetime.Scoped));
+
+
+builder.Services.AddMultiTenant<TenantInfo>()
+    .WithHostStrategy("__tenant__")
+    .WithEFCoreStore<TenantStoreDbContext, TenantInfo>()
+    .WithStaticStrategy(Settings.DefaultTenantId);
+
+//services.AddScoped<LocalizationPersistenceManager>();
 
 // Apply database migration automatically. Note that this approach is not
 // recommended for production scenarios. Consider generating SQL scripts from

@@ -1,4 +1,5 @@
 ﻿using BlazorBoilerplate.Infrastructure.Storage.Permissions;
+using BlazorWebApi.Users.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlazorBoilerplate.Infrastructure.Storage.DataModels

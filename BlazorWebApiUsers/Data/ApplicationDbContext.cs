@@ -15,7 +15,7 @@ namespace BlazorWebApi.Users.Data
 
     public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
-        ApplicationRoleClaim, IdentityUserToken<Guid>>
+        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
         public ApplicationDbContext(TenantInfo tenantInfo, DbContextOptions<ApplicationDbContext> options, IUserSession userSession)
          : base(tenantInfo ?? TenantStoreDbContext.DefaultTenant, options)
@@ -32,7 +32,6 @@ namespace BlazorWebApi.Users.Data
         public DbSet<Message> Messages { get; set; }
 
         private IUserSession UserSession { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
