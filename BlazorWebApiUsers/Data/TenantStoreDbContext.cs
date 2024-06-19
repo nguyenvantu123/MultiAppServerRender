@@ -16,7 +16,10 @@ namespace BlazorBoilerplate.Storage
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.HasDefaultSchema("Identity");
 
             modelBuilder.Entity<TenantInfo>()
                 .Property(t => t.ConnectionString)

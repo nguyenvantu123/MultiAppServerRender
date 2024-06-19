@@ -1,13 +1,16 @@
-﻿using BlazorBoilerplate.Infrastructure.Storage.DataModels;
+﻿using BlazorBoilerplate.Infrastructure.Storage.DataInterfaces;
+using BlazorBoilerplate.Infrastructure.Storage.DataModels;
+using BlazorBoilerplate.Shared.Interfaces;
 using BlazorBoilerplate.Storage;
+using BlazorBoilerplate.Storage.Configurations;
 using BlazorWebApi.Users.Models;
 using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.EntityFrameworkCore;
 using Grpc.Core;
-using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace BlazorWebApi.Users.Data
@@ -32,6 +35,9 @@ namespace BlazorWebApi.Users.Data
         public DbSet<Message> Messages { get; set; }
 
         private IUserSession UserSession { get; set; }
+
+        public DbSet<TenantSetting> TenantSettings { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -109,6 +115,11 @@ namespace BlazorWebApi.Users.Data
 
             builder.Entity<Message>().ToTable("Messages");
 
+            builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key }); ;
+
+            builder.ApplyConfiguration(new MessageConfiguration());
+
+            SetGlobalQueryFilters(builder);
             //builder.Ignore<IdentityRole<Guid>>();
             //builder.Ignore<IdentityRoleClaim<Guid>>();
             //builder.Ignore<IdentityUser<Guid>>();
@@ -122,6 +133,40 @@ namespace BlazorWebApi.Users.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
+        }
+        private void SetGlobalQueryFilters(ModelBuilder modelBuilder)
+        {
+            foreach (Microsoft.EntityFrameworkCore.Metadata.IMutableEntityType tp in modelBuilder.Model.GetEntityTypes())
+            {
+                Type t = tp.ClrType;
+
+                // set Soft Delete Property
+                if (typeof(ISoftDelete).IsAssignableFrom(t))
+                {
+                    MethodInfo method = SetGlobalQueryForSoftDeleteMethodInfo.MakeGenericMethod(t);
+                    method.Invoke(this, new object[] { modelBuilder });
+                }
+            }
+        }
+
+        private static readonly MethodInfo SetGlobalQueryForSoftDeleteMethodInfo = typeof(ApplicationDbContext).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+           .Single(t => t.IsGenericMethod && t.Name == "SetGlobalQueryForSoftDelete");
+
+        public void SetGlobalQueryForSoftDelete<T>(ModelBuilder builder) where T : class, ISoftDelete
+        {
+            builder.Entity<T>().HasQueryFilter(item => !EF.Property<bool>(item, "IsDeleted"));
+        }
+
+        public override int SaveChanges()
+        {
+            ChangeTracker.SetShadowProperties(UserSession);
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ChangeTracker.SetShadowProperties(UserSession);
+            return await base.SaveChangesAsync(true, cancellationToken);
         }
     }
 }

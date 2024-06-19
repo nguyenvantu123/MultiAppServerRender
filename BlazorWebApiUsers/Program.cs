@@ -44,6 +44,7 @@ using Breeze.Core;
 using Newtonsoft.Json.Serialization;
 using BlazorBoilerplate.Shared.Localizer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using BlazorBoilerplate.Server.Middleware;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,9 +74,21 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
               };
           });
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<TenantInfo>), typeof(TenantResolver<TenantInfo>), ServiceLifetime.Scoped));
+
+builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<TenantInfo>>(), ServiceLifetime.Scoped));
+
 
 builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
+
+
+builder.Services.AddMultiTenant<TenantInfo>()
+    .WithHostStrategy("__tenant__")
+    .WithEFCoreStore<TenantStoreDbContext, TenantInfo>()
+    .WithStaticStrategy(Settings.DefaultTenantId);
+
+builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -120,16 +133,6 @@ builder.Services.AddSwaggerGen(c =>
 //builder.Services.AddDbContext<ApplicationDbContext>();
 
 builder.Services.AddScoped<ApplicationPersistenceManager>();
-
-builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<TenantInfo>), typeof(TenantResolver<TenantInfo>), ServiceLifetime.Scoped));
-
-builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<TenantInfo>>(), ServiceLifetime.Scoped));
-
-
-builder.Services.AddMultiTenant<TenantInfo>()
-    .WithHostStrategy("__tenant__")
-    .WithEFCoreStore<TenantStoreDbContext, TenantInfo>()
-    .WithStaticStrategy(Settings.DefaultTenantId);
 
 //services.AddScoped<LocalizationPersistenceManager>();
 
@@ -208,6 +211,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseDeveloperExceptionPage();
 //}
+
+app.UseMultiTenant();
+app.UseMiddleware<UserSessionMiddleware>();
 
 app.Run();
 
