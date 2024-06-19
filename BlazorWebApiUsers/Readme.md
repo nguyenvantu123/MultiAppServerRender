@@ -1,6 +1,6 @@
 -- Migration Command
 
-add-migration InitDb -OutputDir  Data/Migrations  -StartupProject BlazorWebApiUsers -Context ApplicationDbContext
+add-migration GenerateApplicationDB -OutputDir  Data/Migrations  -StartupProject BlazorWebApiUsers -Context ApplicationDbContext
 
 -- Update Database
 

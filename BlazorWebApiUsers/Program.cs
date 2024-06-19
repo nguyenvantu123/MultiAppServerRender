@@ -43,6 +43,7 @@ using Breeze.AspNetCore;
 using Breeze.Core;
 using Newtonsoft.Json.Serialization;
 using BlazorBoilerplate.Shared.Localizer;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -135,7 +136,6 @@ builder.Services.AddMultiTenant<TenantInfo>()
 // Apply database migration automatically. Note that this approach is not
 // recommended for production scenarios. Consider generating SQL scripts from
 // migrations instead.
-builder.Services.AddMigration<ApplicationDbContext, UsersSeed>();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
@@ -146,8 +146,8 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.SignIn.RequireConfirmedEmail = false;
 })
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddIdentityServer(options =>
 {
@@ -176,6 +176,14 @@ builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
 
 builder.Services.AddSingleton<CustomAuthService>();
+
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+
+builder.Services.AddControllers(options =>
+{
+    options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
+});
 
 
 
