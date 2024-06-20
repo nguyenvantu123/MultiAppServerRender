@@ -20,8 +20,8 @@ namespace BlazorWebApi.Users.Data
         IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
         ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
-        public ApplicationDbContext(TenantInfo tenantInfo, DbContextOptions<ApplicationDbContext> options, IUserSession userSession)
-         : base(tenantInfo ?? TenantStoreDbContext.DefaultTenant, options)
+        public ApplicationDbContext(ITenantInfo tenantInfo, DbContextOptions<ApplicationDbContext> options, IUserSession userSession)
+         : base(tenantInfo, options)
         {
             TenantNotSetMode = TenantNotSetMode.Overwrite;
             TenantMismatchMode = TenantMismatchMode.Overwrite;
@@ -38,88 +38,82 @@ namespace BlazorWebApi.Users.Data
 
         public DbSet<TenantSetting> TenantSettings { get; set; }
 
+        public DbSet<AppTenantInfo> MyTenants { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
             base.OnModelCreating(builder);
 
-            builder.HasDefaultSchema("Identity");
+            builder.ConfigureMultiTenant();
 
-            foreach (var property in builder.Model.GetEntityTypes()
-           .SelectMany(t => t.GetProperties())
-           .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
-            {
-                property.SetColumnType("decimal(18,2)");
-            }
+            //builder.HasDefaultSchema("Identity");
 
-            foreach (var property in builder.Model.GetEntityTypes()
-                .SelectMany(t => t.GetProperties())
-                .Where(p => p.Name is "LastModifiedBy" or "CreatedBy"))
-            {
-                property.SetColumnType("nvarchar(128)");
-            }
+            // foreach (var property in builder.Model.GetEntityTypes()
+            //.SelectMany(t => t.GetProperties())
+            //.Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
+            // {
+            //     property.SetColumnType("decimal(18,2)");
+            // }
 
-
-
-            builder.Entity<ApplicationUser>(b =>
-            {
-                // Each User can have many entries in the UserRole join table
-                builder.Entity<ApplicationUser>(b =>
-                {
-                    b.HasOne(a => a.Profile)
-                    .WithOne(b => b.ApplicationUser)
-                    .HasForeignKey<UserProfile>(b => b.UserId);
-
-                    b.HasMany(e => e.UserRoles)
-                    .WithOne(e => e.User)
-                    .HasForeignKey(ur => ur.UserId)
-                    .IsRequired();
-                });
-
-            });
-
-            builder.Entity<ApplicationRole>(b =>
-            {
-                // Each Role can have many entries in the UserRole join table
-                //b.HasMany(e => e.UserRoles)
-                //    .WithOne(e => e.Role)
-                //    .HasForeignKey(ur => ur.RoleId)
-                //    .IsRequired();
-
-                //// Each Role can have many entries in the RoleClaim join table
-                //b.HasMany(e => e.RoleClaims)
-                //    .WithOne(e => e.Role)
-                //    .HasForeignKey(ur => ur.RoleId)
-                //    .IsRequired();
-
-                b.HasMany(e => e.UserRoles)
-               .WithOne(e => e.Role)
-               .HasForeignKey(ur => ur.RoleId)
-               .IsRequired();
-
-                b.HasMany(e => e.RoleClaims)
-                    .WithOne(e => e.Role)
-                    .HasForeignKey(ur => ur.RoleId)
-                    .IsRequired();
-            });
+            // foreach (var property in builder.Model.GetEntityTypes()
+            //     .SelectMany(t => t.GetProperties())
+            //     .Where(p => p.Name is "LastModifiedBy" or "CreatedBy"))
+            // {
+            //     property.SetColumnType("nvarchar(128)");
+            // }
 
 
-            builder.Entity<ApiLogItem>(b =>
-            {
-                b.HasOne(e => e.ApplicationUser)
-                    .WithMany(e => e.ApiLogItems)
-                    .HasForeignKey(e => e.ApplicationUserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
 
-            builder.Entity<Message>().ToTable("Messages");
+            // builder.Entity<ApplicationUser>(b =>
+            // {
+            //     // Each User can have many entries in the UserRole join table
+            //     builder.Entity<ApplicationUser>(b =>
+            //     {
+            //         b.HasOne(a => a.Profile)
+            //         .WithOne(b => b.ApplicationUser)
+            //         .HasForeignKey<UserProfile>(b => b.UserId);
 
-            builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key }); ;
+            //         b.HasMany(e => e.UserRoles)
+            //         .WithOne(e => e.User)
+            //         .HasForeignKey(ur => ur.UserId)
+            //         .IsRequired();
+            //     });
 
-            builder.ApplyConfiguration(new MessageConfiguration());
+            // });
 
-            SetGlobalQueryFilters(builder);
+            // builder.Entity<ApplicationRole>(b =>
+            // {
+
+            //     b.HasMany(e => e.UserRoles)
+            //    .WithOne(e => e.Role)
+            //    .HasForeignKey(ur => ur.RoleId)
+            //    .IsRequired();
+
+            //     b.HasMany(e => e.RoleClaims)
+            //         .WithOne(e => e.Role)
+            //         .HasForeignKey(ur => ur.RoleId)
+            //         .IsRequired();
+            // });
+
+
+            // builder.Entity<ApiLogItem>(b =>
+            // {
+            //     b.HasOne(e => e.ApplicationUser)
+            //         .WithMany(e => e.ApiLogItems)
+            //         .HasForeignKey(e => e.ApplicationUserId)
+            //         .OnDelete(DeleteBehavior.Cascade);
+            // });
+
+            // builder.Entity<Message>().ToTable("Messages");
+
+            // builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key }); ;
+
+            //builder.ApplyConfiguration(new MessageConfiguration());
+
+            //SetGlobalQueryFilters(builder);
             //builder.Ignore<IdentityRole<Guid>>();
             //builder.Ignore<IdentityRoleClaim<Guid>>();
             //builder.Ignore<IdentityUser<Guid>>();

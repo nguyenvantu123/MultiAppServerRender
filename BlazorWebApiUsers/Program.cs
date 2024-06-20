@@ -45,6 +45,8 @@ using Newtonsoft.Json.Serialization;
 using BlazorBoilerplate.Shared.Localizer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using BlazorBoilerplate.Server.Middleware;
+using BlazorBoilerplate.Infrastructure.Storage;
+using BlazorBoilerplate.Infrastructure.Storage.Permissions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,10 +76,9 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
               };
           });
 
-builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<TenantInfo>), typeof(TenantResolver<TenantInfo>), ServiceLifetime.Scoped));
 
-builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<TenantInfo>>(), ServiceLifetime.Scoped));
 
+builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 
 builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
@@ -85,10 +86,23 @@ builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 builder.Services.AddMultiTenant<TenantInfo>()
     .WithHostStrategy("__tenant__")
     .WithEFCoreStore<TenantStoreDbContext, TenantInfo>()
-    .WithStaticStrategy(Settings.DefaultTenantId);
+    .WithStaticStrategy(Settings.DefaultTenantId)
+    .WithPerTenantAuthentication();
+
+
+builder.Services.AddScoped<AppTenantInfo>();
+builder.Services.AddScoped<IMultiTenantContextAccessor<AppTenantInfo>>();
+
+builder.Services.AddScoped<ITenantInfo>();
+
+
+//builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<TenantInfo>), typeof(TenantResolver<TenantInfo>), ServiceLifetime.Scoped));
+
+//builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<TenantInfo>>(), ServiceLifetime.Scoped));
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
+builder.Services.AddScoped<EntityPermissions>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

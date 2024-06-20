@@ -21,9 +21,9 @@ namespace BlazorBoilerplate.Storage
 
             modelBuilder.HasDefaultSchema("Identity");
 
-            modelBuilder.Entity<TenantInfo>()
-                .Property(t => t.ConnectionString)
-                .IsRequired(false);
+            //modelBuilder.Entity<TenantInfo>()
+            //    .Property(t => t.ConnectionString)
+            //    .IsRequired(false);
             modelBuilder.Entity<TenantInfo>()
                 .HasData(DefaultTenant);
         }

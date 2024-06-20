@@ -16,4 +16,15 @@
     {
         public const string DefaultTenantId = "Master";
     }
+
+    public static class DefaultUserNames
+    {
+        public const string Administrator = "admin";
+        public const string User = "user";
+    }
+
+    public static class DefaultRoleNames
+    {
+        public const string Administrator = "Administrator";
+    }
 }
