@@ -10,6 +10,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -18,15 +19,23 @@ namespace BlazorWebApi.Users.Data
 
     public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
-        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
+        ApplicationRoleClaim, IdentityUserToken<Guid>>
     {
-        public ApplicationDbContext(ITenantInfo tenantInfo, DbContextOptions<ApplicationDbContext> options, IUserSession userSession)
-         : base(tenantInfo, options)
+
+        public ApplicationDbContext( TenantInfo tenantInfo,DbContextOptions<ApplicationDbContext> options, IUserSession userSession)
+         : base(tenantInfo ?? TenantStoreDbContext.DefaultTenant, options)
         {
             TenantNotSetMode = TenantNotSetMode.Overwrite;
             TenantMismatchMode = TenantMismatchMode.Overwrite;
             UserSession = userSession;
+
+            tenantInfo = _tenantInfo;
         }
+
+        private readonly TenantInfo _tenantInfo;
+
+
+        public DbSet<TenantInfo> TenantInfos { get; set; }
 
         public DbSet<ApiLogItem> ApiLogs { get; set; }
 
@@ -37,9 +46,6 @@ namespace BlazorWebApi.Users.Data
         private IUserSession UserSession { get; set; }
 
         public DbSet<TenantSetting> TenantSettings { get; set; }
-
-        public DbSet<AppTenantInfo> MyTenants { get; set; }
-
 
 
         protected override void OnModelCreating(ModelBuilder builder)

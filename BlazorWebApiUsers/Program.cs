@@ -47,6 +47,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using BlazorBoilerplate.Server.Middleware;
 using BlazorBoilerplate.Infrastructure.Storage;
 using BlazorBoilerplate.Infrastructure.Storage.Permissions;
+using System;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,29 +77,29 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
               };
           });
 
+var scopeFactory = builder.Services.servce.GetRequiredService<IServiceScopeFactory>();
+
+using (var scope = scopeFactory.CreateScope())
+{
+    var tenantInfo = scope.ServiceProvider.GetRequiredService<TenantInfo>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    // Perform operations with dbContext
+}
 
 
 builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 
 builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
-
 builder.Services.AddMultiTenant<TenantInfo>()
-    .WithHostStrategy("__tenant__")
-    .WithEFCoreStore<TenantStoreDbContext, TenantInfo>()
-    .WithStaticStrategy(Settings.DefaultTenantId)
-    .WithPerTenantAuthentication();
+        .WithConfigurationStore()
+        .WithRouteStrategy()
+        .WithPerTenantAuthentication();
 
+builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<TenantInfo>), typeof(TenantResolver<TenantInfo>), ServiceLifetime.Scoped));
 
-builder.Services.AddScoped<AppTenantInfo>();
-builder.Services.AddScoped<IMultiTenantContextAccessor<AppTenantInfo>>();
-
-builder.Services.AddScoped<ITenantInfo>();
-
-
-//builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<TenantInfo>), typeof(TenantResolver<TenantInfo>), ServiceLifetime.Scoped));
-
-//builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<TenantInfo>>(), ServiceLifetime.Scoped));
+builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<TenantInfo>>(), ServiceLifetime.Scoped));
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
