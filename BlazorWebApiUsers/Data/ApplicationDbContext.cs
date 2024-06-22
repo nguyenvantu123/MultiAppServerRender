@@ -5,8 +5,10 @@ using BlazorBoilerplate.Storage;
 using BlazorBoilerplate.Storage.Configurations;
 using BlazorWebApi.Users.Models;
 using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.EntityFrameworkCore;
 using Grpc.Core;
+using IdentitySample;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,23 +21,16 @@ namespace BlazorWebApi.Users.Data
 
     public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
-        ApplicationRoleClaim, IdentityUserToken<Guid>>
+        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
 
-        public ApplicationDbContext( TenantInfo tenantInfo,DbContextOptions<ApplicationDbContext> options, IUserSession userSession)
-         : base(tenantInfo ?? TenantStoreDbContext.DefaultTenant, options)
+        public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options, IUserSession userSession) : base(multiTenantContextAccessor, options)
         {
             TenantNotSetMode = TenantNotSetMode.Overwrite;
             TenantMismatchMode = TenantMismatchMode.Overwrite;
+
             UserSession = userSession;
-
-            tenantInfo = _tenantInfo;
         }
-
-        private readonly TenantInfo _tenantInfo;
-
-
-        public DbSet<TenantInfo> TenantInfos { get; set; }
 
         public DbSet<ApiLogItem> ApiLogs { get; set; }
 
@@ -47,6 +42,11 @@ namespace BlazorWebApi.Users.Data
 
         public DbSet<TenantSetting> TenantSettings { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var tenantInfo = TenantInfo as AppTenantInfo;
+            base.OnConfiguring(optionsBuilder);
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -55,71 +55,71 @@ namespace BlazorWebApi.Users.Data
 
             builder.ConfigureMultiTenant();
 
-            //builder.HasDefaultSchema("Identity");
+            builder.HasDefaultSchema("Identity");
 
-            // foreach (var property in builder.Model.GetEntityTypes()
-            //.SelectMany(t => t.GetProperties())
-            //.Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
-            // {
-            //     property.SetColumnType("decimal(18,2)");
-            // }
+            foreach (var property in builder.Model.GetEntityTypes()
+           .SelectMany(t => t.GetProperties())
+           .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
+            {
+                property.SetColumnType("decimal(18,2)");
+            }
 
-            // foreach (var property in builder.Model.GetEntityTypes()
-            //     .SelectMany(t => t.GetProperties())
-            //     .Where(p => p.Name is "LastModifiedBy" or "CreatedBy"))
-            // {
-            //     property.SetColumnType("nvarchar(128)");
-            // }
-
-
-
-            // builder.Entity<ApplicationUser>(b =>
-            // {
-            //     // Each User can have many entries in the UserRole join table
-            //     builder.Entity<ApplicationUser>(b =>
-            //     {
-            //         b.HasOne(a => a.Profile)
-            //         .WithOne(b => b.ApplicationUser)
-            //         .HasForeignKey<UserProfile>(b => b.UserId);
-
-            //         b.HasMany(e => e.UserRoles)
-            //         .WithOne(e => e.User)
-            //         .HasForeignKey(ur => ur.UserId)
-            //         .IsRequired();
-            //     });
-
-            // });
-
-            // builder.Entity<ApplicationRole>(b =>
-            // {
-
-            //     b.HasMany(e => e.UserRoles)
-            //    .WithOne(e => e.Role)
-            //    .HasForeignKey(ur => ur.RoleId)
-            //    .IsRequired();
-
-            //     b.HasMany(e => e.RoleClaims)
-            //         .WithOne(e => e.Role)
-            //         .HasForeignKey(ur => ur.RoleId)
-            //         .IsRequired();
-            // });
+            foreach (var property in builder.Model.GetEntityTypes()
+                .SelectMany(t => t.GetProperties())
+                .Where(p => p.Name is "LastModifiedBy" or "CreatedBy"))
+            {
+                property.SetColumnType("nvarchar(128)");
+            }
 
 
-            // builder.Entity<ApiLogItem>(b =>
-            // {
-            //     b.HasOne(e => e.ApplicationUser)
-            //         .WithMany(e => e.ApiLogItems)
-            //         .HasForeignKey(e => e.ApplicationUserId)
-            //         .OnDelete(DeleteBehavior.Cascade);
-            // });
 
-            // builder.Entity<Message>().ToTable("Messages");
+            builder.Entity<ApplicationUser>(b =>
+            {
+                // Each User can have many entries in the UserRole join table
+                builder.Entity<ApplicationUser>(b =>
+                {
+                    b.HasOne(a => a.Profile)
+                    .WithOne(b => b.ApplicationUser)
+                    .HasForeignKey<UserProfile>(b => b.UserId);
 
-            // builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key }); ;
+                    b.HasMany(e => e.UserRoles)
+                    .WithOne(e => e.User)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
+                });
 
-            //builder.ApplyConfiguration(new MessageConfiguration());
+            });
 
-            //SetGlobalQueryFilters(builder);
+            builder.Entity<ApplicationRole>(b =>
+            {
+
+                b.HasMany(e => e.UserRoles)
+               .WithOne(e => e.Role)
+               .HasForeignKey(ur => ur.RoleId)
+               .IsRequired();
+
+                b.HasMany(e => e.RoleClaims)
+                    .WithOne(e => e.Role)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+            });
+
+
+            builder.Entity<ApiLogItem>(b =>
+            {
+                b.HasOne(e => e.ApplicationUser)
+                    .WithMany(e => e.ApiLogItems)
+                    .HasForeignKey(e => e.ApplicationUserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<Message>().ToTable("Messages");
+
+            builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key }); ;
+
+            builder.ApplyConfiguration(new MessageConfiguration());
+
+            SetGlobalQueryFilters(builder);
             //builder.Ignore<IdentityRole<Guid>>();
             //builder.Ignore<IdentityRoleClaim<Guid>>();
             //builder.Ignore<IdentityUser<Guid>>();
@@ -129,9 +129,9 @@ namespace BlazorWebApi.Users.Data
             //builder.Ignore<IdentityUserLogin<Guid>>();
 
 
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+             //Customize the ASP.NET Identity model and override the defaults if needed.
+             //For example, you can rename the ASP.NET Identity table names and more.
+             //Add your customizations after calling base.OnModelCreating(builder);
 
         }
         private void SetGlobalQueryFilters(ModelBuilder modelBuilder)

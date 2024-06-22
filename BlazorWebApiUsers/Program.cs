@@ -48,7 +48,11 @@ using BlazorBoilerplate.Server.Middleware;
 using BlazorBoilerplate.Infrastructure.Storage;
 using BlazorBoilerplate.Infrastructure.Storage.Permissions;
 using System;
-
+using Finbuckle.MultiTenant.Abstractions;
+using IdentitySample;
+using BlazorBoilerplate.Shared.Interfaces;
+using BlazorBoilerplate.Shared.Models;
+using IUserSession = BlazorBoilerplate.Shared.Interfaces.IUserSession;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,33 +81,23 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
               };
           });
 
-var scopeFactory = builder.Services.servce.GetRequiredService<IServiceScopeFactory>();
-
-using (var scope = scopeFactory.CreateScope())
-{
-    var tenantInfo = scope.ServiceProvider.GetRequiredService<TenantInfo>();
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-    // Perform operations with dbContext
-}
-
-
-builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
-
 builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
-builder.Services.AddMultiTenant<TenantInfo>()
+
+builder.Services.AddMultiTenant<AppTenantInfo>()
         .WithConfigurationStore()
         .WithRouteStrategy()
         .WithPerTenantAuthentication();
 
-builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<TenantInfo>), typeof(TenantResolver<TenantInfo>), ServiceLifetime.Scoped));
+builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<AppTenantInfo>), typeof(TenantResolver<AppTenantInfo>), ServiceLifetime.Scoped));
 
-builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<TenantInfo>>(), ServiceLifetime.Scoped));
+builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<AppTenantInfo>>(), ServiceLifetime.Scoped));
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
-builder.Services.AddScoped<EntityPermissions>();
+builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
+
+builder.Services.AddScoped<IUserSession, UserSessionApp>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -188,7 +182,8 @@ builder.Services.AddIdentityServer(options =>
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
 //.Services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
-
+builder.Services.AddScoped<AppTenantInfo>();
+builder.Services.AddScoped<EntityPermissions>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
@@ -217,6 +212,13 @@ app.UseIdentityServer();
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
+
+//var store = app.Services.GetRequiredService<IMultiTenantStore<AppTenantInfo>>();
+//foreach (var tenant in await store.GetAllAsync())
+//{
+//    await using var db = new ApplicationDbContext(tenant);
+//    await db.Database.MigrateAsync();
+//}
 
 if (app.Environment.IsDevelopment())
 {

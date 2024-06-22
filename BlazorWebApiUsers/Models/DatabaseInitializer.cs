@@ -7,27 +7,28 @@ using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Models;
 using BlazorWebApi.Users.RoleConst;
 using Finbuckle.MultiTenant;
+using IdentitySample;
 
 namespace BlazorBoilerplate.Storage
 {
     public class DatabaseInitializer : IDatabaseInitializer
     {
         private readonly ApplicationDbContext _context;
-        private readonly TenantStoreDbContext _tenantStoreDbContext;
+        //private readonly TenantStoreDbContext _tenantStoreDbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly EntityPermissions _entityPermissions;
         private readonly ILogger _logger;
 
         public DatabaseInitializer(
-            TenantStoreDbContext tenantStoreDbContext,
+            //TenantStoreDbContext tenantStoreDbContext,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
             EntityPermissions entityPermissions,
             ILogger<DatabaseInitializer> logger)
         {
-            _tenantStoreDbContext = tenantStoreDbContext;
+            //_tenantStoreDbContext = tenantStoreDbContext;
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
@@ -50,7 +51,7 @@ namespace BlazorBoilerplate.Storage
 
         private async Task MigrateAsync()
         {
-            await _tenantStoreDbContext.Database.MigrateAsync();
+            //await _tenantStoreDbContext.Database.MigrateAsync();
             await _context.Database.MigrateAsync();
         }
 
@@ -61,13 +62,13 @@ namespace BlazorBoilerplate.Storage
                 await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Blazor", "user@blazorboilerplate.com", "+1 (123) 456-7890");
             }
 
-            if (_tenantStoreDbContext.TenantInfo.Count() < 2)
-            {
-                _tenantStoreDbContext.TenantInfo.Add(new TenantInfo() { Id = "tenant1", Identifier = "tenant1.local", Name = "Microsoft Inc." });
-                _tenantStoreDbContext.TenantInfo.Add(new TenantInfo() { Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp." });
+            //if (_tenantStoreDbContext.TenantInfo.Count() < 2)
+            //{
+            //    _tenantStoreDbContext.TenantInfo.Add(new AppTenantInfo() { Id = "tenant1", Identifier = "tenant1.local", Name = "Microsoft Inc." });
+            //    _tenantStoreDbContext.TenantInfo.Add(new AppTenantInfo() { Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp." });
 
-                _tenantStoreDbContext.SaveChanges();
-            }
+            //    _tenantStoreDbContext.SaveChanges();
+            //}
 
             ApplicationUser user = await _userManager.FindByNameAsync(DefaultUserNames.User);
 

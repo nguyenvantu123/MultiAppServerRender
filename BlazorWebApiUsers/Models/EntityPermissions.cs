@@ -1,6 +1,7 @@
 using BlazorBoilerplate.Constants;
 using BlazorWebApi.Users.RoleConst;
 using Finbuckle.MultiTenant;
+using IdentitySample;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -60,7 +61,7 @@ namespace BlazorBoilerplate.Infrastructure.Storage.Permissions
             AllPermissionsForTenants = allPermissions.Where(i => !i.Value.StartsWith("Tenant.")).ToList().AsReadOnly();
         }
 
-        public EntityPermissions(TenantInfo tenantInfo)
+        public EntityPermissions(AppTenantInfo tenantInfo)
         {
             IsMasterTenant = tenantInfo == null || tenantInfo.Id == Settings.DefaultTenantId;
         }
