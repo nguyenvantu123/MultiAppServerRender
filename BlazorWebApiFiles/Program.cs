@@ -19,7 +19,7 @@ builder.Services.AddSwaggerGen();
 
 //builder.ConfigureJwtBearToken();
 
-builder.AddRabbitMQ("messaging");
+//builder.AddRabbitMQ("messaging");
 
 builder.Services.AddAuthorization();
 

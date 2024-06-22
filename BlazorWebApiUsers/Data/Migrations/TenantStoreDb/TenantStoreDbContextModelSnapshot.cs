@@ -3,19 +3,16 @@ using BlazorBoilerplate.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BlazorWebApi.Users.Data.Migrations
+namespace BlazorWebApi.Users.Data.Migrations.TenantStoreDb
 {
     [DbContext(typeof(TenantStoreDbContext))]
-    [Migration("20240619180545_GenerateApplicationDB")]
-    partial class GenerateApplicationDB
+    partial class TenantStoreDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +22,7 @@ namespace BlazorWebApi.Users.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Finbuckle.MultiTenant.TenantInfo", b =>
+            modelBuilder.Entity("IdentitySample.AppTenantInfo", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(64)

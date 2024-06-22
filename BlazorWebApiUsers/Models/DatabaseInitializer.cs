@@ -14,21 +14,21 @@ namespace BlazorBoilerplate.Storage
     public class DatabaseInitializer : IDatabaseInitializer
     {
         private readonly ApplicationDbContext _context;
-        //private readonly TenantStoreDbContext _tenantStoreDbContext;
+        private readonly TenantStoreDbContext _tenantStoreDbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly EntityPermissions _entityPermissions;
         private readonly ILogger _logger;
 
         public DatabaseInitializer(
-            //TenantStoreDbContext tenantStoreDbContext,
+            TenantStoreDbContext tenantStoreDbContext,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
             EntityPermissions entityPermissions,
             ILogger<DatabaseInitializer> logger)
         {
-            //_tenantStoreDbContext = tenantStoreDbContext;
+            _tenantStoreDbContext = tenantStoreDbContext;
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
@@ -62,13 +62,13 @@ namespace BlazorBoilerplate.Storage
                 await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Blazor", "user@blazorboilerplate.com", "+1 (123) 456-7890");
             }
 
-            //if (_tenantStoreDbContext.TenantInfo.Count() < 2)
-            //{
-            //    _tenantStoreDbContext.TenantInfo.Add(new AppTenantInfo() { Id = "tenant1", Identifier = "tenant1.local", Name = "Microsoft Inc." });
-            //    _tenantStoreDbContext.TenantInfo.Add(new AppTenantInfo() { Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp." });
+            if (_tenantStoreDbContext.TenantInfo.Count() < 2)
+            {
+                _tenantStoreDbContext.TenantInfo.Add(new AppTenantInfo() { Id = "tenant1", Identifier = "tenant1.local", Name = "Microsoft Inc." });
+                _tenantStoreDbContext.TenantInfo.Add(new AppTenantInfo() { Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp." });
 
-            //    _tenantStoreDbContext.SaveChanges();
-            //}
+                _tenantStoreDbContext.SaveChanges();
+            }
 
             ApplicationUser user = await _userManager.FindByNameAsync(DefaultUserNames.User);
 
@@ -171,26 +171,29 @@ namespace BlazorBoilerplate.Storage
 
         private async Task<ApplicationUser> CreateUserAsync(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string[] roles = null)
         {
-            var applicationUser = _userManager.FindByNameAsync(userName).Result;
 
-            if (applicationUser == null)
+            try
             {
-                applicationUser = new ApplicationUser
+                var applicationUser = _userManager.FindByNameAsync(userName).Result;
+
+                if (applicationUser == null)
                 {
-                    UserName = userName,
-                    Email = email,
-                    PhoneNumber = phoneNumber,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    EmailConfirmed = true
-                };
+                    applicationUser = new ApplicationUser
+                    {
+                        UserName = userName,
+                        Email = email,
+                        PhoneNumber = phoneNumber,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        EmailConfirmed = true
+                    };
 
-                var result = _userManager.CreateAsync(applicationUser, password).Result;
+                    var result = _userManager.CreateAsync(applicationUser, password).Result;
 
-                if (!result.Succeeded)
-                    throw new Exception(result.Errors.First().Description);
+                    if (!result.Succeeded)
+                        throw new Exception(result.Errors.First().Description);
 
-                result = _userManager.AddClaimsAsync(applicationUser, new Claim[]{
+                    result = _userManager.AddClaimsAsync(applicationUser, new Claim[]{
                         new Claim(ClaimTypes.Name, userName),
                         new Claim(ClaimTypes.GivenName, firstName),
                         new Claim(ClaimTypes.Surname, lastName),
@@ -199,37 +202,44 @@ namespace BlazorBoilerplate.Storage
                         new Claim(ClaimTypes.HomePhone, phoneNumber)
                     }).Result;
 
-                if (!result.Succeeded)
-                    throw new Exception(result.Errors.First().Description);
-
-                //add claims version of roles
-                if (roles != null)
-                {
-                    foreach (var role in roles.Distinct())
-                    {
-                        await _userManager.AddClaimAsync(applicationUser, new Claim($"Is{role}", ClaimValues.trueString));
-                    }
-
-                    ApplicationUser user = await _userManager.FindByNameAsync(applicationUser.UserName);
-
-                    try
-                    {
-                        result = await _userManager.AddToRolesAsync(user, roles.Distinct());
-                    }
-                    catch
-                    {
-                        await _userManager.DeleteAsync(user);
-                        throw;
-                    }
-
                     if (!result.Succeeded)
+                        throw new Exception(result.Errors.First().Description);
+
+                    //add claims version of roles
+                    if (roles != null)
                     {
-                        await _userManager.DeleteAsync(user);
+                        foreach (var role in roles.Distinct())
+                        {
+                            await _userManager.AddClaimAsync(applicationUser, new Claim($"Is{role}", ClaimValues.trueString));
+                        }
+
+                        ApplicationUser user = await _userManager.FindByNameAsync(applicationUser.UserName);
+
+                        try
+                        {
+                            result = await _userManager.AddToRolesAsync(user, roles.Distinct());
+                        }
+                        catch
+                        {
+                            await _userManager.DeleteAsync(user);
+                            throw;
+                        }
+
+                        if (!result.Succeeded)
+                        {
+                            await _userManager.DeleteAsync(user);
+                        }
                     }
                 }
+
+                return applicationUser;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
             }
 
-            return applicationUser;
         }
     }
 }

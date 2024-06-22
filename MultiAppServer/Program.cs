@@ -6,7 +6,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var sqlIndentity = builder.AddSqlServer("sql")
                  .AddDatabase("db", "MultiAppServer.Users");
 
-var messaging = builder.AddRabbitMQ("messaging");
+//var messaging = builder.AddRabbitMQ("messaging");
 
 var fileCache = builder.AddRedis("fileCache");
 
@@ -20,7 +20,7 @@ var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers", l
 
 var identityEndpoint = user.GetEndpoint(launchProfileName);
 
-var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles").WithReference(messaging);
+var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles");
 
 //builder.AddProject<Projects.WebApp>("webapp").WithReference(user);
 

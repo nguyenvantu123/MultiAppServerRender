@@ -61,4 +61,9 @@
     <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Migrations\ApplicationDb\" />
+    <Folder Include="Data\Migrations\TenantStoreDb\" />
+  </ItemGroup>
+
 </Project>

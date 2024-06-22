@@ -24,12 +24,11 @@ namespace BlazorWebApi.Users.Data
         ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
 
-        public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options, IUserSession userSession) : base(multiTenantContextAccessor, options)
+        public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
         {
             TenantNotSetMode = TenantNotSetMode.Overwrite;
             TenantMismatchMode = TenantMismatchMode.Overwrite;
 
-            UserSession = userSession;
         }
 
         public DbSet<ApiLogItem> ApiLogs { get; set; }
@@ -129,9 +128,9 @@ namespace BlazorWebApi.Users.Data
             //builder.Ignore<IdentityUserLogin<Guid>>();
 
 
-             //Customize the ASP.NET Identity model and override the defaults if needed.
-             //For example, you can rename the ASP.NET Identity table names and more.
-             //Add your customizations after calling base.OnModelCreating(builder);
+            //Customize the ASP.NET Identity model and override the defaults if needed.
+            //For example, you can rename the ASP.NET Identity table names and more.
+            //Add your customizations after calling base.OnModelCreating(builder);
 
         }
         private void SetGlobalQueryFilters(ModelBuilder modelBuilder)

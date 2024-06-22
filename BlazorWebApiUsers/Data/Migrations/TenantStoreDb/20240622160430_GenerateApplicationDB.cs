@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BlazorWebApi.Users.Data.Migrations
+namespace BlazorWebApi.Users.Data.Migrations.TenantStoreDb
 {
     /// <inheritdoc />
     public partial class GenerateApplicationDB : Migration

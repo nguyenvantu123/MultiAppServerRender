@@ -11,10 +11,15 @@ namespace BlazorBoilerplate.Storage
         {
             changeTracker.DetectChanges();
             Guid? userId = null;
+            string userName = null;
             DateTime timestamp = DateTime.UtcNow;
 
-            if (userSession.UserId != Guid.Empty)
+            if (userSession != null && userSession.UserId != Guid.Empty)
+            {
                 userId = userSession.UserId;
+                userName = userSession.UserName;
+            }
+
 
             foreach (EntityEntry entry in changeTracker.Entries().Where(e => e.State != EntityState.Unchanged))
             {
@@ -25,7 +30,7 @@ namespace BlazorBoilerplate.Storage
                         entry.Property("CreatedOn").CurrentValue = timestamp;
 
                         if (userId != null)
-                            entry.Property("CreatedBy").CurrentValue = userId;
+                            entry.Property("CreatedBy").CurrentValue = userName;
                     }
 
                     if (entry.State == EntityState.Deleted || entry.State == EntityState.Modified)
@@ -33,7 +38,7 @@ namespace BlazorBoilerplate.Storage
                         entry.Property("LastModifiedOn").CurrentValue = timestamp;
 
                         if (userId != null)
-                            entry.Property("LastModifiedBy").CurrentValue = userId;
+                            entry.Property("LastModifiedBy").CurrentValue = userName;
                     }
                 }
 
