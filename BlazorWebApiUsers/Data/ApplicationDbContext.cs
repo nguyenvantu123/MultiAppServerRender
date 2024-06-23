@@ -21,7 +21,7 @@ namespace BlazorWebApi.Users.Data
 
     public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
-        ApplicationRoleClaim, IdentityUserToken<Guid>>
+        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
         public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
         {
@@ -46,6 +46,8 @@ namespace BlazorWebApi.Users.Data
 
             base.OnModelCreating(builder);
 
+            //builder.ConfigureMultiTenant();
+
             builder.HasDefaultSchema("Identity");
 
             foreach (var property in builder.Model.GetEntityTypes()
@@ -62,44 +64,6 @@ namespace BlazorWebApi.Users.Data
                 property.SetColumnType("nvarchar(128)");
             }
 
-            //builder.Entity<ApplicationUser>(entity =>
-            //{
-            //    entity.ToTable(name: "Users", "Identity");
-            //    entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            //});
-
-            //builder.Entity<ApplicationRole>(entity =>
-            //{
-            //    entity.ToTable(name: "Roles", "Identity");
-            //});
-            //builder.Entity<ApplicationUserRole>(entity =>
-            //{
-            //    entity.ToTable("UserRoles", "Identity");
-            //});
-
-            //builder.Entity<ApplicationUserClaim>(entity =>
-            //{
-            //    entity.ToTable("UserClaims", "Identity");
-            //});
-
-            //builder.Entity<IdentityUserLogin<Guid>>(entity =>
-            //{
-            //    entity.ToTable("UserLogins", "Identity");
-            //    entity.HasNoKey();
-            //});
-
-            //builder.Entity<ApplicationRoleClaim>(entity =>
-            //{
-            //    entity.ToTable(name: "RoleClaims", "Identity");
-            //    entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            //});
-
-            //builder.Entity<IdentityUserToken<Guid>>(entity =>
-            //{
-            //    entity.ToTable("UserTokens", "Identity");
-            //    entity.HasNoKey();
-            //});
-
             builder.Entity<ApplicationUser>(b =>
             {
                 // Each User can have many entries in the UserRole join table
@@ -115,23 +79,6 @@ namespace BlazorWebApi.Users.Data
                     .IsRequired();
                 });
 
-            });
-
-            builder.Entity<ApplicationUser>(b =>
-            {
-                // Each User can have many entries in the UserRole join table
-                b.HasMany(e => e.UserRoles)
-                    .WithOne(e => e.User)
-                    .HasForeignKey(ur => ur.UserId)
-                    .IsRequired();
-
-                // Each User can have one entry in the JobTitle join table
-
-                // Each User can have many entries in the RefreshToken join table
-                //b.HasMany(e => e.RefreshTokens)
-                //    .WithOne(e => e.User)
-                //    .HasForeignKey(ur => ur.UserId)
-                //    .IsRequired();
             });
 
             builder.Entity<ApplicationRole>(b =>

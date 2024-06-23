@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BlazorBoilerplate.Infrastructure.Storage.Permissions;
+using Finbuckle.MultiTenant;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorWebApi.Users.Models
 {
-    [Table("ApplicationRoleClaim")]
+    [MultiTenant]
+    [Permissions(Actions.CRUD)]
     public class ApplicationRoleClaim : IdentityRoleClaim<Guid>
     {
         public string Description { get; set; }
