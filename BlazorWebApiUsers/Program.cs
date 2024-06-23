@@ -83,15 +83,14 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
 
 builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
-
 builder.Services.AddMultiTenant<AppTenantInfo>()
-        .WithConfigurationStore()
-        .WithRouteStrategy()
-        .WithPerTenantAuthentication();
+    .WithHostStrategy("__tenant__")
+    .WithEFCoreStore<TenantStoreDbContext, AppTenantInfo>()
+    .WithStaticStrategy(Settings.DefaultTenantId);
 
 builder.Services.AddScoped<IUserSession, UserSessionApp>();
 
-
+builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<AppTenantInfo>), typeof(TenantResolver<AppTenantInfo>), ServiceLifetime.Scoped));
 
 builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<AppTenantInfo>>(), ServiceLifetime.Scoped));
@@ -163,6 +162,9 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+//builder.Services.AddScoped<IUserStore<ApplicationUser>, MultiTenantUserStore>();
+
+
 builder.Services.AddIdentityServer(options =>
 {
     options.IssuerUri = "null";
@@ -195,7 +197,7 @@ builder.Services.AddSingleton<CustomAuthService>();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 //builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
-
+builder.Services.AddHostedService(sp => sp.GetRequiredService<DatabaseInitializer>());
 
 builder.Services.AddControllers(options =>
 {
@@ -239,8 +241,6 @@ app.UseMiddleware<UserSessionMiddleware>();
 //    var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
 //    databaseInitializer.SeedAsync().Wait();
 //}
-
-builder.Services.AddHostedService(sp => sp.GetRequiredService<DatabaseInitializer>());
 
 app.Run();
 
@@ -307,8 +307,6 @@ app.Run();
 //builder.AddSqlServerDbContext<UserDbContext>("identitydb");
 
 //builder.AddRabbitMQ("message");
-
-//builder.Services.AddSingleton<IdentityDbInitializer>();
 
 //builder.Services.AddIdentity<User, Role>(options =>
 //    {

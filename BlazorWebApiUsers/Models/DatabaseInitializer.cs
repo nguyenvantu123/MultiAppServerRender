@@ -227,7 +227,6 @@ namespace BlazorBoilerplate.Storage
         private async Task<ApplicationUser> CreateUserAsync(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string[] roles = null)
         {
 
-
             ApplicationUser applicationUser = await _userManager.FindByNameAsync(userName);
 
             if (applicationUser == null)

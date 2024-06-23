@@ -7,8 +7,8 @@ namespace BlazorWebApi.Users.Models
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
     [Table("ApplicationUser")]
-    [MultiTenant]
-    [Permissions(Actions.CRUD)]
+    //[MultiTenant]
+    //[Permissions(Actions.CRUD)]
     public class ApplicationUser : IdentityUser<Guid>
     {
         public new Guid Id { get; set; }
@@ -34,6 +34,7 @@ namespace BlazorWebApi.Users.Models
 
         public virtual ICollection<Message> Messages { get; set; }
 
+        public string TenantId { get; set; }
 
     }
 }
