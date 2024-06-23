@@ -98,7 +98,7 @@ builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
-builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
+//builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -194,7 +194,7 @@ builder.Services.AddSingleton<CustomAuthService>();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
+//builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 
 
 builder.Services.AddControllers(options =>
@@ -234,11 +234,13 @@ app.UseDeveloperExceptionPage();
 app.UseMultiTenant();
 app.UseMiddleware<UserSessionMiddleware>();
 
-using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-{
-    var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
-    databaseInitializer.SeedAsync().Wait();
-}
+//using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+//{
+//    var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
+//    databaseInitializer.SeedAsync().Wait();
+//}
+
+builder.Services.AddHostedService(sp => sp.GetRequiredService<DatabaseInitializer>());
 
 app.Run();
 
