@@ -238,8 +238,6 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 {
     var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
     databaseInitializer.SeedAsync().Wait();
-
-
 }
 
 app.Run();

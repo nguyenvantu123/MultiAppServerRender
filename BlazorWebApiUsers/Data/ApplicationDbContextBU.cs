@@ -19,17 +19,17 @@ using System.Reflection.Emit;
 namespace BlazorWebApi.Users.Data
 {
 
-    public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
+    public class ApplicationDbContextBU : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
-        ApplicationRoleClaim, IdentityUserToken<Guid>>
+        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
-        public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
-        {
 
+        public ApplicationDbContextBU(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
+        {
             TenantNotSetMode = TenantNotSetMode.Overwrite;
             TenantMismatchMode = TenantMismatchMode.Overwrite;
-        }
 
+        }
 
         public DbSet<ApiLogItem> ApiLogs { get; set; }
 
@@ -37,14 +37,22 @@ namespace BlazorWebApi.Users.Data
 
         public DbSet<Message> Messages { get; set; }
 
+        private IUserSession UserSession { get; set; }
+
         public DbSet<TenantSetting> TenantSettings { get; set; }
 
-        private IUserSession UserSession { get; set; }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    var tenantInfo = TenantInfo as AppTenantInfo;
+        //    base.OnConfiguring(optionsBuilder);
+        //}
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
             base.OnModelCreating(builder);
+
+            builder.ConfigureMultiTenant();
 
             builder.HasDefaultSchema("Identity");
 
@@ -62,43 +70,7 @@ namespace BlazorWebApi.Users.Data
                 property.SetColumnType("nvarchar(128)");
             }
 
-            //builder.Entity<ApplicationUser>(entity =>
-            //{
-            //    entity.ToTable(name: "Users", "Identity");
-            //    entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            //});
 
-            //builder.Entity<ApplicationRole>(entity =>
-            //{
-            //    entity.ToTable(name: "Roles", "Identity");
-            //});
-            //builder.Entity<ApplicationUserRole>(entity =>
-            //{
-            //    entity.ToTable("UserRoles", "Identity");
-            //});
-
-            //builder.Entity<ApplicationUserClaim>(entity =>
-            //{
-            //    entity.ToTable("UserClaims", "Identity");
-            //});
-
-            //builder.Entity<IdentityUserLogin<Guid>>(entity =>
-            //{
-            //    entity.ToTable("UserLogins", "Identity");
-            //    entity.HasNoKey();
-            //});
-
-            //builder.Entity<ApplicationRoleClaim>(entity =>
-            //{
-            //    entity.ToTable(name: "RoleClaims", "Identity");
-            //    entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            //});
-
-            //builder.Entity<IdentityUserToken<Guid>>(entity =>
-            //{
-            //    entity.ToTable("UserTokens", "Identity");
-            //    entity.HasNoKey();
-            //});
 
             builder.Entity<ApplicationUser>(b =>
             {
@@ -117,37 +89,20 @@ namespace BlazorWebApi.Users.Data
 
             });
 
-            builder.Entity<ApplicationUser>(b =>
-            {
-                // Each User can have many entries in the UserRole join table
-                b.HasMany(e => e.UserRoles)
-                    .WithOne(e => e.User)
-                    .HasForeignKey(ur => ur.UserId)
-                    .IsRequired();
-
-                // Each User can have one entry in the JobTitle join table
-
-                // Each User can have many entries in the RefreshToken join table
-                //b.HasMany(e => e.RefreshTokens)
-                //    .WithOne(e => e.User)
-                //    .HasForeignKey(ur => ur.UserId)
-                //    .IsRequired();
-            });
-
             builder.Entity<ApplicationRole>(b =>
             {
-                // Each Role can have many entries in the UserRole join table
-                b.HasMany(e => e.UserRoles)
-                    .WithOne(e => e.Role)
-                    .HasForeignKey(ur => ur.RoleId)
-                    .IsRequired();
 
-                // Each Role can have many entries in the RoleClaim join table
+                b.HasMany(e => e.UserRoles)
+               .WithOne(e => e.Role)
+               .HasForeignKey(ur => ur.RoleId)
+               .IsRequired();
+
                 b.HasMany(e => e.RoleClaims)
                     .WithOne(e => e.Role)
                     .HasForeignKey(ur => ur.RoleId)
                     .IsRequired();
             });
+
 
             builder.Entity<ApiLogItem>(b =>
             {
@@ -161,7 +116,9 @@ namespace BlazorWebApi.Users.Data
 
             builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key }); ;
 
+            //builder.ApplyConfiguration(new MessageConfiguration());
 
+            //SetGlobalQueryFilters(builder);
             //builder.Ignore<IdentityRole<Guid>>();
             //builder.Ignore<IdentityRoleClaim<Guid>>();
             //builder.Ignore<IdentityUser<Guid>>();
@@ -171,10 +128,44 @@ namespace BlazorWebApi.Users.Data
             //builder.Ignore<IdentityUserLogin<Guid>>();
 
 
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+            //Customize the ASP.NET Identity model and override the defaults if needed.
+            //For example, you can rename the ASP.NET Identity table names and more.
+            //Add your customizations after calling base.OnModelCreating(builder);
 
+        }
+        private void SetGlobalQueryFilters(ModelBuilder modelBuilder)
+        {
+            foreach (Microsoft.EntityFrameworkCore.Metadata.IMutableEntityType tp in modelBuilder.Model.GetEntityTypes())
+            {
+                Type t = tp.ClrType;
+
+                // set Soft Delete Property
+                if (typeof(ISoftDelete).IsAssignableFrom(t))
+                {
+                    MethodInfo method = SetGlobalQueryForSoftDeleteMethodInfo.MakeGenericMethod(t);
+                    method.Invoke(this, new object[] { modelBuilder });
+                }
+            }
+        }
+
+        private static readonly MethodInfo SetGlobalQueryForSoftDeleteMethodInfo = typeof(ApplicationDbContext).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+           .Single(t => t.IsGenericMethod && t.Name == "SetGlobalQueryForSoftDelete");
+
+        public void SetGlobalQueryForSoftDelete<T>(ModelBuilder builder) where T : class, ISoftDelete
+        {
+            builder.Entity<T>().HasQueryFilter(item => !EF.Property<bool>(item, "IsDeleted"));
+        }
+
+        public override int SaveChanges()
+        {
+            ChangeTracker.SetShadowProperties(UserSession);
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ChangeTracker.SetShadowProperties(UserSession);
+            return await base.SaveChangesAsync(true, cancellationToken);
         }
     }
 }

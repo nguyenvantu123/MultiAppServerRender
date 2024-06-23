@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240622160352_GenerateApplicationDB1")]
+    [Migration("20240623082529_GenerateApplicationDB1")]
     partial class GenerateApplicationDB1
     {
         /// <inheritdoc />
@@ -86,6 +86,9 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<Guid?>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -102,7 +105,7 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Messages", "Identity");
                 });
@@ -110,7 +113,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
             modelBuilder.Entity("BlazorBoilerplate.Infrastructure.Storage.DataModels.TenantSetting", b =>
                 {
                     b.Property<string>("TenantId")
-                        .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Key")
@@ -125,8 +127,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                     b.HasKey("TenantId", "Key");
 
                     b.ToTable("TenantSettings", "Identity");
-
-                    b.HasAnnotation("Finbuckle:MultiTenant", true);
                 });
 
             modelBuilder.Entity("BlazorBoilerplate.Infrastructure.Storage.DataModels.UserProfile", b =>
@@ -156,8 +156,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                         .HasColumnType("datetime2");
 
                     b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<Guid>("UserId")
@@ -169,8 +167,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                         .IsUnique();
 
                     b.ToTable("UserProfiles", "Identity");
-
-                    b.HasAnnotation("Finbuckle:MultiTenant", true);
                 });
 
             modelBuilder.Entity("BlazorWebApi.Users.Models.ApplicationRole", b =>
@@ -272,27 +268,8 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("CardHolderName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CardType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
@@ -311,10 +288,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Expiration")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
@@ -331,7 +304,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -339,10 +311,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -361,25 +329,8 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("SecurityNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -387,10 +338,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -403,8 +350,6 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", "Identity");
-
-                    b.HasAnnotation("Finbuckle:MultiTenant", true);
                 });
 
             modelBuilder.Entity("BlazorWebApi.Users.Models.ApplicationUserRole", b =>
@@ -503,9 +448,7 @@ namespace BlazorWebApi.Users.Data.Migrations.ApplicationDb
                 {
                     b.HasOne("BlazorWebApi.Users.Models.ApplicationUser", "Sender")
                         .WithMany("Messages")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SenderId");
 
                     b.Navigation("Sender");
                 });

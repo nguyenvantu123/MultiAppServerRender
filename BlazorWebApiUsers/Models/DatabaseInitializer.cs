@@ -8,6 +8,7 @@ using BlazorWebApi.Users.Models;
 using BlazorWebApi.Users.RoleConst;
 using Finbuckle.MultiTenant;
 using IdentitySample;
+using Microsoft.AspNetCore.Identity;
 
 namespace BlazorBoilerplate.Storage
 {
@@ -51,7 +52,7 @@ namespace BlazorBoilerplate.Storage
 
         private async Task MigrateAsync()
         {
-            //await _tenantStoreDbContext.Database.MigrateAsync();
+            await _tenantStoreDbContext.Database.MigrateAsync();
             await _context.Database.MigrateAsync();
         }
 
@@ -174,7 +175,7 @@ namespace BlazorBoilerplate.Storage
 
             try
             {
-                var applicationUser = _userManager.FindByNameAsync(userName).Result;
+                ApplicationUser applicationUser = await _userManager.FindByNameAsync(userName);
 
                 if (applicationUser == null)
                 {
@@ -230,9 +231,12 @@ namespace BlazorBoilerplate.Storage
                             await _userManager.DeleteAsync(user);
                         }
                     }
+                    //}
+
                 }
 
                 return applicationUser;
+
             }
             catch (Exception ex)
             {
