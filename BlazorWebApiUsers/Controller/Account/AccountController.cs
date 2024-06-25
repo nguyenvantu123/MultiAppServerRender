@@ -83,7 +83,8 @@ namespace IdentityServerHost.Quickstart.UI
         /// Entry point into the login workflow
         /// </summary>
 
-        [HttpPost("BuildLoginViewModel")]
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -117,7 +118,8 @@ namespace IdentityServerHost.Quickstart.UI
         /// Handle postback from username/password login
         /// </summary>
          // POST: api/Account/Login
-        [HttpPost("Login")]
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -186,7 +188,8 @@ namespace IdentityServerHost.Quickstart.UI
         }
 
         // POST: api/Account/LoginWithRecoveryCode
-        [HttpPost("LoginWithRecoveryCode")]
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]

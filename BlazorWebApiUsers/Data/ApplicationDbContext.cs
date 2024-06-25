@@ -4,6 +4,7 @@ using BlazorBoilerplate.Shared.Interfaces;
 using BlazorBoilerplate.Storage;
 using BlazorBoilerplate.Storage.Configurations;
 using BlazorWebApi.Users.Models;
+using BlazorWebApi.Users.RoleConst;
 using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.EntityFrameworkCore;
@@ -20,16 +21,17 @@ namespace BlazorWebApi.Users.Data
 {
 
     public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
-        IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>,
+        ApplicationUserClaim, ApplicationUserRole, IdentityUserLogin<Guid>,
         ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
         public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
         {
-
+            TenantInfo = (AppTenantInfo)multiTenantContextAccessor.MultiTenantContext.TenantInfo ?? new AppTenantInfo { Id = Settings.DefaultTenantId, Identifier = Settings.DefaultTenantId, Name = Settings.DefaultTenantId };
             TenantNotSetMode = TenantNotSetMode.Overwrite;
             TenantMismatchMode = TenantMismatchMode.Overwrite;
         }
 
+        public new ITenantInfo TenantInfo { get; }
 
         public DbSet<ApiLogItem> ApiLogs { get; set; }
 
@@ -96,13 +98,18 @@ namespace BlazorWebApi.Users.Data
                     .IsRequired();
             });
 
+            builder.Entity<IdentityUserLogin<Guid>>().IsMultiTenant();
+
+            builder.Entity<IdentityUserToken<Guid>>().IsMultiTenant();
+
+
             builder.Entity<ApiLogItem>(b =>
-            {
-                b.HasOne(e => e.ApplicationUser)
-                    .WithMany(e => e.ApiLogItems)
-                    .HasForeignKey(e => e.ApplicationUserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
+              {
+                  b.HasOne(e => e.ApplicationUser)
+                      .WithMany(e => e.ApiLogItems)
+                      .HasForeignKey(e => e.ApplicationUserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+              });
 
             builder.Entity<Message>().ToTable("Messages");
 

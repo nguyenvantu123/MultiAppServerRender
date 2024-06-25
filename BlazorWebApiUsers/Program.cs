@@ -58,9 +58,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
+});
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    var parameterTransformer = new SlugifyParameterTransformer();
+    options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
+    options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddMvc().AddNewtonsoftJson(opt =>
@@ -199,11 +207,6 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 //builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 //builder.Services.AddHostedService(sp => sp.GetRequiredService<DatabaseInitializer>());
 
-builder.Services.AddControllers(options =>
-{
-    options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
-});
-
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -217,6 +220,11 @@ app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
 
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//});
+
 //var store = app.Services.GetRequiredService<IMultiTenantStore<AppTenantInfo>>();
 //foreach (var tenant in await store.GetAllAsync())
 //{
@@ -226,7 +234,18 @@ app.MapDefaultControllerRoute();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((document, request) =>
+        {
+            var paths = document.Paths.ToDictionary(item => item.Key.ToLowerInvariant(), item => item.Value);
+            document.Paths.Clear();
+            foreach (var pathItem in paths)
+            {
+                document.Paths.Add(pathItem.Key, pathItem.Value);
+            }
+        });
+    });
     app.UseSwaggerUI();
 }
 
