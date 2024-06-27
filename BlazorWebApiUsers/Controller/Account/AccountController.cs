@@ -246,7 +246,8 @@ namespace IdentityServerHost.Quickstart.UI
         }
 
         // POST: api/Account/LoginWith2fa
-        [HttpPost("LoginWith2fa")]
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -309,7 +310,8 @@ namespace IdentityServerHost.Quickstart.UI
         /// Show logout page
         /// </summary>
         // POST: api/Account/Logout
-        [HttpPost("Logout")]
+        [HttpPost]
+        [Route("[action]")]
         [Authorize]
         public async Task<ApiResponse> Logout()
         {
@@ -343,7 +345,8 @@ namespace IdentityServerHost.Quickstart.UI
 
 
         // POST: api/Account/Register
-        [HttpPost("Register")]
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         public async Task<ApiResponse> Register(RegisterViewModel parameters)
         {
@@ -425,7 +428,8 @@ namespace IdentityServerHost.Quickstart.UI
 
 
         // POST: api/Account/ConfirmEmail
-        [HttpPost("ConfirmEmail")]
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         public async Task<ApiResponse> ConfirmEmail(ConfirmEmailViewModel parameters)
 
@@ -469,7 +473,8 @@ namespace IdentityServerHost.Quickstart.UI
         }
 
         // POST: api/Account/ForgotPassword
-        [HttpPost("ForgotPassword")]
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         public async Task<ApiResponse> ForgotPassword(ForgotPasswordViewModel parameters)
         {
@@ -506,7 +511,8 @@ namespace IdentityServerHost.Quickstart.UI
         }
 
         //api/Account/ResetPassword
-        [HttpPost("ResetPassword")]
+        [HttpPost]
+        [Route("[action]")]
         [AllowAnonymous]
         public async Task<ApiResponse> ResetPassword(ResetPasswordViewModel parameters)
         {
@@ -547,7 +553,8 @@ namespace IdentityServerHost.Quickstart.UI
         }
 
         //api/Account/UpdatePassword
-        [HttpPost("UpdatePassword")]
+        [HttpPost]
+        [Route("[action]")]
         public async Task<ApiResponse> UpdatePassword(UpdatePasswordViewModel parameters)
         {
             if (!ModelState.IsValid)
@@ -577,7 +584,8 @@ namespace IdentityServerHost.Quickstart.UI
             }
         }
 
-        [HttpPost("EnableAuthenticator")]
+        [HttpPost]
+        [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ApiResponse> EnableAuthenticator(AuthenticatorVerificationCodeViewModel parameters)
@@ -700,7 +708,8 @@ namespace IdentityServerHost.Quickstart.UI
             return result.ToString().ToUpperInvariant();
         }
 
-        [HttpPost("DisableAuthenticator")]
+        [HttpPost]
+        [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ApiResponse> DisableAuthenticator()
@@ -733,7 +742,8 @@ namespace IdentityServerHost.Quickstart.UI
             return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], await BuildUserViewModel(User));
         }
 
-        [HttpPost("ForgetTwoFactorClient")]
+        [HttpPost]
+        [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ApiResponse> ForgetTwoFactorClient()
@@ -750,7 +760,8 @@ namespace IdentityServerHost.Quickstart.UI
             return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], await BuildUserViewModel(User));
         }
 
-        [HttpPost("Enable2fa")]
+        [HttpPost]
+        [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ApiResponse> Enable2fa()
@@ -772,7 +783,8 @@ namespace IdentityServerHost.Quickstart.UI
                 return new ApiResponse((int)HttpStatusCode.BadRequest, "Error while enabling 2fa");
         }
 
-        [HttpPost("Disable2fa")]
+        [HttpPost]
+        [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ApiResponse> Disable2fa()
@@ -794,7 +806,8 @@ namespace IdentityServerHost.Quickstart.UI
                 return new ApiResponse((int)HttpStatusCode.BadRequest, "Error while disabling 2fa");
         }
 
-        [HttpGet("UserViewModel")]
+        [HttpGet]
+        [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ApiResponse> UserViewModel()
@@ -803,7 +816,8 @@ namespace IdentityServerHost.Quickstart.UI
             return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], userViewModel);
         }
 
-        [HttpPost("UpdateUser")]
+        [HttpPost]
+        [Route("[action]")]
         [Authorize]
         public async Task<ApiResponse> UpdateUser(UserViewModel userViewModel)
         {
@@ -834,7 +848,8 @@ namespace IdentityServerHost.Quickstart.UI
 
         ///----------Admin User Management Interface Methods
         // POST: api/Account/Create
-        [HttpPost("Create")]
+        [HttpPost]
+        [Route("[action]")]
         [Authorize(Permissions.User.Create)]
         public async Task<ApiResponse> Create(RegisterViewModel parameters)
         {
@@ -933,7 +948,8 @@ namespace IdentityServerHost.Quickstart.UI
                 return new ApiResponse((int)HttpStatusCode.Forbidden, L["User {0} cannot be edited", user.UserName]);
         }
 
-        [HttpGet("GetUser")]
+        [HttpGet]
+        [Route("[action]")]
         public ApiResponse GetUser()
         {
             UserViewModel userViewModel = User != null && User.Identity.IsAuthenticated
@@ -947,7 +963,8 @@ namespace IdentityServerHost.Quickstart.UI
             return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], userViewModel);
         }
 
-        [HttpPost("AdminUpdateUser")]
+        [HttpPost]
+        [Route("[action]")]
         [Authorize(Permissions.User.Update)]
         public async Task<ApiResponse> AdminUpdateUser([FromBody] UserViewModel userViewModel)
         {
@@ -1022,7 +1039,8 @@ namespace IdentityServerHost.Quickstart.UI
             return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"]);
         }
 
-        [HttpPost("AdminUserPasswordReset")]
+        [HttpPost]
+        [Route("[action]")]
         [Authorize(Permissions.User.Update)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<ApiResponse> AdminResetUserPasswordAsync(ChangePasswordViewModel changePasswordViewModel)
