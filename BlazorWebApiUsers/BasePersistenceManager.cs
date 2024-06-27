@@ -37,9 +37,9 @@ namespace BlazorBoilerplate.Storage
                 var user = httpContextAccessor?.HttpContext?.User;
 
                 if (user == null || user.Identity.IsAuthenticated == false)
-                    throw new UnauthorizedAccessException(L["AuthenticationRequired"] + ": " + L["LoginRequired"]);
+                    throw new UnauthorizedAccessException("AuthenticationRequired" + ": " + "LoginRequired");
                 else if (!user.Claims.Any(c => c.Type == ApplicationClaimTypes.Permission && c.Value == $"{typeof(TEntity).Name}.{Actions.Read}"))
-                    throw new UnauthorizedAccessException(L["Operation not allowed"] + ": " + L["NotAuthorizedTo"]);
+                    throw new UnauthorizedAccessException("Operation not allowed" + ": " + "NotAuthorizedTo");
             }
 
             return Context.Set<TEntity>();
@@ -78,9 +78,9 @@ namespace BlazorBoilerplate.Storage
                         if ((requiredPermissions.Actions & requiredAction) == requiredAction)
                         {
                             if (user == null || user.Identity.IsAuthenticated == false)
-                                errors.Add(new EFEntityError(entityInfo, L["AuthenticationRequired"], L["LoginRequired"], null));
+                                errors.Add(new EFEntityError(entityInfo, "AuthenticationRequired", "LoginRequired", null));
                             else if (!user.Claims.Any(c => c.Type == ApplicationClaimTypes.Permission && c.Value == $"{entityType.Name}.{requiredAction}"))
-                                errors.Add(new EFEntityError(entityInfo, L["Operation not allowed"], L["NotAuthorizedTo"], null));
+                                errors.Add(new EFEntityError(entityInfo, "Operation not allowed", "NotAuthorizedTo", null));
                         }
 
                         if (entityInfo.EntityState == EntityState.Added || entityInfo.EntityState == EntityState.Modified)

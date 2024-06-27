@@ -39,7 +39,7 @@ namespace BlazorBoilerplate.Server.Middleware
         protected async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
         {
             string msg = exception.GetBaseException().StackTrace;
-            string userMsg = L["Operation Failed"];
+            string userMsg = "Operation Failed";
             int code = Status500InternalServerError;
 
             if (exception is EntityErrorsException)
@@ -48,7 +48,7 @@ namespace BlazorBoilerplate.Server.Middleware
             }
             else if (exception is UnauthorizedAccessException)
             {
-                userMsg = msg = L["UnauthorizedAccess"];
+                userMsg = msg = "UnauthorizedAccess";
                 code = Status401Unauthorized;
             }
             else if (exception is DomainException exception1)

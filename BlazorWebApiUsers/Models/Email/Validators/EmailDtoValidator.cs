@@ -11,7 +11,7 @@ namespace BlazorBoilerplate.Shared.Dto.Email.Validators
         {
             RuleFor(p => p.ToAddress)
                 .NotEmpty()
-                .EmailAddress().WithName(L["Email"]);
+                .EmailAddress().WithName("Email");
         }
     }
 }

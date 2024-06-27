@@ -53,6 +53,8 @@ using IdentitySample;
 using BlazorBoilerplate.Shared.Interfaces;
 using BlazorBoilerplate.Shared.Models;
 using IUserSession = BlazorBoilerplate.Shared.Interfaces.IUserSession;
+using BlazorBoilerplate.Infrastructure.Server;
+using BlazorBoilerplate.Server.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -199,7 +201,7 @@ builder.Services.AddScoped<EntityPermissions>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
-
+builder.Services.AddTransient<IEmailFactory, EmailFactory>();
 builder.Services.AddSingleton<CustomAuthService>();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);

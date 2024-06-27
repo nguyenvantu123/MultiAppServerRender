@@ -21,7 +21,7 @@ namespace BlazorBoilerplate.Server.Factories
         {
             var emailMessage = new EmailMessageDto();
 
-            emailMessage.Body = L["TestEmail.template"].Value
+            emailMessage.Body = "TestEmail.template"
                 .FormatWith(new { baseUrl, user = recipient, testDate = DateTime.Now });
 
             //emailMessage.Subject = "TestEmail.subject", recipient];
@@ -34,10 +34,10 @@ namespace BlazorBoilerplate.Server.Factories
         {
             var emailMessage = new EmailMessageDto();
 
-            emailMessage.Body = L["PlainTextTestEmail.template"].Value
+            emailMessage.Body = "PlainTextTestEmail.template"
                 .FormatWith(new { date });
 
-            emailMessage.Subject = L["PlainTextTestEmail.subject", emailMessage.ToAddresses[0].Name];
+            emailMessage.Subject = emailMessage.ToAddresses[0].Name;
 
             emailMessage.IsHtml = false;
 
@@ -47,10 +47,10 @@ namespace BlazorBoilerplate.Server.Factories
         {
             var emailMessage = new EmailMessageDto();
 
-            emailMessage.Body = L["NewUserConfirmationEmail.template"].Value
+            emailMessage.Body = "NewUserConfirmationEmail.template"
                 .FormatWith(new { baseUrl, name = fullName, userName, callbackUrl });
 
-            emailMessage.Subject = L["NewUserConfirmationEmail.subject", fullName];
+            emailMessage.Subject = fullName;
 
             return emailMessage;
         }
@@ -58,10 +58,10 @@ namespace BlazorBoilerplate.Server.Factories
         {
             var emailMessage = new EmailMessageDto();
 
-            emailMessage.Body = L["NewUserEmail.template"].Value
+            emailMessage.Body = "NewUserEmail.template"
                 .FormatWith(new { baseUrl, fullName = userName, userName, email = emailAddress, password });
 
-            emailMessage.Subject = L["NewUserEmail.subject", fullName];
+            emailMessage.Subject = fullName;
 
             return emailMessage;
         }
@@ -70,10 +70,10 @@ namespace BlazorBoilerplate.Server.Factories
             var emailMessage = new EmailMessageDto();
             //placeholder not actually implemented
 
-            emailMessage.Body = L["NewUserNotificationEmail.template"].Value
+            emailMessage.Body = "NewUserNotificationEmail.template"
                 .FormatWith(new { baseUrl, creator, name, userName, roles, company });
 
-            emailMessage.Subject = L["NewUserNotificationEmail.subject", userName];
+            emailMessage.Subject = userName;
 
             return emailMessage;
         }
@@ -81,10 +81,10 @@ namespace BlazorBoilerplate.Server.Factories
         {
             var emailMessage = new EmailMessageDto();
 
-            emailMessage.Body = L["ForgotPassword.template"].Value
+            emailMessage.Body = "ForgotPassword.template"
                 .FormatWith(new { baseUrl, name, callbackUrl, token });
 
-            emailMessage.Subject = L["ForgotPassword.subject", name];
+            emailMessage.Subject = name;
 
             return emailMessage;
         }
@@ -92,10 +92,10 @@ namespace BlazorBoilerplate.Server.Factories
         {
             var emailMessage = new EmailMessageDto();
 
-            emailMessage.Body = L["PasswordReset.template"].Value
+            emailMessage.Body = "PasswordReset.template"
                 .FormatWith(new { baseUrl, userName });
 
-            emailMessage.Subject = L["PasswordReset.subject", userName];
+            emailMessage.Subject = userName;
 
             return emailMessage;
         }
