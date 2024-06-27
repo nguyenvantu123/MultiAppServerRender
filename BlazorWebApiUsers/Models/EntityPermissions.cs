@@ -1,12 +1,8 @@
-using BlazorBoilerplate.Constants;
-using BlazorWebApi.Users.RoleConst;
-using Finbuckle.MultiTenant;
-using IdentitySample;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using BlazorWebApi.Users.Constants;
 
-namespace BlazorBoilerplate.Infrastructure.Storage.Permissions
+namespace BlazorWebApi.Users.Models
 {
     public class EntityPermissions
     {

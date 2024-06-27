@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Infrastructure.Storage.Permissions
+﻿namespace WebApp.Permissions
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class PermissionsAttribute : Attribute

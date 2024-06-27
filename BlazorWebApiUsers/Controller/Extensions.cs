@@ -1,6 +1,7 @@
+using BlazorWebApi.Users.Controller.Account;
 using IdentityServer4.Models;
 
-namespace IdentityServerHost.Quickstart.UI;
+namespace BlazorWebApi.Users.Controller;
 
 public static class Extensions
 {
@@ -14,7 +15,7 @@ public static class Extensions
            && !context.RedirectUri.StartsWith("http", StringComparison.Ordinal);
     }
 
-    public static IActionResult LoadingPage(this Controller controller, string viewName, string redirectUri)
+    public static IActionResult LoadingPage(this Microsoft.AspNetCore.Mvc.Controller controller, string viewName, string redirectUri)
     {
         controller.HttpContext.Response.StatusCode = 200;
         controller.HttpContext.Response.Headers["Location"] = "";

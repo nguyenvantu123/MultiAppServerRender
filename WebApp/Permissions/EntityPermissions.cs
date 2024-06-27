@@ -1,11 +1,10 @@
-using BlazorBoilerplate.Constants;
-//using Finbuckle.MultiTenant;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using WebApp.Settings;
 
-namespace BlazorBoilerplate.Infrastructure.Storage.Permissions
+//using Finbuckle.MultiTenant;
+
+namespace WebApp.Permissions
 {
     public class EntityPermissions
     {

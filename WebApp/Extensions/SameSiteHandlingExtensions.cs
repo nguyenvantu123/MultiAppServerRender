@@ -1,4 +1,4 @@
-namespace BlazorBoilerplate.Server.Extensions
+namespace WebApp
 {
     // copied from https://devblogs.microsoft.com/aspnet/upcoming-samesite-cookie-changes-in-asp-net-and-asp-net-core/
     // also read https://web.dev/samesite-cookies-explained/

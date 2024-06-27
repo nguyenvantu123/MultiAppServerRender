@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Infrastructure.Storage.Permissions
+﻿namespace WebApp
 {
     [Flags]
     public enum Actions

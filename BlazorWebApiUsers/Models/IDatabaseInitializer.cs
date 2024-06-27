@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Infrastructure.Storage
+﻿namespace BlazorWebApi.Users.Models
 {
     public interface IDatabaseInitializer
     {

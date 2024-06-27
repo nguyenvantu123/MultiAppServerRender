@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 

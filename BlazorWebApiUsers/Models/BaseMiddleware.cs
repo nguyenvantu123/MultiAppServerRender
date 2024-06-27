@@ -1,12 +1,10 @@
-﻿using BlazorBoilerplate.Infrastructure.Server.Models;
-using BlazorBoilerplate.Shared.Localizer;
-using Breeze.Persistence;
+﻿using Breeze.Persistence;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using ObjectCloner.Extensions;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
-namespace BlazorBoilerplate.Server.Middleware
+namespace BlazorWebApi.Users.Models
 {
     public abstract class BaseMiddleware
     {
@@ -39,7 +37,7 @@ namespace BlazorBoilerplate.Server.Middleware
         protected async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
         {
             string msg = exception.GetBaseException().StackTrace;
-            string userMsg = L["Operation Failed"];
+            string userMsg = "Operation Failed";
             int code = Status500InternalServerError;
 
             if (exception is EntityErrorsException)
@@ -48,7 +46,7 @@ namespace BlazorBoilerplate.Server.Middleware
             }
             else if (exception is UnauthorizedAccessException)
             {
-                userMsg = msg = L["UnauthorizedAccess"];
+                userMsg = msg = "UnauthorizedAccess";
                 code = Status401Unauthorized;
             }
             else if (exception is DomainException exception1)

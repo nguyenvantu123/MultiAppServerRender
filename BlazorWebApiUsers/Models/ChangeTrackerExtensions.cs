@@ -1,9 +1,6 @@
-﻿using BlazorBoilerplate.Infrastructure.Storage.DataInterfaces;
-using BlazorBoilerplate.Shared.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace BlazorBoilerplate.Storage
+namespace BlazorWebApi.Users.Models
 {
     public static class ChangeTrackerExtensions
     {

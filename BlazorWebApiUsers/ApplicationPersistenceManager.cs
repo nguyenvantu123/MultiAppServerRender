@@ -1,15 +1,10 @@
-﻿using BlazorBoilerplate.Infrastructure.Storage.DataModels;
-using BlazorBoilerplate.Shared.Localizer;
-using BlazorWebApi.Users.Data;
+﻿using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Models;
 using Breeze.Persistence;
 using Finbuckle.MultiTenant;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
-using System.Security.Claims;
 
-namespace BlazorBoilerplate.Storage
+namespace BlazorWebApi.Users
 {
     public class ApplicationPersistenceManager : BasePersistenceManager<ApplicationDbContext>
     {

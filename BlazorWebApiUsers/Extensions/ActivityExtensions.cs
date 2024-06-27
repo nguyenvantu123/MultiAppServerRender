@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 
+namespace BlazorWebApi.Users.Extensions;
+
 internal static class ActivityExtensions
 {
     // See https://opentelemetry.io/docs/specs/otel/trace/semantic_conventions/exceptions/

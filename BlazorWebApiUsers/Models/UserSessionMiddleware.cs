@@ -1,9 +1,6 @@
-﻿using BlazorBoilerplate.Shared.Interfaces;
-using BlazorBoilerplate.Shared.Localizer;
-using Microsoft.Extensions.Localization;
-using System.Security.Claims;
+﻿using Microsoft.Extensions.Localization;
 
-namespace BlazorBoilerplate.Server.Middleware
+namespace BlazorWebApi.Users.Models
 {
     public class UserSessionMiddleware : BaseMiddleware
     {

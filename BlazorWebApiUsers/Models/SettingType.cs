@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Constants
+﻿namespace BlazorWebApi.Users.Models
 {
     public enum SettingType
     {

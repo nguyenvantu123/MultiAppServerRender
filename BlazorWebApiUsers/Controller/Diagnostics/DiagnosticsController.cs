@@ -2,11 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-namespace IdentityServerHost.Quickstart.UI;
+namespace BlazorWebApi.Users.Controller.Diagnostics;
 
 [SecurityHeaders]
 [Authorize]
-public class DiagnosticsController : Controller
+public class DiagnosticsController : Microsoft.AspNetCore.Mvc.Controller
 {
     public async Task<IActionResult> Index()
     {

@@ -1,8 +1,8 @@
-﻿using BlazorBoilerplate.Shared.Localizer;
+﻿using BlazorWebApi.Users.Models;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
 
-namespace BlazorBoilerplate.Shared.Validators
+namespace BlazorWebApi.Users
 {
     public class LocalizedAbstractValidator<T, S> : AbstractValidator<T>
     {

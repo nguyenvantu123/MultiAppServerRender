@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Infrastructure.Storage.Permissions
+﻿namespace WebApp.Permissions
 {
     public class EntityPermission
     {

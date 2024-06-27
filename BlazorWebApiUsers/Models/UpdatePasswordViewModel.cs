@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BlazorBoilerplate.Shared.Models.Account
+﻿namespace BlazorWebApi.Users.Models
 {
     public class UpdatePasswordViewModel
     {

@@ -1,8 +1,8 @@
-﻿using BlazorBoilerplate.Infrastructure.AuthorizationDefinitions;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
+using WebApp.Permissions;
 
-namespace BlazorBoilerplate.Server.Authorization
+namespace WebApp.Components
 {
     public class AuthorizationPolicyProvider : SharedAuthorizationPolicyProvider
     {

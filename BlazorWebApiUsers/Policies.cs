@@ -1,5 +1,5 @@
 ﻿
-namespace BlazorBoilerplate.Infrastructure.AuthorizationDefinitions
+namespace BlazorWebApi.Users
 {
     public static class Policies
     {

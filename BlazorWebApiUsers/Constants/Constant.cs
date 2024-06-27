@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApi.Users.RoleConst
+﻿namespace BlazorWebApi.Users.Constants
 {
     public static class Constant
     {

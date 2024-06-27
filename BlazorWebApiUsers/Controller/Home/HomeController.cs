@@ -3,11 +3,11 @@
 
 using IdentityServer4.Services;
 
-namespace IdentityServerHost.Quickstart.UI
+namespace BlazorWebApi.Users.Controller.Home
 {
     [SecurityHeaders]
     [AllowAnonymous]
-    public class HomeController : Controller
+    public class HomeController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IWebHostEnvironment _environment;

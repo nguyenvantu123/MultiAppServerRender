@@ -3,7 +3,7 @@
 
 using IdentityServer4.Models;
 
-namespace IdentityServerHost.Quickstart.UI;
+namespace BlazorWebApi.Users.Controller.Home;
 
 public class ErrorViewModel
 {

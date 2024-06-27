@@ -1,4 +1,4 @@
-﻿namespace WebApp.Models
+﻿namespace BlazorWebApi.Users.Models.AccountViewModels
 {
     public class LoginResponseModel
     {

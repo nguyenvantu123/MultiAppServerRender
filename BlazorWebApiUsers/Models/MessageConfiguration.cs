@@ -1,8 +1,6 @@
-﻿using BlazorBoilerplate.Infrastructure.Storage.DataModels;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BlazorBoilerplate.Storage.Configurations
+namespace BlazorWebApi.Users.Models
 {
     public class MessageConfiguration : IEntityTypeConfiguration<Message>
     {

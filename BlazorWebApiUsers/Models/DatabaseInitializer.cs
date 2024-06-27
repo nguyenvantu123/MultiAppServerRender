@@ -1,16 +1,7 @@
-﻿
-using BlazorBoilerplate.Infrastructure.AuthorizationDefinitions;
-using BlazorBoilerplate.Infrastructure.Storage;
-using BlazorBoilerplate.Infrastructure.Storage.DataModels;
-using BlazorBoilerplate.Infrastructure.Storage.Permissions;
+﻿using BlazorWebApi.Users.Constants;
 using BlazorWebApi.Users.Data;
-using BlazorWebApi.Users.Models;
-using BlazorWebApi.Users.RoleConst;
-using Finbuckle.MultiTenant;
-using IdentitySample;
-using Microsoft.AspNetCore.Identity;
 
-namespace BlazorBoilerplate.Storage
+namespace BlazorWebApi.Users.Models
 {
     public class DatabaseInitializer : IDatabaseInitializer
     {

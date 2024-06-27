@@ -1,4 +1,4 @@
-﻿namespace eShop.Identity.API.Services
+﻿namespace BlazorWebApi.Users.Services
 {
     public interface ILoginService<T>
     {

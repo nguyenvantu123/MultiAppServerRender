@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Shared.Dto.Email
+﻿namespace WebApp.Models
 {
     public class EmailViewModel
     {

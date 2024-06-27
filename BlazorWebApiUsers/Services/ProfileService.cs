@@ -2,7 +2,7 @@
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 
-namespace eShop.Identity.API.Services
+namespace BlazorWebApi.Users.Services
 {
     public class ProfileService : IProfileService
     {

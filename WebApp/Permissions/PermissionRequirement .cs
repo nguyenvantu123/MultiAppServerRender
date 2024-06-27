@@ -1,7 +1,6 @@
-﻿using BlazorBoilerplate.Infrastructure.AuthorizationDefinitions;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 
-namespace BlazorBoilerplate.Server.Authorization
+namespace WebApp.Permissions
 {
     public class PermissionRequirement : IAuthorizationRequirement
     {

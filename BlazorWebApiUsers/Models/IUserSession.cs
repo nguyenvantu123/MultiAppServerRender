@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Shared.Interfaces
+﻿namespace BlazorWebApi.Users.Models
 {
     public interface IUserSession
     {

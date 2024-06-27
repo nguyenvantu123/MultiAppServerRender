@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 using System.Security.Principal;
 
-namespace BlazorBoilerplate.Server.Extensions
+namespace BlazorWebApi.Users.Extensions
 {
     public static class Extensions
     {

@@ -1,38 +1,28 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System.Net;
+using System.Text;
+using System.Text.Encodings.Web;
 using BlazorBoilerplate.Constants;
-using BlazorBoilerplate.Infrastructure.AuthorizationDefinitions;
-using BlazorBoilerplate.Infrastructure.Server;
-using BlazorBoilerplate.Infrastructure.Server.Models;
-using BlazorBoilerplate.Infrastructure.Storage.Permissions;
-using BlazorBoilerplate.Server.Extensions;
-using BlazorBoilerplate.Shared.Dto.Email;
-using BlazorBoilerplate.Shared.Localizer;
-using BlazorBoilerplate.Shared.Models.Account;
+using BlazorWebApi.Users.Extensions;
 using BlazorWebApi.Users.Models;
 using BlazorWebApi.Users.Models.AccountViewModels;
+using BlazorWebApi.Users.Models.Email;
 using BlazorWebApi.Users.Models.ManageViewModels;
-using IdentityModel;
-using IdentityServer4.Events;
-using IdentityServer4.Extensions;
-using IdentityServer4.Models;
+using BlazorWebApi.Users.Services;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.Extensions.Localization;
 using NSwag.Annotations;
-using System.Net;
-using System.Text;
-using System.Text.Encodings.Web;
-using WebApp.Models;
 
-namespace IdentityServerHost.Quickstart.UI
+namespace BlazorWebApi.Users.Controller.Account
 {
     [OpenApiIgnore]
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : Controller
+    public class AccountController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -105,7 +95,7 @@ namespace IdentityServerHost.Quickstart.UI
 
             var allowLocal = true;
 
-            return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], new LoginViewModel
+            return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful", new LoginViewModel
             {
                 AllowRememberLogin = AccountOptions.AllowRememberLogin,
                 EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
@@ -128,7 +118,7 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             try
@@ -154,14 +144,14 @@ namespace IdentityServerHost.Quickstart.UI
                 if (result.IsLockedOut)
                 {
                     _logger.LogInformation("User Locked out: {0}", parameters.Username);
-                    return new ApiResponse((int)HttpStatusCode.Unauthorized, L["LockedUser"]);
+                    return new ApiResponse((int)HttpStatusCode.Unauthorized, "LockedUser");
                 }
 
                 // If your email is not confirmed but you require it in the settings for login.
                 if (result.IsNotAllowed)
                 {
                     _logger.LogInformation("User {0} not allowed to log in, because email is not confirmed", parameters.Username);
-                    return new ApiResponse((int)HttpStatusCode.Unauthorized, L["EmailNotConfirmed"]);
+                    return new ApiResponse((int)HttpStatusCode.Unauthorized, "EmailNotConfirmed");
                 }
 
                 if (result.Succeeded)
@@ -178,12 +168,12 @@ namespace IdentityServerHost.Quickstart.UI
                 }
 
                 _logger.LogInformation("Invalid Password for user {0}", parameters.Username);
-                return new ApiResponse((int)HttpStatusCode.Unauthorized, L["LoginFailed"]);
+                return new ApiResponse((int)HttpStatusCode.Unauthorized, "LoginFailed");
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Login Failed: {ex.GetBaseException().Message}");
-                return new ApiResponse((int)HttpStatusCode.InternalServerError, L["LoginFailed"]);
+                return new ApiResponse((int)HttpStatusCode.InternalServerError, "LoginFailed");
             }
         }
 
@@ -197,7 +187,7 @@ namespace IdentityServerHost.Quickstart.UI
         {
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             try
@@ -218,14 +208,14 @@ namespace IdentityServerHost.Quickstart.UI
                 if (result.IsLockedOut)
                 {
                     _logger.LogInformation("User Locked out: {0}", user.UserName);
-                    return new ApiResponse((int)HttpStatusCode.Unauthorized, L["LockedUser"]);
+                    return new ApiResponse((int)HttpStatusCode.Unauthorized, "LockedUser");
                 }
 
                 // If your email is not confirmed but you require it in the settings for login.
                 if (result.IsNotAllowed)
                 {
                     _logger.LogInformation("User {0} not allowed to log in, because email is not confirmed", user.UserName);
-                    return new ApiResponse((int)HttpStatusCode.Unauthorized, L["EmailNotConfirmed"]);
+                    return new ApiResponse((int)HttpStatusCode.Unauthorized, "EmailNotConfirmed");
                 }
 
                 if (result.Succeeded)
@@ -236,12 +226,12 @@ namespace IdentityServerHost.Quickstart.UI
                 }
 
                 _logger.LogInformation("Invalid recovery code for user {0}", user.UserName);
-                return new ApiResponse((int)HttpStatusCode.Unauthorized, L["LoginFailed"]);
+                return new ApiResponse((int)HttpStatusCode.Unauthorized, "LoginFailed");
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Login Failed: {ex.GetBaseException().Message}");
-                return new ApiResponse((int)HttpStatusCode.InternalServerError, L["LoginFailed"]);
+                return new ApiResponse((int)HttpStatusCode.InternalServerError, "LoginFailed");
             }
         }
 
@@ -256,7 +246,7 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             try
@@ -277,14 +267,14 @@ namespace IdentityServerHost.Quickstart.UI
                 if (result.IsLockedOut)
                 {
                     _logger.LogInformation("User Locked out: {0}", user.UserName);
-                    return new ApiResponse((int)HttpStatusCode.Unauthorized, L["LockedUser"]);
+                    return new ApiResponse((int)HttpStatusCode.Unauthorized, "LockedUser");
                 }
 
                 // If your email is not confirmed but you require it in the settings for login.
                 if (result.IsNotAllowed)
                 {
                     _logger.LogInformation("User {0} not allowed to log in, because email is not confirmed", user.UserName);
-                    return new ApiResponse((int)HttpStatusCode.Unauthorized, L["EmailNotConfirmed"]);
+                    return new ApiResponse((int)HttpStatusCode.Unauthorized, "EmailNotConfirmed");
                 }
 
                 if (result.Succeeded)
@@ -295,12 +285,12 @@ namespace IdentityServerHost.Quickstart.UI
                 }
 
                 _logger.LogInformation("Invalid authenticator code for user {0}", user.UserName);
-                return new ApiResponse((int)HttpStatusCode.Unauthorized, L["LoginFailed"]);
+                return new ApiResponse((int)HttpStatusCode.Unauthorized, "LoginFailed");
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Login Failed: {ex.GetBaseException().Message}");
-                return new ApiResponse((int)HttpStatusCode.InternalServerError, L["LoginFailed"]);
+                return new ApiResponse((int)HttpStatusCode.InternalServerError, "LoginFailed");
             }
         }
 
@@ -353,13 +343,13 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             await RegisterNewUserAsync(parameters.UserName, parameters.Email, parameters.Password, _userManager.Options.SignIn.RequireConfirmedEmail);
 
             if (_userManager.Options.SignIn.RequireConfirmedEmail)
-                return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"]);
+                return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful");
             else
             {
                 return await Login(new LoginInputModel
@@ -437,20 +427,20 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             if (parameters.UserId == null || parameters.Token == null)
             {
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             var user = await _userManager.FindByIdAsync(parameters.UserId);
 
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", parameters.UserId]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", parameters.UserId);
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             if (!user.EmailConfirmed)
@@ -469,7 +459,7 @@ namespace IdentityServerHost.Quickstart.UI
                 await _userManager.AddClaimAsync(user, new Claim(ApplicationClaimTypes.EmailVerified, ClaimValues.trueString, ClaimValueTypes.Boolean));
             }
 
-            return new ApiResponse((int)HttpStatusCode.OK, L["EmailVerificationSuccessful"]);
+            return new ApiResponse((int)HttpStatusCode.OK, "EmailVerificationSuccessful");
         }
 
         // POST: api/Account/ForgotPassword
@@ -481,7 +471,7 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             var user = await _userManager.FindByEmailAsync(parameters.Email);
@@ -490,7 +480,7 @@ namespace IdentityServerHost.Quickstart.UI
             {
                 _logger.LogInformation("Forgot Password with non-existent email / user: {0}", parameters.Email);
                 // Don't reveal that the user does not exist or is not confirmed
-                return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"]);
+                return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful");
             }
 
             // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
@@ -518,14 +508,14 @@ namespace IdentityServerHost.Quickstart.UI
         {
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             var user = await _userManager.FindByIdAsync(parameters.UserId);
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", parameters.UserId]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", parameters.UserId);
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             var result = await _userManager.ResetPasswordAsync(user, parameters.Token, parameters.Password);
@@ -559,14 +549,14 @@ namespace IdentityServerHost.Quickstart.UI
         {
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             var user = await _userManager.FindByIdAsync(User.GetSubjectById());
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", User.GetDisplayByName()]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", User.GetDisplayByName());
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             var result = await _userManager.ChangePasswordAsync(user, parameters.CurrentPassword, parameters.NewPassword);
@@ -574,7 +564,7 @@ namespace IdentityServerHost.Quickstart.UI
             if (result.Succeeded)
             {
                 await _signInManager.RefreshSignInAsync(user);
-                return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"]);
+                return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful");
             }
             else
             {
@@ -593,14 +583,14 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             var user = await _userManager.FindByIdAsync(User.GetSubjectById());
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", User.GetDisplayByName()]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", User.GetDisplayByName());
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             var verificationCode = parameters.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
@@ -623,7 +613,7 @@ namespace IdentityServerHost.Quickstart.UI
                         userViewModel.RecoveryCodes = (await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10)).ToArray();
                     }
 
-                    return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], userViewModel);
+                    return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful", userViewModel);
                 }
                 else
                     return new ApiResponse((int)HttpStatusCode.InternalServerError, "Error while enabling 2FA");
@@ -631,7 +621,7 @@ namespace IdentityServerHost.Quickstart.UI
             else
             {
                 _logger.LogWarning($"Verification code of {user.UserName} is invalid.");
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["VerificationCodeInvalid"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "VerificationCodeInvalid");
             }
         }
 
@@ -717,8 +707,8 @@ namespace IdentityServerHost.Quickstart.UI
             var user = await _userManager.FindByIdAsync(User.GetSubjectById());
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", User.GetDisplayByName()]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", User.GetDisplayByName());
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             var result = await _userManager.SetTwoFactorEnabledAsync(user, false);
@@ -739,7 +729,7 @@ namespace IdentityServerHost.Quickstart.UI
             else
                 return new ApiResponse((int)HttpStatusCode.BadRequest, "Error while disabling 2fa");
 
-            return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], await BuildUserViewModel(User));
+            return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful", await BuildUserViewModel(User));
         }
 
         [HttpPost]
@@ -751,13 +741,13 @@ namespace IdentityServerHost.Quickstart.UI
             var user = await _userManager.FindByIdAsync(User.GetSubjectById());
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", User.GetDisplayByName()]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", User.GetDisplayByName());
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             await _signInManager.ForgetTwoFactorClientAsync();
 
-            return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], await BuildUserViewModel(User));
+            return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful", await BuildUserViewModel(User));
         }
 
         [HttpPost]
@@ -769,8 +759,8 @@ namespace IdentityServerHost.Quickstart.UI
             var user = await _userManager.FindByIdAsync(User.GetSubjectById());
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", User.GetDisplayByName()]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", User.GetDisplayByName());
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             var result = await _userManager.SetTwoFactorEnabledAsync(user, true);
@@ -792,8 +782,8 @@ namespace IdentityServerHost.Quickstart.UI
             var user = await _userManager.FindByIdAsync(User.GetSubjectById());
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", User.GetDisplayByName()]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", User.GetDisplayByName());
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             var result = await _userManager.SetTwoFactorEnabledAsync(user, false);
@@ -813,7 +803,7 @@ namespace IdentityServerHost.Quickstart.UI
         public async Task<ApiResponse> UserViewModel()
         {
             var userViewModel = await BuildUserViewModel(User);
-            return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], userViewModel);
+            return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful", userViewModel);
         }
 
         [HttpPost]
@@ -826,8 +816,8 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (user == null)
             {
-                _logger.LogInformation(L["The user {0} doesn't exist", userViewModel.Email]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogInformation("The user {0} doesn't exist", userViewModel.Email);
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
 
             user.FirstName = userViewModel.FirstName;
@@ -843,7 +833,7 @@ namespace IdentityServerHost.Quickstart.UI
                 return new ApiResponse((int)HttpStatusCode.BadRequest, msg);
             }
 
-            return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"]);
+            return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful");
         }
 
         ///----------Admin User Management Interface Methods
@@ -855,7 +845,7 @@ namespace IdentityServerHost.Quickstart.UI
         {
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             var user = new ApplicationUser
@@ -921,7 +911,7 @@ namespace IdentityServerHost.Quickstart.UI
                     LastName = user.LastName
                 };
 
-                return new ApiResponse((int)HttpStatusCode.OK, L["User {0} created", userViewModel.UserName], userViewModel);
+                return new ApiResponse((int)HttpStatusCode.OK, $"User {userViewModel.UserName} created", userViewModel);
             }
         }
 
@@ -933,8 +923,8 @@ namespace IdentityServerHost.Quickstart.UI
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                _logger.LogWarning(L["The user {0} doesn't exist", id]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogWarning("The user {0} doesn't exist", id);
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
             if (user.UserName.ToLower() != "admin")
             {
@@ -945,7 +935,7 @@ namespace IdentityServerHost.Quickstart.UI
                 return new ApiResponse((int)HttpStatusCode.OK, "User Deletion Successful");
             }
             else
-                return new ApiResponse((int)HttpStatusCode.Forbidden, L["User {0} cannot be edited", user.UserName]);
+                return new ApiResponse((int)HttpStatusCode.Forbidden, "User {0} cannot be edited", user.UserName);
         }
 
         [HttpGet]
@@ -960,7 +950,7 @@ namespace IdentityServerHost.Quickstart.UI
                   Roles = new List<string>()
               };
 
-            return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"], userViewModel);
+            return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful", userViewModel);
         }
 
         [HttpPost]
@@ -971,7 +961,7 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             var user = await _userManager.FindByIdAsync(userViewModel.UserId.ToString());
@@ -990,7 +980,7 @@ namespace IdentityServerHost.Quickstart.UI
             catch (Exception ex)
             {
                 _logger.LogError($"Updating user exception: {ex.GetBaseException().Message}");
-                return new ApiResponse((int)HttpStatusCode.InternalServerError, L["Operation Failed"]);
+                return new ApiResponse((int)HttpStatusCode.InternalServerError, "Operation Failed");
             }
 
             if (userViewModel.Roles != null)
@@ -1032,11 +1022,11 @@ namespace IdentityServerHost.Quickstart.UI
                 catch (Exception ex)
                 {
                     _logger.LogError($"Updating Roles exception: {ex.GetBaseException().Message}");
-                    return new ApiResponse((int)HttpStatusCode.InternalServerError, L["Operation Failed"]);
+                    return new ApiResponse((int)HttpStatusCode.InternalServerError, "Operation Failed");
                 }
             }
 
-            return new ApiResponse((int)HttpStatusCode.OK, L["Operation Successful"]);
+            return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful");
         }
 
         [HttpPost]
@@ -1048,14 +1038,14 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, L["InvalidData"]);
+                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
             var user = await _userManager.FindByIdAsync(changePasswordViewModel.UserId);
             if (user == null)
             {
-                _logger.LogWarning(L["The user {0} doesn't exist", changePasswordViewModel.UserId]);
-                return new ApiResponse((int)HttpStatusCode.NotFound, L["The user doesn't exist"]);
+                _logger.LogWarning("The user {0} doesn't exist", changePasswordViewModel.UserId);
+                return new ApiResponse((int)HttpStatusCode.NotFound, "The user doesn't exist");
             }
             var passToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, passToken, changePasswordViewModel.Password);

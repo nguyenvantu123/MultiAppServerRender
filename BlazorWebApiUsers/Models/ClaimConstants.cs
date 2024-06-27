@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Infrastructure.AuthorizationDefinitions
+﻿namespace BlazorWebApi.Users.Models
 {
     public static class ApplicationClaimTypes
     {

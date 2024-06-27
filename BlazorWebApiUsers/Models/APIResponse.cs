@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
-namespace BlazorBoilerplate.Infrastructure.Server.Models
+namespace BlazorWebApi.Users.Models
 {
     [Serializable]
     [DataContract]

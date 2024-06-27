@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace BlazorBoilerplate.Shared.Localizer
+namespace BlazorWebApi.Users.Models
 {
     public class Global
     {

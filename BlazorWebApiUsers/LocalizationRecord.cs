@@ -1,7 +1,4 @@
-﻿using BlazorBoilerplate.Infrastructure.Storage.Permissions;
-using System.ComponentModel.DataAnnotations;
-
-namespace BlazorBoilerplate.Infrastructure.Storage.DataModels
+﻿namespace BlazorWebApi.Users
 {
     [Permissions(Actions.Create | Actions.Update | Actions.Delete)]
     public partial class LocalizationRecord 

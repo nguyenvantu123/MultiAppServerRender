@@ -13,6 +13,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Infrastructure.Server.Models
+﻿namespace BlazorWebApi.Users.Models
 {
     public class DomainException : Exception
     {

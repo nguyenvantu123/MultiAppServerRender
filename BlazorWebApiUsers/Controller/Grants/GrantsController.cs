@@ -6,14 +6,14 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 
-namespace IdentityServerHost.Quickstart.UI;
+namespace BlazorWebApi.Users.Controller.Grants;
 
 /// <summary>
 /// This sample controller allows a user to revoke grants given to clients
 /// </summary>
 [SecurityHeaders]
 [Authorize]
-public class GrantsController : Controller
+public class GrantsController : Microsoft.AspNetCore.Mvc.Controller
 {
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IClientStore _clients;

@@ -1,7 +1,4 @@
-﻿using BlazorWebApi.Users.Models;
-using System.ComponentModel.DataAnnotations;
-
-namespace BlazorBoilerplate.Infrastructure.Storage.DataModels
+﻿namespace BlazorWebApi.Users.Models
 {
     public partial class Message
     {

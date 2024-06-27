@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Infrastructure.Storage.DataInterfaces
+﻿namespace BlazorWebApi.Users.Models
 {
     public interface IAuditable
     {

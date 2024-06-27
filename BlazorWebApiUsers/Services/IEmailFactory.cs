@@ -1,8 +1,8 @@
 ﻿using BlazorBoilerplate.Constants;
-using BlazorBoilerplate.Infrastructure.Server.Models;
-using BlazorBoilerplate.Shared.Dto.Email;
+using BlazorWebApi.Users.Models;
+using BlazorWebApi.Users.Models.Email;
 
-namespace BlazorBoilerplate.Infrastructure.Server
+namespace BlazorWebApi.Users.Services
 {
     public interface IEmailFactory
     {

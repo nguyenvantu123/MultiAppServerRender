@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace BlazorBoilerplate.Infrastructure.AuthorizationDefinitions
+namespace WebApp.Handler
 {
     public class EmailVerifiedRequirement : IAuthorizationRequirement
     {

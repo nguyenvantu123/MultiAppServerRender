@@ -31,28 +31,20 @@ using LazyCache;
 using Microsoft.Extensions.Caching.Memory;
 using ServiceDefaults;
 using IdentityServer4.Services;
-using eShop.Identity.API;
-using eShop.Identity.API.Services;
 using IdentityServer4.Stores;
 using IdentityServer4.EntityFramework.Stores;
 using AutoMapper.Configuration;
-using BlazorBoilerplate.Storage;
 using Finbuckle.MultiTenant;
-using BlazorWebApi.Users.RoleConst;
 using Breeze.AspNetCore;
 using Breeze.Core;
 using Newtonsoft.Json.Serialization;
-using BlazorBoilerplate.Shared.Localizer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using BlazorBoilerplate.Server.Middleware;
-using BlazorBoilerplate.Infrastructure.Storage;
-using BlazorBoilerplate.Infrastructure.Storage.Permissions;
 using System;
 using Finbuckle.MultiTenant.Abstractions;
-using IdentitySample;
-using BlazorBoilerplate.Shared.Interfaces;
-using BlazorBoilerplate.Shared.Models;
-using IUserSession = BlazorBoilerplate.Shared.Interfaces.IUserSession;
+using IUserSession = BlazorWebApi.Users.Models.IUserSession;
+using BlazorWebApi.Users.Configuration;
+using BlazorWebApi.Users.Constants;
+using BlazorWebApi.Users.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -199,7 +191,7 @@ builder.Services.AddScoped<EntityPermissions>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
-
+builder.Services.AddTransient<IEmailFactory, EmailFactory>();
 builder.Services.AddSingleton<CustomAuthService>();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);

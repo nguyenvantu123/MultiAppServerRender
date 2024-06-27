@@ -1,9 +1,7 @@
-﻿using BlazorBoilerplate.Shared.Localizer;
-using BlazorBoilerplate.Shared.Validators;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 
-namespace BlazorBoilerplate.Shared.Dto.Email.Validators
+namespace BlazorWebApi.Users.Models.Email.Validators
 {
     public class EmailDtoValidator : LocalizedAbstractValidator<EmailDto>
     {
@@ -11,7 +9,7 @@ namespace BlazorBoilerplate.Shared.Dto.Email.Validators
         {
             RuleFor(p => p.ToAddress)
                 .NotEmpty()
-                .EmailAddress().WithName(L["Email"]);
+                .EmailAddress().WithName("Email");
         }
     }
 }

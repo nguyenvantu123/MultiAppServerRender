@@ -1,6 +1,6 @@
 using Finbuckle.MultiTenant.Abstractions;
 
-namespace IdentitySample;
+namespace BlazorWebApi.Users.Models;
 
 public class AppTenantInfo : ITenantInfo
 {

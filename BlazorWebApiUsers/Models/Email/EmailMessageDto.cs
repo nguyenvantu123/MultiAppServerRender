@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Shared.Dto.Email
+﻿namespace BlazorWebApi.Users.Models.Email
 {
     public class EmailMessageDto
     {

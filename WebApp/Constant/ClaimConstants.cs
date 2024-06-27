@@ -1,4 +1,4 @@
-﻿namespace BlazorBoilerplate.Infrastructure.AuthorizationDefinitions
+﻿namespace WebApp
 {
     public static class ApplicationClaimTypes
     {
@@ -9,10 +9,10 @@
 
     public static class ClaimValues
     {
-        public static string trueString = "true";
-        public static string falseString = "false";
+        public static string TrueString = "true";
+        public static string FalseString = "false";
 
-        public static string AuthenticationMethodMFA = "mfa";
+        public static string AuthenticationMethodMfa = "mfa";
         public static string AuthenticationMethodPwd = "pwd";
     }
 }

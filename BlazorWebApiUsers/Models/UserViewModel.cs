@@ -1,6 +1,4 @@
-﻿using BlazorBoilerplate.Shared.Dto;
-
-namespace BlazorBoilerplate.Shared.Models.Account
+﻿namespace BlazorWebApi.Users.Models
 {
     public class UserViewModel : BaseDto
     {

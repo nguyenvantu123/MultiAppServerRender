@@ -1,9 +1,7 @@
-﻿using BlazorWebApi.Users.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Finbuckle.MultiTenant;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BlazorBoilerplate.Infrastructure.Storage.DataModels
+namespace BlazorWebApi.Users.Models
 {
     [MultiTenant]
     public partial class UserProfile

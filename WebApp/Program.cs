@@ -9,17 +9,10 @@ using WebApp.Services;
 using ServiceDefaults;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Authorization;
-using BlazorBoilerplate.Infrastructure.Storage.Permissions;
-using BlazorBoilerplate.Server.Authorization;
-using BlazorBoilerplate.Infrastructure.AuthorizationDefinitions;
 using Microsoft.VisualBasic;
 using WebApp.Settings;
-using static BlazorBoilerplate.Constants.PasswordPolicy;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using BlazorBoilerplate.Server.Extensions;
 using WebApp.Interfaces;
-using BlazorBoilerplate.Theme.Material.Services;
-using eShop.ServiceDefaults;
 using Breeze.AspNetCore;
 using Breeze.Core;
 using Newtonsoft.Json.Serialization;
@@ -27,6 +20,10 @@ using WebApp.Localizer;
 using FluentValidation.AspNetCore;
 using Microsoft.JSInterop;
 using System.Net.Http;
+using WebApp;
+using WebApp.Extensions;
+using WebApp.Handler;
+using WebApp.Permissions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,11 +75,11 @@ builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationSt
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    options.Password.RequireDigit = RequireDigit;
-    options.Password.RequiredLength = RequiredLength;
-    options.Password.RequireNonAlphanumeric = RequireNonAlphanumeric;
-    options.Password.RequireUppercase = RequireUppercase;
-    options.Password.RequireLowercase = RequireLowercase;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
     //options.Password.RequiredUniqueChars = 6;
 
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);

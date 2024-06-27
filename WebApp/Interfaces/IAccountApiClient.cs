@@ -1,5 +1,4 @@
-﻿using BlazorBoilerplate.Shared.Dto.Email;
-using ServiceDefaults;
+﻿using ServiceDefaults;
 using WebApp.Models;
 
 namespace WebApp.Interfaces

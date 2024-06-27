@@ -3,11 +3,11 @@ using IdentityServer4.Events;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 
-namespace IdentityServerHost.Quickstart.UI;
+namespace BlazorWebApi.Users.Controller.Account;
 
 [SecurityHeaders]
 [AllowAnonymous]
-public class ExternalController : Controller
+public class ExternalController : Microsoft.AspNetCore.Mvc.Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;

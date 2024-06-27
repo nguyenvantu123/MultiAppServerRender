@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 // using modified example from https://chrissainty.com/securing-your-blazor-apps-configuring-policy-based-authorization-with-blazor/
 
-namespace BlazorBoilerplate.Infrastructure.AuthorizationDefinitions
+namespace WebApp.Handler
 {
     public class DomainRequirement : IAuthorizationRequirement
     {

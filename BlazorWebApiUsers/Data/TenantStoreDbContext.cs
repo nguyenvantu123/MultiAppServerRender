@@ -1,12 +1,8 @@
-﻿using BlazorBoilerplate.Constants;
-using BlazorWebApi.Users.RoleConst;
-using Finbuckle.MultiTenant;
+﻿using BlazorWebApi.Users.Constants;
+using BlazorWebApi.Users.Models;
 using Finbuckle.MultiTenant.EntityFrameworkCore.Stores.EFCoreStore;
-using Finbuckle.MultiTenant.Stores;
-using IdentitySample;
-using Microsoft.EntityFrameworkCore;
 
-namespace BlazorBoilerplate.Storage
+namespace BlazorWebApi.Users.Data
 {
     public class TenantStoreDbContext : EFCoreStoreDbContext<AppTenantInfo>
     {

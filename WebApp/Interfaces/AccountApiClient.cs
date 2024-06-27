@@ -1,15 +1,11 @@
-﻿using BlazorBoilerplate.Shared.Dto;
-using BlazorBoilerplate.Shared.Dto.Db;
-using BlazorBoilerplate.Shared.Dto.Email;
-using BlazorBoilerplate.Shared.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using ServiceDefaults;
+using WebApp.Constant;
 using WebApp.Extensions;
-using WebApp.Interfaces;
 using WebApp.Models;
+using WebApp.State;
 
-namespace WebApp.Services
+namespace WebApp.Interfaces
 {
     public class AccountApiClient : IAccountApiClient
     {

@@ -1,6 +1,6 @@
 ﻿using BlazorWebApi.Users.Models;
 
-namespace eShop.Identity.API.Services
+namespace BlazorWebApi.Users.Services
 {
     public class EFLoginService : ILoginService<ApplicationUser>
     {

@@ -1,7 +1,7 @@
 ﻿using MudBlazor;
 using WebApp.Interfaces;
 
-namespace BlazorBoilerplate.Theme.Material.Services
+namespace WebApp
 {
     public class ViewNotifier : IViewNotifier
     {

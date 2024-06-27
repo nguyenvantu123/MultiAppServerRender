@@ -1,6 +1,4 @@
-﻿using BlazorBoilerplate.Shared.Interfaces;
-
-namespace BlazorBoilerplate.Shared.Models
+﻿namespace BlazorWebApi.Users.Models
 {
     public class UserSessionApp : IUserSession
     {

@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-namespace WebApp
+namespace WebApp.Components
 {
     public class BlazorHeroTheme
     {

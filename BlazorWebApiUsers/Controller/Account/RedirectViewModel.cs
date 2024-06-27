@@ -3,7 +3,7 @@
 
 
 
-namespace IdentityServerHost.Quickstart.UI;
+namespace BlazorWebApi.Users.Controller.Account;
 
 public class RedirectViewModel
 {
