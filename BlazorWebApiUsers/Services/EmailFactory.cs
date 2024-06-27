@@ -24,7 +24,7 @@ namespace BlazorBoilerplate.Server.Factories
             emailMessage.Body = L["TestEmail.template"].Value
                 .FormatWith(new { baseUrl, user = recipient, testDate = DateTime.Now });
 
-            //emailMessage.Subject = L["TestEmail.subject", recipient];
+            //emailMessage.Subject = "TestEmail.subject", recipient];
             emailMessage.Subject = $"Test email from {baseUrl}";
             emailMessage.Body = "Test email completed.";
 
