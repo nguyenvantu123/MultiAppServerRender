@@ -31,6 +31,7 @@ using LazyCache;
 using Microsoft.Extensions.Caching.Memory;
 using ServiceDefaults;
 using IdentityServer4.Services;
+
 using IdentityServer4.Stores;
 using IdentityServer4.EntityFramework.Stores;
 using AutoMapper.Configuration;
@@ -41,10 +42,9 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System;
 using Finbuckle.MultiTenant.Abstractions;
-using IUserSession = BlazorWebApi.Users.Models.IUserSession;
 using BlazorWebApi.Users.Configuration;
-using BlazorWebApi.Users.Constants;
 using BlazorWebApi.Users.Services;
+using BlazorWebApi.Users.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,7 +88,7 @@ builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithEFCoreStore<TenantStoreDbContext, AppTenantInfo>()
     .WithStaticStrategy(Settings.DefaultTenantId);
 
-builder.Services.AddScoped<IUserSession, UserSessionApp>();
+builder.Services.AddScoped<BlazorWebApi.Users.Models.IUserSession, UserSessionApp>();
 
 //builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<AppTenantInfo>), typeof(TenantResolver<AppTenantInfo>), ServiceLifetime.Scoped));
