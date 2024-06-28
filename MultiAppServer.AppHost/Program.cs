@@ -4,7 +4,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 
 var sqlIndentity = builder.AddSqlServer("sql")
-                 .AddDatabase("db", "MultiAppServer.Users");
+                 .AddDatabase("db", "MultiAppServer.AppHost.Users");
 
 //var messaging = builder.AddRabbitMQ("messaging");
 

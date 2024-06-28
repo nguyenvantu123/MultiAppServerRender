@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace ServiceDefaults;
+namespace MultiAppServer.ServiceDefaults;
 
 public static class ConfigurationExtensions
 {

@@ -1,4 +1,4 @@
-﻿namespace ServiceDefaults
+﻿namespace MultiAppServer.ServiceDefaults
 {
     public interface IMementoDto
     {

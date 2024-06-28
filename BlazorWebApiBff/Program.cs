@@ -13,7 +13,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using ServiceDefaults;
+using MultiAppServer.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +30,8 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Bff MultiAppServer",
-        Description = "MultiAppServer",
+        Title = "Bff MultiAppServer.AppHost",
+        Description = "MultiAppServer.AppHost",
         License = new OpenApiLicense
         {
             Name = "MIT",

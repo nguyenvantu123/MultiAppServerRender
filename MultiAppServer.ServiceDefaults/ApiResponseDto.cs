@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServiceDefaults
+namespace MultiAppServer.ServiceDefaults
 {
     public class ApiResponseDto<T> 
     {

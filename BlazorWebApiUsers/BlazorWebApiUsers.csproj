@@ -50,6 +50,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NSwag.Annotations" Version="14.0.8" />
+    <PackageReference Include="ObjectCloner.Extensions" Version="2.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
@@ -58,7 +59,7 @@
     <ProjectReference Include="..\Aspire.Minio.Client\Aspire.Minio.Client.csproj" />
     <ProjectReference Include="..\Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj" />
     <ProjectReference Include="..\Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj" />
-    <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
+    <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,5 @@
 ﻿
-using ServiceDefaults;
+using MultiAppServer.ServiceDefaults;
 
 namespace WebApp.Models
 {

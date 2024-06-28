@@ -1,7 +1,7 @@
 ﻿using ObjectCloner.Extensions;
 using System.Reflection;
 
-namespace ServiceDefaults
+namespace MultiAppServer.ServiceDefaults
 {
     public abstract class BaseDto : IMementoDto
     {

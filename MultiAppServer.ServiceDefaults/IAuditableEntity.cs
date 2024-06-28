@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ServiceDefaults
+namespace MultiAppServer.ServiceDefaults
 {
 
     public interface IAuditableEntity

@@ -17,21 +17,21 @@
 
         @if (loginViewModel == null)
         {
-            <LoadingBackground />
+            <LoadingBackground/>
         }
         else
         {
             @if (loginViewModel.EnableLocalLogin)
             {
-                <EditForm Model="@_tokenModel" OnValidSubmit="SubmitAsync">
-                    <FluentValidationValidator @ref="_fluentValidationValidator" />
+                <EditForm Model="@loginViewModel" OnValidSubmit="SubmitAsync">
+                    <FluentValidationValidator @ref="_fluentValidationValidator"/>
                     <MudGrid>
                         <MudItem xs="12">
                             <div class="d-flex justify-center">
-                                <MudIcon Icon="@CustomIcons.BlazorHero" Color="Color.Primary" Size="Size.Large" ViewBox="0 0 500 500" Style="width: 100px; height: 100px;" />
+                                <MudIcon Icon="@CustomIcons.BlazorHero" Color="Color.Primary" Size="Size.Large" ViewBox="0 0 500 500" Style="width: 100px; height: 100px;"/>
                             </div>
                         </MudItem>
-                        <DataAnnotationsValidator />
+                        <DataAnnotationsValidator/>
                         <MudItem xs="12">
                             <div class="d-flex justify-center">
                                 <MudText Typo="Typo.h4">Title</MudText>
@@ -49,12 +49,12 @@
                         </MudItem>
                         <MudItem xs="12">
                             <MudTextField T="string" Label="E-mail" Variant="Variant.Outlined"
-                                          @bind-Value="_tokenModel.Email" For="@(() => _tokenModel.Email)" />
+                                          @bind-Value="loginViewModel.UserName" For="@(() => loginViewModel.UserName)"/>
                         </MudItem>
                         <MudItem xs="12">
                             <MudTextField Label="Password" Variant="Variant.Outlined"
-                                          @bind-Value="_tokenModel.Password" For="@(() => _tokenModel.Password)"
-                                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
+                                          @bind-Value="loginViewModel.Password" For="@(() => loginViewModel.Password)"
+                                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility"/>
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-space-between align-center">
                             <MudCheckBox T="bool" Label="Remember me?" Color="Color.Primary" Class="ml-n1"></MudCheckBox> <MudLink Href="/account/forgot-password">Forgot password?</MudLink>
@@ -65,9 +65,10 @@
                     </MudGrid>
                 </EditForm>
             }
+
             @if (loginViewModel.VisibleExternalProviders.Any())
             {
-                <br />
+                <br/>
                 <MudCard Elevation="2">
                     @*    <MudCardHeader>
             <CardHeaderContent>
@@ -89,12 +90,14 @@
                             {
                                 case "Google":
                                 case "Facebook":
-                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))"><img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg" /></MudButton>
+                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))">
+                                        <img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg"/>
+                                    </MudButton>
                                     break;
                                 case "Twitter":
                                 case "Microsoft":
                                 case "Apple":
-                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))"><img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg" />&nbsp;@provider.DisplayName</MudButton>
+                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))"><img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg"/>&nbsp;@provider.DisplayName</MudButton>
                                     break;
                                 default:
                                     <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))">@provider.DisplayName</MudButton>
@@ -104,6 +107,7 @@
                     </MudCardContent>
                 </MudCard>
             }
+
             @if (!loginViewModel.EnableLocalLogin && !loginViewModel.VisibleExternalProviders.Any())
             {
                 <MudAlert Severity="Severity.Warning">
@@ -111,7 +115,6 @@
                     There are no login schemes configured for this client.
                 </MudAlert>
             }
-
         }
 
     </NotAuthorized>
@@ -122,12 +125,9 @@
 
     private FluentValidationValidator _fluentValidationValidator;
     private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
-    private TokenRequest _tokenModel = new();
-
     protected LoginViewModel loginViewModel;
 
-    [SupplyParameterFromQuery]
-    public string? ReturnUrl { get; set; }
+    [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 
     [Inject] protected IStringLocalizer<Global> L { get; set; }
 
@@ -135,11 +135,9 @@
     // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
 
 
-    [CascadingParameter]
-    Task<AuthenticationState> authenticationStateTask { get; set; }
+    [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    [CascadingParameter]
-    public HttpContext? HttpContext { get; set; }
+    [CascadingParameter] public HttpContext? HttpContext { get; set; }
 
     [Inject] protected HttpClient httpClient { get; set; }
 
@@ -150,15 +148,24 @@
 
     private async Task SubmitAsync()
     {
-        if (!string.IsNullOrEmpty(ReturnUrl))
-            ReturnUrl = Uri.EscapeDataString(ReturnUrl);
+        try
+        {
+            loginViewModel.ReturnUrl = ReturnUrl;
+            var response = await identityAuthenticationStateProvider.Login(loginViewModel);
 
-        // navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{provider.AuthenticationScheme}/{ReturnUrl}", true);
+            if (!response.Success)
+            {
+                viewNotifier.Show(string.Join(';', response.ErrorMessages), ViewNotifierType.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["LoginFailed"]);
+        }
     }
 
     private async Task SignInWith(ExternalProvider externalProvider)
     {
-
     }
 
     private bool _passwordVisibility;
@@ -183,11 +190,9 @@
 
     public class TokenRequest
     {
-        [Required]
-        public string Email { get; set; }
+        [Required] public string Email { get; set; }
 
-        [Required]
-        public string Password { get; set; }
+        [Required] public string Password { get; set; }
     }
 
     [ExcludeFromCodeCoverage]
@@ -246,4 +251,5 @@
             }
         }
     }
+
 }

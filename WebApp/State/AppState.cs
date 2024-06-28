@@ -9,7 +9,7 @@ namespace WebApp.State
 {
     public class AppState
     {
-        public static BlazorRuntime Runtime { get; set; } = BlazorRuntime.WebAssembly;
+        public static BlazorRuntime Runtime { get; set; } = BlazorRuntime.Server;
 
         //public event Action OnChange;
 

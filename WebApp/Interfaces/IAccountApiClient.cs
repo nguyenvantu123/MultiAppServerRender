@@ -1,4 +1,4 @@
-﻿using ServiceDefaults;
+﻿using MultiAppServer.ServiceDefaults;
 using WebApp.Models;
 
 namespace WebApp.Interfaces

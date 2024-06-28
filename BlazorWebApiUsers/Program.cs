@@ -1,7 +1,6 @@
 using Aspire.Minio.Client;
 using Aspire.MongoDb.Driver;
 using Aspire.RabbitMQ.Client;
-using Grpc.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -15,37 +14,17 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using System.Globalization;
-using System.Net;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text;
 using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 using BlazorWebApi.Users;
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Models;
-using Microsoft.AspNetCore.Mvc;
-using LazyCache.Providers;
 using LazyCache;
-using Microsoft.Extensions.Caching.Memory;
-using ServiceDefaults;
 using IdentityServer4.Services;
-
-using IdentityServer4.Stores;
-using IdentityServer4.EntityFramework.Stores;
-using AutoMapper.Configuration;
-using BlazorBoilerplate.Storage;
 using Finbuckle.MultiTenant;
-using BlazorWebApi.Users.RoleConst;
 using Breeze.AspNetCore;
 using Breeze.Core;
 using Newtonsoft.Json.Serialization;
-using BlazorBoilerplate.Shared.Localizer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using BlazorBoilerplate.Server.Middleware;
-using BlazorBoilerplate.Infrastructure.Storage;
-using BlazorBoilerplate.Infrastructure.Storage.Permissions;
 using System;
 using Finbuckle.MultiTenant.Abstractions;
 using BlazorWebApi.Users.Configuration;
@@ -113,7 +92,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Version = "v1",
         Title = "Users",
-        Description = "MultiAppServer",
+        Description = "MultiAppServer.AppHost",
         License = new OpenApiLicense
         {
             Name = "MIT",
@@ -278,8 +257,8 @@ app.Run();
 //    c.SwaggerDoc("v1", new OpenApiInfo
 //    {
 //        Version = "v1",
-//        Title = "Bff MultiAppServer",
-//        Description = "MultiAppServer",
+//        Title = "Bff MultiAppServer.AppHost",
+//        Description = "MultiAppServer.AppHost",
 //        License = new OpenApiLicense
 //        {
 //            Name = "MIT",

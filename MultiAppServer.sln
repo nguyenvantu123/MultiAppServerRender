@@ -23,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.StackExchange.Redis.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.StackExchange.Redis", "Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj", "{2F2A94D3-A0A9-42DB-9423-C930941F8428}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAppServer", "MultiAppServer\MultiAppServer.csproj", "{73F72C23-62DF-4A5E-8A8F-0EC11F93033F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAppServer.AppHost", "MultiAppServer.AppHost\MultiAppServer.AppHost.csproj", "{73F72C23-62DF-4A5E-8A8F-0EC11F93033F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceDefaults", "ServiceDefaults\ServiceDefaults.csproj", "{77316C0A-7A7F-4545-BE6D-114DFE812FE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAppServer.ServiceDefaults", "MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj", "{77316C0A-7A7F-4545-BE6D-114DFE812FE4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csproj", "{383A21D9-769E-4CAF-94BE-8901E4FA9497}"
 EndProject

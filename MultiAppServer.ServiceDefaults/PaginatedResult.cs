@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServiceDefaults
+namespace MultiAppServer.ServiceDefaults
 {
     public class PaginatedResult<T> 
     {

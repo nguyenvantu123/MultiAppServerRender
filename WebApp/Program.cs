@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using MudBlazor.Services;
 using WebApp.Components;
 using WebApp.Services;
-using ServiceDefaults;
+using MultiAppServer.ServiceDefaults;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.VisualBasic;
@@ -189,6 +189,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

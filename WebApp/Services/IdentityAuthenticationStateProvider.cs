@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using ServiceDefaults;
+using MultiAppServer.ServiceDefaults;
 using System.Security.Claims;
 using WebApp.Interfaces;
 using WebApp.Models;
