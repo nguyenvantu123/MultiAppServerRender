@@ -24,6 +24,7 @@ using WebApp;
 using WebApp.Extensions;
 using WebApp.Handler;
 using WebApp.Permissions;
+using Microsoft.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,9 +36,15 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddMudServices();
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidation>();
+//builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidation>();
 
+builder.Services.AddAuthorizationCore();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
+builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
 builder.Services.AddSingleton<CookieEvents>();
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.EventsType = typeof(CookieEvents);
@@ -55,6 +62,36 @@ string projectName = nameof(WebApp);
 //builder.Services.AddAuthorization();
 builder.Services.AddAuthorization();
 
+builder.Services.AddScoped(s =>
+{
+    // creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
+    var navigationManager = s.GetRequiredService<NavigationManager>();
+    var httpContextAccessor = s.GetRequiredService<IHttpContextAccessor>();
+    var cookies = httpContextAccessor.HttpContext.Request.Cookies;
+    var httpClientHandler = new HttpClientHandler() { UseCookies = false };
+    if (builder.Environment.IsDevelopment())
+    {
+        // Return 'true' to allow certificates that are untrusted/invalid
+        httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+    }
+    var client = new HttpClient(httpClientHandler);
+    if (cookies.Any())
+    {
+        var cks = new List<string>();
+
+        foreach (var cookie in cookies)
+        {
+            cks.Add($"{cookie.Key}={cookie.Value}");
+        }
+
+        client.DefaultRequestHeaders.Add("Cookie", string.Join(';', cks));
+    }
+
+    client.BaseAddress = new Uri(navigationManager.BaseUri);
+
+    return client;
+});
+
 builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
 
 var authBuilder = builder.Services.AddAuthentication(options =>
@@ -65,13 +102,6 @@ var authBuilder = builder.Services.AddAuthentication(options =>
         }).AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(60));
 
 builder.Services.AddScoped<EntityPermissions>();
-builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
-builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
-builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
-builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
-
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
-
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -174,14 +204,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 #endregion
 
-builder.Services.AddCascadingAuthenticationState();
+//builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.

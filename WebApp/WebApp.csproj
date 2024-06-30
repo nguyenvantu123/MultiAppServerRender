@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Shared\RedirectToLogin.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
     <PackageReference Include="Breeze.AspNetCore.NetCore" Version="7.3.0" />
     <PackageReference Include="Breeze.Sharp" Version="0.8.2" />

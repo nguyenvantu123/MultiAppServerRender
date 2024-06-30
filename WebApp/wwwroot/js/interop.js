@@ -33,6 +33,8 @@ window.interop = {
     },
     SetFocus: (id) => { document.getElementById(id).focus(); },
     submitForm: (path, fields) => {
+
+        debugger;
         const form = document.createElement('form');
         form.method = 'post';
         form.action = path;
