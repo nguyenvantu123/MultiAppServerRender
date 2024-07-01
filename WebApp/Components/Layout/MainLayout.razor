@@ -4,32 +4,45 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<CascadingValue Value="this">
-    <MudLayout>
-        <MudAppBar Elevation="2">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-            <MudSpacer />
-            <TopRightBarSection />
-        </MudAppBar>
-        <MudDrawer @bind-Open="@_navMenuOpened" Elevation="2">
-            <UserProfile />
-            <NavMenu />
-            <DrawerFooter />
-        </MudDrawer>
-        <MudMainContent Style="min-height: 100vh; display: flex; flex-direction: column">
-            <MudContainer MaxWidth="MaxWidth.False" Style="flex: 1">
-                @TopSection
-                <MudPaper Class="py-4" Elevation="0">
-                    @Body
-                </MudPaper>
-            </MudContainer>
-            <Footer />
-        </MudMainContent>
-        <MudScrollToTop TopOffset="400" Style="z-index:2000;">
-            <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
-        </MudScrollToTop>
-    </MudLayout>
-</CascadingValue>
+<AuthorizeView>
+    <NotAuthorized>
+        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center" Style="height: 100vh;">
+            <MudPaper Elevation="25" Class="pa-8" Style="width: 500px;">
+                @Body
+            </MudPaper>
+        </MudContainer>
+    </NotAuthorized>
+
+    <Authorized>
+        <CascadingValue Value="this">
+
+            <MudLayout>
+                <MudAppBar Elevation="2">
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                    <MudSpacer />
+                    <TopRightBarSection />
+                </MudAppBar>
+                <MudDrawer @bind-Open="@_navMenuOpened" Elevation="2">
+                    <UserProfile />
+                    <NavMenu />
+                    <DrawerFooter />
+                </MudDrawer>
+                <MudMainContent Style="min-height: 100vh; display: flex; flex-direction: column">
+                    <MudContainer MaxWidth="MaxWidth.False" Style="flex: 1">
+                        @TopSection
+                        <MudPaper Class="py-4" Elevation="0">
+                            @Body
+                        </MudPaper>
+                    </MudContainer>
+                    <Footer />
+                </MudMainContent>
+                <MudScrollToTop TopOffset="400" Style="z-index:2000;">
+                    <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
+                </MudScrollToTop>
+            </MudLayout>
+        </CascadingValue>
+    </Authorized>
+</AuthorizeView>
 
 @code {
 
