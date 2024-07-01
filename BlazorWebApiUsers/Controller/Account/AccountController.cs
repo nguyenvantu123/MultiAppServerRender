@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Text.Encodings.Web;
 using BlazorBoilerplate.Constants;
+using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Extensions;
 using BlazorWebApi.Users.Models;
 using BlazorWebApi.Users.Models.AccountViewModels;
@@ -41,6 +42,8 @@ namespace BlazorWebApi.Users.Controller.Account
 
         private readonly UrlEncoder _urlEncoder;
 
+        private readonly ApplicationDbContext _context;
+
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -53,7 +56,8 @@ namespace BlazorWebApi.Users.Controller.Account
             IEventService events,
             IConfiguration configuration,
             IEmailFactory emailFactory,
-            UrlEncoder urlEncoder)
+            UrlEncoder urlEncoder,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -67,6 +71,7 @@ namespace BlazorWebApi.Users.Controller.Account
 
             _emailFactory = emailFactory;
             _urlEncoder = urlEncoder;
+            _context = context;
         }
 
         /// <summary>
@@ -127,6 +132,10 @@ namespace BlazorWebApi.Users.Controller.Account
 
                 var result = await _signInManager.PasswordSignInAsync(parameters.Username, parameters.Password, parameters.RememberLogin, true);
 
+                var user = await _userManager.FindByNameAsync(parameters.Username);
+
+                var lastPageVisited = (await _context.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == parameters.Username.ToUpper()))?.LastPageVisited ?? "/";
+
                 if (result.RequiresTwoFactor)
                 {
                     _logger.LogInformation("Two factor authentication required for user {0}", parameters.Username);
@@ -135,7 +144,8 @@ namespace BlazorWebApi.Users.Controller.Account
                     {
                         Result = new LoginResponseModel()
                         {
-                            RequiresTwoFactor = true
+                            RequiresTwoFactor = true,
+                            LastPageVisited = lastPageVisited
                         }
                     };
                 }
@@ -156,7 +166,7 @@ namespace BlazorWebApi.Users.Controller.Account
 
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync(parameters.Username);
+
                     _logger.LogInformation("Logged In user {0}", parameters.Username);
 
                     //TODO parameters.IsValidReturnUrl is set true above 
@@ -164,7 +174,14 @@ namespace BlazorWebApi.Users.Controller.Account
                     //    // user might have clicked on a malicious link - should be logged
                     //    throw new Exception("invalid return URL");
 
-                    return new ApiResponse((int)HttpStatusCode.OK);
+                    return new ApiResponse((int)HttpStatusCode.OK, "Two factor authentication required")
+                    {
+                        Result = new LoginResponseModel()
+                        {
+                            RequiresTwoFactor = false,
+                            LastPageVisited = lastPageVisited
+                        }
+                    };
                 }
 
                 _logger.LogInformation("Invalid Password for user {0}", parameters.Username);

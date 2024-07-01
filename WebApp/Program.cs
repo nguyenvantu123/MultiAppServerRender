@@ -176,7 +176,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.ExpireTimeSpan = TimeSpan.FromDays(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "30"));
-    options.LoginPath = Settings.LoginPath;
+    //options.LoginPath = Settings.LoginPath;
     //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     // ReturnUrlParameter requires
     //using Microsoft.AspNetCore.Authentication.Cookies;

@@ -1,4 +1,4 @@
-﻿@page "/Account/Login"
+﻿@page "/account/login"
 
 @layout MainLayout
 @attribute [AllowAnonymous]
@@ -17,21 +17,21 @@
 
         @if (loginViewModel == null)
         {
-            <LoadingBackground/>
+            <LoadingBackground />
         }
         else
         {
             @if (loginViewModel.EnableLocalLogin)
             {
-                <EditForm Model="@loginViewModel" OnValidSubmit="SubmitAsync">
-                    <FluentValidationValidator @ref="_fluentValidationValidator"/>
+                <EditForm Model="@loginViewModel" FormName="Name" OnValidSubmit="SubmitAsync">
+                    <FluentValidationValidator @ref="_fluentValidationValidator" />
                     <MudGrid>
                         <MudItem xs="12">
                             <div class="d-flex justify-center">
-                                <MudIcon Icon="@CustomIcons.BlazorHero" Color="Color.Primary" Size="Size.Large" ViewBox="0 0 500 500" Style="width: 100px; height: 100px;"/>
+                                <MudIcon Icon="@CustomIcons.BlazorHero" Color="Color.Primary" Size="Size.Large" ViewBox="0 0 500 500" Style="width: 100px; height: 100px;" />
                             </div>
                         </MudItem>
-                        <DataAnnotationsValidator/>
+                        <DataAnnotationsValidator />
                         <MudItem xs="12">
                             <div class="d-flex justify-center">
                                 <MudText Typo="Typo.h4">Title</MudText>
@@ -49,12 +49,12 @@
                         </MudItem>
                         <MudItem xs="12">
                             <MudTextField T="string" Label="UserName" Variant="Variant.Outlined"
-                                          @bind-Value="loginViewModel.UserName" For="@(() => loginViewModel.UserName)"/>
+                                          @bind-Value="loginViewModel.UserName" For="@(() => loginViewModel.UserName)" />
                         </MudItem>
                         <MudItem xs="12">
                             <MudTextField Label="Password" Variant="Variant.Outlined"
                                           @bind-Value="loginViewModel.Password" For="@(() => loginViewModel.Password)"
-                                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility"/>
+                                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-space-between align-center">
                             <MudCheckBox T="bool" Label="Remember me?" Color="Color.Primary" Class="ml-n1"></MudCheckBox> <MudLink Href="/account/forgot-password">Forgot password?</MudLink>
@@ -68,7 +68,7 @@
 
             @if (loginViewModel.VisibleExternalProviders.Any())
             {
-                <br/>
+                <br />
                 <MudCard Elevation="2">
                     @*    <MudCardHeader>
             <CardHeaderContent>
@@ -91,13 +91,13 @@
                                 case "Google":
                                 case "Facebook":
                                     <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))">
-                                        <img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg"/>
+                                        <img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg" />
                                     </MudButton>
                                     break;
                                 case "Twitter":
                                 case "Microsoft":
                                 case "Apple":
-                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))"><img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg"/>&nbsp;@provider.DisplayName</MudButton>
+                                    <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))"><img height="18" src="/images/@(provider.AuthenticationScheme.ToLower()).svg" />&nbsp;@provider.DisplayName</MudButton>
                                     break;
                                 default:
                                     <MudButton Class="signInWithButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SignInWith(provider))">@provider.DisplayName</MudButton>
@@ -156,6 +156,16 @@
             if (!response.Success)
             {
                 viewNotifier.Show(string.Join(';', response.ErrorMessages), ViewNotifierType.Error);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(ReturnUrl) || ReturnUrl == "/")
+                    loginViewModel.ReturnUrl = response.Result.LastPageVisited;
+
+                if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
+                    loginViewModel.ReturnUrl = $"{Settings.Settings.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
+
+                navigationManager.NavigateTo($"{ReturnUrl}", true);
             }
         }
         catch (Exception ex)
