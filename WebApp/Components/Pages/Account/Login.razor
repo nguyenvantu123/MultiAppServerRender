@@ -1,4 +1,5 @@
 ﻿@page "/account/login"
+@using System.Net
 
 @layout MainLayout
 @attribute [AllowAnonymous]
@@ -153,7 +154,7 @@
             loginViewModel.ReturnUrl = ReturnUrl;
             var response = await identityAuthenticationStateProvider.Login(loginViewModel);
 
-            if (!response.Success)
+            if (response.StatusCode != (int)HttpStatusCode.OK)
             {
                 viewNotifier.Show(string.Join(';', response.ErrorMessages), ViewNotifierType.Error);
             }
