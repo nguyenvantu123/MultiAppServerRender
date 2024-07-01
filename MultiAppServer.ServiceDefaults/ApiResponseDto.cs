@@ -8,21 +8,19 @@ using System.Threading.Tasks;
 
 namespace MultiAppServer.ServiceDefaults
 {
-    public class ApiResponseDto<T> 
+    public class ApiResponseDto<T>
     {
         public ApiResponseDto()
         {
             StatusCode = 200;
-            ErrorMessages = new List<string>();
             Success = true;
 
         }
-        
+
         public ApiResponseDto(T result)
         {
             Success = true;
             Result = result;
-            ErrorMessages = new List<string>();
             StatusCode = 200;
         }
 
@@ -42,8 +40,8 @@ namespace MultiAppServer.ServiceDefaults
         [DataMember]
         public bool Success { get; set; }
 
-        [DataMember]
-        public List<string> ErrorMessages { get; set; }
+        [DataMember] 
+        public string Message { get; set; }
 
     }
 

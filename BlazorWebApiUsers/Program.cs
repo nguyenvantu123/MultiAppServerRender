@@ -99,14 +99,14 @@ builder.Services.AddSwaggerGen(c =>
             Url = new Uri("https://github.com/ignaciojvig/ChatAPI/blob/master/LICENSE")
         }
     });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = @"JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
+    //c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    //{
+    //    Description = @"JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+    //    Name = "Authorization",
+    //    In = ParameterLocation.Header,
+    //    Type = SecuritySchemeType.ApiKey,
+    //    Scheme = "Bearer"
+    //});
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {

@@ -9,11 +9,11 @@
 
 <AuthorizeView Context="AuthorizeContext">
 
-    <Authorized>
+@*     <Authorized>
         <LoadingBackground>
             <label>Loading</label>
         </LoadingBackground>
-    </Authorized>
+    </Authorized> *@
     <NotAuthorized>
 
         @if (loginViewModel == null)
@@ -156,12 +156,12 @@
 
             if (response.StatusCode != (int)HttpStatusCode.OK)
             {
-                viewNotifier.Show(string.Join(';', response.ErrorMessages), ViewNotifierType.Error);
+                viewNotifier.Show(string.Join(';', response.Message), ViewNotifierType.Error);
             }
             else
             {
                 if (string.IsNullOrEmpty(ReturnUrl) || ReturnUrl == "/")
-                    loginViewModel.ReturnUrl = response.Result.LastPageVisited;
+                    loginViewModel.ReturnUrl = (response.Result as LoginResponseModel).LastPageVisited;
 
                 if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
                     loginViewModel.ReturnUrl = $"{Settings.Settings.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
@@ -254,7 +254,7 @@
                     }
                 }
                 else
-                    viewNotifier.Show(string.Join(",", apiResponse.ErrorMessages), ViewNotifierType.Error, "LoginFailed");
+                    viewNotifier.Show(string.Join(",", apiResponse.Message), ViewNotifierType.Error, "LoginFailed");
             }
             catch (Exception ex)
             {
