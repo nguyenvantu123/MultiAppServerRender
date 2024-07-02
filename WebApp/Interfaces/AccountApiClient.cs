@@ -66,7 +66,7 @@ namespace WebApp.Interfaces
         {
             var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/logout", null);
 
-            if (response.Success)
+            if (response.IsSuccessStatusCode)
             {
                 var logoutModel = new AccountFormModel() { ReturnUrl = returnUrl };
 
@@ -144,7 +144,7 @@ namespace WebApp.Interfaces
 
             var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>("api/account/user-view-model");
 
-            if (apiResponse.Success)
+            if (apiResponse.IsSuccessStatusCode)
                 userViewModel = apiResponse.Result;
 
             return userViewModel;

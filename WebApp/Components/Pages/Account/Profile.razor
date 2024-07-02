@@ -1,0 +1,266 @@
+﻿@page "/account/profile"
+@attribute [Authorize]
+
+@layout MainLayout
+
+@if (userViewModel != null)
+{
+    <PageTitle>@L["User Profile"]</PageTitle>
+    @if (userViewModel.HasPassword)
+    {
+        <MudButton StartIcon="@Icons.Material.Filled.RotateRight" OnClick="@(() => OpenUpdatePasswordDialog())" Style="margin-left: 10px">@L["Change Password"]</MudButton>
+    }
+    @if (userViewModel.HasAuthenticator)
+    {
+        <MudButton StartIcon="@Icons.Material.Filled.RotateRight" OnClick="@(() => DisableAuthenticator())" Style="margin-left: 10px">@L["ResetAuthenticator"]</MudButton>
+    }
+
+    <EditForm id="mainForm" Model="@userViewModel" OnValidSubmit="@UpdateUser">
+        <FluentValidationValidator />
+        <MudValidationSummary />
+        <MudTextField @bind-Value="@userViewModel.UserName" Label=@L["UserName"] AdornmentIcon="@Icons.Material.Filled.Person" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] ReadOnly="true"></MudTextField>
+
+        <MudTextField @bind-Value="@userViewModel.Email" Label="Email" AdornmentIcon="@Icons.Material.Outlined.Mail" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
+
+        <MudTextField @bind-Value="@userViewModel.FirstName" Label=@L["FirstName"] FullWidth="true"></MudTextField>
+
+        <MudTextField @bind-Value="@userViewModel.LastName" Label=@L["LastName"] FullWidth="true"></MudTextField>
+
+        <strong>@L["Roles"]</strong><br />
+        <MudChipSet>
+            @foreach (var role in userViewModel.Roles)
+            {
+                <MudChip Text="@role"></MudChip>
+            }
+        </MudChipSet>
+
+        <MudButton ButtonType="ButtonType.Submit" form="mainForm" Variant="Variant.Filled" Color="Color.Primary">@L["Save"]</MudButton>
+        <MudButton Href="/" form="mainForm" Variant="Variant.Filled" Color="Color.Secondary">@L["Cancel"]</MudButton>
+    </EditForm>
+    @if (userViewModel.TwoFactorEnabled)
+    {
+        <MudSwitch Value="@TwoFactorEnabled" Label=@L["TwoFactorAuthentication"] Color="Color.Primary" />
+
+        @if (userViewModel.BrowserRemembered)
+        {
+            <MudSwitch Value="@BrowserRemembered" Label=@L["BrowserRemembered"] Color="Color.Primary" />
+        }
+        if (userViewModel.RecoveryCodes != null)
+        {
+            <MudChipSet>
+                @foreach (var rCode in userViewModel.RecoveryCodes)
+                {
+                    <MudChip Text="@rCode"></MudChip>
+                }
+            </MudChipSet>
+        }
+        else
+        {
+            <span>@L["RecoveryCodesLeft"]</span> @userViewModel.CountRecoveryCodes
+        }
+    }
+    else
+    {
+        <h3>@L["TwoFactorAuthentication"]</h3>
+        @L["EnableAuthenticatorInstructions", userViewModel.SharedKey, $"https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl={userViewModel.AuthenticatorUri}"].ToMarkup()
+        <MudTextField @bind-Value="@authenticatorVerificationCodeViewModel.Code" Label=@L["Code"] FullWidth="true"></MudTextField>
+        <MudButton OnClick="@EnableAuthenticator">@L["VerifyCode"]</MudButton>
+    }
+
+    <MudDialog @bind-IsVisible="@updatePasswordDialogOpen">
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Lock" Class="mr-3 mb-n1" />
+                Password Update for @userViewModel.UserName
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <EditForm Model="@updatePasswordViewModel" OnValidSubmit="@UpdatePassword">
+                <FluentValidationValidator />
+                <MudValidationSummary />
+                <MudTextField @bind-Value="@updatePasswordViewModel.CurrentPassword" Label=@L["CurrentPassword"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
+
+                <MudTextField @bind-Value="@updatePasswordViewModel.NewPassword" Label=@L["NewPassword"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
+
+                <MudTextField @bind-Value="@updatePasswordViewModel.NewPasswordConfirm" Label=@L["Password Confirmation"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
+
+            </EditForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="@(e => { updatePasswordDialogOpen = false; })">@L["Cancel"]</MudButton>
+            <MudButton OnClick="@UpdatePassword" Variant="Variant.Filled" Color="Color.Primary">@L["Update Password"]</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+}
+
+@code {
+    [Inject] AuthenticationStateProvider authStateProvider { get; set; }
+    [Inject] protected IStringLocalizer<Global> L { get; set; }
+    [Inject] IViewNotifier viewNotifier { get; set; }
+
+    protected UserViewModel userViewModel;
+    protected bool updatePasswordDialogOpen = false;
+    protected UpdatePasswordViewModel updatePasswordViewModel { get; set; } = new UpdatePasswordViewModel();
+    protected AuthenticatorVerificationCodeViewModel authenticatorVerificationCodeViewModel { get; set; } = new AuthenticatorVerificationCodeViewModel();
+
+    IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+
+    protected bool BrowserRemembered
+    {
+        get { return userViewModel.BrowserRemembered; }
+        set
+        {
+            if (userViewModel.BrowserRemembered != value)
+                ForgetTwoFactorClient().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                        viewNotifier.Show(t.Exception.Message, ViewNotifierType.Error, L["Operation Failed"]);
+                });
+        }
+    }
+
+    protected bool TwoFactorEnabled
+    {
+        get { return userViewModel.TwoFactorEnabled; }
+        set
+        {
+            if (userViewModel.TwoFactorEnabled != value)
+                EnableDisable2fa().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                        viewNotifier.Show(t.Exception.Message, ViewNotifierType.Error, L["Operation Failed"]);
+                });
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+
+        userViewModel = await identityAuthenticationStateProvider.GetUserViewModel();
+    }
+
+    protected void OpenUpdatePasswordDialog()
+    {
+        updatePasswordViewModel = new UpdatePasswordViewModel();
+        updatePasswordDialogOpen = true;
+    }
+
+    protected async Task UpdatePassword()
+    {
+        if (updatePasswordViewModel.NewPassword != updatePasswordViewModel.NewPasswordConfirm)
+        {
+            viewNotifier.Show(L["PasswordConfirmationFailed"], ViewNotifierType.Warning);
+        }
+        else
+        {
+            try
+            {
+                var apiResponse = await identityAuthenticationStateProvider.UpdatePassword(updatePasswordViewModel);
+
+                if (apiResponse.IsSuccessStatusCode)
+                    viewNotifier.Show(L["UpdatePasswordSuccessful"], ViewNotifierType.Success);
+                else
+                    viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["UpdatePasswordFailed"]);
+            }
+            catch (Exception ex)
+            {
+                viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["UpdatePasswordFailed"]);
+            }
+
+            updatePasswordDialogOpen = false;
+        }
+    }
+
+    protected async Task UpdateUser()
+    {
+        try
+        {
+            var apiResponse = await identityAuthenticationStateProvider.UpdateUser(userViewModel);
+
+            if (apiResponse.IsSuccessStatusCode)
+                viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            else
+                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    protected async Task EnableAuthenticator()
+    {
+        var apiResponse = await identityAuthenticationStateProvider.EnableAuthenticator(authenticatorVerificationCodeViewModel);
+
+        if (apiResponse.IsSuccessStatusCode)
+        {
+            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            userViewModel = apiResponse.Result;
+            StateHasChanged();
+        }
+        else
+            viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+
+    }
+
+    protected async Task DisableAuthenticator()
+    {
+        try
+        {
+            var apiResponse = await identityAuthenticationStateProvider.DisableAuthenticator();
+
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+                userViewModel = apiResponse.Result;
+                authenticatorVerificationCodeViewModel = new AuthenticatorVerificationCodeViewModel();
+                StateHasChanged();
+            }
+            else
+                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+
+    }
+
+    async Task ForgetTwoFactorClient()
+    {
+        if (userViewModel.BrowserRemembered)
+        {
+            var apiResponse = await identityAuthenticationStateProvider.ForgetTwoFactorClient();
+
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+                userViewModel = apiResponse.Result;
+                StateHasChanged();
+            }
+            else
+            {
+                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+            }
+        }
+    }
+
+    async Task EnableDisable2fa()
+    {
+        var apiResponse = userViewModel.TwoFactorEnabled ? await identityAuthenticationStateProvider.Disable2fa() : await identityAuthenticationStateProvider.Enable2fa();
+
+        if (apiResponse.IsSuccessStatusCode)
+        {
+            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            userViewModel = apiResponse.Result;
+            StateHasChanged();
+        }
+        else
+        {
+            viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+}

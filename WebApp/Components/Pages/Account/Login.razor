@@ -241,7 +241,7 @@
             {
                 var apiResponse = await identityAuthenticationStateProvider.BuildLoginViewModel(ReturnUrl);
 
-                if (apiResponse.Success)
+                if (apiResponse.IsSuccessStatusCode)
                 {
                     loginViewModel = apiResponse.Result;
 
