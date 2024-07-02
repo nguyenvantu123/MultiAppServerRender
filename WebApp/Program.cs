@@ -25,6 +25,7 @@ using WebApp.Extensions;
 using WebApp.Handler;
 using WebApp.Permissions;
 using Microsoft.AspNetCore.Components;
+using WebApp.State;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,7 @@ builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>()
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
 builder.Services.AddSingleton<CookieEvents>();
+builder.Services.AddScoped<AppState>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

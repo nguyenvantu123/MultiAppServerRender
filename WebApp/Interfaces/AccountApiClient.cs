@@ -190,7 +190,6 @@ namespace WebApp.Interfaces
             var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserProfile>>("api/data/user-profile");
             return apiResponse.Result;
 
-            //return await _httpClient.GetNewtonsoftJsonAsync<UserProfile>("api/data/user-profile");
         }
 
         public Task<ApiResponseDto> SendTestEmail(EmailViewModel email)
