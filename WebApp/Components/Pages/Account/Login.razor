@@ -9,10 +9,10 @@
 
 <AuthorizeView Context="AuthorizeContext">
 
-@*     <Authorized>
-        <LoadingBackground>
-            <label>Loading</label>
-        </LoadingBackground>
+    @*     <Authorized>
+    <LoadingBackground>
+    <label>Loading</label>
+    </LoadingBackground>
     </Authorized> *@
     <NotAuthorized>
 
@@ -43,11 +43,11 @@
                                 <MudText>Description</MudText>
                             </div>
                         </MudItem>
-                        <MudItem xs="12">
-                            <div class="d-flex justify-center">
-                                <MudText>Don't have an account? <MudLink Href="/register">Register here</MudLink></MudText>
-                            </div>
-                        </MudItem>
+                        @*                         <MudItem xs="12">
+                <div class="d-flex justify-center">
+                <MudText>Don't have an account? <MudLink Href="/register">Register here</MudLink></MudText>
+                </div>
+                </MudItem> *@
                         <MudItem xs="12">
                             <MudTextField T="string" Label="UserName" Variant="Variant.Outlined"
                                           @bind-Value="loginViewModel.UserName" For="@(() => loginViewModel.UserName)" />
@@ -58,7 +58,9 @@
                                           InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-space-between align-center">
-                            <MudCheckBox T="bool" Label="Remember me?" Color="Color.Primary" Class="ml-n1"></MudCheckBox> <MudLink Href="/account/forgot-password">Forgot password?</MudLink>
+
+                            <MudCheckBox Value="@loginViewModel.AllowRememberLogin" Class="ml-n2">RememberMe</MudCheckBox>
+                            <MudLink Href="/account/forgot-password">Forgot password?</MudLink>
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-center">
                             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Disabled="@(!Validated)" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign In</MudButton>
@@ -152,6 +154,16 @@
         try
         {
             loginViewModel.ReturnUrl = ReturnUrl;
+
+            // if (loginViewModel.RememberMe)
+            // {
+            //     loginViewModel.AllowRememberLogin = true;
+            // }
+            // else
+            // {
+            //     loginViewModel.AllowRememberLogin = false;
+            // }
+
             var response = await identityAuthenticationStateProvider.Login(loginViewModel);
 
             if (response.StatusCode != (int)HttpStatusCode.OK)

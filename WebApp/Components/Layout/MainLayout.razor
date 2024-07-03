@@ -37,22 +37,14 @@
                             </div>
                         </MudMenu>
                     </MudHidden>
+
+                    <MudMenu TransformOrigin="Origin.TopRight" AnchorOrigin="Origin.TopRight" Dense="true" Class="mt-1 ml-4">
+                        <UserProfile />
+                    </MudMenu>
                 </MudAppBar>
                 <MudDrawer @bind-Open="_navMenuOpened" Elevation="25" ClipMode="DrawerClipMode.Always">
                     <NavMenu />
                 </MudDrawer>
-
-                <MudMenu TransformOrigin="Origin.TopRight" AnchorOrigin="Origin.TopRight" Dense="true" Class="mt-1 ml-4">
-                    <ActivatorContent>
-                        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
-                    </ActivatorContent>
-                    <ChildContent>
-                        <UserCard Class="mt-n2" />
-                        <MudDivider Class="mb-2" />
-                        <MudListItem Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
-                        <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
-                    </ChildContent>
-                </MudMenu>
                 <MudMainContent>
                     <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
                         @*   <CascadingValue Value="hubConnection">
