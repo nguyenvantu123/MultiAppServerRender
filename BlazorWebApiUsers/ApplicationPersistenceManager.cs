@@ -34,7 +34,7 @@ namespace BlazorWebApi.Users
 
             if (userProfile == null)
             {
-                var tenantId = httpContextAccessor.HttpContext.GetMultiTenantContext<TenantInfo>().TenantInfo.Id;
+                var tenantId = httpContextAccessor.HttpContext.GetMultiTenantContext<AppTenantInfo>().TenantInfo.Id;
                 var userId = new Guid(user.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
                 userProfile = await Context.UserProfiles.SingleOrDefaultAsync(i => i.TenantId == tenantId && i.UserId == userId);

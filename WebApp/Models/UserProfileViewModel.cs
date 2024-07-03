@@ -1,6 +1,6 @@
 ﻿namespace WebApp.Models
 {
-    public class UserProfile
+    public class UserProfileViewModel
     {
 
         public string LastPageVisited { get; set; }
@@ -11,12 +11,15 @@
 
         public int Count { get; set; }
 
-        public UserProfile()
+        public bool IsDarkMode { get; set; }
+
+        public UserProfileViewModel()
         {
             LastPageVisited = "/";
             IsNavOpen = true;
             IsNavMinified = false;
             Count = 0;
+            IsDarkMode = false;
         }
     }
 }

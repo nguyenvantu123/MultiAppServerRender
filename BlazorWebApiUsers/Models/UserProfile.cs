@@ -19,6 +19,8 @@ namespace BlazorWebApi.Users.Models
         public DateTime LastUpdatedDate { get; set; } = DateTime.MinValue;
         public string Culture { get; set; }
 
+        public bool IsDarkMode { get; set; } = false;
+
         [Column(TypeName = "nvarchar(64)")]
         public string TenantId { get; set; }
     }

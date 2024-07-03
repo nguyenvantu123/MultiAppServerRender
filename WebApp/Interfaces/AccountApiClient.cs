@@ -185,10 +185,10 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/admin-update-user", userViewModel);
         }
 
-        public async Task<UserProfile> GetUserProfile()
+        public async Task<UserProfileViewModel> GetUserProfile()
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserProfile>>("api/data/user-profile");
-            return apiResponse.Result;
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<UserProfileViewModel>("api/data/user-profile");
+            return apiResponse;
 
         }
 

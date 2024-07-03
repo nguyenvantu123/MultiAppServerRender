@@ -51,7 +51,7 @@ namespace BlazorWebApi.Users.Models
         {
             if ((await _userManager.FindByNameAsync(DefaultUserNames.User)) == null)
             {
-                await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Blazor", "user@blazorboilerplate.com", "+1 (123) 456-7890");
+                await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Multiapp", "nguyenvantu0207943@gmail.com", "0334336232");
             }
 
             if (_tenantStoreDbContext.TenantInfo.Count() < 2)
@@ -114,7 +114,7 @@ namespace BlazorWebApi.Users.Models
         public async Task EnsureAdminIdentitiesAsync()
         {
             await EnsureRoleAsync(DefaultRoleNames.Administrator, _entityPermissions.GetAllPermissionValues());
-            await CreateUserAsync(DefaultUserNames.Administrator, "admin123", "Admin", "Blazor", "admin@blazorboilerplate.com", "+1 (123) 456-7890", new string[] { DefaultRoleNames.Administrator });
+            await CreateUserAsync(DefaultUserNames.Administrator, "admin123", "Admin", "MultiApp", "nguyenvantu020794@gmail.com", "0334336232", new string[] { DefaultRoleNames.Administrator });
 
             ApplicationRole adminRole = await _roleManager.FindByNameAsync(DefaultRoleNames.Administrator);
             var AllClaims = _entityPermissions.GetAllPermissionValues().Distinct();
@@ -191,7 +191,8 @@ namespace BlazorWebApi.Users.Models
                         new Claim(ClaimTypes.Surname, lastName),
                         new Claim(ClaimTypes.Email, email),
                         new Claim(ApplicationClaimTypes.EmailVerified, ClaimValues.trueString, ClaimValueTypes.Boolean),
-                        new Claim(ClaimTypes.HomePhone, phoneNumber)
+                        new Claim(ClaimTypes.HomePhone, phoneNumber),
+                        new Claim(ClaimTypes.NameIdentifier, applicationUser.Id.ToString())
                     }).Result;
 
                 if (!result.Succeeded)

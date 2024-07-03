@@ -16,7 +16,7 @@ namespace WebApp.State
         public event Action OnChange;
 
         private readonly IAccountApiClient _apiClient;
-        private UserProfile _userProfile { get; set; }
+        private UserProfileViewModel _userProfile { get; set; }
 
         //private readonly IStringLocalizer<Global> L;
 
@@ -54,7 +54,7 @@ namespace WebApp.State
             _userProfile = null;
         }
 
-        public async Task<UserProfile> GetUserProfile()
+        public async Task<UserProfileViewModel> GetUserProfile()
         {
             if (_userProfile == null)
                 _userProfile = await _apiClient.GetUserProfile();

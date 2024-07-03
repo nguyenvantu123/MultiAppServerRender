@@ -32,7 +32,7 @@ namespace WebApp.Interfaces
         Task<ApiResponseDto<UserViewModel>> Enable2fa(string userId = null);
         Task<ApiResponseDto<UserViewModel>> Disable2fa(string userId = null);
 
-        Task<UserProfile> GetUserProfile();
+        Task<UserProfileViewModel> GetUserProfile();
         Task<ApiResponseDto> SendTestEmail(EmailViewModel email);
     }
 }
