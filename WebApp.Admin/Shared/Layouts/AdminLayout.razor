@@ -1,0 +1,114 @@
+﻿@using MudBlazor
+@using WebApp.Components
+@using WebApp.Components.Layout
+@using WebApp.Localizer
+@using WebApp.Models
+@using WebApp.Permissions
+@using WebApp.State
+@using static WebApp.Components.Pages.Account.Login
+@inherits RootLayout
+@inject NavigationManager navigationManager
+@inject AppState appState
+@inject IStringLocalizer<Global> L
+@attribute [Authorize(Policies.IsAdmin)]
+
+<CascadingValue Value="this">
+    <MudAppBar Elevation="25">
+        <MudIcon Icon="@CustomIcons.BlazorHero" Size="Size.Large" ViewBox="0 0 500 500" />
+        <MudText Typo="Typo.h6" Class="ml-4">MultiApp</MudText>
+        <MudToolBar DisableGutters="true">
+            <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
+        </MudToolBar>
+        <MudSpacer />
+        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+            <MudTooltip Text="Toggle Dark Mode">
+                <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
+            </MudTooltip>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+            <MudMenu StartIcon="@Icons.Material.Filled.Settings" Color="Color.Inherit" Dense="true">
+                <div class="px-2">
+                    <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
+                </div>
+            </MudMenu>
+        </MudHidden>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_navMenuOpened" Elevation="25" ClipMode="DrawerClipMode.Always">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
+            @*   <CascadingValue Value="hubConnection">
+            @ChildContent
+            </CascadingValue> *@
+        </MudContainer>
+    </MudMainContent>
+</CascadingValue>
+
+@code {
+
+    private MudTheme _currentTheme;
+
+    bool _navMenuOpened = true;
+
+    bool _toggleDarkMode = true;
+
+
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private UserProfileViewModel? profile { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var user = (await authenticationStateTask).User;
+
+        if (user.Identity!.IsAuthenticated)
+        {
+            profile = await appState.GetUserProfile();
+
+            _navMenuOpened = profile.IsNavOpen;
+
+            _toggleDarkMode = profile.IsDarkMode;
+
+            _currentTheme = _toggleDarkMode
+          ? BlazorHeroTheme.DefaultTheme
+          : BlazorHeroTheme.DarkTheme;
+        }
+
+        await Task.CompletedTask;
+
+    }
+
+    private void DrawerToggle()
+    {
+        _navMenuOpened = !_navMenuOpened;
+    }
+
+    private async Task ToggleDarkMode()
+    {
+        _toggleDarkMode = !_toggleDarkMode;
+
+        _currentTheme = _toggleDarkMode
+            ? BlazorHeroTheme.DefaultTheme
+            : BlazorHeroTheme.DarkTheme;
+
+        await Task.FromResult(true);
+    }
+
+    private void Logout()
+    {
+        var parameters = new DialogParameters
+            {
+                {nameof(WebApp.Components.Dialogs.Logout.ContentText), $"Logout Confirmation"},
+                {nameof(WebApp.Components.Dialogs.Logout.ButtonText), $"Logout"},
+                {nameof(WebApp.Components.Dialogs.Logout.Color), Color.Error}
+            };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+
+        _dialogService.Show<WebApp.Components.Dialogs.Logout>("Logout", parameters, options);
+    }
+}

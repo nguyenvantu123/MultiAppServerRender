@@ -16,65 +16,52 @@
     </NotAuthorized>
 
     <Authorized>
-        <CascadingValue Value="this">
-            <MudLayout>
-                <MudAppBar Elevation="2">
-                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-                    <MudSpacer />
-                    <TopRightBarSection />
-                </MudAppBar>
-             @*    <MudAppBar Elevation="25">
-
+        <MudLayout>
+            <CascadingValue Value="this">
+                <MudAppBar Elevation="25">
                     <MudIcon Icon="@CustomIcons.BlazorHero" Size="Size.Large" ViewBox="0 0 500 500" />
                     <MudText Typo="Typo.h6" Class="ml-4">MultiApp</MudText>
-
                     <MudToolBar DisableGutters="true">
-                        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-                        <MudSpacer />
-                        <TopRightBarSection />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
                     </MudToolBar>
-
-                    <MudTooltip Text="Toggle Dark Mode">
-                        <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
-                    </MudTooltip>
                     <MudSpacer />
-
-                    <MudMenu>
-                        <ChildContent>
-                            <UserCard Class="mt-n2" />
-                            <MudDivider Class="mb-2" />
-                            <MudListItem Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
-                            <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
-                        </ChildContent>
-                    </MudMenu>
-                </MudAppBar> *@
-                @*  <MudAppBar Elevation="4" Color="Color.Primary">
-                <MudSpacer />
-                <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                        <MudTooltip Text="Toggle Dark Mode">
+                            <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
+                        </MudTooltip>
+                    </MudHidden>
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                        <MudMenu StartIcon="@Icons.Material.Filled.Settings" Color="Color.Inherit" Dense="true">
+                            <div class="px-2">
+                                <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
+                            </div>
+                        </MudMenu>
+                    </MudHidden>
                 </MudAppBar>
-                <MudAppBar Elevation="2">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-                <MudSpacer />
-                <TopRightBarSection />
-                </MudAppBar> *@
-                <MudDrawer @bind-Open="@_navMenuOpened" Elevation="2">
+                <MudDrawer @bind-Open="_navMenuOpened" Elevation="25" ClipMode="DrawerClipMode.Always">
                     <NavMenu />
-                    <DrawerFooter />
                 </MudDrawer>
-                <MudMainContent Style="min-height: 100vh; display: flex; flex-direction: column">
-                    <MudContainer MaxWidth="MaxWidth.False" Style="flex: 1">
-                        @TopSection
-                        <MudPaper Class="py-4" Elevation="0">
-                            @Body
-                        </MudPaper>
+
+                <MudMenu TransformOrigin="Origin.TopRight" AnchorOrigin="Origin.TopRight" Dense="true" Class="mt-1 ml-4">
+                    <ActivatorContent>
+                        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
+                    </ActivatorContent>
+                    <ChildContent>
+                        <UserCard Class="mt-n2" />
+                        <MudDivider Class="mb-2" />
+                        <MudListItem Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
+                        <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
+                    </ChildContent>
+                </MudMenu>
+                <MudMainContent>
+                    <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
+                        @*   <CascadingValue Value="hubConnection">
+                        @ChildContent
+                        </CascadingValue> *@
                     </MudContainer>
-                    <Footer />
                 </MudMainContent>
-                <MudScrollToTop TopOffset="400" Style="z-index:2000;">
-                    <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
-                </MudScrollToTop>
-            </MudLayout>
-        </CascadingValue>
+            </CascadingValue>
+        </MudLayout>
     </Authorized>
 </AuthorizeView>
 
@@ -82,8 +69,12 @@
 
     private MudTheme _currentTheme;
 
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
 
     bool _navMenuOpened = true;
+
+    bool _toggleDarkMode = true;
 
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -115,6 +106,12 @@
             profile = await appState.GetUserProfile();
 
             _navMenuOpened = profile.IsNavOpen;
+
+            _toggleDarkMode = profile.IsDarkMode;
+
+            _currentTheme = _toggleDarkMode
+        ? BlazorHeroTheme.DefaultTheme
+        : BlazorHeroTheme.DarkTheme;
         }
 
         await Task.CompletedTask;
@@ -128,8 +125,9 @@
 
     private async Task ToggleDarkMode()
     {
-        bool isDarkMode = profile!.IsDarkMode;
-        _currentTheme = isDarkMode
+        _toggleDarkMode = !_toggleDarkMode;
+
+        _currentTheme = _toggleDarkMode
             ? BlazorHeroTheme.DefaultTheme
             : BlazorHeroTheme.DarkTheme;
 
@@ -142,9 +140,7 @@
             {
                 {nameof(Dialogs.Logout.ContentText), $"Logout Confirmation"},
                 {nameof(Dialogs.Logout.ButtonText), $"Logout"},
-                {nameof(Dialogs.Logout.Color), Color.Error},
-                // {nameof(Dialogs.Logout.CurrentUserId), CurrentUserId},
-                // {nameof(Dialogs.Logout.HubConnection), hubConnection}
+                {nameof(Dialogs.Logout.Color), Color.Error}
             };
 
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };

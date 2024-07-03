@@ -30,12 +30,7 @@ var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
 
 webApp.WithReference(user).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
 
-
-builder.AddProject<Projects.WebApp_Admin>("webapp-admin");
-
-
 builder.Build().Run();
-
 
 static bool ShouldUseHttpForEndpoints()
 {
