@@ -10,4 +10,8 @@
     <ProjectReference Include="..\WebApp\WebApp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\" />
+  </ItemGroup>
+
 </Project>

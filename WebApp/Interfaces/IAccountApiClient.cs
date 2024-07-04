@@ -1,4 +1,8 @@
-﻿using MultiAppServer.ServiceDefaults;
+﻿using BlazorWebApi.Users.Models;
+using Breeze.Sharp;
+using MultiAppServer.ServiceDefaults;
+using System.Linq.Expressions;
+using WebApp.DataModels;
 using WebApp.Models;
 
 namespace WebApp.Interfaces
@@ -33,6 +37,17 @@ namespace WebApp.Interfaces
         Task<ApiResponseDto<UserViewModel>> Disable2fa(string userId = null);
 
         Task<UserProfileViewModel> GetUserProfile();
-        Task<ApiResponseDto> SendTestEmail(EmailViewModel email);
+        Task<QueryResult<TenantSetting>> GetTenantSettings();
+        Task<QueryResult<ApplicationUser>> GetUsers(Expression<Func<ApplicationUser, bool>> predicate = null, int? take = null, int? skip = null);
+        Task<QueryResult<ApplicationRole>> GetRoles(Expression<Func<ApplicationRole, bool>> predicate = null, int? take = null, int? skip = null);
+
+        Task<QueryResult<DbLog>> GetLogs(Expression<Func<DbLog, bool>> predicate = null, int? take = null, int? skip = null);
+        Task<QueryResult<ApiLogItem>> GetApiLogs(Expression<Func<ApiLogItem, bool>> predicate = null, int? take = null, int? skip = null);
+
+        //Task<QueryResult<Todo>> GetToDos(ToDoFilter filter, int? take = null, int? skip = null);
+        Task<QueryResult<ApplicationUser>> GetTodoCreators(ToDoFilter filter);
+        //Task<QueryResult<ApplicationUser>> GetTodoEditors(ToDoFilter filter);
+
+        Task<ApiResponseDto> SendTestEmail(EmailDto email);
     }
 }

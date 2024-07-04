@@ -29,8 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAppServer.ServiceDefau
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csproj", "{383A21D9-769E-4CAF-94BE-8901E4FA9497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp.Admin", "WebApp.Admin\WebApp.Admin.csproj", "{7008FD84-74B0-467F-AB7F-F2BFDB787078}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,10 +83,6 @@ Global
 		{383A21D9-769E-4CAF-94BE-8901E4FA9497}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{383A21D9-769E-4CAF-94BE-8901E4FA9497}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{383A21D9-769E-4CAF-94BE-8901E4FA9497}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7008FD84-74B0-467F-AB7F-F2BFDB787078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7008FD84-74B0-467F-AB7F-F2BFDB787078}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7008FD84-74B0-467F-AB7F-F2BFDB787078}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7008FD84-74B0-467F-AB7F-F2BFDB787078}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

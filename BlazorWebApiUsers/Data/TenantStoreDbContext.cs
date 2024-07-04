@@ -6,7 +6,7 @@ namespace BlazorWebApi.Users.Data
 {
     public class TenantStoreDbContext : EFCoreStoreDbContext<AppTenantInfo>
     {
-        public static readonly AppTenantInfo DefaultTenant = new AppTenantInfo() { Id = Settings.DefaultTenantId, Identifier = Settings.DefaultTenantId, Name = Settings.DefaultTenantId };
+        public static readonly AppTenantInfo DefaultTenant = new AppTenantInfo() { Id = Constants.DefaultTenant.DefaultTenantId, Identifier = Constants.DefaultTenant.DefaultTenantId, Name = Constants.DefaultTenant.DefaultTenantId };
 
         public TenantStoreDbContext(DbContextOptions<TenantStoreDbContext> options) : base(options)
         {

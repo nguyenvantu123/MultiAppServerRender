@@ -71,7 +71,7 @@ builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")
     .WithEFCoreStore<TenantStoreDbContext, AppTenantInfo>()
-    .WithStaticStrategy(Settings.DefaultTenantId);
+    .WithStaticStrategy(DefaultTenant.DefaultTenantId);
 
 builder.Services.AddScoped<BlazorWebApi.Users.Models.IUserSession, UserSessionApp>();
 

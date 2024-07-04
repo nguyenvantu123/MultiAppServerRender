@@ -1,6 +1,10 @@
-﻿using Microsoft.JSInterop;
+﻿using BlazorWebApi.Users.Models;
+using Breeze.Sharp;
+using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
+using System.Linq.Expressions;
 using WebApp.Constant;
+using WebApp.DataModels;
 using WebApp.Extensions;
 using WebApp.Models;
 using WebApp.State;
@@ -193,6 +197,41 @@ namespace WebApp.Interfaces
         }
 
         public Task<ApiResponseDto> SendTestEmail(EmailViewModel email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<QueryResult<TenantSetting>> GetTenantSettings()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<QueryResult<ApplicationUser>> GetUsers(Expression<Func<ApplicationUser, bool>> predicate = null, int? take = null, int? skip = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<QueryResult<ApplicationRole>> GetRoles(Expression<Func<ApplicationRole, bool>> predicate = null, int? take = null, int? skip = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<QueryResult<DbLog>> GetLogs(Expression<Func<DbLog, bool>> predicate = null, int? take = null, int? skip = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<QueryResult<ApiLogItem>> GetApiLogs(Expression<Func<ApiLogItem, bool>> predicate = null, int? take = null, int? skip = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<QueryResult<ApplicationUser>> GetTodoCreators(ToDoFilter filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ApiResponseDto> SendTestEmail(EmailDto email)
         {
             throw new NotImplementedException();
         }
