@@ -12,7 +12,7 @@
         public const string DefaultPassword = "Abc@12345";
     }
 
-    public static class Settings
+    public static class DefaultTenant
     {
         public const string DefaultTenantId = "Master";
     }

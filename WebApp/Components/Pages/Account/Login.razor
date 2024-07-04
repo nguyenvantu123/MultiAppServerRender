@@ -130,7 +130,7 @@
 
     [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 
-    [Inject] protected IStringLocalizer<Global> L { get; set; }
+    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
     // [Inject] NavigationManager navigationManager { get; set; }
     // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
@@ -164,7 +164,7 @@
                     loginViewModel.ReturnUrl = (response.Result as LoginResponseModel).LastPageVisited;
 
                 if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
-                    loginViewModel.ReturnUrl = $"{Settings.Settings.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
+                    loginViewModel.ReturnUrl = $"{DefaultTenant.Settings.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
 
                 navigationManager.NavigateTo($"{ReturnUrl}", true);
             }

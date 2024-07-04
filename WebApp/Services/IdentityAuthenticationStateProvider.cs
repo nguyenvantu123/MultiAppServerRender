@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using BlazorWebApi.Users.Models;
+using Microsoft.AspNetCore.Components.Authorization;
 using MultiAppServer.ServiceDefaults;
 using System.Security.Claims;
 using WebApp.Interfaces;

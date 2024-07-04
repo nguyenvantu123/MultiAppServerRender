@@ -59,7 +59,7 @@ namespace BlazorWebApi.Users.Models
 
         public EntityPermissions(AppTenantInfo tenantInfo)
         {
-            IsMasterTenant = tenantInfo == null || tenantInfo.Id == Settings.DefaultTenantId;
+            IsMasterTenant = tenantInfo == null || tenantInfo.Id == DefaultTenant.DefaultTenantId;
         }
 
         private IEnumerable<EntityPermission> GetAllPermission()

@@ -1,0 +1,36 @@
+﻿<CascadingValue Value="this">
+    <ul class="breadcrumb">
+        @for (int i = 0; i < Items.Count; ++i)
+        {
+            <li>
+                @if (i == Items.Count - 1)
+                {
+                    @Items[i].Title
+                }
+                else
+                {
+                    <a href="@Items[i].Link">@Items[i].Title</a>
+                }
+            </li>
+        }
+        @ChildContent
+    </ul>
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool IncludeRoot { get; set; } = true;
+
+    protected internal List<Breadcrumb> Items = new();
+
+    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (IncludeRoot)
+            Items.Insert(0, Breadcrumb.New("/", L["BreadCrumbHome"]));
+    }
+}

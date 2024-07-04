@@ -1,0 +1,272 @@
+﻿@page "/admin/multitenancy"
+@using MultiAppServer.ServiceDefaults
+@using System.Net
+@attribute [Authorize(Policies.IsAdmin)]
+@layout MainLayout
+
+<TopSection>
+    <Breadcrumbs>
+        <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
+        <Breadcrumb Title=@L["BreadCrumbadminmultitenancy"] />
+    </Breadcrumbs>
+</TopSection>
+
+<PageTitle>@L["Tenants"]</PageTitle>
+
+@if (tenants == null)
+{
+    <LoadingBackground>
+        <label>@L["Loading"]</label>
+    </LoadingBackground>
+}
+else
+{
+    <MudTable Items="@tenants" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2">
+        <HeaderContent>
+            <MudTh><MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => OpenUpsertTenantDialog())" Variant="Variant.Filled" Color="Color.Primary">@L["New Tenant"]</MudButton></MudTh>
+            <MudTh>Id</MudTh>
+            <MudTh>Identifier</MudTh>
+            <MudTh>@L["Name"]</MudTh>
+            <MudTh>ConnectionString</MudTh>
+        </HeaderContent>
+        <RowTemplate Context="TenantRow">
+            <MudTd>
+                <div style="width:155px;">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => OpenUpsertTenantDialog(TenantRow))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OpenDeleteTenantDialog(TenantRow))" Disabled="@(TenantRow.Id ==  DefaultTenant.DefaultTenantId )"></MudIconButton>
+                </div>
+            </MudTd>
+            <MudTd><div style="min-width:130px;">@TenantRow.Id</div></MudTd>
+            <MudTd>
+                <div style="min-width:130px; white-space:nowrap;">
+                    @TenantRow.Identifier
+                    @if (TenantRow.Id != DefaultTenant.DefaultTenantId)
+                    {
+                        <MudIconButton Link="@GetTenantUri(TenantRow)" Target="_blank" Icon="@Icons.Material.Filled.Link" />
+                    }
+                </div>
+            </MudTd>
+            <MudTd><div style="min-width:130px;">@TenantRow.Name</div></MudTd>
+            <MudTd><div style="min-width:130px;">@TenantRow.ConnectionString</div></MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+<MudDialog @bind-IsVisible="@isUpsertTenantDialogOpen">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3 mb-n1" />
+            @labelUpsertDialogTitle
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@currentTenant">
+            <FluentValidationValidator />
+            <MudValidationSummary />
+            <MudTextField @bind-Value="@currentTenant.Id" Disabled="@isCurrentTenantKeyReadOnly" Label="Id" AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
+
+            <MudTextField @bind-Value="@currentTenant.Identifier" Disabled="@(currentTenant.Id ==DefaultTenant.DefaultTenantId)" Label="Identifier" AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true"></MudTextField>
+
+            <MudTextField @bind-Value="@currentTenant.Name" Label=@L["Name"] AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
+
+            <MudTextField @bind-Value="@currentTenant.ConnectionString" Label="ConnectionString" AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true" Lines="5"></MudTextField>
+
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@CancelChanges">@L["Cancel"]</MudButton>
+        <MudButton OnClick="@UpsertTenant" Variant="Variant.Filled" Color="Color.Primary">@labelUpsertDialogOkButton</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudDialog @bind-IsVisible="@isDeleteTenantDialogOpen" Style="z-index:100">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
+            @L["Confirm Delete"]
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        Are you sure you want to delete the Tenant "@currentTenant.Name" ?
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(e => { isDeleteTenantDialogOpen = false; })">@L["Cancel"]</MudButton>
+        <MudButton OnClick="@DeleteTenantAsync" Variant="Variant.Filled" Color="Color.Error">@L["Delete"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [Inject] NavigationManager Navigation { get; set; }
+    [Inject] IViewNotifier viewNotifier { get; set; }
+    [Inject] HttpClient Http { get; set; }
+    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+    int pageSize { get; set; } = 15;
+    int currentPage { get; set; } = 0;
+
+    protected bool isCurrentTenantKeyReadOnly = false;
+
+    protected List<TenantDto> tenants;
+    protected TenantDto currentTenant { get; set; } = new();
+
+    #region OnInitializedAsync
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeTenantsListAsync();
+    }
+
+    protected string GetTenantUri(TenantDto tenant)
+    {
+        var builder = new UriBuilder(Navigation.BaseUri)
+            {
+                Host = tenant.Identifier
+            };
+        return builder.Uri.ToString();
+    }
+
+    protected async Task InitializeTenantsListAsync()
+    {
+        try
+        {
+            var response = await Http.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/Admin/Tenants?pageSize={pageSize}&pageNumber={currentPage}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                viewNotifier.Show(response.Message, ViewNotifierType.Success, L["Operation Successful"]);
+                tenants = response.Result;
+            }
+            else
+                viewNotifier.Show(response.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    #endregion
+
+    #region OpenUpsertTenantDialog
+    protected bool isUpsertTenantDialogOpen = false;
+    bool isInsertOperation;
+
+    protected string labelUpsertDialogTitle;
+    protected string labelUpsertDialogOkButton;
+
+    protected void OpenUpsertTenantDialog(TenantDto tenant = null)
+    {
+        try
+        {
+            isInsertOperation = tenant == null;
+
+            currentTenant = tenant ?? new TenantDto();
+
+            // Update the UI
+            if (isInsertOperation)
+            {
+                labelUpsertDialogTitle = L["New Tenant"];
+                labelUpsertDialogOkButton = L["Create"];
+            }
+            else
+            {
+                labelUpsertDialogTitle = L["Edit {0}", currentTenant.Name];
+                labelUpsertDialogOkButton = L["Update"];
+            }
+
+            isCurrentTenantKeyReadOnly = !isInsertOperation;
+
+            if (!isInsertOperation)
+                currentTenant.SaveState();
+
+            isUpsertTenantDialogOpen = true;
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    protected void CancelChanges()
+    {
+        currentTenant.RestoreState();
+        isUpsertTenantDialogOpen = false;
+    }
+
+    protected async Task UpsertTenant()
+    {
+        try
+        {
+            if (currentTenant == null)
+            {
+                viewNotifier.Show("Tenant Creation Error", ViewNotifierType.Error, "New Tenant not found");
+                return;
+            }
+
+            ApiResponseDto response;
+
+            if (isInsertOperation)
+                response = await Http.PostJsonAsync<ApiResponseDto>("api/Admin/Tenant", currentTenant);
+            else
+                response = await Http.PutJsonAsync<ApiResponseDto>("api/Admin/Tenant", currentTenant);
+
+            if (response.IsSuccessStatusCode)
+            {
+                viewNotifier.Show(response.Message, ViewNotifierType.Success);
+
+                StateHasChanged();
+            }
+            else
+                viewNotifier.Show(response.Message, ViewNotifierType.Error);
+
+
+            await OnInitializedAsync();
+
+            isUpsertTenantDialogOpen = false;
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+        finally
+        {
+            currentTenant.ClearState();
+        }
+    }
+
+    #endregion
+
+    #region OpenDeleteTenantDialog
+
+    protected bool isDeleteTenantDialogOpen = false;
+
+    protected void OpenDeleteTenantDialog(TenantDto tenant)
+    {
+        currentTenant = tenant;
+        isDeleteTenantDialogOpen = true;
+    }
+
+    protected async Task DeleteTenantAsync()
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"api/Admin/Tenant/{currentTenant.Name}");
+            if (response.StatusCode != (HttpStatusCode)200)
+            {
+                viewNotifier.Show("Tenant Delete Failed", ViewNotifierType.Error);
+                return;
+            }
+
+            viewNotifier.Show("Tenant Deleted", ViewNotifierType.Success);
+            await OnInitializedAsync();
+            isDeleteTenantDialogOpen = false;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    #endregion
+}
