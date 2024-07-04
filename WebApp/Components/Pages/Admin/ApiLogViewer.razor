@@ -91,11 +91,11 @@ else
     {
         try
         {
-            var result = await apiClient.GetApiLogs(null, pageSize, pageIndex * pageSize);
+            // var result = await apiClient.GetApiLogs(null, pageSize, pageIndex * pageSize);
 
-            apiLogItems = new List<ApiLogItem>(result);
-            totalItemsCount = (int)result.InlineCount.Value;
-            viewNotifier.Show($"{totalItemsCount} items found", ViewNotifierType.Success, L["Operation Successful"]);
+            // apiLogItems = new List<ApiLogItem>(result);
+            // totalItemsCount = (int)result.InlineCount.Value;
+            // viewNotifier.Show($"{totalItemsCount} items found", ViewNotifierType.Success, L["Operation Successful"]);
 
         }
         catch (Exception ex)

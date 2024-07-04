@@ -4,6 +4,7 @@ using MultiAppServer.ServiceDefaults;
 using System.Linq.Expressions;
 using WebApp.DataModels;
 using WebApp.Models;
+using WebApp.Settings;
 
 namespace WebApp.Interfaces
 {
@@ -37,7 +38,7 @@ namespace WebApp.Interfaces
         Task<ApiResponseDto<UserViewModel>> Disable2fa(string userId = null);
 
         Task<UserProfileViewModel> GetUserProfile();
-        Task<QueryResult<TenantSetting>> GetTenantSettings();
+        Task<QueryResult<TenantSettingModels>> GetTenantSettings();
         Task<QueryResult<ApplicationUser>> GetUsers(Expression<Func<ApplicationUser, bool>> predicate = null, int? take = null, int? skip = null);
         Task<QueryResult<ApplicationRole>> GetRoles(Expression<Func<ApplicationRole, bool>> predicate = null, int? take = null, int? skip = null);
 
@@ -45,7 +46,7 @@ namespace WebApp.Interfaces
         Task<QueryResult<ApiLogItem>> GetApiLogs(Expression<Func<ApiLogItem, bool>> predicate = null, int? take = null, int? skip = null);
 
         //Task<QueryResult<Todo>> GetToDos(ToDoFilter filter, int? take = null, int? skip = null);
-        Task<QueryResult<ApplicationUser>> GetTodoCreators(ToDoFilter filter);
+        //Task<QueryResult<ApplicationUser>> GetTodoCreators(ToDoFilter filter);
         //Task<QueryResult<ApplicationUser>> GetTodoEditors(ToDoFilter filter);
 
         Task<ApiResponseDto> SendTestEmail(EmailDto email);

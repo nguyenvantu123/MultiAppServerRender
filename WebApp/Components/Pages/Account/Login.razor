@@ -176,7 +176,7 @@
                     loginViewModel.ReturnUrl = (response.Result as LoginResponseModel).LastPageVisited;
 
                 if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
-                    loginViewModel.ReturnUrl = $"{DefaultTenant.Settings.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
+                    loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
 
                 navigationManager.NavigateTo($"{ReturnUrl}", true);
             }

@@ -1,6 +1,8 @@
 ﻿@using WebApp.State
 @using static WebApp.Components.Pages.Account.Login
 @inherits RootLayout
+@attribute [Authorize(Policies.IsAdmin)]
+
 
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />

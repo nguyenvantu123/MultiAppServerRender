@@ -129,7 +129,7 @@ else
     {
         try
         {
-            var response = await Http.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/Admin/Tenants?pageSize={pageSize}&pageNumber={currentPage}");
+            var response = await Http.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={currentPage}");
 
             if (response.IsSuccessStatusCode)
             {

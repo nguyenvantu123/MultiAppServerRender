@@ -1,6 +1,5 @@
 @using Microsoft.AspNetCore.Components;
 @using MultiAppServer.ServiceDefaults
-@using WebApp.Constants
 @inherits DynamicComponentContainer
 @inject NavigationManager navigationManager
 @inject HttpClient Http
@@ -36,7 +35,7 @@
     <MudNavLink Href="@navigationManager.ToAbsoluteUri("admin/roles").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
         @L["Roles"]
     </MudNavLink>
-    @if (tenant.Id == Settings.Index)
+    @if (tenant.Id == DefaultTenant.DefaultTenantId)
     {
         <MudNavLink Href="@navigationManager.ToAbsoluteUri("admin/multitenancy").AbsoluteUri" Icon="@Icons.Material.Filled.AccountBalance">
             @L["MultiTenancy"]

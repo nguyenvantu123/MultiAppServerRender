@@ -113,7 +113,7 @@ else
     {
         try
         {
-            var apiResponse = await Http.GetFromJsonAsync<ApiResponseDto<List<RoleDto>>>($"api/Admin/Roles?pageSize={pageSize}&pageNumber={currentPage}");
+            var apiResponse = await Http.GetFromJsonAsync<ApiResponseDto<List<RoleDto>>>($"api/admin/roles?pageSize={pageSize}&pageNumber={currentPage}");
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -164,11 +164,11 @@ else
 
             if (isCurrentRoleReadOnly)
             {
-                var roleResponse = await Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/Admin/Role/{roleName}");
+                var roleResponse = await Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
                 role = roleResponse.Result;
             }
 
-            var response = await Http.GetFromJsonAsync<ApiResponseDto<List<string>>>("api/Admin/Permissions");
+            var response = await Http.GetFromJsonAsync<ApiResponseDto<List<string>>>("api/admin/permissions");
             permissionsSelections.Clear();
 
 
@@ -207,9 +207,9 @@ else
             ApiResponseDto apiResponse;
 
             if (isInsertOperation)
-                apiResponse = await Http.PostJsonAsync<ApiResponseDto>("api/Admin/Role", request);
+                apiResponse = await Http.PostJsonAsync<ApiResponseDto>("api/amin/role", request);
             else
-                apiResponse = await Http.PutJsonAsync<ApiResponseDto>("api/Admin/Role", request);
+                apiResponse = await Http.PutJsonAsync<ApiResponseDto>("api/admin/role", request);
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -248,7 +248,7 @@ else
     {
         try
         {
-            var response = await Http.DeleteAsync($"api/Admin/Role/{currentRoleName}");
+            var response = await Http.DeleteAsync($"api/admin/role/{currentRoleName}");
 
             if (response.IsSuccessStatusCode)
             {

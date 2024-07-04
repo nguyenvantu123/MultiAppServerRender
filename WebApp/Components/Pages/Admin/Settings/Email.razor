@@ -1,6 +1,8 @@
-﻿@inherits EmailPage
-@page "/admin/settings/email"
-@layout AdminLayout
+﻿@page "/admin/settings/email"
+@using System.Security.Authentication
+@using WebApp.Constant
+@using WebApp.Settings
+@layout MainLayout
 
 <TopSection>
     <Breadcrumbs>
@@ -103,4 +105,98 @@ else
 }
 
 @code {
+
+    protected Dictionary<SettingKey, TenantSettingModels> settings;
+
+    [Inject] private NavigationManager navigationManager { get; set; }
+
+    [Inject] IApiClient apiClient { get; set; }
+
+    [Inject] IAccountApiClient accountApiClient { get; set; }
+
+    [Inject] protected IViewNotifier viewNotifier { get; set; }
+
+    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+
+    protected bool isSendEmailDialogOpen = false;
+    protected EmailDto email { get; set; } = new();
+    protected string[] sslProtocols = ((SslProtocols[])Enum.GetValues(typeof(SslProtocols))).Select(i => i.ToString()).ToArray();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSettings("EmailConfiguration_");
+    }
+
+    protected async Task SendTestEmail()
+    {
+        try
+        {
+            var apiResponse = await accountApiClient.SendTestEmail(email);
+
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Success);
+            }
+            else
+            {
+                viewNotifier.Show(apiResponse.Message + " : " + apiResponse.StatusCode, ViewNotifierType.Error, L["Operation Failed"]);
+            }
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    protected async Task LoadSettings(string prefix)
+    {
+        try
+        {
+            var result = (await accountApiClient.GetTenantSettings()).Where(i => i.Key.ToString().StartsWith(prefix)).ToDictionary(i => i.Key, i => i);
+
+            foreach (var def in TenantSettingValues.Default.Where(i => i.Key.ToString().StartsWith(prefix)))
+            {
+                if (!result.ContainsKey(def.Key))
+                {
+                    var entity = new TenantSettingModels() { Key = def.Key, Type = def.Value.Item2, Value = def.Value.Item1 };
+                    result.Add(def.Key, entity);
+                    apiClient.AddEntity(entity);
+                }
+            }
+
+            settings = result;
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    protected async Task SaveChanges()
+    {
+        try
+        {
+            var reload = false;
+
+            if (settings.ContainsKey(SettingKey.MainConfiguration_Runtime) && settings[SettingKey.MainConfiguration_Runtime].EntityAspect.HasChanges())
+                reload = true;
+
+            await apiClient.SaveChanges();
+
+            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+
+            if (reload)
+                navigationManager.NavigateTo(navigationManager.Uri, true);
+
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    public void Dispose()
+    {
+        apiClient.CancelChanges();
+    }
 }

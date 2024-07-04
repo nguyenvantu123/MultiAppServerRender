@@ -7,6 +7,7 @@ using WebApp.Constant;
 using WebApp.DataModels;
 using WebApp.Extensions;
 using WebApp.Models;
+using WebApp.Settings;
 using WebApp.State;
 
 namespace WebApp.Interfaces
@@ -201,7 +202,7 @@ namespace WebApp.Interfaces
             throw new NotImplementedException();
         }
 
-        public Task<QueryResult<TenantSetting>> GetTenantSettings()
+        public Task<QueryResult<TenantSettingModels>> GetTenantSettings()
         {
             throw new NotImplementedException();
         }
@@ -226,10 +227,10 @@ namespace WebApp.Interfaces
             throw new NotImplementedException();
         }
 
-        public Task<QueryResult<ApplicationUser>> GetTodoCreators(ToDoFilter filter)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<QueryResult<ApplicationUser>> GetTodoCreators(ToDoFilter filter)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public Task<ApiResponseDto> SendTestEmail(EmailDto email)
         {
