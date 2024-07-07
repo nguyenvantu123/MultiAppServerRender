@@ -6,7 +6,7 @@ namespace BlazorWebApi.Users.Controller.Account;
 public class AccountOptions
 {
     public static bool AllowLocalLogin = true;
-    public static bool AllowRememberLogin = true;
+    public static bool AllowRememberLogin = false;
     public static TimeSpan RememberMeLoginDuration = TimeSpan.FromDays(30);
 
     public static bool ShowLogoutPrompt = false;

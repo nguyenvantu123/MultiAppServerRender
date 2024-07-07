@@ -19,6 +19,7 @@ namespace MultiAppServer.ServiceDefaults
         [DataMember]
         public int StatusCode { get; set; }
 
+        [DataMember]
         public bool IsSuccessStatusCode => StatusCode >= 200 && StatusCode < 300;
 
         [DataMember]

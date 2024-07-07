@@ -236,5 +236,11 @@ namespace WebApp.Interfaces
         {
             throw new NotImplementedException();
         }
+
+        public async Task<ApiResponseDto<TenantDto>> GetTenant()
+        {
+            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<TenantDto>>("api/admin/tenant");
+
+        }
     }
 }

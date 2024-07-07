@@ -50,5 +50,7 @@ namespace WebApp.Interfaces
         //Task<QueryResult<ApplicationUser>> GetTodoEditors(ToDoFilter filter);
 
         Task<ApiResponseDto> SendTestEmail(EmailDto email);
+
+        Task<ApiResponseDto<TenantDto>> GetTenant();
     }
 }

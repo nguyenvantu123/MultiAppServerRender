@@ -92,7 +92,7 @@ else
 
 @code {
     [Inject] HttpClient Http { get; set; }
-    [Inject] IViewNotifier viewNotifier { get; set; }
+    // [Inject] IViewNotifier viewNotifier { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
     protected int pageSize { get; set; } = 15;
     protected int currentPage { get; set; } = 0;

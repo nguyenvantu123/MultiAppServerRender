@@ -1,7 +1,7 @@
 ﻿@page "/account/login"
 @using System.Net
 
-@layout MainLayout
+
 @attribute [AllowAnonymous]
 @inject NavigationManager Nav
 @inject NavigationManager navigationManager
@@ -59,7 +59,7 @@
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-space-between align-center">
 
-                            <MudCheckBox Value="@loginViewModel.AllowRememberLogin" Class="ml-n2">RememberMe</MudCheckBox>
+                            <MudCheckBox @bind-Value="@loginViewModel.AllowRememberLogin" Class="ml-n2">RememberMe</MudCheckBox>
                             <MudLink Href="/account/forgot-password">Forgot password?</MudLink>
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-center">
@@ -146,23 +146,12 @@
 
     private IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
 
-    [Inject] IViewNotifier viewNotifier { get; set; }
-
 
     private async Task SubmitAsync()
     {
         try
         {
             loginViewModel.ReturnUrl = ReturnUrl;
-
-            // if (loginViewModel.RememberMe)
-            // {
-            //     loginViewModel.AllowRememberLogin = true;
-            // }
-            // else
-            // {
-            //     loginViewModel.AllowRememberLogin = false;
-            // }
 
             var response = await identityAuthenticationStateProvider.Login(loginViewModel);
 
@@ -172,13 +161,13 @@
             }
             else
             {
-                if (string.IsNullOrEmpty(ReturnUrl) || ReturnUrl == "/")
-                    loginViewModel.ReturnUrl = (response.Result as LoginResponseModel).LastPageVisited;
+                if (string.IsNullOrEmpty(response.Result.ReturnUrl) || response.Result.ReturnUrl == "/" || response.Result.ReturnUrl == "/admin")
+                    loginViewModel.ReturnUrl = response.Result.LastPageVisited;
 
                 if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
                     loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
 
-                navigationManager.NavigateTo($"{ReturnUrl}", true);
+                navigationManager.NavigateTo($"{loginViewModel.ReturnUrl}", true);
             }
         }
         catch (Exception ex)

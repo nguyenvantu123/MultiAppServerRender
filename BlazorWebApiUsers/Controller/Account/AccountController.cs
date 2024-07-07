@@ -4,6 +4,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Encodings.Web;
+using Azure;
 using BlazorBoilerplate.Constants;
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Extensions;
@@ -23,7 +24,7 @@ namespace BlazorWebApi.Users.Controller.Account
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : Microsoft.AspNetCore.Mvc.Controller
+    public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -174,12 +175,26 @@ namespace BlazorWebApi.Users.Controller.Account
                     //    // user might have clicked on a malicious link - should be logged
                     //    throw new Exception("invalid return URL");
 
+                    if (User.IsInRole("Administrator"))
+                    {
+                        if (string.IsNullOrEmpty(parameters.ReturnUrl) || parameters.ReturnUrl == "/")
+                        {
+                            parameters.ReturnUrl = "/admin";
+                        }
+
+                        if (string.IsNullOrEmpty(lastPageVisited) || lastPageVisited == "/")
+                        {
+                            lastPageVisited = "/admin";
+                        }
+                    }
+
                     return new ApiResponse((int)HttpStatusCode.OK, "Two factor authentication required")
                     {
                         Result = new LoginResponseModel()
                         {
                             RequiresTwoFactor = false,
-                            LastPageVisited = lastPageVisited
+                            LastPageVisited = lastPageVisited,
+                            ReturnUrl = parameters.ReturnUrl
                         }
                     };
                 }

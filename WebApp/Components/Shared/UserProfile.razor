@@ -3,22 +3,23 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="drawer-profile">
-            <div class="triangle-container">
-                <div class="triangles">
-                </div>
-            </div>
-            <MudIconButton Icon="@Icons.Material.Filled.AccountCircle" Href="/account/profile" />
-            @if (userViewModel == null)
-            {
-                <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-            }
-            else
-            {
-                <span><b><a href="/account/profile">@userViewModel.UserName</a></b></span>
-                <Login ShowLogOutLabel="true" />
-            }
-        </div>
+        @if (userViewModel == null)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        }
+        else
+        {
+            <MudMenu AnchorOrigin="Origin.TopLeft">
+                <ActivatorContent>
+                    <MudAvatar Color="Color.Secondary">@userViewModel.UserName.Substring(0, 1)</MudAvatar>
+                </ActivatorContent>
+                <ChildContent>
+                    <MudDivider Class="mb-2" />
+                    <MudListItem Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
+                    <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
+                </ChildContent>
+            </MudMenu>
+        }
     </Authorized>
 </AuthorizeView>
 
@@ -36,5 +37,19 @@
 
         if (user.Identity!.IsAuthenticated)
             userViewModel = await ((IdentityAuthenticationStateProvider)authStateProvider).GetUserViewModel();
+    }
+
+    private void Logout()
+    {
+        var parameters = new DialogParameters
+            {
+                {nameof(Dialogs.Logout.ContentText), $"Logout Confirmation"},
+                {nameof(Dialogs.Logout.ButtonText), $"Logout"},
+                {nameof(Dialogs.Logout.Color), Color.Error}
+            };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+
+        _dialogService.Show<Dialogs.Logout>("Logout", parameters, options);
     }
 }

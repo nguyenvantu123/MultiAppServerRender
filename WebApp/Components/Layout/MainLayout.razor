@@ -1,6 +1,10 @@
 ﻿@using WebApp.State
+@* @using WebApp.State *@
 @using static WebApp.Components.Pages.Account.Login
+
 @inherits RootLayout
+@attribute [Authorize(Policies.IsAdmin)]
+
 
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
@@ -38,18 +42,23 @@
                         </MudMenu>
                     </MudHidden>
 
-                    <MudMenu TransformOrigin="Origin.TopRight" AnchorOrigin="Origin.TopRight" Dense="true" Class="mt-1 ml-4">
+
                         <UserProfile />
-                    </MudMenu>
+                        @*  <ActivatorContent>
+                        <MudAvatar Color="Color.Secondary">@userViewModel.UserName.Substring(0, 1)</MudAvatar>
+                        </ActivatorContent>
+                        <ChildContent>
+                        <MudDivider Class="mb-2" />
+                        <MudListItem Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
+                        <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
+                        </ChildContent> *@
                 </MudAppBar>
                 <MudDrawer @bind-Open="_navMenuOpened" Elevation="25" ClipMode="DrawerClipMode.Always">
                     <AdminNavMenu />
                 </MudDrawer>
                 <MudMainContent>
                     <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
-                        @*   <CascadingValue Value="hubConnection">
                         @ChildContent
-                        </CascadingValue> *@
                     </MudContainer>
                 </MudMainContent>
             </CascadingValue>
@@ -84,6 +93,7 @@
     [Inject] private NavigationManager? NavMan { get; set; }
 
     private UserProfileViewModel? profile { get; set; }
+    // UserViewModel userViewModel;
 
 
     protected override async Task OnInitializedAsync()
@@ -101,7 +111,10 @@
 
             _toggleDarkMode = profile.IsDarkMode;
 
+            // userViewModel = await ((IdentityAuthenticationStateProvider)authStateProvider).GetUserViewModel();
+
             _currentTheme = _toggleDarkMode
+
         ? BlazorHeroTheme.DefaultTheme
         : BlazorHeroTheme.DarkTheme;
         }

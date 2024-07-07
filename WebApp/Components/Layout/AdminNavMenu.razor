@@ -62,13 +62,15 @@
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
 
+    [Inject] protected IAccountApiClient accountApiClient { get; set; }
+
     protected override async Task OnParametersSetAsync()
     {
         var user = (await authenticationStateTask).User;
 
         if (user!.Identity!.IsAuthenticated)
         {
-            var apiResponse = await Http.GetNewtonsoftJsonAsync<ApiResponseDto<TenantDto>>("api/admin/tenant");
+            var apiResponse = await accountApiClient.GetTenant();
             if (apiResponse.StatusCode == 200)
             {
                 tenant = apiResponse.Result;

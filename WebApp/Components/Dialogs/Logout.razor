@@ -1,5 +1,10 @@
 ﻿@namespace WebApp.Components.Dialogs
+@using WebApp.State
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Logout> localizer
+@inject AuthenticationStateProvider authStateProvider
+
+@inject AppState appState
+
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
@@ -29,12 +34,23 @@
 
     async Task Submit()
     {
-        // await HubConnection.SendAsync(ApplicationConstants.SignalR.OnDisconnect, CurrentUserId);
-        // await _authenticationManager.Logout();
-        _navigationManager.NavigateTo("/account/login");
-        MudDialog.Close(DialogResult.Ok(true));
 
-        await Task.FromResult(true);
+        var respone = await ((IdentityAuthenticationStateProvider)authStateProvider).Logout();
+
+        if (respone.IsSuccessStatusCode)
+        {
+            appState.ClearUserProfile();
+
+            MudDialog.Close(DialogResult.Ok(true));
+
+            await Task.FromResult(true);
+        }
+        else
+        {
+            viewNotifier.Show("LogoutFailed", ViewNotifierType.Error, "LogoutFailed");
+
+        }
+
     }
     void Cancel() => MudDialog.Cancel();
 }

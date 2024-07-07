@@ -96,12 +96,12 @@ builder.Services.AddScoped(s =>
 
 builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
 
-var authBuilder = builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            //options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        }).AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(60));
+//var authBuilder = builder.Services.AddAuthentication(options =>
+//        {
+//            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//            //options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+//            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//        }).AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(60));
 
 builder.Services.AddScoped<EntityPermissions>();
 
@@ -172,12 +172,24 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 //options.Cookie.SameSite = SameSiteMode.None;
 //});
 
+builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        }).AddCookie(x =>
+        {
+            x.LoginPath = WebApp.Settings.Settings.LoginPath;
+            x.ExpireTimeSpan = TimeSpan.FromDays(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "60"));
+
+        });
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.IsEssential = true;
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.ExpireTimeSpan = TimeSpan.FromDays(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "30"));
+    options.ExpireTimeSpan = TimeSpan.FromDays(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "60"));
     //options.LoginPath = Settings.LoginPath;
     //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     // ReturnUrlParameter requires

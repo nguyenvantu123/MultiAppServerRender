@@ -5,7 +5,7 @@ namespace WebApp.Models
 {
     public class LoginViewModel : LoginInputModel
     {
-        public bool AllowRememberLogin { get; set; } = true;
+        public bool AllowRememberLogin { get; set; } = false;
         public bool EnableLocalLogin { get; set; } = true;
 
         public IEnumerable<ExternalProvider> ExternalProviders { get; set; } = Enumerable.Empty<ExternalProvider>();
