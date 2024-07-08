@@ -1,4 +1,4 @@
-﻿@page "/account/login"
+﻿@page "/login"
 @using System.Net
 
 
@@ -128,7 +128,7 @@
 
     private FluentValidationValidator _fluentValidationValidator;
     private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
-    protected LoginViewModel loginViewModel;
+    public LoginViewModel loginViewModel;
 
     [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 

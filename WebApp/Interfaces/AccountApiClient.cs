@@ -28,19 +28,19 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto<LoginViewModel>>("/api/account/build-login-view-model", returnUrl);
         }
 
-        //private async Task SubmitServerForm(string path, AccountFormModel model)
-        //{
-        //    model.__RequestVerificationToken = await _jsRuntime.InvokeAsync<string>("interop.getElementByName", "__RequestVerificationToken");
+        private async Task SubmitServerForm(string path, AccountFormModel model)
+        {
+            model.__RequestVerificationToken = await _jsRuntime.InvokeAsync<string>("interop.getElementByName", "__RequestVerificationToken");
 
-        //    await _jsRuntime.InvokeAsync<string>("interop.submitForm", path, model);
-        //}
+            await _jsRuntime.InvokeAsync<string>("interop.submitForm", path, model);
+        }
 
         public async Task<ApiResponseDto<LoginResponseModel>> Login(LoginInputModel parameters)
         {
             var response = await _httpClient.PostJsonAsync<ApiResponseDto<LoginResponseModel>>("api/account/login", parameters);
 
             //if (AppState.Runtime == BlazorRuntime.Server)
-            //    if (response.Success)
+            //    if (response.IsSuccessStatusCode)
             //        await SubmitServerForm("/server/login/", parameters);
 
             return response;

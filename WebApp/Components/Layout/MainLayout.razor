@@ -2,7 +2,7 @@
 @* @using WebApp.State *@
 @using static WebApp.Components.Pages.Account.Login
 
-@inherits RootLayout
+@inherits LayoutComponentBase
 
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
@@ -40,23 +40,24 @@
                         </MudMenu>
                     </MudHidden>
 
-                        <UserProfile />
-                        @*  <ActivatorContent>
-                        <MudAvatar Color="Color.Secondary">@userViewModel.UserName.Substring(0, 1)</MudAvatar>
-                        </ActivatorContent>
-                        <ChildContent>
-                        <MudDivider Class="mb-2" />
-                        <MudListItem Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
-                        <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
-                        </ChildContent> *@
+                    <UserProfile />
+                    @*  <ActivatorContent>
+                    <MudAvatar Color="Color.Secondary">@userViewModel.UserName.Substring(0, 1)</MudAvatar>
+                    </ActivatorContent>
+                    <ChildContent>
+                    <MudDivider Class="mb-2" />
+                    <MudListItem Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
+                    <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
+                    </ChildContent> *@
                 </MudAppBar>
-                <MudDrawer @bind-Open="_navMenuOpened" Elevation="25" ClipMode="DrawerClipMode.Always">
-                    <NavMenu />
-                </MudDrawer>
-                <MudMainContent>
-                    <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
-                        @ChildContent
+                <MudMainContent Style="min-height: 100vh; display: flex; flex-direction: column">
+                    <MudContainer MaxWidth="MaxWidth.False" Style="flex: 1">
+                      @*   @TopSection *@
+                        <MudPaper Class="py-4" Elevation="0">
+                            @Body
+                        </MudPaper>
                     </MudContainer>
+                    <Footer />
                 </MudMainContent>
             </CascadingValue>
         </MudLayout>
@@ -91,6 +92,22 @@
 
     private UserProfileViewModel? profile { get; set; }
     // UserViewModel userViewModel;
+
+    public RenderFragment TopSection => topSection?.ChildContent;
+
+    TopSection topSection;
+
+    public void SetTopSection(TopSection topSection)
+    {
+        this.topSection = topSection;
+        Update();
+    }
+
+    public void Update()
+    {
+        if (topSection != null)
+            StateHasChanged();
+    }
 
 
     protected override async Task OnInitializedAsync()

@@ -1,8 +1,11 @@
-﻿@using WebApp.Components.Pages.Account
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Services
+@using WebApp.Components.Pages.Account
+@using WebApp.Components.Pages.Admin
+
 <Error>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="typeof({LAYOUT})">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 
                 <Authorizing>
                     <AuthorizingInProgress />
@@ -11,7 +14,7 @@
                 <NotAuthorized>
                     @if (context.User!.Identity!.IsAuthenticated)
                     {
-                        <Login />
+                        <RedirectToLogin />
                     }
                     else
                     {
@@ -24,7 +27,7 @@
 
         <NotFound>
             <CascadingAuthenticationState>
-                <LayoutView Layout="typeof(MainLayout)">
+                <LayoutView Layout="typeof(AdminMainLayout)">
                     <NotFoundLayout />
                 </LayoutView>
             </CascadingAuthenticationState>
@@ -40,3 +43,4 @@
         </NotFound>
     </Router>
 </Error>
+

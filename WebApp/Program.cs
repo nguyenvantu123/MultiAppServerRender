@@ -47,10 +47,9 @@ builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationSt
 builder.Services.AddSingleton<CookieEvents>();
 builder.Services.AddScoped<AppState>();
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.EventsType = typeof(CookieEvents);
-});
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//});
 
 var configuration = builder.Configuration;
 
@@ -196,6 +195,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     //using Microsoft.AspNetCore.Authentication.Cookies;
     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
     options.SlidingExpiration = true;
+
+    options.EventsType = typeof(CookieEvents);
 
     // Suppress redirect on API URLs in ASP.NET Core -> https://stackoverflow.com/a/56384729/54159
     options.Events = new CookieAuthenticationEvents()
