@@ -35,12 +35,12 @@
                         <DataAnnotationsValidator />
                         <MudItem xs="12">
                             <div class="d-flex justify-center">
-                                <MudText Typo="Typo.h4">Title</MudText>
+                                <MudText Typo="Typo.h4">Blazor Server App</MudText>
                             </div>
                         </MudItem>
                         <MudItem xs="12">
                             <div class="d-flex justify-center">
-                                <MudText>Description</MudText>
+                                <MudText>Server for Blazor App</MudText>
                             </div>
                         </MudItem>
                         @*                         <MudItem xs="12">
@@ -233,7 +233,7 @@
         var user = (await authenticationStateTask).User;
 
         if (user.Identity!.IsAuthenticated)
-            navigationManager.NavigateTo(ReturnUrl ?? "/");
+            navigationManager.NavigateTo(ReturnUrl ?? "/", true);
         else
         {
             identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;

@@ -1,4 +1,5 @@
-﻿<Error>
+﻿@using WebApp.Components.Pages.Account
+<Error>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -30,12 +31,12 @@
         </NotFound>
 
 
-        @*   <NotFound>
-        <CascadingAuthenticationState>
-        <LayoutView Layout="@typeof(NotFoundLayout)">
-        <p>Sorry, there's nothing at this address.</p>
-        </LayoutView>
-        </CascadingAuthenticationState>
-        </NotFound> *@
+        <NotFound>
+            <CascadingAuthenticationState>
+                <LayoutView Layout="@typeof(NotFoundLayout)">
+                    <p>Sorry, there's nothing at this address.</p>
+                </LayoutView>
+            </CascadingAuthenticationState>
+        </NotFound>
     </Router>
 </Error>

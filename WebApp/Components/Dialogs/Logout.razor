@@ -43,7 +43,7 @@
 
             MudDialog.Close(DialogResult.Ok(true));
 
-            await Task.FromResult(true);
+            _navigationManager.NavigateTo($"{WebApp.Settings.Settings.LoginPath}", true);
         }
         else
         {

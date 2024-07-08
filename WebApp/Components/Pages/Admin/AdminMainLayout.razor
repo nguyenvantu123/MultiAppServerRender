@@ -3,6 +3,8 @@
 @using static WebApp.Components.Pages.Account.Login
 
 @inherits RootLayout
+@attribute [Authorize(Policies.IsAdmin)]
+
 
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
@@ -51,7 +53,7 @@
                         </ChildContent> *@
                 </MudAppBar>
                 <MudDrawer @bind-Open="_navMenuOpened" Elevation="25" ClipMode="DrawerClipMode.Always">
-                    <NavMenu />
+                    <AdminNavMenu />
                 </MudDrawer>
                 <MudMainContent>
                     <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
