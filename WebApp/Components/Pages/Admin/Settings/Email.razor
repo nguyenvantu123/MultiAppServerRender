@@ -108,7 +108,7 @@ else
 
     protected Dictionary<SettingKey, TenantSettingModels> settings;
 
-    [Inject] private NavigationManager navigationManager { get; set; }
+    // [Inject] private NavigationManager navigationManager { get; set; }
 
     [Inject] IApiClient apiClient { get; set; }
 
@@ -186,7 +186,7 @@ else
             viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
 
             if (reload)
-                navigationManager.NavigateTo(navigationManager.Uri, true);
+                _navigationManager.NavigateTo(_navigationManager.Uri, true);
 
         }
         catch (Exception ex)

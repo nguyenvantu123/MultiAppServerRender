@@ -3,19 +3,10 @@
 
 
 @attribute [AllowAnonymous]
-@inject NavigationManager Nav
-@inject NavigationManager navigationManager
-@inject AuthenticationStateProvider authStateProvider
 
-<AuthorizeView Context="AuthorizeContext">
 
-    @*     <Authorized>
-    <LoadingBackground>
-    <label>Loading</label>
-    </LoadingBackground>
-    </Authorized> *@
-    <NotAuthorized>
-
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center" Style="height: 100vh;">
+    <MudPaper Elevation="25" Class="pa-8" Style="width: 500px;">
         @if (loginViewModel == null)
         {
             <LoadingBackground />
@@ -40,7 +31,6 @@
                         </MudItem>
                         <MudItem xs="12">
                             <div class="d-flex justify-center">
-                                <MudText>Server for Blazor App</MudText>
                             </div>
                         </MudItem>
                         @*                         <MudItem xs="12">
@@ -119,10 +109,8 @@
                 </MudAlert>
             }
         }
-
-    </NotAuthorized>
-</AuthorizeView>
-
+    </MudPaper>
+</MudContainer>
 
 @code {
 
@@ -133,10 +121,6 @@
     [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
-
-    // [Inject] NavigationManager navigationManager { get; set; }
-    // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
-
 
     [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
@@ -167,7 +151,7 @@
                 if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
                     loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
 
-                navigationManager.NavigateTo($"{loginViewModel.ReturnUrl}", true);
+                _navigationManager.NavigateTo($"{loginViewModel.ReturnUrl}", true);
             }
         }
         catch (Exception ex)
@@ -227,13 +211,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (navigationManager.TryGetQueryString("ReturnUrl", out string url))
+        if (_navigationManager.TryGetQueryString("ReturnUrl", out string url))
             ReturnUrl = url;
 
         var user = (await authenticationStateTask).User;
 
         if (user.Identity!.IsAuthenticated)
-            navigationManager.NavigateTo(ReturnUrl ?? "/", true);
+            _navigationManager.NavigateTo(ReturnUrl ?? "/");
         else
         {
             identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
@@ -251,7 +235,7 @@
                         if (!string.IsNullOrEmpty(ReturnUrl))
                             ReturnUrl = Uri.EscapeDataString(ReturnUrl);
                         // we only have one option for logging in and it's an external provider
-                        navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
+                        _navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
                     }
                 }
                 else
@@ -262,6 +246,7 @@
                 viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, "LoginFailed");
             }
         }
-    }
 
+        await Task.CompletedTask;
+    }
 }

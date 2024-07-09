@@ -6,28 +6,26 @@
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-
                 <Authorizing>
-                    <AuthorizingInProgress />
+                    <MudProgressCircular />
                 </Authorizing>
-
                 <NotAuthorized>
                     @if (context.User!.Identity!.IsAuthenticated)
                     {
-                        <RedirectToLogin />
+                        <Login />
                     }
                     else
                     {
                         <UserNotAuthorized />
                     }
-
                 </NotAuthorized>
             </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
 
         <NotFound>
             <CascadingAuthenticationState>
-                <LayoutView Layout="typeof(AdminMainLayout)">
+                <LayoutView Layout="typeof(MainLayout)">
                     <NotFoundLayout />
                 </LayoutView>
             </CascadingAuthenticationState>

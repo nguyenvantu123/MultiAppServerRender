@@ -1,5 +1,4 @@
 ﻿@using WebApp.State
-@* @using WebApp.State *@
 @using static WebApp.Components.Pages.Account.Login
 
 @inherits LayoutComponentBase
@@ -11,13 +10,6 @@
 <MudSnackbarProvider />
 
 <AuthorizeView>
-    <NotAuthorized>
-        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center" Style="height: 100vh;">
-            <MudPaper Elevation="25" Class="pa-8" Style="width: 500px;">
-                @Body
-            </MudPaper>
-        </MudContainer>
-    </NotAuthorized>
 
     <Authorized>
         <MudLayout>
@@ -41,16 +33,7 @@
                             </div>
                         </MudMenu>
                     </MudHidden>
-
-                        <UserProfile />
-                        @*  <ActivatorContent>
-                        <MudAvatar Color="Color.Secondary">@userViewModel.UserName.Substring(0, 1)</MudAvatar>
-                        </ActivatorContent>
-                        <ChildContent>
-                        <MudDivider Class="mb-2" />
-                        <MudListItem Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
-                        <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
-                        </ChildContent> *@
+                    <UserProfile />
                 </MudAppBar>
                 <MudDrawer @bind-Open="_navMenuOpened" Elevation="25" ClipMode="DrawerClipMode.Always">
                     <AdminNavMenu />
@@ -81,19 +64,9 @@
 
     [Inject] AppState appState { get; set; }
 
-
-    // [Inject] protected IAccountApiClient accountApiClient { get; set; }
-
-    //Gets context that contains auth state
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
-
-    //Injects Nav Man to redirect
-    [Inject] private NavigationManager? NavMan { get; set; }
-
     private UserProfileViewModel? profile { get; set; }
-    // UserViewModel userViewModel;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,9 +82,6 @@
             _navMenuOpened = profile.IsNavOpen;
 
             _toggleDarkMode = profile.IsDarkMode;
-
-            // userViewModel = await ((IdentityAuthenticationStateProvider)authStateProvider).GetUserViewModel();
-
             _currentTheme = _toggleDarkMode
 
         ? BlazorHeroTheme.DefaultTheme

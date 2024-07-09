@@ -25,12 +25,11 @@
 
 @code {
 
-    [CascadingParameter]
-    Task<AuthenticationState> authenticationStateTask { get; set; }
+    [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
     UserViewModel userViewModel;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         // userViewModel = null;
         var user = (await authenticationStateTask).User;
