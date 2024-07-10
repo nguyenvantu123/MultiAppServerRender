@@ -12,6 +12,8 @@ namespace BlazorWebApi.Users.Data
         {
         }
 
+        public DbSet<AppTenantInfo> AppTenantInfo { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

@@ -2,7 +2,7 @@
 
 add-migration GenerateApplicationDB3 -OutputDir  Data/Migrations/ApplicationDb  -StartupProject BlazorWebApiUsers -Context ApplicationDbContext
 
-add-migration GenerateApplicationDB -OutputDir  Data/Migrations/TenantStoreDb  -StartupProject BlazorWebApiUsers -Context TenantStoreDbContext
+add-migration GenerateApplicationTenantDB1 -OutputDir  Data/Migrations/TenantStoreDb  -StartupProject BlazorWebApiUsers -Context TenantStoreDbContext
 
 
 -- Update Database

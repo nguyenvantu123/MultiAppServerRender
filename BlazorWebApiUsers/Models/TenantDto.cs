@@ -1,6 +1,4 @@
-﻿using MultiAppServer.ServiceDefaults;
-
-namespace WebApp.Models
+﻿namespace BlazorWebApi.Users.Models
 {
     public class TenantDto : BaseDto
     {

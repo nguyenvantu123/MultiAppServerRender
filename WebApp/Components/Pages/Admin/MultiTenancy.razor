@@ -99,12 +99,14 @@ else
 
     // [Inject] NavigationManager Navigation { get; set; }
     // [Inject] IViewNotifier viewNotifier { get; set; }
-    [Inject] HttpClient Http { get; set; }
+    // [Inject] HttpClient Http { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
     int pageSize { get; set; } = 15;
     int currentPage { get; set; } = 0;
 
     protected bool isCurrentTenantKeyReadOnly = false;
+
+    [Inject] protected IAccountApiClient accountApiClient { get; set; }
 
     protected List<TenantDto> tenants;
     protected TenantDto currentTenant { get; set; } = new();
@@ -129,7 +131,9 @@ else
     {
         try
         {
-            var response = await Http.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={currentPage}");
+            // var response = await Http.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={currentPage}");
+
+            var response = await accountApiClient.GetListTenant(pageSize, currentPage, "");
 
             if (response.IsSuccessStatusCode)
             {
@@ -206,9 +210,9 @@ else
             ApiResponseDto response;
 
             if (isInsertOperation)
-                response = await Http.PostJsonAsync<ApiResponseDto>("api/Admin/Tenant", currentTenant);
+                response = await accountApiClient.CreateNewTenant(currentTenant);
             else
-                response = await Http.PutJsonAsync<ApiResponseDto>("api/Admin/Tenant", currentTenant);
+                response = await accountApiClient.UpdateNewTenant(currentTenant);
 
             if (response.IsSuccessStatusCode)
             {
@@ -250,8 +254,8 @@ else
     {
         try
         {
-            var response = await Http.DeleteAsync($"api/Admin/Tenant/{currentTenant.Name}");
-            if (response.StatusCode != (HttpStatusCode)200)
+            var response = await accountApiClient.DeleteTenant(currentTenant.Name);
+            if (response.StatusCode != 200)
             {
                 viewNotifier.Show("Tenant Delete Failed", ViewNotifierType.Error);
                 return;

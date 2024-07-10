@@ -32,6 +32,8 @@ using BlazorWebApi.Users.Services;
 using BlazorWebApi.Users.Constants;
 using AutoMapper;
 using WebApp.Mapping;
+using Microsoft.AspNetCore.Authorization;
+using WebApp.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +69,11 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
                   return factory.Create(typeof(Global));
               };
           });
+
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
 
 builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 

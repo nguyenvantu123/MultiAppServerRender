@@ -310,7 +310,7 @@ else
         {
             disableCreateUserButton = true;
 
-            var apiResponse = await identityAuthenticationStateProvider.Create(newUserViewModel);
+            var apiResponse = await identityAuthenticationStateProvider.CreateUser(newUserViewModel);
 
             if (apiResponse.IsSuccessStatusCode)
             {

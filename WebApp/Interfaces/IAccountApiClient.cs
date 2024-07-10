@@ -2,6 +2,7 @@
 using Breeze.Sharp;
 using MultiAppServer.ServiceDefaults;
 using System.Linq.Expressions;
+using WebApp.Components.Pages.Admin;
 using WebApp.DataModels;
 using WebApp.Models;
 using WebApp.Settings;
@@ -14,7 +15,7 @@ namespace WebApp.Interfaces
         Task<ApiResponseDto<LoginResponseModel>> Login(LoginInputModel parameters);
         Task<ApiResponseDto> LoginWith2fa(LoginWith2faInputModel parameters);
         Task<ApiResponseDto> LoginWithRecoveryCode(LoginWithRecoveryCodeInputModel parameters);
-        Task<ApiResponseDto> Create(RegisterViewModel parameters);
+        Task<ApiResponseDto> CreateUser(RegisterViewModel parameters);
         Task<ApiResponseDto<LoginResponseModel>> Register(RegisterViewModel parameters);
         Task<ApiResponseDto> ForgotPassword(ForgotPasswordViewModel parameters);
         Task<ApiResponseDto> ResetPassword(ResetPasswordViewModel parameters);
@@ -52,5 +53,13 @@ namespace WebApp.Interfaces
         Task<ApiResponseDto> SendTestEmail(EmailDto email);
 
         Task<ApiResponseDto<TenantDto>> GetTenant();
+
+        Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText);
+
+        Task<ApiResponseDto> CreateNewTenant(TenantDto currentTenant);
+
+        Task<ApiResponseDto> UpdateNewTenant(TenantDto currentTenant);
+
+        Task<ApiResponseDto> DeleteTenant(string name);
     }
 }

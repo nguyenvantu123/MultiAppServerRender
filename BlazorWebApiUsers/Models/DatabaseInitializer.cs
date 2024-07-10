@@ -54,10 +54,10 @@ namespace BlazorWebApi.Users.Models
                 await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Multiapp", "nguyenvantu0207943@gmail.com", "0334336232");
             }
 
-            if (_tenantStoreDbContext.TenantInfo.Count() < 2)
+            if (_tenantStoreDbContext.AppTenantInfo.Count() < 2)
             {
-                _tenantStoreDbContext.TenantInfo.Add(new AppTenantInfo() { Id = "tenant1", Identifier = "tenant1.local", Name = "Microsoft Inc." });
-                _tenantStoreDbContext.TenantInfo.Add(new AppTenantInfo() { Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp." });
+                _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo() { Id = "tenant1", Identifier = "tenant1.local", Name = "Microsoft Inc." });
+                _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo() { Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp." });
 
                 _tenantStoreDbContext.SaveChanges();
             }
