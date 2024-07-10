@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BlazorWebApi.Users.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace WebApp.Handler
+namespace BlazorWebApi.Authorization
 {
     public class EmailVerifiedRequirement : IAuthorizationRequirement
     {

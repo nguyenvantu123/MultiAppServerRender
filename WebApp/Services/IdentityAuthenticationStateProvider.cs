@@ -52,7 +52,7 @@ namespace WebApp.Services
 
         public async Task<ApiResponseDto> Create(RegisterViewModel parameters)
         {
-            return await _accountApiClient.Create(parameters);
+            return await _accountApiClient.CreateUser(parameters);
         }
 
         public async Task<ApiResponseDto> ConfirmEmail(ConfirmEmailViewModel parameters)

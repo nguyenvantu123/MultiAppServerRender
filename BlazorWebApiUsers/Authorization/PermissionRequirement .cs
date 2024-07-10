@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BlazorWebApi.Users.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace WebApp.Permissions
+namespace BlazorWebApi.Authorization
 {
     public class PermissionRequirement : IAuthorizationRequirement
     {

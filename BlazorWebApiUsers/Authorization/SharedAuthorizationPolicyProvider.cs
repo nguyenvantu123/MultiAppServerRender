@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BlazorWebApi.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using WebApp.Handler;
-using WebApp.Permissions;
 
-namespace WebApp.Components
+namespace BlazorWebApi.Authorization
 {
     public class SharedAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider
     {
@@ -16,7 +15,6 @@ namespace WebApp.Components
 
         public override async Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
         {
-            
             var policy = await base.GetPolicyAsync(policyName);
 
             if (policy == null)

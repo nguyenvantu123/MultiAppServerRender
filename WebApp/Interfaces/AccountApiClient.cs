@@ -3,6 +3,8 @@ using Breeze.Sharp;
 using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
 using System.Linq.Expressions;
+using System.Net.Http.Json;
+using WebApp.Components.Pages.Admin;
 using WebApp.Constant;
 using WebApp.DataModels;
 using WebApp.Extensions;
@@ -81,7 +83,7 @@ namespace WebApp.Interfaces
             return response;
         }
 
-        public async Task<ApiResponseDto> Create(RegisterViewModel parameters)
+        public async Task<ApiResponseDto> CreateUser(RegisterViewModel parameters)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/create", parameters);
         }
@@ -242,5 +244,34 @@ namespace WebApp.Interfaces
             return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<TenantDto>>("api/admin/tenant");
 
         }
+
+        public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)
+        {
+            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
+
+        }
+
+
+        public async Task<ApiResponseDto> CreateNewTenant(TenantDto currentTenant)
+        {
+            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/admin/create-tenant", currentTenant);
+
+        }
+
+        public async Task<ApiResponseDto> UpdateNewTenant(TenantDto currentTenant)
+        {
+            return await _httpClient.PutJsonAsync<ApiResponseDto>("api/admin/update-tenant", currentTenant);
+        }
+
+        public async Task<ApiResponseDto> DeleteTenant(string name)
+        {
+            return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/tenant/delete/{name}");
+        }
+
+        //public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)
+        //{
+        //    return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
+
+        //}
     }
 }
