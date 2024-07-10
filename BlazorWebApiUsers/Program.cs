@@ -33,7 +33,7 @@ using BlazorWebApi.Users.Constants;
 using AutoMapper;
 using WebApp.Mapping;
 using Microsoft.AspNetCore.Authorization;
-using WebApp.Authorization;
+using BlazorWebApi.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -171,6 +171,11 @@ builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
 builder.Services.AddTransient<IEmailFactory, EmailFactory>();
 builder.Services.AddSingleton<CustomAuthService>();
+
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 

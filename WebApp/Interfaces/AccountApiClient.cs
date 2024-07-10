@@ -247,7 +247,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)
         {
-            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&search={searchText}");
+            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
 
         }
 

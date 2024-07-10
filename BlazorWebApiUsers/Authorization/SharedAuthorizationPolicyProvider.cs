@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace WebApp.Authorization
+namespace BlazorWebApi.Authorization
 {
     public class SharedAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider
     {

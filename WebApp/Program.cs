@@ -22,10 +22,10 @@ using Microsoft.JSInterop;
 using System.Net.Http;
 using WebApp;
 using WebApp.Extensions;
-using WebApp.Handler;
 using WebApp.Permissions;
 using Microsoft.AspNetCore.Components;
 using WebApp.State;
+using BlazorWebApi.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,19 +37,14 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddMudServices();
 builder.Services.AddCascadingAuthenticationState();
-//builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidation>();
 
 builder.Services.AddAuthorizationCore();
-builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
-builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
-builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
+
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
+
 builder.Services.AddSingleton<CookieEvents>();
 builder.Services.AddScoped<AppState>();
-
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//});
 
 var configuration = builder.Configuration;
 

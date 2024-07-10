@@ -1,7 +1,8 @@
 ﻿@page "/account/profile"
+@using WebApp.Components.Pages.Admin
 @attribute [Authorize]
 
-@layout MainLayout
+@layout AdminMainLayout
 
 @if (userViewModel != null)
 {
