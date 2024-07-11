@@ -144,7 +144,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddHttpClient<IAccountApiClient, AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new("http://blazorwebapiusers");
-}).AddAuthToken();
+});
 
 
 #region Cookies
