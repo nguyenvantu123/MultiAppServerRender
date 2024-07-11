@@ -52,13 +52,13 @@ namespace WebApp.Interfaces
 
         Task<ApiResponseDto> SendTestEmail(EmailDto email);
 
-        Task<ApiResponseDto<TenantDto>> GetTenant();
+        Task<ApiResponseDto<TenantModel>> GetTenant();
 
-        Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText);
+        Task<ApiResponseDto<List<TenantModel>>> GetListTenant(int pageSize, int pageNumber, string searchText);
 
-        Task<ApiResponseDto> CreateNewTenant(TenantDto currentTenant);
+        Task<ApiResponseDto> CreateNewTenant(TenantModel currentTenant);
 
-        Task<ApiResponseDto> UpdateNewTenant(TenantDto currentTenant);
+        Task<ApiResponseDto> UpdateNewTenant(TenantModel currentTenant);
 
         Task<ApiResponseDto> DeleteTenant(string name);
     }

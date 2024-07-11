@@ -239,26 +239,26 @@ namespace WebApp.Interfaces
             throw new NotImplementedException();
         }
 
-        public async Task<ApiResponseDto<TenantDto>> GetTenant()
+        public async Task<ApiResponseDto<TenantModel>> GetTenant()
         {
-            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<TenantDto>>("api/admin/tenant");
+            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<TenantModel>>("api/admin/tenant");
 
         }
 
-        public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)
+        public async Task<ApiResponseDto<List<TenantModel>>> GetListTenant(int pageSize, int pageNumber, string searchText)
         {
-            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
+            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantModel>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
 
         }
 
 
-        public async Task<ApiResponseDto> CreateNewTenant(TenantDto currentTenant)
+        public async Task<ApiResponseDto> CreateNewTenant(TenantModel currentTenant)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/admin/create-tenant", currentTenant);
 
         }
 
-        public async Task<ApiResponseDto> UpdateNewTenant(TenantDto currentTenant)
+        public async Task<ApiResponseDto> UpdateNewTenant(TenantModel currentTenant)
         {
             return await _httpClient.PutJsonAsync<ApiResponseDto>("api/admin/update-tenant", currentTenant);
         }

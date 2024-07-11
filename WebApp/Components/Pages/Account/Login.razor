@@ -217,7 +217,18 @@
         var user = (await authenticationStateTask).User;
 
         if (user.Identity!.IsAuthenticated)
-            _navigationManager.NavigateTo(ReturnUrl ?? "/");
+        {
+            if (user.IsInRole("Administrator"))
+            {
+                _navigationManager.NavigateTo(ReturnUrl ?? "/admin");
+
+            }
+            else
+            {
+                _navigationManager.NavigateTo(ReturnUrl ?? "/");
+
+            }
+        }
         else
         {
             identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;

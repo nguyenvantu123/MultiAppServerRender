@@ -164,7 +164,7 @@ builder.Services.AddIdentityServer(options =>
 //.Services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
 
-builder.Services.AddScoped<AppTenantInfo>();
+//builder.Services.AddScoped<AppTenantInfo>();
 builder.Services.AddScoped<EntityPermissions>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();

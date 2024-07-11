@@ -40,9 +40,6 @@ builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddAuthorizationCore();
 
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
-builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
-
 builder.Services.AddSingleton<CookieEvents>();
 builder.Services.AddScoped<AppState>();
 
@@ -57,6 +54,10 @@ string projectName = nameof(WebApp);
 
 //builder.Services.AddAuthorization();
 builder.Services.AddAuthorization();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
+builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
 
 builder.Services.AddScoped(s =>
 {

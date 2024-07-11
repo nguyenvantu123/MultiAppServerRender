@@ -1,8 +1,9 @@
 ﻿@page "/admin/multitenancy"
 @using MultiAppServer.ServiceDefaults
 @using System.Net
+@using WebApp.Permissions
 @attribute [Authorize(Policies.IsAdmin)]
-@layout MainLayout
+@layout AdminMainLayout
 
 <TopSection>
     <Breadcrumbs>
@@ -108,8 +109,8 @@ else
 
     [Inject] protected IAccountApiClient accountApiClient { get; set; }
 
-    protected List<TenantDto> tenants;
-    protected TenantDto currentTenant { get; set; } = new();
+    protected List<TenantModel> tenants;
+    protected TenantModel currentTenant { get; set; } = new();
 
     #region OnInitializedAsync
 
@@ -118,7 +119,7 @@ else
         await InitializeTenantsListAsync();
     }
 
-    protected string GetTenantUri(TenantDto tenant)
+    protected string GetTenantUri(TenantModel tenant)
     {
         var builder = new UriBuilder(_navigationManager.BaseUri)
             {
@@ -158,13 +159,13 @@ else
     protected string labelUpsertDialogTitle;
     protected string labelUpsertDialogOkButton;
 
-    protected void OpenUpsertTenantDialog(TenantDto tenant = null)
+    protected void OpenUpsertTenantDialog(TenantModel tenant = null)
     {
         try
         {
             isInsertOperation = tenant == null;
 
-            currentTenant = tenant ?? new TenantDto();
+            currentTenant = tenant ?? new TenantModel();
 
             // Update the UI
             if (isInsertOperation)
@@ -244,7 +245,7 @@ else
 
     protected bool isDeleteTenantDialogOpen = false;
 
-    protected void OpenDeleteTenantDialog(TenantDto tenant)
+    protected void OpenDeleteTenantDialog(TenantModel tenant)
     {
         currentTenant = tenant;
         isDeleteTenantDialogOpen = true;

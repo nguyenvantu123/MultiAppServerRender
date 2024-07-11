@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Reflection;
 using BlazorWebApi.Users.Constants;
+using Finbuckle.MultiTenant;
 
 namespace BlazorWebApi.Users.Models
 {
@@ -9,7 +10,15 @@ namespace BlazorWebApi.Users.Models
         private static readonly ReadOnlyCollection<EntityPermission> AllPermissions;
         private static readonly ReadOnlyCollection<EntityPermission> AllPermissionsForTenants;
 
-        private bool IsMasterTenant;
+        protected readonly IHttpContextAccessor httpContextAccessor;
+
+        private bool IsMasterTenant = false;
+
+        public EntityPermissions(IHttpContextAccessor accessor)
+        {
+            httpContextAccessor = accessor;
+        }
+
         /// <summary>
         /// Generates ApplicationPermissions based on Permissions Type by iterating over its nested classes and getting constant strings in each class as Value and Name, LocalizedDescriptionAttribute of the constant string as Description, the nested class name as GroupName.
         /// </summary>
@@ -57,13 +66,24 @@ namespace BlazorWebApi.Users.Models
             AllPermissionsForTenants = allPermissions.Where(i => !i.Value.StartsWith("Tenant.")).ToList().AsReadOnly();
         }
 
-        public EntityPermissions(AppTenantInfo tenantInfo)
-        {
-            IsMasterTenant = tenantInfo == null || tenantInfo.Id == DefaultTenant.DefaultTenantId;
-        }
-
         private IEnumerable<EntityPermission> GetAllPermission()
         {
+
+            if (httpContextAccessor.HttpContext != null)
+            {
+                var tenantId = httpContextAccessor.HttpContext.GetMultiTenantContext<AppTenantInfo>().TenantInfo.Id;
+
+                if (tenantId == DefaultTenant.DefaultTenantId)
+                {
+                    IsMasterTenant = true;
+                }
+            }
+            else
+            {
+                IsMasterTenant = true;
+            }
+
+
             return IsMasterTenant ? AllPermissions : AllPermissionsForTenants;
         }
 

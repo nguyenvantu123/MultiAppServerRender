@@ -52,7 +52,7 @@ namespace BlazorWebApi.Users.Controller.Account
             if (pageSize > 0)
                 query = query.Skip(pageNumber * pageSize).Take(pageSize);
 
-            return new ApiResponse(200, $"{count} tenants fetched", await _autoMapper.ProjectTo<TenantDto>(query).ToListAsync());
+            return new ApiResponse(200, $"{count} tenants fetched", await _autoMapper.ProjectTo<TenantModel>(query).ToListAsync());
         }
 
         [HttpGet]
@@ -62,7 +62,7 @@ namespace BlazorWebApi.Users.Controller.Account
         {
             var tenant = await _tenantStoreDbContext.AppTenantInfo.SingleOrDefaultAsync(i => i.Id == id);
 
-            return tenant != null ? new ApiResponse(200, "Retrieved tenant", _autoMapper.Map<TenantDto>(tenant)) :
+            return tenant != null ? new ApiResponse(200, "Retrieved tenant", _autoMapper.Map<TenantModel>(tenant)) :
                                     new ApiResponse(404, "Failed to Retrieve Tenant");
         }
 
@@ -70,10 +70,10 @@ namespace BlazorWebApi.Users.Controller.Account
         [HttpPost]
         [Route("[action]")]
         [Authorize(Permissions.Tenant.Create)]
-        public async Task<ApiResponse> CreateTenantAsync([FromBody] TenantDto tenantDto)
+        public async Task<ApiResponse> CreateTenantAsync([FromBody] TenantModel tenantDto)
         {
 
-            var tenant = _autoMapper.Map<TenantDto, AppTenantInfo>(tenantDto);
+            var tenant = _autoMapper.Map<TenantModel, AppTenantInfo>(tenantDto);
             await _tenantStoreDbContext.AppTenantInfo.AddAsync(tenant);
             await _tenantStoreDbContext.SaveChangesAsync();
 
@@ -84,7 +84,7 @@ namespace BlazorWebApi.Users.Controller.Account
         [HttpPut]
         [Route("[action]")]
         [Authorize(Permissions.Tenant.Update)]
-        public async Task<ApiResponse> UpdateTenantAsync([FromBody] TenantDto tenantDto)
+        public async Task<ApiResponse> UpdateTenantAsync([FromBody] TenantModel tenantDto)
         {
             var tenant = await _tenantStoreDbContext.AppTenantInfo.SingleOrDefaultAsync(i => i.Id == tenantDto.Id);
 

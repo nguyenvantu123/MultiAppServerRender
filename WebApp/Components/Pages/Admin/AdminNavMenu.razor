@@ -56,7 +56,7 @@
 </MudNavMenu>
 
 @code {
-    TenantDto tenant = new TenantDto();
+    TenantModel tenant = new TenantModel();
 
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
