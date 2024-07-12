@@ -26,6 +26,7 @@ using WebApp.Permissions;
 using Microsoft.AspNetCore.Components;
 using WebApp.State;
 using BlazorWebApi.Authorization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,8 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationP
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddScoped(s =>
 {
@@ -141,7 +144,7 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
 
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.AddHttpClient<IAccountApiClient, AccountApiClient>(httpClient =>
+builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new("http://blazorwebapiusers");
 });

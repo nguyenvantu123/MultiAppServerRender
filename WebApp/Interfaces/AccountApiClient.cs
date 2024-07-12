@@ -11,30 +11,22 @@ using WebApp.Extensions;
 using WebApp.Models;
 using WebApp.Settings;
 using WebApp.State;
+using static System.Net.WebRequestMethods;
 
 namespace WebApp.Interfaces
 {
-    public class AccountApiClient : IAccountApiClient
+    public class AccountApiClient
     {
         private readonly HttpClient _httpClient;
-        private readonly IJSRuntime _jsRuntime;
 
         public AccountApiClient(HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
-            _jsRuntime = jsRuntime;
         }
 
         public async Task<ApiResponseDto<LoginViewModel>> BuildLoginViewModel(string returnUrl)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto<LoginViewModel>>("/api/account/build-login-view-model", returnUrl);
-        }
-
-        private async Task SubmitServerForm(string path, AccountFormModel model)
-        {
-            model.__RequestVerificationToken = await _jsRuntime.InvokeAsync<string>("interop.getElementByName", "__RequestVerificationToken");
-
-            await _jsRuntime.InvokeAsync<string>("interop.submitForm", path, model);
         }
 
         public async Task<ApiResponseDto<LoginResponseModel>> Login(LoginInputModel parameters)
@@ -214,11 +206,6 @@ namespace WebApp.Interfaces
             throw new NotImplementedException();
         }
 
-        public Task<QueryResult<ApplicationRole>> GetRoles(Expression<Func<ApplicationRole, bool>> predicate = null, int? take = null, int? skip = null)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<QueryResult<DbLog>> GetLogs(Expression<Func<DbLog, bool>> predicate = null, int? take = null, int? skip = null)
         {
             throw new NotImplementedException();
@@ -241,7 +228,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<TenantModel>> GetTenant()
         {
-            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<TenantModel>>("api/admin/tenant");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<TenantModel>>("api/admin/tenant");
 
         }
 
@@ -266,6 +253,36 @@ namespace WebApp.Interfaces
         public async Task<ApiResponseDto> DeleteTenant(string name)
         {
             return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/tenant/delete/{name}");
+        }
+        public async Task<ApiResponseDto> DeleteRole(string name)
+        {
+            return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/role/{name}");
+        }
+
+        public async Task<ApiResponseDto<List<RoleDto>>> GetRoles(int pageSize, int currentPage, string search)
+        {
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<RoleDto>>>($"api/admin/get-roles?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
+        }
+
+        public async Task<ApiResponseDto> UpdateRole(RoleDto request)
+        {
+            return await _httpClient.PutJsonAsync<ApiResponseDto>("api/account/update-user", request);
+        }
+
+        public async Task<ApiResponseDto> CreateRole(RoleDto request)
+        {
+            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/update-user", request);
+        }
+
+        public async Task<ApiResponseDto<List<string>>> GetAllPermissions()
+        {
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<string>>>("api/admin/permissions");
+        }
+
+        public async Task<ApiResponseDto<RoleDto>> GetRoleByName(string roleName)
+        {
+            //Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}")
+            return await _httpClient.GetJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
         }
 
         //public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)

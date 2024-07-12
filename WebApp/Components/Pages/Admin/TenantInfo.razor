@@ -1,5 +1,5 @@
 ﻿@using MultiAppServer.ServiceDefaults
-@inject HttpClient Http
+@inject AccountApiClient accountClientApi
 <AuthorizeView>
     <span>Current Tenant: @tenant.Name</span>
 </AuthorizeView>
@@ -8,7 +8,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        var apiResponse = await Http.GetNewtonsoftJsonAsync<ApiResponseDto<TenantModel>>("api/admin/tenant");
+        var apiResponse = await accountClientApi.GetTenant();
         if (apiResponse.StatusCode == 200)
         {
             tenant = apiResponse.Result;

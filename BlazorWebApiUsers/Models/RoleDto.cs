@@ -18,5 +18,7 @@ namespace WebApp.Models
                 return String.Join(", ", Permissions.ToArray());
             }
         }
+
+        public Guid Id { get; set; }
     }
 }

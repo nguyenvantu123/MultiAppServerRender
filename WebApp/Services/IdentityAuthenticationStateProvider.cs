@@ -9,9 +9,9 @@ namespace WebApp.Services
 {
     public class IdentityAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly IAccountApiClient _accountApiClient;
+        private readonly AccountApiClient _accountApiClient;
 
-        public IdentityAuthenticationStateProvider(IAccountApiClient accountApiClient)
+        public IdentityAuthenticationStateProvider(AccountApiClient accountApiClient)
         {
             _accountApiClient = accountApiClient;
         }

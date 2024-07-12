@@ -5,29 +5,31 @@
 @attribute [Authorize(Policies.IsAdmin)]
 @layout AdminMainLayout
 
-<TopSection>
+@* <TopSectionFrame>
     <Breadcrumbs>
-        <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
-        <Breadcrumb Title=@L["BreadCrumbadminmultitenancy"] />
+        <Breadcrumb Link="/admin" Title="BreadCrumbadmin" />
+        <Breadcrumb Title="BreadCrumbadminmultitenancy" />
     </Breadcrumbs>
-</TopSection>
+</TopSectionFrame> *@
 
-<PageTitle>@L["Tenants"]</PageTitle>
+<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
+
+<PageTitle>Tenants</PageTitle>
 
 @if (tenants == null)
 {
     <LoadingBackground>
-        <label>@L["Loading"]</label>
+        <label>Loading</label>
     </LoadingBackground>
 }
 else
 {
     <MudTable Items="@tenants" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2">
         <HeaderContent>
-            <MudTh><MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => OpenUpsertTenantDialog())" Variant="Variant.Filled" Color="Color.Primary">@L["New Tenant"]</MudButton></MudTh>
+            <MudTh><MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => OpenUpsertTenantDialog())" Variant="Variant.Filled" Color="Color.Primary">New Tenant</MudButton></MudTh>
             <MudTh>Id</MudTh>
             <MudTh>Identifier</MudTh>
-            <MudTh>@L["Name"]</MudTh>
+            <MudTh>Name</MudTh>
             <MudTh>ConnectionString</MudTh>
         </HeaderContent>
         <RowTemplate Context="TenantRow">
@@ -43,7 +45,7 @@ else
                     @TenantRow.Identifier
                     @if (TenantRow.Id != DefaultTenant.DefaultTenantId)
                     {
-                        <MudIconButton Link="@GetTenantUri(TenantRow)" Target="_blank" Icon="@Icons.Material.Filled.Link" />
+                        <MudIconButton Href="@GetTenantUri(TenantRow)" Target="_blank" Icon="@Icons.Material.Filled.Link" />
                     }
                 </div>
             </MudTd>
@@ -64,18 +66,18 @@ else
         <EditForm Model="@currentTenant">
             <FluentValidationValidator />
             <MudValidationSummary />
-            <MudTextField @bind-Value="@currentTenant.Id" Disabled="@isCurrentTenantKeyReadOnly" Label="Id" AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
+            <MudTextField @bind-Value="@currentTenant.Id" Disabled="@isCurrentTenantKeyReadOnly" Label="Id" AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError="Required"></MudTextField>
 
             <MudTextField @bind-Value="@currentTenant.Identifier" Disabled="@(currentTenant.Id ==DefaultTenant.DefaultTenantId)" Label="Identifier" AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true"></MudTextField>
 
-            <MudTextField @bind-Value="@currentTenant.Name" Label=@L["Name"] AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
+            <MudTextField @bind-Value="@currentTenant.Name" Label="Name" AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError="Required"></MudTextField>
 
             <MudTextField @bind-Value="@currentTenant.ConnectionString" Label="ConnectionString" AdornmentIcon="@Icons.Material.Filled.Description" Adornment="Adornment.End" FullWidth="true" Lines="5"></MudTextField>
 
         </EditForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="@CancelChanges">@L["Cancel"]</MudButton>
+        <MudButton OnClick="@CancelChanges">Cancel</MudButton>
         <MudButton OnClick="@UpsertTenant" Variant="Variant.Filled" Color="Color.Primary">@labelUpsertDialogOkButton</MudButton>
     </DialogActions>
 </MudDialog>
@@ -84,15 +86,15 @@ else
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
-            @L["Confirm Delete"]
+            Confirm Delete
         </MudText>
     </TitleContent>
     <DialogContent>
         Are you sure you want to delete the Tenant "@currentTenant.Name" ?
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="@(e => { isDeleteTenantDialogOpen = false; })">@L["Cancel"]</MudButton>
-        <MudButton OnClick="@DeleteTenantAsync" Variant="Variant.Filled" Color="Color.Error">@L["Delete"]</MudButton>
+        <MudButton OnClick="@(e => { isDeleteTenantDialogOpen = false; })">Cancel</MudButton>
+        <MudButton OnClick="@DeleteTenantAsync" Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -107,15 +109,23 @@ else
 
     protected bool isCurrentTenantKeyReadOnly = false;
 
-    [Inject] protected IAccountApiClient accountApiClient { get; set; }
+    [Inject] protected AccountApiClient accountApiClient { get; set; }
 
     protected List<TenantModel> tenants;
     protected TenantModel currentTenant { get; set; } = new();
+
+    private List<BreadcrumbItem> _items { get; set; }
 
     #region OnInitializedAsync
 
     protected override async Task OnInitializedAsync()
     {
+
+        _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+        new BreadcrumbItem("BreadCrumbAdminMultitenancy", href: "/admin/multitenancy")
+    };
         await InitializeTenantsListAsync();
     }
 

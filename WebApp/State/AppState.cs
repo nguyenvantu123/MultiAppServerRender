@@ -15,7 +15,7 @@ namespace WebApp.State
 
         public event Action OnChange;
 
-        private readonly IAccountApiClient _apiClient;
+        private readonly AccountApiClient _apiClient;
         private UserProfileViewModel _userProfile { get; set; }
 
         //private readonly IStringLocalizer<Global> L;
@@ -23,7 +23,7 @@ namespace WebApp.State
         //public readonly string AppName = string.Empty;
         //public readonly string AppShortName = string.Empty;
 
-        public AppState(IAccountApiClient apiClient)
+        public AppState(AccountApiClient apiClient)
         {
             _apiClient = apiClient;
         }

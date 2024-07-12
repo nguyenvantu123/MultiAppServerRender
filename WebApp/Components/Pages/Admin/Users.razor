@@ -2,14 +2,16 @@
 @attribute [Authorize(Policies.IsAdmin)]
 @layout AdminMainLayout
 
-<TopSection>
+@* <TopSection>
     <Breadcrumbs>
         <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
         <Breadcrumb Title=@L["BreadCrumbadminusers"] />
     </Breadcrumbs>
-</TopSection>
+</TopSection> *@
 
-<PageTitle>@L["Users"]</PageTitle>
+<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
+
+<PageTitle>Users</PageTitle>
 
 @if (users == null)
 {
@@ -157,7 +159,7 @@ else
 
     // [Inject] IViewNotifier viewNotifier { get; set; }
     // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
-    [Inject] IAccountApiClient apiClient { get; set; }
+    [Inject] AccountApiClient apiClient { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
     protected IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
@@ -177,6 +179,8 @@ else
     protected bool changePasswordDialogOpen = false;
     protected bool disableChangePasswordButton = false;
 
+    private List<BreadcrumbItem> _items { get; set; }
+
     protected List<ApplicationUser> users { get; set; }
     protected List<SelectItem<Guid>> roleSelections { get; set; } = new();
     protected ApplicationUser currentUser { get; set; } = new ApplicationUser();
@@ -186,6 +190,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+
+        _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+        new BreadcrumbItem("BreadCrumbAdminUsers", href: "/admin/users")
+    };
+
         await LoadUsers();
         await LoadRoles();
     }
@@ -223,14 +234,24 @@ else
     {
         try
         {
-            var result = await apiClient.GetRoles();
+            var result = await apiClient.GetRoles(0, 0, "");
 
-            roleSelections = result.Select(i => new SelectItem<Guid>
-                {
-                    Id = i.Id,
-                    DisplayValue = i.Name,
-                    Selected = false
-                }).ToList();
+            foreach (var role in result.Result)
+            {
+                roleSelections.Add(new SelectItem<Guid>
+                    {
+                        Id = role.Id,
+                        DisplayValue = role.Name,
+                        Selected = false
+                    });
+            }
+
+            // roleSelections = result.Select(i => new SelectItem<Guid>
+            //     {
+            //         Id = i.Id,
+            //         DisplayValue = i.Name,
+            //         Selected = false
+            //     }).ToList();
 
         }
         catch (Exception ex)

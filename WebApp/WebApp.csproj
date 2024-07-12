@@ -27,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Components\Pages\Admin\AdminNavMenu.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="Components\Layout\Index.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

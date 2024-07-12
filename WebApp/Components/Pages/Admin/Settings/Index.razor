@@ -3,12 +3,15 @@
 @using WebApp.Settings
 @layout AdminMainLayout
 
-<TopSection>
+@* <TopSection>
     <Breadcrumbs>
         <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
         <Breadcrumb Title=@L["BreadCrumbadminsettings"] />
     </Breadcrumbs>
 </TopSection>
+ *@
+
+<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
 <PageTitle>@L["MainSettings"]</PageTitle>
 
@@ -43,7 +46,13 @@ else
 
     [Inject] protected IApiClient apiClient { get; set; }
 
-    [Inject] protected IAccountApiClient accountApiClient { get; set; }
+    [Inject] protected AccountApiClient accountApiClient { get; set; }
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+    new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+    new BreadcrumbItem("BreadCrumbAdminSettings", href: "/admin/settings")
+    };
 
 
     // [Inject] protected IViewNotifier viewNotifier { get; set; }

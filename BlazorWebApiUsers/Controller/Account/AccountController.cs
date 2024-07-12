@@ -24,6 +24,7 @@ namespace BlazorWebApi.Users.Controller.Account
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;

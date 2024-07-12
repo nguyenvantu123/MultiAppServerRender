@@ -3,14 +3,9 @@
 @attribute [Authorize(Policies.IsAdmin)]
 @layout AdminMainLayout
 
-<TopSection>
-    <Breadcrumbs>
-        <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
-        <Breadcrumb Title=@L["BreadCrumbadminroles"] />
-    </Breadcrumbs>
-</TopSection>
+<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
-<PageTitle>@L["Roles"]</PageTitle>
+<PageTitle>Roles</PageTitle>
 
 @if (roles == null)
 {
@@ -91,7 +86,7 @@ else
 </MudDialog>
 
 @code {
-    [Inject] HttpClient Http { get; set; }
+    [Inject] AccountApiClient accountApiClient { get; set; }
     // [Inject] IViewNotifier viewNotifier { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
     protected int pageSize { get; set; } = 15;
@@ -99,13 +94,20 @@ else
 
     protected string currentRoleName = string.Empty;
     protected bool isCurrentRoleReadOnly = false;
-
+    private List<BreadcrumbItem> _items { get; set; }
     protected List<RoleDto> roles;
 
     #region OnInitializedAsync
 
     protected override async Task OnInitializedAsync()
     {
+
+        _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+        new BreadcrumbItem("BreadCrumbAdminRoles", href: "/admin/roles")
+    };
+
         await InitializeRolesListAsync();
     }
 
@@ -113,7 +115,7 @@ else
     {
         try
         {
-            var apiResponse = await Http.GetFromJsonAsync<ApiResponseDto<List<RoleDto>>>($"api/admin/roles?pageSize={pageSize}&pageNumber={currentPage}");
+            var apiResponse = await accountApiClient.GetRoles(pageSize, currentPage, "");
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -164,11 +166,11 @@ else
 
             if (isCurrentRoleReadOnly)
             {
-                var roleResponse = await Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
+                var roleResponse = await accountApiClient.GetRoleByName(roleName);
                 role = roleResponse.Result;
             }
 
-            var response = await Http.GetFromJsonAsync<ApiResponseDto<List<string>>>("api/admin/permissions");
+            var response = await accountApiClient.GetAllPermissions();
             permissionsSelections.Clear();
 
 
@@ -207,9 +209,9 @@ else
             ApiResponseDto apiResponse;
 
             if (isInsertOperation)
-                apiResponse = await Http.PostJsonAsync<ApiResponseDto>("api/amin/role", request);
+                apiResponse = await accountApiClient.UpdateRole(request);
             else
-                apiResponse = await Http.PutJsonAsync<ApiResponseDto>("api/admin/role", request);
+                apiResponse = await accountApiClient.CreateRole(request);
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -248,7 +250,7 @@ else
     {
         try
         {
-            var response = await Http.DeleteAsync($"api/admin/role/{currentRoleName}");
+            var response = await accountApiClient.DeleteRole(currentRoleName);
 
             if (response.IsSuccessStatusCode)
             {

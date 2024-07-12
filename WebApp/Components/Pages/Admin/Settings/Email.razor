@@ -4,15 +4,17 @@
 @using WebApp.Settings
 @layout AdminMainLayout
 
-<TopSection>
+@* <TopSection>
     <Breadcrumbs>
         <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
         <Breadcrumb Link="/admin/settings" Title=@L["BreadCrumbadminsettings"] />
         <Breadcrumb Title=@L["BreadCrumbadminsettingsemail"] />
     </Breadcrumbs>
-</TopSection>
+</TopSection> *@
 
-<PageTitle>@L["EmailSettings"]</PageTitle>
+<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
+
+<PageTitle>EmailSettings</PageTitle>
 
 @if (settings == null)
 {
@@ -44,9 +46,9 @@ else
         {
             <MudSelect @bind-Value="@settings[SettingKey.EmailConfiguration_SmtpSslProtocol].Value" Label="SSL Protocol">
                 @foreach (var item in sslProtocols)
-                        {
+                {
                     <MudSelectItem Value="@item">@item</MudSelectItem>
-                        }
+                }
             </MudSelect>
         }
         <MudDivider Class="my-4" />
@@ -112,11 +114,18 @@ else
 
     [Inject] IApiClient apiClient { get; set; }
 
-    [Inject] IAccountApiClient accountApiClient { get; set; }
+    [Inject] AccountApiClient accountApiClient { get; set; }
 
     // [Inject] protected IViewNotifier viewNotifier { get; set; }
 
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+    new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+    new BreadcrumbItem("BreadCrumbAdminSettings", href: "/admin/settings"),
+    new BreadcrumbItem("BreadCrumbAdminSettingsEmail", href: "/admin/settings/email")
+    };
 
     protected bool isSendEmailDialogOpen = false;
     protected EmailDto email { get; set; } = new();
