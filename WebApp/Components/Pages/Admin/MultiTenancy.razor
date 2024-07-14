@@ -16,10 +16,9 @@
 
 <PageTitle>Tenants</PageTitle>
 
-@if (tenants == null)
+@if (!_loaded)
 {
     <LoadingBackground>
-        <label>Loading</label>
     </LoadingBackground>
 }
 else
@@ -108,6 +107,7 @@ else
     int currentPage { get; set; } = 0;
 
     protected bool isCurrentTenantKeyReadOnly = false;
+    private bool _loaded = false;
 
     [Inject] protected AccountApiClient accountApiClient { get; set; }
 
@@ -157,6 +157,11 @@ else
         catch (Exception ex)
         {
             viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+
+        finally
+        {
+            _loaded = true;
         }
     }
 

@@ -21,14 +21,16 @@ namespace BlazorWebApi.Users.Models
 
         [DataMember(EmitDefaultValue = false)]
         public T Result { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public int Count { get; set; } = 0;
 
         [JsonConstructor]
-        public ApiResponse(int statusCode, string message = "", T result = default)
+        public ApiResponse(int statusCode, string message = "", T result = default, int count = 0)
         {
             StatusCode = statusCode;
             Message = message;
             Result = result;
-
+            Count = count;
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             if (string.IsNullOrWhiteSpace(message))
@@ -46,11 +48,12 @@ namespace BlazorWebApi.Users.Models
     public class ApiResponse : ApiResponse<object>
     {
         [JsonConstructor]
-        public ApiResponse(int statusCode, string message = "", object result = null) : base(statusCode, message)
+        public ApiResponse(int statusCode, string message = "", object result = null, int count = 0) : base(statusCode, message)
         {
             StatusCode = statusCode;
             Message = message;
             Result = result;
+            Count = count;
         }
 
         public ApiResponse(int statusCode) : base(statusCode, "")

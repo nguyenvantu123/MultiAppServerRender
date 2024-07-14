@@ -21,5 +21,15 @@
         public int CountRecoveryCodes { get; set; }
         public List<string> Roles { get; set; }
         public List<KeyValuePair<string, string>> ExposedClaims { get; set; }
+
+        public List<UserRoleViewModel> UserRoles { get; set; }
+
+        public bool EmailConfirmed { get; set; }
+    }
+
+    public class UserRoleViewModel
+    {
+
+        public Guid RoleId { get; set; }
     }
 }

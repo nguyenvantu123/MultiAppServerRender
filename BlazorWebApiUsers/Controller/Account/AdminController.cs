@@ -64,7 +64,7 @@ namespace BlazorWebApi.Users.Controller.Account
             if (pageSize > 0)
                 query = query.Skip(pageNumber * pageSize).Take(pageSize);
 
-            return new ApiResponse(200, $"{count} tenants fetched", await _autoMapper.ProjectTo<TenantModel>(query).ToListAsync());
+            return new ApiResponse(200, $"{count} tenants fetched", await _autoMapper.ProjectTo<TenantModel>(query).ToListAsync(), count);
         }
 
         [HttpGet]
@@ -146,9 +146,9 @@ namespace BlazorWebApi.Users.Controller.Account
         [HttpGet]
         [Route("[action]")]
         [Authorize(Permissions.User.Read)]
-        public async Task<ApiResponse> Users([FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 0)
+        public async Task<ApiResponseDto<List<UserViewModel>>> Users([FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 0)
         {
-            var userList = _userManager.Users.AsQueryable();
+            var userList = _userManager.Users.Include(x => x.UserRoles).AsQueryable();
             var count = userList.Count();
             var listResponse = userList.OrderBy(x => x.Id).Skip(pageNumber * pageSize).Take(pageSize).ToList();
 
@@ -162,11 +162,16 @@ namespace BlazorWebApi.Users.Controller.Account
                     UserName = applicationUser.UserName,
                     Email = applicationUser.Email,
                     UserId = applicationUser.Id,
+                    UserRoles = applicationUser.UserRoles.Select(x => new UserRoleViewModel
+                    {
+                        RoleId = x.RoleId
+                    }).ToList(),
                     Roles = await _userManager.GetRolesAsync(applicationUser).ConfigureAwait(true) as List<string>
+
                 });
             }
 
-            return new ApiResponse(200, $"{count} users fetched", userDtoList);
+            return new ApiResponseDto<List<UserViewModel>>(200, $"{count} users fetched", userDtoList, count);
         }
 
         [HttpGet]
@@ -204,7 +209,7 @@ namespace BlazorWebApi.Users.Controller.Account
                 });
             }
 
-            return new ApiResponse(200, $"{count} roles fetched", roleDtoList);
+            return new ApiResponse(200, $"{count} roles fetched", roleDtoList, count);
         }
 
         [HttpGet]

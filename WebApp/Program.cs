@@ -123,13 +123,15 @@ builder.Services.Configure<IdentityOptions>(options =>
     }
 });
 
+//builder.Services.AddHttpClient("MyHttpClient").SetHandlerLifetime(TimeSpan.FromHours(12));
+
 builder.Services.AddMvc().AddNewtonsoftJson(opt =>
 {
     // Set Breeze defaults for entity serialization
     var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
     if (ss.ContractResolver is DefaultContractResolver resolver)
-    {
-        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
+    {0
+1        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
     }
 })   // Add Breeze exception filter to send errors back to the client
            .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
@@ -147,7 +149,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new("http://blazorwebapiusers");
-});
+}).SetHandlerLifetime(TimeSpan.FromHours(12));
 
 
 #region Cookies

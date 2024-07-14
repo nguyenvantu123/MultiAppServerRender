@@ -28,13 +28,16 @@ namespace MultiAppServer.ServiceDefaults
         [DataMember(EmitDefaultValue = false)]
         public T Result { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
+        public int Count { get; set; } = 0;
+
         [JsonConstructor]
-        public ApiResponseDto(int statusCode, string message = "", T result = default)
+        public ApiResponseDto(int statusCode, string message = "", T result = default, int count = 0)
         {
             StatusCode = statusCode;
             Message = message;
             Result = result;
-
+            Count = count;
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             if (string.IsNullOrWhiteSpace(message))
@@ -54,11 +57,12 @@ namespace MultiAppServer.ServiceDefaults
     public class ApiResponseDto : ApiResponseDto<object>
     {
         [JsonConstructor]
-        public ApiResponseDto(int statusCode, string message = "", object result = null) : base(statusCode, message)
+        public ApiResponseDto(int statusCode, string message = "", object result = null, int count = 0) : base(statusCode, message)
         {
             StatusCode = statusCode;
             Message = message;
             Result = result;
+            Count = count;
         }
 
         public ApiResponseDto(int statusCode) : base(statusCode, "")

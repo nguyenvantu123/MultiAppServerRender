@@ -139,7 +139,7 @@ namespace WebApp.Interfaces
 
         public async Task<UserViewModel> GetUserViewModel()
         {
-            UserViewModel userViewModel = new() { IsAuthenticated = false, Roles = new List<string>() };
+            UserViewModel userViewModel = new() { IsAuthenticated = false};
 
             var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>("api/account/user-view-model");
 
@@ -201,9 +201,9 @@ namespace WebApp.Interfaces
             throw new NotImplementedException();
         }
 
-        public Task<QueryResult<ApplicationUser>> GetUsers(Expression<Func<ApplicationUser, bool>> predicate = null, int? take = null, int? skip = null)
+        public async Task<ApiResponseDto<List<UserViewModel>>> GetUsers(int pageSize, int currentPage, string search)
         {
-            throw new NotImplementedException();
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<UserViewModel>>>($"api/admin/Users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
 
         public Task<QueryResult<DbLog>> GetLogs(Expression<Func<DbLog, bool>> predicate = null, int? take = null, int? skip = null)

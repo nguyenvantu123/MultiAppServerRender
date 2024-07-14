@@ -700,7 +700,7 @@ namespace BlazorWebApi.Users.Controller.Account
                     userViewModel.SharedKey = FormatKey(unformattedKey);
                     userViewModel.AuthenticatorUri = string.Format(
                         "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6",
-                        _urlEncoder.Encode("BlazorBoilerplate"),
+                        _urlEncoder.Encode("MultiApp"),
                         _urlEncoder.Encode(user.Email),
                         unformattedKey);
                 }
@@ -979,8 +979,7 @@ namespace BlazorWebApi.Users.Controller.Account
               ? new UserViewModel { UserName = User.Identity.Name, IsAuthenticated = true }
               : new()
               {
-                  IsAuthenticated = false,
-                  Roles = new List<string>()
+                  IsAuthenticated = false
               };
 
             return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful", userViewModel);
@@ -1016,7 +1015,7 @@ namespace BlazorWebApi.Users.Controller.Account
                 return new ApiResponse((int)HttpStatusCode.InternalServerError, "Operation Failed");
             }
 
-            if (userViewModel.Roles != null)
+            if (userViewModel.UserRoles != null)
             {
                 try
                 {

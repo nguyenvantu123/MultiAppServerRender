@@ -13,15 +13,14 @@
 
 <PageTitle>Users</PageTitle>
 
-@if (users == null)
+@if (!_loaded)
 {
     <LoadingBackground>
-        <label>@L["Loading"]</label>
     </LoadingBackground>
 }
 else
 {
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<ApplicationUser>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<UserViewModel>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
         <HeaderContent>
             <MudTh><MudButton StartIcon="@Icons.Material.Filled.PersonAdd" OnClick="@(e => { createUserDialogOpen = true; })" Variant="Variant.Filled" Color="Color.Primary">@L["New User"]</MudButton></MudTh>
             <MudTh>@L["UserName"]</MudTh>
@@ -44,12 +43,12 @@ else
                 }
             </MudTd>
             <MudTd>
-                @if (@UserRow.UserRoles != null)
+                @if (@UserRow.Roles != null)
                 {
                     <MudChipSet>
-                        @foreach (var ur in @UserRow.UserRoles)
+                        @foreach (var ur in @UserRow.Roles)
                         {
-                            <MudChip Text="@ur.Role.Name"></MudChip>
+                            <MudChip Text="@ur"></MudChip>
                         }
                     </MudChipSet>
                 }
@@ -155,13 +154,14 @@ else
 </MudDialog>
 
 @code {
-    private MudTable<ApplicationUser> table;
+    private MudTable<UserViewModel> table;
 
     // [Inject] IViewNotifier viewNotifier { get; set; }
     // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
     [Inject] AccountApiClient apiClient { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
+    private bool _loaded = false;
     protected IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
 
     protected int pageSize { get; set; } = 10;
@@ -181,24 +181,35 @@ else
 
     private List<BreadcrumbItem> _items { get; set; }
 
-    protected List<ApplicationUser> users { get; set; }
+    protected List<UserViewModel> users { get; set; }
     protected List<SelectItem<Guid>> roleSelections { get; set; } = new();
-    protected ApplicationUser currentUser { get; set; } = new ApplicationUser();
+    protected UserViewModel currentUser { get; set; } = new UserViewModel();
     protected RegisterViewModel newUserViewModel { get; set; } = new RegisterViewModel();
     protected ChangePasswordViewModel changePasswordViewModel { get; set; } = new ChangePasswordViewModel();
 
     protected override async Task OnInitializedAsync()
     {
-        identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+        try
+        {
+            identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
 
-        _items = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
-        new BreadcrumbItem("BreadCrumbAdminUsers", href: "/admin/users")
-    };
+            _items = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+            new BreadcrumbItem("BreadCrumbAdminUsers", href: "/admin/users")
+        };
 
-        await LoadUsers();
-        await LoadRoles();
+            await LoadUsers();
+            await LoadRoles();
+        }
+        finally
+        {
+            _loaded = true;
+        };
+
+
+
+
     }
 
     protected async Task OnPage(int index, int size)
@@ -218,9 +229,9 @@ else
         try
         {
             // apiClient.ClearEntitiesCache();
-            var result = await apiClient.GetUsers(null, pageSize, pageIndex * pageSize);
-            users = new List<ApplicationUser>(result);
-            totalItemsCount = (int)result.InlineCount.Value;
+            var result = await apiClient.GetUsers(pageSize, pageIndex, "");
+            users = result.Result;
+            totalItemsCount = (int)result.Result.Count;
 
             viewNotifier.Show($"{totalItemsCount} items found", ViewNotifierType.Success, L["Operation Successful"]);
         }
@@ -260,7 +271,7 @@ else
         }
     }
 
-    protected void OpenEditDialog(ApplicationUser user)
+    protected void OpenEditDialog(UserViewModel user)
     {
         currentUser = user;
 
@@ -270,16 +281,16 @@ else
         editDialogOpen = true;
     }
 
-    protected void OpenResetPasswordDialog(ApplicationUser user)
+    protected void OpenResetPasswordDialog(UserViewModel user)
     {
         currentUser = user;
 
-        changePasswordViewModel = new ChangePasswordViewModel() { UserId = user.Id.ToString() };
+        changePasswordViewModel = new ChangePasswordViewModel() { UserId = user.UserId.ToString() };
 
         changePasswordDialogOpen = true;
     }
 
-    protected void OpenDeleteDialog(ApplicationUser user)
+    protected void OpenDeleteDialog(UserViewModel user)
     {
         currentUser = user;
         deleteUserDialogOpen = true;
@@ -302,10 +313,7 @@ else
         {
             disableUpdateUserButton = true;
 
-            var apiResponse = await identityAuthenticationStateProvider.AdminUpdateUser(new UserViewModel
-            {
-
-            });
+            var apiResponse = await identityAuthenticationStateProvider.AdminUpdateUser(currentUser);
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -393,10 +401,10 @@ else
         }
     }
 
-    private async Task<TableData<ApplicationUser>> ServerReload(TableState state)
+    private async Task<TableData<UserViewModel>> ServerReload(TableState state)
     {
         await OnPage(state.Page, state.PageSize);
 
-        return new TableData<ApplicationUser>() { TotalItems = totalItemsCount, Items = users };
+        return new TableData<UserViewModel>() { TotalItems = totalItemsCount, Items = users };
     }
 }

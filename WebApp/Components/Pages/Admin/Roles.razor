@@ -7,10 +7,9 @@
 
 <PageTitle>Roles</PageTitle>
 
-@if (roles == null)
+@if (!_loaded)
 {
     <LoadingBackground>
-        <label>@L["Loading"]</label>
     </LoadingBackground>
 }
 else
@@ -94,21 +93,28 @@ else
 
     protected string currentRoleName = string.Empty;
     protected bool isCurrentRoleReadOnly = false;
-    private List<BreadcrumbItem> _items { get; set; }
+    private List<BreadcrumbItem>
+        _items = new List<BreadcrumbItem>
+                        {
+        new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+        new BreadcrumbItem("BreadCrumbAdminRoles", href: "/admin/roles")
+                        };
     protected List<RoleDto> roles;
+    private bool _loaded = false;
 
     #region OnInitializedAsync
 
     protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            await InitializeRolesListAsync();
 
-        _items = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
-        new BreadcrumbItem("BreadCrumbAdminRoles", href: "/admin/roles")
-    };
-
-        await InitializeRolesListAsync();
+        }
+        finally
+        {
+            _loaded = true;
+        }
     }
 
     public async Task InitializeRolesListAsync()
