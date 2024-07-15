@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using BlazorWebApi.Users.Models;
+using Microsoft.Extensions.Localization;
 
-namespace BlazorWebApi.Users.Models
+namespace BlazorWebApi.Users.Middleware
 {
     public class UserSessionMiddleware : BaseMiddleware
     {

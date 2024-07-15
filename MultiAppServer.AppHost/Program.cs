@@ -8,7 +8,7 @@ var sqlIndentity = builder.AddSqlServer("sql")
 
 //var messaging = builder.AddRabbitMQ("messaging");
 
-var fileCache = builder.AddRedis("fileCache");
+var fileCache = builder.AddRedis("redis");
 
 //var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers").WithReference(sqlIndentity).WithReference(messaging);
 

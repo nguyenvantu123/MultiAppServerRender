@@ -42,6 +42,8 @@ namespace BlazorWebApi.Users.Controller.Account
 
         [HttpGet]
         [Route("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public ApiResponse Tenant()
             => new ApiResponse((int)HttpStatusCode.OK, string.Empty, _autoMapper.Map<TenantModel>(HttpContext.GetMultiTenantContext<AppTenantInfo>().TenantInfo));
 
@@ -82,6 +84,8 @@ namespace BlazorWebApi.Users.Controller.Account
         [HttpPost]
         [Route("[action]")]
         [Authorize(Permissions.Tenant.Create)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ApiResponse> CreateTenantAsync([FromBody] TenantModel tenantDto)
         {
 

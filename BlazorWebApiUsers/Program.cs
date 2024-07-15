@@ -34,6 +34,11 @@ using AutoMapper;
 using WebApp.Mapping;
 using Microsoft.AspNetCore.Authorization;
 using BlazorWebApi.Authorization;
+using BlazorWebApi.Users.Middleware;
+using BlazorWebApi.Middleware;
+using BlazorBoilerplate.Server.Aop;
+using Serilog.Extensions.Logging;
+using eShop.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +48,8 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
 });
+
+builder.AddDefaultAuthentication();
 
 builder.Services.AddControllers(options =>
 {
@@ -95,35 +102,10 @@ builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Users",
-        Description = "MultiAppServer.AppHost",
-        License = new OpenApiLicense
-        {
-            Name = "MIT",
-            Url = new Uri("https://github.com/ignaciojvig/ChatAPI/blob/master/LICENSE")
-        }
-    });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
+var withApiVersioning = builder.Services.AddApiVersioning();
+
+builder.AddDefaultOpenApi(withApiVersioning);
 
 #region Automapper
 //Automapper to map DTO to Models https://www.c-sharpcorner.com/UploadFile/1492b1/crud-operations-using-automapper-in-mvc-application/
@@ -164,6 +146,11 @@ builder.Services.AddIdentityServer(options =>
 //.Services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
 
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+//});
+
 //builder.Services.AddScoped<AppTenantInfo>();
 builder.Services.AddScoped<EntityPermissions>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
@@ -176,6 +163,16 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyP
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
+
+builder.Services.AddTransient<ApiResponseExceptionAspect>()
+                .AddTransient<LogExceptionAspect>()
+                .AddSingleton<ILoggerFactory>(services => new SerilogLoggerFactory());
+
+//builder.Services.AddMvc(options =>
+//{
+//    options.Filters.Add(new Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute(typeof(ApiError), 400));
+//    options.Filters.Add(new Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute(typeof(ApiError), 401));
+//});
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -214,6 +211,8 @@ app.UseDeveloperExceptionPage();
 
 app.UseMultiTenant();
 app.UseMiddleware<UserSessionMiddleware>();
+
+//app.UseMiddleware<APIResponseRequestLoggingMiddleware>();
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {

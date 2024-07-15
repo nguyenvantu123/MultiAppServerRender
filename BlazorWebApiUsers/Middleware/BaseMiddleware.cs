@@ -1,10 +1,11 @@
-﻿using Breeze.Persistence;
+﻿using BlazorWebApi.Users.Models;
+using Breeze.Persistence;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using ObjectCloner.Extensions;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
-namespace BlazorWebApi.Users.Models
+namespace BlazorWebApi.Users.Middleware
 {
     public abstract class BaseMiddleware
     {

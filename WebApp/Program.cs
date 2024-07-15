@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Components;
 using WebApp.State;
 using BlazorWebApi.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using BlazorWebApi.Users.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,6 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 builder.Services.AddCascadingAuthenticationState();
 
-builder.Services.AddAuthorizationCore();
 
 builder.Services.AddSingleton<CookieEvents>();
 builder.Services.AddScoped<AppState>();
@@ -53,12 +53,43 @@ var configuration = builder.Configuration;
 
 string projectName = nameof(WebApp);
 
-//builder.Services.AddAuthorization();
-builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
+
+builder.Services.AddAuthorization();
+
+
+var identityUrl = configuration.GetRequiredValue("IdentityUrl");
+var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie(x =>
+{
+    x.LoginPath = WebApp.Settings.Settings.LoginPath;
+    x.ExpireTimeSpan = TimeSpan.FromDays(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "60"));
+
+}).AddOpenIdConnect(options =>
+{
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.Authority = identityUrl;
+    options.SignedOutRedirectUri = callBackUrl;
+    options.ClientId = "webapp";
+    options.ClientSecret = "secret";
+    options.ResponseType = "code";
+    options.SaveTokens = true;
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.RequireHttpsMetadata = false;
+    options.Scope.Add("openid");
+    options.Scope.Add("profile");
+    options.Scope.Add("identity");
+    options.Scope.Add("basket");
+}); ;
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -130,8 +161,8 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
     // Set Breeze defaults for entity serialization
     var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
     if (ss.ContractResolver is DefaultContractResolver resolver)
-    {0
-1        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
+    {
+        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
     }
 })   // Add Breeze exception filter to send errors back to the client
            .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
@@ -139,7 +170,7 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
            {
                options.DataAnnotationLocalizerProvider = (type, factory) =>
                {
-                   return factory.Create(typeof(Global));
+                   return factory.Create(typeof(WebApp.Localizer.Global));
                };
            });
 //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LocalizationRecordValidator>());
@@ -165,24 +196,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
                                                    // requires using Microsoft.AspNetCore.Http;
                                                    //options.MinimumSameSitePolicy = SameSiteMode.None;
 });
-
-//services.ConfigureExternalCookie(options =>
-// {
-// macOS login fix
-//options.Cookie.SameSite = SameSiteMode.None;
-//});
-
-builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        }).AddCookie(x =>
-        {
-            x.LoginPath = WebApp.Settings.Settings.LoginPath;
-            x.ExpireTimeSpan = TimeSpan.FromDays(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "60"));
-
-        });
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
