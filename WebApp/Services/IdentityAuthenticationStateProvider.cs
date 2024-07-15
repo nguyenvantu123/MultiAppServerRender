@@ -7,7 +7,7 @@ using WebApp.Models;
 
 namespace WebApp.Services
 {
-    public class IdentityAuthenticationStateProvider : AuthenticationStateProvider, IHostEnvironmentAuthenticationStateProvider
+    public class IdentityAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly AccountApiClient _accountApiClient;
 
@@ -166,12 +166,6 @@ namespace WebApp.Services
         public async Task<ApiResponseDto> AdminUpdateUser(UserViewModel userViewModel)
         {
             return await _accountApiClient.AdminUpdateUser(userViewModel);
-        }
-
-        public void SetAuthenticationState(Task<AuthenticationState> authenticationStateTask)
-        {
-            _authenticationStateTask = authenticationStateTask ?? throw new ArgumentNullException(nameof(authenticationStateTask));
-            NotifyAuthenticationStateChanged(_authenticationStateTask);
         }
     }
 }

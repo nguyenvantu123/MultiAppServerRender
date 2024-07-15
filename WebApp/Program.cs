@@ -180,7 +180,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new("http://blazorwebapiusers");
-}).SetHandlerLifetime(TimeSpan.FromHours(12));
+}).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12));
 
 
 #region Cookies

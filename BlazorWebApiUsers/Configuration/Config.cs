@@ -157,8 +157,8 @@ namespace BlazorWebApi.Users.Configuration
                 },
                 new Client
                 {
-                    ClientId = "orderingswaggerui",
-                    ClientName = "Ordering Swagger UI",
+                    ClientId = "identityswaggerui",
+                    ClientName = "Identity Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 

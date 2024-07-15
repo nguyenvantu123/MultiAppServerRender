@@ -27,6 +27,7 @@ var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles");
 var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
     .WithExternalHttpEndpoints().WithEnvironment("IdentityUrl", identityEndpoint);
 
+user.WithEnvironment("IdentityApiClient", user.GetEndpoint("http"));
 
 webApp.WithReference(user).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
 

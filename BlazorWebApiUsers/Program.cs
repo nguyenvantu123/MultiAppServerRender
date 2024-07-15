@@ -211,6 +211,7 @@ app.UseDeveloperExceptionPage();
 
 app.UseMultiTenant();
 app.UseMiddleware<UserSessionMiddleware>();
+app.UseDefaultOpenApi();
 
 //app.UseMiddleware<APIResponseRequestLoggingMiddleware>();
 
