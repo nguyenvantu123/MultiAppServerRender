@@ -47,50 +47,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-//builder.Services.AddControllersWithViews(options =>
-//{
-//    options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
-//});
-
-//builder.AddDefaultAuthentication();
-
-//var identitySection = builder.Configuration.GetSection("Identity");
-
-var identityUrl = builder.Configuration.GetRequiredValue("IdentityUrl");
-var callBackUrl = builder.Configuration.GetRequiredValue("CallBackUrl");
-//var audience = builder.Configuration.GetRequiredValue("Audience");
-
-builder.Services.AddAuthentication().AddJwtBearer(options =>
-{
-    options.Authority = identityUrl;
-    options.RequireHttpsMetadata = false;
-    options.Audience = "identity";
-
-#if DEBUG
-    //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
-    options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
-#else
-            options.TokenValidationParameters.ValidIssuers = [identityUrl];
-#endif
-
-    options.TokenValidationParameters.ValidateAudience = false;
-}).AddOpenIdConnect(options =>
-{
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.Authority = identityUrl;
-    options.SignedOutRedirectUri = callBackUrl;
-    options.ClientId = "webapp";
-    options.ClientSecret = "secret";
-    options.ResponseType = "code";
-    options.SaveTokens = true;
-    options.GetClaimsFromUserInfoEndpoint = true;
-    options.RequireHttpsMetadata = false;
-    options.Scope.Add("openid");
-    options.Scope.Add("profile");
-    options.Scope.Add("identity");
-    options.Scope.Add("basket");
-});
-
 builder.Services.AddControllers(options =>
 {
     var parameterTransformer = new SlugifyParameterTransformer();
@@ -209,7 +165,7 @@ app.UseDeveloperExceptionPage();
 app.UseMultiTenant();
 app.UseMiddleware<UserSessionMiddleware>();
 app.UseDefaultOpenApi();
-app.UseMiddleware<APIResponseRequestLoggingMiddleware>();
+//app.UseMiddleware<APIResponseRequestLoggingMiddleware>();
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {

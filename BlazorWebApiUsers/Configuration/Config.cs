@@ -9,7 +9,7 @@ namespace BlazorWebApi.Users.Configuration
         {
             return new List<ApiResource>
             {
-                new ApiResource("orders", "Orders Service"),
+                new ApiResource("identity", "Identity Service"),
                 new ApiResource("basket", "Basket Service"),
                 new ApiResource("webhooks", "Webhooks registration Service"),
             };
@@ -21,7 +21,7 @@ namespace BlazorWebApi.Users.Configuration
         {
             return new List<ApiScope>
             {
-                new ApiScope("orders", "Orders Service"),
+                new ApiScope("identity", "Identity Service"),
                 new ApiScope("basket", "Basket Service"),
                 new ApiScope("webhooks", "Webhooks registration Service"),
             };
@@ -162,8 +162,8 @@ namespace BlazorWebApi.Users.Configuration
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris = { $"{configuration["OrderingApiClient"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{configuration["OrderingApiClient"]}/swagger/" },
+                    RedirectUris = { $"{configuration["IdentityApiClient"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{configuration["IdentityApiClient"]}/swagger/" },
 
                     AllowedScopes =
                     {
