@@ -11,7 +11,6 @@ namespace BlazorBoilerplate.Server.Aop
     public class ApiResponseExceptionAspect
     {
         private readonly ILogger<ApiResponseExceptionAspect> _logger;
-        private readonly IStringLocalizer<Global> L;
 
         private readonly MethodInfo _asyncHandler = typeof(ApiResponseExceptionAspect).GetMethod(nameof(WrapAsync), BindingFlags.Instance | BindingFlags.NonPublic);
         private readonly MethodInfo _syncHandler = typeof(ApiResponseExceptionAspect).GetMethod(nameof(WrapSync), BindingFlags.Instance | BindingFlags.NonPublic);
@@ -19,10 +18,9 @@ namespace BlazorBoilerplate.Server.Aop
         private readonly MethodInfo _asyncGenericHandler = typeof(ApiResponseExceptionAspect).GetMethod(nameof(WrapGenericAsync), BindingFlags.Instance | BindingFlags.NonPublic);
         private readonly MethodInfo _syncGenericHandler = typeof(ApiResponseExceptionAspect).GetMethod(nameof(WrapGenericSync), BindingFlags.Instance | BindingFlags.NonPublic);
 
-        public ApiResponseExceptionAspect(ILogger<ApiResponseExceptionAspect> logger, IStringLocalizer<Global> l)
+        public ApiResponseExceptionAspect(ILogger<ApiResponseExceptionAspect> logger)
         {
             _logger = logger;
-            L = l;
         }
 
 
@@ -91,7 +89,7 @@ namespace BlazorBoilerplate.Server.Aop
 
             _logger.LogError($"{method}: {msg}");
 
-            return new ApiResponse(code, (isDomainException || isUnauthorizedAccessException) ? msg : L["Operation Failed"]);
+            return new ApiResponse(code, (isDomainException || isUnauthorizedAccessException) ? msg : "Operation Failed");
         }
 
         private ApiResponse WrapSync(Func<object[], object> target, object[] args, string name)

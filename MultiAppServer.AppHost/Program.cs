@@ -14,11 +14,16 @@ var fileCache = builder.AddRedis("redis");
 
 var launchProfileName = ShouldUseHttpForEndpoints() ? "http" : "https";
 
+
+
 var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers", launchProfileName)
     .WithExternalHttpEndpoints()
     .WithReference(sqlIndentity);
 
 var identityEndpoint = user.GetEndpoint(launchProfileName);
+
+
+user.WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", user.GetEndpoint(launchProfileName)); ;
 
 var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles");
 

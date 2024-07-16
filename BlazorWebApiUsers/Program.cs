@@ -39,17 +39,57 @@ using BlazorWebApi.Middleware;
 using BlazorBoilerplate.Server.Aop;
 using Serilog.Extensions.Logging;
 using eShop.ServiceDefaults;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Google.Protobuf.WellKnownTypes;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.Services.AddControllersWithViews(options =>
-{
-    options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
-});
+//builder.Services.AddControllersWithViews(options =>
+//{
+//    options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
+//});
 
-builder.AddDefaultAuthentication();
+//builder.AddDefaultAuthentication();
+
+//var identitySection = builder.Configuration.GetSection("Identity");
+
+var identityUrl = builder.Configuration.GetRequiredValue("IdentityUrl");
+var callBackUrl = builder.Configuration.GetRequiredValue("CallBackUrl");
+//var audience = builder.Configuration.GetRequiredValue("Audience");
+
+builder.Services.AddAuthentication().AddJwtBearer(options =>
+{
+    options.Authority = identityUrl;
+    options.RequireHttpsMetadata = false;
+    options.Audience = "identity";
+
+#if DEBUG
+    //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
+    options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
+#else
+            options.TokenValidationParameters.ValidIssuers = [identityUrl];
+#endif
+
+    options.TokenValidationParameters.ValidateAudience = false;
+}).AddOpenIdConnect(options =>
+{
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.Authority = identityUrl;
+    options.SignedOutRedirectUri = callBackUrl;
+    options.ClientId = "webapp";
+    options.ClientSecret = "secret";
+    options.ResponseType = "code";
+    options.SaveTokens = true;
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.RequireHttpsMetadata = false;
+    options.Scope.Add("openid");
+    options.Scope.Add("profile");
+    options.Scope.Add("identity");
+    options.Scope.Add("basket");
+});
 
 builder.Services.AddControllers(options =>
 {
@@ -57,25 +97,6 @@ builder.Services.AddControllers(options =>
     options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
     options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
 });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
-builder.Services.AddMvc().AddNewtonsoftJson(opt =>
-{
-    // Set Breeze defaults for entity serialization
-    var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
-    if (ss.ContractResolver is DefaultContractResolver resolver)
-    {
-        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
-    }
-})   // Add Breeze exception filter to send errors back to the client
-          .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
-          .AddViewLocalization().AddDataAnnotationsLocalization(options =>
-          {
-              options.DataAnnotationLocalizerProvider = (type, factory) =>
-              {
-                  return factory.Create(typeof(Global));
-              };
-          });
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
@@ -101,7 +122,7 @@ builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddEndpointsApiExplorer();
 
 var withApiVersioning = builder.Services.AddApiVersioning();
 
@@ -119,7 +140,7 @@ var autoMapper = automapperConfig.CreateMapper();
 builder.Services.AddSingleton(autoMapper);
 #endregion
 
-builder.Services.AddScoped<ApplicationPersistenceManager>();
+//builder.Services.AddScoped<ApplicationPersistenceManager>();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -143,15 +164,16 @@ builder.Services.AddIdentityServer(options =>
 .AddAspNetIdentity<ApplicationUser>()
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
-//.Services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
-
-//builder.Services.AddAuthorization(options =>
+//builder.Services.AddAuthentication(options =>
 //{
-//    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//}).AddCookie(x =>
+//{
+//    x.ExpireTimeSpan = TimeSpan.FromMinutes(60);
 //});
-
-//builder.Services.AddScoped<AppTenantInfo>();
 builder.Services.AddScoped<EntityPermissions>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
@@ -168,12 +190,6 @@ builder.Services.AddTransient<ApiResponseExceptionAspect>()
                 .AddTransient<LogExceptionAspect>()
                 .AddSingleton<ILoggerFactory>(services => new SerilogLoggerFactory());
 
-//builder.Services.AddMvc(options =>
-//{
-//    options.Filters.Add(new Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute(typeof(ApiError), 400));
-//    options.Filters.Add(new Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute(typeof(ApiError), 401));
-//});
-
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var app = builder.Build();
@@ -189,36 +205,14 @@ app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger(c =>
-    {
-        c.PreSerializeFilters.Add((document, request) =>
-        {
-            var paths = document.Paths.ToDictionary(item => item.Key.ToLowerInvariant(), item => item.Value);
-            document.Paths.Clear();
-            foreach (var pathItem in paths)
-            {
-                document.Paths.Add(pathItem.Key, pathItem.Value);
-            }
-        });
-    });
-    app.UseSwaggerUI();
-}
-
 app.UseDeveloperExceptionPage();
-//}
-
 app.UseMultiTenant();
 app.UseMiddleware<UserSessionMiddleware>();
 app.UseDefaultOpenApi();
-
-//app.UseMiddleware<APIResponseRequestLoggingMiddleware>();
+app.UseMiddleware<APIResponseRequestLoggingMiddleware>();
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
-
-    //var scopedService = serviceScope.ServiceProvider.GetRequiredService<AppTenantInfo>();
 
     var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
     databaseInitializer.SeedAsync().Wait();

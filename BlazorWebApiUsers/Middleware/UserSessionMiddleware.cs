@@ -5,7 +5,7 @@ namespace BlazorWebApi.Users.Middleware
 {
     public class UserSessionMiddleware : BaseMiddleware
     {
-        public UserSessionMiddleware(RequestDelegate next, IStringLocalizer<Global> l, ILogger<UserSessionMiddleware> logger) : base(next, l, logger)
+        public UserSessionMiddleware(RequestDelegate next, ILogger<UserSessionMiddleware> logger) : base(next, logger)
         { }
 
         public async Task InvokeAsync(HttpContext httpContext, IUserSession userSession)

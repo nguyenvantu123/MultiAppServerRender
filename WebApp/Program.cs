@@ -61,8 +61,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationSt
 builder.Services.AddAuthorization();
 
 
-var identityUrl = configuration.GetRequiredValue("IdentityUrl");
-var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
+//var identityUrl = configuration.GetRequiredValue("IdentityUrl");
+//var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -72,24 +72,8 @@ builder.Services.AddAuthentication(options =>
 }).AddCookie(x =>
 {
     x.LoginPath = WebApp.Settings.Settings.LoginPath;
-    x.ExpireTimeSpan = TimeSpan.FromDays(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "60"));
-
-}).AddOpenIdConnect(options =>
-{
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.Authority = identityUrl;
-    options.SignedOutRedirectUri = callBackUrl;
-    options.ClientId = "webapp";
-    options.ClientSecret = "secret";
-    options.ResponseType = "code";
-    options.SaveTokens = true;
-    options.GetClaimsFromUserInfoEndpoint = true;
-    options.RequireHttpsMetadata = false;
-    options.Scope.Add("openid");
-    options.Scope.Add("profile");
-    options.Scope.Add("identity");
-    options.Scope.Add("basket");
-}); ;
+    x.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+});
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -202,8 +186,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.IsEssential = true;
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.ExpireTimeSpan = TimeSpan.FromDays(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "60"));
-    //options.LoginPath = Settings.LoginPath;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "60"));
+    options.LoginPath = Settings.LoginPath;
     //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     // ReturnUrlParameter requires
     //using Microsoft.AspNetCore.Authentication.Cookies;

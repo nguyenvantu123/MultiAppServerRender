@@ -8,11 +8,9 @@ namespace BlazorWebApi.Users.Services
 {
     public class EmailFactory : IEmailFactory
     {
-        protected readonly IStringLocalizer<EmailFactory> L;
         private readonly string baseUrl;
-        public EmailFactory(IStringLocalizer<EmailFactory> l, IConfiguration configuration)
+        public EmailFactory(IConfiguration configuration)
         {
-            L = l;
             baseUrl = configuration[$"{nameof(BlazorBoilerplate)}:ApplicationUrl"];
         }
 

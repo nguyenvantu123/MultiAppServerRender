@@ -29,8 +29,7 @@ namespace BlazorWebApi.Middleware
 
         public APIResponseRequestLoggingMiddleware(RequestDelegate next,
             IConfiguration configuration,
-            IStringLocalizer<Global> l,
-            ILogger<APIResponseRequestLoggingMiddleware> logger) : base(next, l, logger)
+            ILogger<APIResponseRequestLoggingMiddleware> logger) : base(next, logger)
         {
             _enableAPILogging = configuration.GetSection("BlazorBoilerplate:Api:Logging:Enabled").Get<bool>();
             _clearCacheHeadersDelegate = ClearCacheHeaders;

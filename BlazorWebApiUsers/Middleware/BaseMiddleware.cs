@@ -10,15 +10,13 @@ namespace BlazorWebApi.Users.Middleware
     public abstract class BaseMiddleware
     {
         protected ILogger<BaseMiddleware> _logger;
-        protected IStringLocalizer<Global> L;
 
         //https://trailheadtechnology.com/aspnetcore-multi-tenant-tips-and-tricks/
         protected readonly RequestDelegate _next;
 
-        protected BaseMiddleware(RequestDelegate next, IStringLocalizer<Global> l, ILogger<BaseMiddleware> logger)
+        protected BaseMiddleware(RequestDelegate next, ILogger<BaseMiddleware> logger)
         {
             _next = next;
-            L = l;
             _logger = logger;
         }
 
