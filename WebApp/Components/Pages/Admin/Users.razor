@@ -20,7 +20,7 @@
 }
 else
 {
-   @*  <MudTable ServerData="@(new Func<TableState, Task<TableData<UserViewModel>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<UserViewModel>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
         <HeaderContent>
             <MudTh><MudButton StartIcon="@Icons.Material.Filled.PersonAdd" OnClick="@(e => { createUserDialogOpen = true; })" Variant="Variant.Filled" Color="Color.Primary">@L["New User"]</MudButton></MudTh>
             <MudTh>@L["UserName"]</MudTh>
@@ -45,7 +45,7 @@ else
             <MudTd>
                 @if (@UserRow.Roles != null)
                 {
-                    <MudChipSet T="string">
+                    <MudChipSet>
                         @foreach (var ur in @UserRow.Roles)
                         {
                             <MudChip Text="@ur"></MudChip>
@@ -57,7 +57,7 @@ else
         <PagerContent>
             <MudTablePager RowsPerPageString=@L["Rows per page"] />
         </PagerContent>
-    </MudTable> *@
+    </MudTable>
 }
 
 <MudDialog @bind-IsVisible="@createUserDialogOpen">
@@ -101,7 +101,7 @@ else
 
             <MudTextField @bind-Value="@currentUser.Email" Label=@L["Email"] AdornmentIcon="@Icons.Material.Outlined.Email" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] Type="mail"></MudTextField>
 
-            <MudChipSet T="string">
+            <MudChipSet>
                 @foreach (var role in roleSelections.OrderBy(x => x.DisplayValue))
                 {
                     <MudChip Text="@role.DisplayValue" Icon="@((role.Selected) ? Icons.Material.Filled.Done : "")" @onclick="@(()=>UpdateUserRole(role))" />
@@ -115,7 +115,7 @@ else
     </DialogActions>
 </MudDialog>
 
-<MudDialog @bind-IsVisible="@deleteUserDialogOpen" Style="z-index:1000">
+<MudDialog @bind-IsVisible="@deleteUserDialogOpen" Style="z-index:100">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />

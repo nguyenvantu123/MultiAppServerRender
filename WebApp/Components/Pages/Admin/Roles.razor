@@ -27,10 +27,10 @@ else
             </MudTd>
             <MudTd><div style="width:130px;">@RoleRow.Name</div></MudTd>
             <MudTd>
-                <MudChipSet T="string">
+                <MudChipSet>
                     @foreach (var permission in @RoleRow.Permissions)
                     {
-                    <MudChip Value="@permission"></MudChip>
+                        <MudChip Text="@permission"></MudChip>
                     }
                 </MudChipSet>
             </MudTd>
@@ -55,7 +55,7 @@ else
             </HeaderContent>
             <RowTemplate>
                 <MudTd>@context.DisplayValue</MudTd>
-                <MudTd><MudCheckBox Value="@context.Selected"></MudCheckBox></MudTd>
+                <MudTd><MudCheckBox @bind-Checked="@context.Selected"></MudCheckBox></MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager RowsPerPageString=@L["Rows per page"] />

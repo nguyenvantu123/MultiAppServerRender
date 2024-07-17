@@ -42,15 +42,14 @@ using eShop.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Google.Protobuf.WellKnownTypes;
-using BlazorWebApi.Users.Components;
-using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+//builder.Services.AddControllersWithViews();
+
+//builder.AddDefaultAuthentication();
 
 builder.Services.AddControllers(options =>
 {
@@ -58,8 +57,6 @@ builder.Services.AddControllers(options =>
     options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
     options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
 });
-
-builder.Services.AddMudServices();
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
@@ -92,6 +89,15 @@ builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+});
 
 //builder.Services.ConfigureApplicationCookie(options =>
 //{
@@ -193,8 +199,11 @@ app.UseStaticFiles();
 
 app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 app.UseRouting();
+
 app.UseIdentityServer();
 app.UseAuthorization();
+
+//app.UseAuthentication();
 
 app.MapDefaultControllerRoute();
 
@@ -210,9 +219,6 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
     databaseInitializer.SeedAsync().Wait();
 }
-
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
 
 app.Run();
 

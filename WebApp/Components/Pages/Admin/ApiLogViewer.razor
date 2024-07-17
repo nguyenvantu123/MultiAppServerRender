@@ -26,7 +26,7 @@
 }
 else
 {
-  @*   <MudTable ServerData="@(new Func<TableState, Task<TableData<ApiLogItem>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<ApiLogItem>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
         <HeaderContent>
             <MudTh><div style="width:175px;"><MudFab Icon="@Icons.Material.Filled.Refresh" OnClick="@(() => Reload())" DisableElevation="true" Size="Size.Small" /> Date / Time</div></MudTh>
             <MudTh>Http Code</MudTh>
@@ -48,7 +48,7 @@ else
         <PagerContent>
             <MudTablePager RowsPerPageString=@L["Rows per page"] />
         </PagerContent>
-    </MudTable> *@
+    </MudTable>
 }
 
 @code {
