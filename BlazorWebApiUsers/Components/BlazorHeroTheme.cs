@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-namespace WebApp.Components
+namespace BlazorWebApi.Components
 {
     public class BlazorHeroTheme
     {
@@ -118,30 +118,6 @@ namespace WebApp.Components
                 DrawerBackground = "#FFF",
                 DrawerText = "rgba(0,0,0, 0.7)",
                 Success = "#007E33"
-            },
-            Typography = DefaultTypography,
-            LayoutProperties = DefaultLayoutProperties
-        };
-
-        public static MudTheme DarkTheme = new MudTheme()
-        {
-            PaletteDark = new PaletteDark()
-            {
-                Primary = "#1E88E5",
-                Success = "#007E33",
-                Black = "#27272f",
-                Background = "#32333d",
-                Surface = "#373740",
-                DrawerBackground = "#27272f",
-                DrawerText = "rgba(255,255,255, 0.50)",
-                AppbarBackground = "#373740",
-                AppbarText = "rgba(255,255,255, 0.70)",
-                TextPrimary = "rgba(255,255,255, 0.70)",
-                TextSecondary = "rgba(255,255,255, 0.50)",
-                ActionDefault = "#adadb1",
-                ActionDisabled = "rgba(255,255,255, 0.26)",
-                ActionDisabledBackground = "rgba(255,255,255, 0.12)",
-                DrawerIcon = "rgba(255,255,255, 0.50)"
             },
             Typography = DefaultTypography,
             LayoutProperties = DefaultLayoutProperties

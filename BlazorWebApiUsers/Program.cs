@@ -42,10 +42,15 @@ using eShop.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Google.Protobuf.WellKnownTypes;
+using BlazorWebApi.Users.Components;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
 builder.Services.AddControllers(options =>
 {
@@ -53,6 +58,8 @@ builder.Services.AddControllers(options =>
     options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
     options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
 });
+
+builder.Services.AddMudServices();
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
@@ -67,6 +74,8 @@ builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithStaticStrategy(DefaultTenant.DefaultTenantId);
 
 builder.Services.AddScoped<BlazorWebApi.Users.Models.IUserSession, UserSessionApp>();
+
+builder.Services.AddRazorPages();
 
 //builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<AppTenantInfo>), typeof(TenantResolver<AppTenantInfo>), ServiceLifetime.Scoped));
@@ -83,6 +92,34 @@ builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
+
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//    options.Cookie.Name = "auth_cookie";
+//    options.Cookie.SameSite = SameSiteMode.None;
+//    options.LoginPath = "/login";
+//    options.AccessDeniedPath = new PathString("/api/contests");
+
+//    // Not creating a new object since ASP.NET Identity has created
+//    // one already and hooked to the OnValidatePrincipal event.
+//    // See https://github.com/aspnet/AspNetCore/blob/5a64688d8e192cacffda9440e8725c1ed41a30cf/src/Identity/src/Identity/IdentityServiceCollectionExtensions.cs#L56
+//    options.Events.OnRedirectToLogin = context =>
+//    {
+//        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+//        return Task.CompletedTask;
+//    };
+//});
+
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//}).AddCookie(x =>
+//{
+//    x.LoginPath = "/Account/Login";
+//    x.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+//});
 
 #region Automapper
 //Automapper to map DTO to Models https://www.c-sharpcorner.com/UploadFile/1492b1/crud-operations-using-automapper-in-mvc-application/
@@ -173,6 +210,9 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
     databaseInitializer.SeedAsync().Wait();
 }
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 
 app.Run();
 

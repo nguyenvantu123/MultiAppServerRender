@@ -167,7 +167,7 @@ namespace BlazorWebApi.Users.Configuration
 
                     AllowedScopes =
                     {
-                        "orders"
+                        "identity"
                     }
                 },
                 new Client

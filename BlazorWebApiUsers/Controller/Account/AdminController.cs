@@ -28,8 +28,11 @@ namespace BlazorWebApi.Users.Controller.Account
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly ILogger<AdminController> _logger;
 
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IHttpContextAccessor _accessor;
+        private readonly IServiceProvider _serviceProvider;
 
-        public AdminController(IMapper autoMapper, TenantStoreDbContext tenantStoreDbContext, UserManager<ApplicationUser> userManager, EntityPermissions entityPermissions, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger)
+        public AdminController(IMapper autoMapper, TenantStoreDbContext tenantStoreDbContext, UserManager<ApplicationUser> userManager, EntityPermissions entityPermissions, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger, ApplicationDbContext dbContext, IHttpContextAccessor accessor, IServiceProvider serviceProvider)
         {
             _autoMapper = autoMapper;
             _tenantStoreDbContext = tenantStoreDbContext;
@@ -37,6 +40,10 @@ namespace BlazorWebApi.Users.Controller.Account
             _entityPermissions = entityPermissions;
             _roleManager = roleManager;
             _logger = logger;
+
+            _dbContext = dbContext;
+            _accessor = accessor;
+            _serviceProvider = serviceProvider;
         }
 
 
@@ -332,6 +339,35 @@ namespace BlazorWebApi.Users.Controller.Account
             }
 
             return response;
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<UserProfile> UserProfile()
+        {
+            var user = _accessor.HttpContext.User;
+            var userProfile = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == user.Identity.Name.ToUpper());
+
+            if (userProfile == null)
+            {
+                var tenantId = _accessor.HttpContext.GetMultiTenantContext<AppTenantInfo>().TenantInfo.Id;
+                var userId = new Guid(user.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+                userProfile = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.TenantId == tenantId && i.UserId == userId);
+
+                if (userProfile == null)
+                {
+                    userProfile = new UserProfile { TenantId = tenantId, UserId = userId };
+
+                    _dbContext.UserProfiles.Add(userProfile);
+                }
+
+                userProfile.LastUpdatedDate = DateTime.Now;
+
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return userProfile;
         }
         #endregion
     }

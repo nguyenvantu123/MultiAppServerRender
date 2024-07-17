@@ -186,7 +186,7 @@ namespace WebApp.Interfaces
 
         public async Task<UserProfileViewModel> GetUserProfile()
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<UserProfileViewModel>("api/data/user-profile");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<UserProfileViewModel>("api/admin/user-profile");
             return apiResponse;
 
         }

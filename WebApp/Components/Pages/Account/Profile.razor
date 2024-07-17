@@ -28,7 +28,7 @@
         <MudTextField @bind-Value="@userViewModel.LastName" Label=@L["LastName"] FullWidth="true"></MudTextField>
 
         <strong>@L["Roles"]</strong><br />
-        <MudChipSet>
+        <MudChipSet T="string">
             @foreach (var role in userViewModel.Roles)
             {
                 <MudChip Text="@role"></MudChip>
@@ -48,10 +48,10 @@
         }
         if (userViewModel.RecoveryCodes != null)
         {
-            <MudChipSet>
+            <MudChipSet T="string">
                 @foreach (var rCode in userViewModel.RecoveryCodes)
                 {
-                    <MudChip Text="@rCode"></MudChip>
+                <MudChip Text="@rCode"></MudChip>
                 }
             </MudChipSet>
         }
