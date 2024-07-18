@@ -86,16 +86,22 @@ var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
 
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//}).AddCookie(x =>
-//{
-//    x.LoginPath = "/Account/Login";
-//    x.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-//});
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToAccessDenied =
+        options.Events.OnRedirectToLogin = c =>
+        {
+            if (c.Request.Path.StartsWithSegments("/api")
+                && c.Response.StatusCode == StatusCodes.Status200OK)
+            {
+                c.Response.Headers["Location"] = c.RedirectUri;
+                c.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.FromResult<object>(null);
+            }
+            c.Response.Redirect(c.RedirectUri);
+            return Task.FromResult<object>(null);
+        };
+});
 
 #region Automapper
 //Automapper to map DTO to Models https://www.c-sharpcorner.com/UploadFile/1492b1/crud-operations-using-automapper-in-mvc-application/
@@ -173,7 +179,7 @@ app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthorization();
 
-//app.UseAuthentication();
+app.UseAuthentication();
 
 app.MapDefaultControllerRoute();
 
