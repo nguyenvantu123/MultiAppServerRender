@@ -49,7 +49,7 @@ builder.AddServiceDefaults();
 
 //builder.Services.AddControllersWithViews();
 
-//builder.AddDefaultAuthentication();
+builder.AddDefaultAuthentication();
 
 builder.Services.AddControllers(options =>
 {
@@ -82,39 +82,9 @@ builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
 builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-
 var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
-
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Events.OnRedirectToLogin = context =>
-    {
-        context.Response.StatusCode = 401;
-        return Task.CompletedTask;
-    };
-});
-
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.Cookie.Name = "auth_cookie";
-//    options.Cookie.SameSite = SameSiteMode.None;
-//    options.LoginPath = "/login";
-//    options.AccessDeniedPath = new PathString("/api/contests");
-
-//    // Not creating a new object since ASP.NET Identity has created
-//    // one already and hooked to the OnValidatePrincipal event.
-//    // See https://github.com/aspnet/AspNetCore/blob/5a64688d8e192cacffda9440e8725c1ed41a30cf/src/Identity/src/Identity/IdentityServiceCollectionExtensions.cs#L56
-//    options.Events.OnRedirectToLogin = context =>
-//    {
-//        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-//        return Task.CompletedTask;
-//    };
-//});
 
 //builder.Services.AddAuthentication(options =>
 //{

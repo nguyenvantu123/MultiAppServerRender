@@ -221,12 +221,10 @@
             if (user.IsInRole("Administrator"))
             {
                 _navigationManager.NavigateTo(ReturnUrl ?? "/admin");
-
             }
             else
             {
                 _navigationManager.NavigateTo(ReturnUrl ?? "/");
-
             }
         }
         else
