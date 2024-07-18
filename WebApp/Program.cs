@@ -181,40 +181,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
                                                    //options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.IsEssential = true;
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(Convert.ToDouble(configuration[$"{projectName}:CookieExpireTimeSpanDays"] ?? "60"));
-    options.LoginPath = Settings.LoginPath;
-    //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-    // ReturnUrlParameter requires
-    //using Microsoft.AspNetCore.Authentication.Cookies;
-    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-    options.SlidingExpiration = true;
-
-    options.EventsType = typeof(CookieEvents);
-
-    // Suppress redirect on API URLs in ASP.NET Core -> https://stackoverflow.com/a/56384729/54159
-    options.Events = new CookieAuthenticationEvents()
-    {
-        OnRedirectToAccessDenied = context =>
-        {
-            if (context.Request.Path.StartsWithSegments("/api"))
-            {
-                context.Response.StatusCode = Status403Forbidden;
-            }
-
-            return Task.CompletedTask;
-        },
-        OnRedirectToLogin = context =>
-        {
-            context.Response.StatusCode = Status401Unauthorized;
-            return Task.CompletedTask;
-        }
-    };
-});
 #endregion
 
 //builder.Services.AddCascadingAuthenticationState();

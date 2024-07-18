@@ -49,6 +49,12 @@ namespace BlazorWebApi.Quickstart
         public async Task<IActionResult> Login(string returnUrl)
         {
             // build a model so we know what to show on the login page
+
+            if (returnUrl.Contains("/api"))
+            {
+                return Unauthorized();
+            }
+
             var vm = await BuildLoginViewModelAsync(returnUrl);
 
             ViewData["ReturnUrl"] = returnUrl;

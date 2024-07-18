@@ -43,6 +43,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Google.Protobuf.WellKnownTypes;
 using System.Reflection;
+using static Microsoft.AspNetCore.Http.StatusCodes;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,6 +90,32 @@ builder.Services.AddControllers(options =>
     options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
 });
 
+var identitySection = builder.Configuration.GetSection("Identity");
+
+//builder.Services.AddAuthentication().AddJwtBearer(options =>
+//{
+
+//    //$"{configuration["IdentityApiClient"]}/swagger/oauth2-redirect.html"
+//    var identityUrl = identitySection["IdentityApiClient"];
+//    var audience = identitySection.GetRequiredValue("Audience");
+
+//    options.Authority = identityUrl;
+//    options.RequireHttpsMetadata = false;
+//    options.Audience = audience;
+
+//#if DEBUG
+//    //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
+//    options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
+//#else
+//            options.TokenValidationParameters.ValidIssuers = [identityUrl];
+//#endif
+
+//    options.TokenValidationParameters.ValidateAudience = false;
+//});
+
+//builder.Services.AddAuthorization();
+
+
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
@@ -116,26 +144,36 @@ var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
 
-//builder.Services.ConfigureApplicationCookie(o =>
+//builder.Services.ConfigureApplicationCookie(options =>
 //{
-//    o.Events = new CookieAuthenticationEvents()
+//    options.Cookie.IsEssential = true;
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+//    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+//    options.LoginPath = "/Account/Login";
+//    //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+//    // ReturnUrlParameter requires
+//    //using Microsoft.AspNetCore.Authentication.Cookies;
+//    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+//    options.SlidingExpiration = true;
+
+//    //options.EventsType = typeof(CookieEvents);
+
+//    // Suppress redirect on API URLs in ASP.NET Core -> https://stackoverflow.com/a/56384729/54159
+//    options.Events = new CookieAuthenticationEvents()
 //    {
-//        OnRedirectToLogin = (ctx) =>
+//        OnRedirectToAccessDenied = context =>
 //        {
-//            if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+//            if (context.Request.Path.StartsWithSegments("/api"))
 //            {
-//                ctx.Response.StatusCode = 401;
+//                context.Response.StatusCode = Status403Forbidden;
 //            }
 
 //            return Task.CompletedTask;
 //        },
-//        OnRedirectToAccessDenied = (ctx) =>
+//        OnRedirectToLogin = context =>
 //        {
-//            if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-//            {
-//                ctx.Response.StatusCode = 403;
-//            }
-
+//            context.Response.StatusCode = Status401Unauthorized;
 //            return Task.CompletedTask;
 //        }
 //    };
@@ -217,7 +255,7 @@ app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthorization();
 
-app.UseAuthentication();
+//app.UseAuthentication();
 
 app.MapDefaultControllerRoute();
 
