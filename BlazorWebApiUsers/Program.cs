@@ -42,6 +42,7 @@ using eShop.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Google.Protobuf.WellKnownTypes;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,35 @@ builder.AddServiceDefaults();
 //builder.Services.AddControllersWithViews();
 
 builder.AddDefaultAuthentication();
+
+//builder.Services.AddSwaggerGen(opt =>
+//{
+//    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
+//    //opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//    //{
+//    //    In = ParameterLocation.Header,
+//    //    Description = "Please enter token",
+//    //    Name = "Authorization",
+//    //    Type = SecuritySchemeType.Http,
+//    //    BearerFormat = "JWT",
+//    //    Scheme = "bearer"
+//    //});
+
+//    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+//    {
+//        {
+//            new OpenApiSecurityScheme
+//            {
+//                Reference = new OpenApiReference
+//                {
+//                    Type=ReferenceType.SecurityScheme,
+//                    Id="Bearer"
+//                }
+//            },
+//            new string[]{}
+//        }
+//    });
+//});
 
 builder.Services.AddControllers(options =>
 {
@@ -86,22 +116,30 @@ var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Events.OnRedirectToAccessDenied =
-        options.Events.OnRedirectToLogin = c =>
-        {
-            if (c.Request.Path.StartsWithSegments("/api")
-                && c.Response.StatusCode == StatusCodes.Status200OK)
-            {
-                c.Response.Headers["Location"] = c.RedirectUri;
-                c.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                return Task.FromResult<object>(null);
-            }
-            c.Response.Redirect(c.RedirectUri);
-            return Task.FromResult<object>(null);
-        };
-});
+//builder.Services.ConfigureApplicationCookie(o =>
+//{
+//    o.Events = new CookieAuthenticationEvents()
+//    {
+//        OnRedirectToLogin = (ctx) =>
+//        {
+//            if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+//            {
+//                ctx.Response.StatusCode = 401;
+//            }
+
+//            return Task.CompletedTask;
+//        },
+//        OnRedirectToAccessDenied = (ctx) =>
+//        {
+//            if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+//            {
+//                ctx.Response.StatusCode = 403;
+//            }
+
+//            return Task.CompletedTask;
+//        }
+//    };
+//});
 
 #region Automapper
 //Automapper to map DTO to Models https://www.c-sharpcorner.com/UploadFile/1492b1/crud-operations-using-automapper-in-mvc-application/
@@ -124,7 +162,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
 
 builder.Services.AddIdentityServer(options =>
 {
-    options.Authentication.CookieLifetime = TimeSpan.FromHours(2);
+    options.Authentication.CookieLifetime = TimeSpan.FromMinutes(5);
 
     options.Events.RaiseErrorEvents = true;
     options.Events.RaiseInformationEvents = true;
