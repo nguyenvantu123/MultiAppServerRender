@@ -41,5 +41,16 @@ namespace BlazorWebApi.Users.Extensions
         {
             return string.Join("\n", result.Errors.Select(i => i.Description));
         }
+
+        private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
+        {
+            //eventBus.AddSubscription<GracePeriodConfirmedIntegrationEvent, GracePeriodConfirmedIntegrationEventHandler>();
+            //eventBus.AddSubscription<OrderStockConfirmedIntegrationEvent, OrderStockConfirmedIntegrationEventHandler>();
+            //eventBus.AddSubscription<OrderStockRejectedIntegrationEvent, OrderStockRejectedIntegrationEventHandler>();
+            //eventBus.AddSubscription<OrderPaymentFailedIntegrationEvent, OrderPaymentFailedIntegrationEventHandler>();
+            //eventBus.AddSubscription<OrderPaymentSucceededIntegrationEvent, OrderPaymentSucceededIntegrationEventHandler>();
+        }
     }
+
+
 }

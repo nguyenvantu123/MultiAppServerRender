@@ -139,6 +139,8 @@ builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
+builder.AddRabbitMqEventBus("eventbus").AddEventBusSubscriptions();
+
 builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 var withApiVersioning = builder.Services.AddApiVersioning();
 
@@ -273,4 +275,3 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 }
 
 app.Run();
-
