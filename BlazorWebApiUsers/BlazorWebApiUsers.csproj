@@ -20,6 +20,7 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
     <PackageReference Include="AspectInjector" Version="2.8.2" />
+    <PackageReference Include="Aspire.StackExchange.Redis" Version="8.0.2" />
     <PackageReference Include="Breeze.AspNetCore.NetCore" Version="7.3.0" />
     <PackageReference Include="Breeze.Persistence" Version="7.3.0" />
     <PackageReference Include="Breeze.Persistence.EFCore" Version="7.3.0" />
@@ -61,8 +62,7 @@
     <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
     <ProjectReference Include="..\Aspire.Minio.Client\Aspire.Minio.Client.csproj" />
     <ProjectReference Include="..\Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj" />
-    <ProjectReference Include="..\Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj" />
-    <ProjectReference Include="..\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
   </ItemGroup>
 

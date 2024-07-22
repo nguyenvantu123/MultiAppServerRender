@@ -1,6 +1,4 @@
-﻿using MultiAppServer.EventBus.Events;
-
-namespace MultiAppServer.EventBus.Abstractions;
+﻿namespace MultiAppServer.EventBus.Abstractions;
 
 public interface IIntegrationEventHandler<in TIntegrationEvent> : IIntegrationEventHandler
     where TIntegrationEvent : IntegrationEvent

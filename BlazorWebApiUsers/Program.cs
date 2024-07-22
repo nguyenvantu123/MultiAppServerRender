@@ -1,6 +1,5 @@
 ﻿using Aspire.Minio.Client;
 using Aspire.MongoDb.Driver;
-using Aspire.RabbitMQ.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -44,44 +43,15 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Google.Protobuf.WellKnownTypes;
 using System.Reflection;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using BlazorWebApi.Users.Extensions;
+using EventBus.RabbitMQ;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-//builder.Services.AddControllersWithViews();
-
-builder.AddDefaultAuthentication();
-
-//builder.Services.AddSwaggerGen(opt =>
-//{
-//    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
-//    //opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//    //{
-//    //    In = ParameterLocation.Header,
-//    //    Description = "Please enter token",
-//    //    Name = "Authorization",
-//    //    Type = SecuritySchemeType.Http,
-//    //    BearerFormat = "JWT",
-//    //    Scheme = "bearer"
-//    //});
-
-//    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-//    {
-//        {
-//            new OpenApiSecurityScheme
-//            {
-//                Reference = new OpenApiReference
-//                {
-//                    Type=ReferenceType.SecurityScheme,
-//                    Id="Bearer"
-//                }
-//            },
-//            new string[]{}
-//        }
-//    });
-//});
+builder.AddApplicationServices();
 
 builder.Services.AddControllers(options =>
 {
@@ -91,30 +61,6 @@ builder.Services.AddControllers(options =>
 });
 
 var identitySection = builder.Configuration.GetSection("Identity");
-
-//builder.Services.AddAuthentication().AddJwtBearer(options =>
-//{
-
-//    //$"{configuration["IdentityApiClient"]}/swagger/oauth2-redirect.html"
-//    var identityUrl = identitySection["IdentityApiClient"];
-//    var audience = identitySection.GetRequiredValue("Audience");
-
-//    options.Authority = identityUrl;
-//    options.RequireHttpsMetadata = false;
-//    options.Audience = audience;
-
-//#if DEBUG
-//    //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
-//    options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
-//#else
-//            options.TokenValidationParameters.ValidIssuers = [identityUrl];
-//#endif
-
-//    options.TokenValidationParameters.ValidateAudience = false;
-//});
-
-//builder.Services.AddAuthorization();
-
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
@@ -139,47 +85,10 @@ builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
-builder.AddRabbitMqEventBus("eventbus").AddEventBusSubscriptions();
-
 builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
-
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.Cookie.IsEssential = true;
-//    options.Cookie.HttpOnly = true;
-//    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-//    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-//    options.LoginPath = "/Account/Login";
-//    //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-//    // ReturnUrlParameter requires
-//    //using Microsoft.AspNetCore.Authentication.Cookies;
-//    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-//    options.SlidingExpiration = true;
-
-//    //options.EventsType = typeof(CookieEvents);
-
-//    // Suppress redirect on API URLs in ASP.NET Core -> https://stackoverflow.com/a/56384729/54159
-//    options.Events = new CookieAuthenticationEvents()
-//    {
-//        OnRedirectToAccessDenied = context =>
-//        {
-//            if (context.Request.Path.StartsWithSegments("/api"))
-//            {
-//                context.Response.StatusCode = Status403Forbidden;
-//            }
-
-//            return Task.CompletedTask;
-//        },
-//        OnRedirectToLogin = context =>
-//        {
-//            context.Response.StatusCode = Status401Unauthorized;
-//            return Task.CompletedTask;
-//        }
-//    };
-//});
 
 #region Automapper
 //Automapper to map DTO to Models https://www.c-sharpcorner.com/UploadFile/1492b1/crud-operations-using-automapper-in-mvc-application/
@@ -192,8 +101,6 @@ var autoMapper = automapperConfig.CreateMapper();
 
 builder.Services.AddSingleton(autoMapper);
 #endregion
-
-//builder.Services.AddScoped<ApplicationPersistenceManager>();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -218,15 +125,6 @@ builder.Services.AddIdentityServer(options =>
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
 
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//}).AddCookie(x =>
-//{
-//    x.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-//});
 builder.Services.AddScoped<EntityPermissions>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
@@ -257,15 +155,12 @@ app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthorization();
 
-//app.UseAuthentication();
-
 app.MapDefaultControllerRoute();
 
 app.UseDeveloperExceptionPage();
 app.UseMultiTenant();
 app.UseMiddleware<UserSessionMiddleware>();
 app.UseDefaultOpenApi();
-//app.UseMiddleware<APIResponseRequestLoggingMiddleware>();
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {

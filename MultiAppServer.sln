@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.Microsoft.EntityFram
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.MongoDb.Driver", "Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj", "{919D49DA-12A0-4BC5-997B-F2ECA920A4C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.RabbitMQ.Client", "Aspire.RabbitMQ.Client\Aspire.RabbitMQ.Client.csproj", "{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.RabbitMQ", "EventBus.RabbitMQ\EventBus.RabbitMQ.csproj", "{1E7F4CA6-FEDE-44DE-A00C-BD6672E3F500}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.Minio.Client", "Aspire.Minio.Client\Aspire.Minio.Client.csproj", "{3331583A-51B2-48C1-8A94-6778691A35B2}"
 EndProject

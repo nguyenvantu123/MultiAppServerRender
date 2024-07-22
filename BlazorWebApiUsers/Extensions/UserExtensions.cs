@@ -2,7 +2,7 @@ using System.Security.Principal;
 
 namespace BlazorWebApi.Users.Extensions
 {
-    public static class Extensions
+    public static class UserExtensions
     {
         public static string GetSubjectById(this IPrincipal principal)
         {
@@ -40,15 +40,6 @@ namespace BlazorWebApi.Users.Extensions
         public static string GetErrors(this IdentityResult result)
         {
             return string.Join("\n", result.Errors.Select(i => i.Description));
-        }
-
-        private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
-        {
-            //eventBus.AddSubscription<GracePeriodConfirmedIntegrationEvent, GracePeriodConfirmedIntegrationEventHandler>();
-            //eventBus.AddSubscription<OrderStockConfirmedIntegrationEvent, OrderStockConfirmedIntegrationEventHandler>();
-            //eventBus.AddSubscription<OrderStockRejectedIntegrationEvent, OrderStockRejectedIntegrationEventHandler>();
-            //eventBus.AddSubscription<OrderPaymentFailedIntegrationEvent, OrderPaymentFailedIntegrationEventHandler>();
-            //eventBus.AddSubscription<OrderPaymentSucceededIntegrationEvent, OrderPaymentSucceededIntegrationEventHandler>();
         }
     }
 

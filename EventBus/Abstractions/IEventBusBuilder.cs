@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace MultiAppServer.EventBus.Abstractions;
 
 public interface IEventBusBuilder
 {

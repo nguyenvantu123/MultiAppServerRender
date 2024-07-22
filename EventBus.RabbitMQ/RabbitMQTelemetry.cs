@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using OpenTelemetry.Context.Propagation;
 
-namespace Aspire.RabbitMQ.Client;
+namespace EventBus.RabbitMQ;
 
 public class RabbitMQTelemetry
 {

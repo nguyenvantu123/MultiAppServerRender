@@ -1,12 +1,4 @@
-﻿namespace Aspire.RabbitMQ.Client;
-
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Net.Sockets;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,6 +9,15 @@ using OpenTelemetry.Context.Propagation;
 using Polly;
 using Polly.Retry;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Net.Sockets;
+using System.Text;
+using System.Text.Json;
+
+namespace EventBus.RabbitMQ;
 
 public sealed class RabbitMQEventBus(
     ILogger<RabbitMQEventBus> logger,

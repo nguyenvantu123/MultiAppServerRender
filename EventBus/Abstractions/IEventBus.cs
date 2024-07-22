@@ -1,5 +1,4 @@
-﻿using MultiAppServer.EventBus.Events;
-
+﻿
 namespace MultiAppServer.EventBus.Abstractions;
 
 public interface IEventBus

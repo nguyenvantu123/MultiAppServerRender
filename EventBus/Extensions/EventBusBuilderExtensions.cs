@@ -1,9 +1,10 @@
-﻿using MultiAppServer.EventBus.Abstractions;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MultiAppServer.EventBus.Abstractions;
 using MultiAppServer.EventBus.Events;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace MultiAppServer.EventBus.Abstractions;
 
 public static class EventBusBuilderExtensions
 {

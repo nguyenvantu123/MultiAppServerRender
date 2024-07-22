@@ -1,8 +1,10 @@
-﻿using Aspire.RabbitMQ.Client;
+﻿using EventBus.RabbitMQ;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MultiAppServer.EventBus.Abstractions;
+using RabbitMQ.Client;
 
-namespace Microsoft.Extensions.Hosting;
+namespace EventBus.RabbitMQ;
 
 public static class RabbitMqDependencyInjectionExtensions
 {

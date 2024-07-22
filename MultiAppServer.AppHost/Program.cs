@@ -8,7 +8,9 @@ var sqlIndentity = builder.AddSqlServer("sql")
 
 //var messaging = builder.AddRabbitMQ("messaging");
 
-var fileCache = builder.AddRedis("redis");
+var redis = builder.AddRedis("redis");
+
+var rabbitMq = builder.AddRabbitMQ("eventbus");
 
 //var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers").WithReference(sqlIndentity).WithReference(messaging);
 
@@ -16,7 +18,9 @@ var launchProfileName = ShouldUseHttpForEndpoints() ? "http" : "https";
 
 var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers", launchProfileName)
     .WithExternalHttpEndpoints()
-    .WithReference(sqlIndentity);
+    .WithReference(sqlIndentity)
+    .WithReference(rabbitMq)
+    .WithReference(redis);
 
 var identityEndpoint = user.GetEndpoint(launchProfileName);
 

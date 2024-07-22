@@ -1,4 +1,4 @@
-﻿namespace Aspire.RabbitMQ.Client;
+﻿namespace EventBus.RabbitMQ;
 
 public class EventBusOptions
 {
