@@ -1,10 +1,10 @@
-﻿using MultiAppServer.EventBus.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
-using EventBus.RabbitMQ;
-using BlazorWebApi.Repositories;
+﻿
 
-namespace BlazorWebApi.Users.Extensions
+using eShop.WebApp.Services.OrderStatus.IntegrationEvents;
+using EventBus.RabbitMQ;
+using MultiAppServer.EventBus.Abstractions;
+
+namespace WebApp.Extensions
 {
     public static class Extension
     {
@@ -17,13 +17,11 @@ namespace BlazorWebApi.Users.Extensions
 
             builder.AddRedisClient("redis");
 
-
-            builder.Services.AddSingleton<RedisUserRepository>();
         }
 
         private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
         {
-
+            eventBus.AddSubscription<UserProfileIntegrationEvent, UserProfileEventHandler>();
         }
     }
 }

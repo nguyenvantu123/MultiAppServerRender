@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlazorWebApi.Repositories;
 using BlazorWebApi.Users.Constants;
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Extensions;
@@ -32,7 +33,9 @@ namespace BlazorWebApi.Users.Controller.Account
         private readonly IHttpContextAccessor _accessor;
         private readonly IServiceProvider _serviceProvider;
 
-        public AdminController(IMapper autoMapper, TenantStoreDbContext tenantStoreDbContext, UserManager<ApplicationUser> userManager, EntityPermissions entityPermissions, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger, ApplicationDbContext dbContext, IHttpContextAccessor accessor, IServiceProvider serviceProvider)
+        private readonly RedisUserRepository _redisUserRepository;
+
+        public AdminController(IMapper autoMapper, TenantStoreDbContext tenantStoreDbContext, UserManager<ApplicationUser> userManager, EntityPermissions entityPermissions, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger, ApplicationDbContext dbContext, IHttpContextAccessor accessor, IServiceProvider serviceProvider, RedisUserRepository redisUserRepository)
         {
             _autoMapper = autoMapper;
             _tenantStoreDbContext = tenantStoreDbContext;
@@ -44,6 +47,8 @@ namespace BlazorWebApi.Users.Controller.Account
             _dbContext = dbContext;
             _accessor = accessor;
             _serviceProvider = serviceProvider;
+
+            _redisUserRepository = redisUserRepository;
         }
 
 
@@ -345,29 +350,41 @@ namespace BlazorWebApi.Users.Controller.Account
         [Route("[action]")]
         public async Task<UserProfile> UserProfile()
         {
+
             var user = _accessor.HttpContext.User;
-            var userProfile = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == user.Identity.Name.ToUpper());
 
-            if (userProfile == null)
+            var userProfileResult = new UserProfile();
+            var userId = new Guid(user.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            userProfileResult = await _redisUserRepository.GetUserProfileAsync(userId);
+
+            if (userProfileResult == null)
             {
-                var tenantId = _accessor.HttpContext.GetMultiTenantContext<AppTenantInfo>().TenantInfo.Id;
-                var userId = new Guid(user.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                userProfileResult = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == user.Identity.Name.ToUpper());
 
-                userProfile = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.TenantId == tenantId && i.UserId == userId);
-
-                if (userProfile == null)
+                if (userProfileResult == null)
                 {
-                    userProfile = new UserProfile { TenantId = tenantId, UserId = userId };
+                    var tenantId = _accessor.HttpContext.GetMultiTenantContext<AppTenantInfo>().TenantInfo.Id;
 
-                    _dbContext.UserProfiles.Add(userProfile);
+
+                    userProfileResult = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.TenantId == tenantId && i.UserId == userId);
+
+                    if (userProfileResult == null)
+                    {
+                        userProfileResult = new UserProfile { TenantId = tenantId, UserId = userId };
+
+                        _dbContext.UserProfiles.Add(userProfileResult);
+                    }
+
+                    userProfileResult.LastUpdatedDate = DateTime.Now;
+
+                    await _dbContext.SaveChangesAsync();
                 }
 
-                userProfile.LastUpdatedDate = DateTime.Now;
-
-                await _dbContext.SaveChangesAsync();
+                await _redisUserRepository.UpdateUserProfileAsync(userProfileResult);
             }
 
-            return userProfile;
+
+            return userProfileResult;
         }
         #endregion
     }
