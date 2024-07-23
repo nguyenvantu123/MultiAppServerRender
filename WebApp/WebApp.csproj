@@ -43,6 +43,7 @@
   <ItemGroup>
     <Folder Include="Handler\" />
     <Folder Include="Localizer\" />
+    <Folder Include="Services\UserProfile\" />
   </ItemGroup>
 
 </Project>

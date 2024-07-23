@@ -44,14 +44,22 @@ using Google.Protobuf.WellKnownTypes;
 using System.Reflection;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using BlazorWebApi.Users.Extensions;
-using EventBus.RabbitMQ;
+using Aspire.StackExchange.Redis;
+using BlazorWebApi.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.AddApplicationServices();
+//builder.AddApplicationServices();
+
+builder.AddRedis("Redis");
+
+builder.AddRabbitMQ("EventBus");
+
+builder.Services.AddSingleton<RedisUserRepository>();
+
 
 builder.Services.AddControllers(options =>
 {

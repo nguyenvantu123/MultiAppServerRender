@@ -1,8 +1,7 @@
-﻿using MultiAppServer.EventBus.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
-using EventBus.RabbitMQ;
 using BlazorWebApi.Repositories;
+using Aspire.StackExchange.Redis;
 
 namespace BlazorWebApi.Users.Extensions
 {
@@ -12,18 +11,13 @@ namespace BlazorWebApi.Users.Extensions
         public static void AddApplicationServices(this IHostApplicationBuilder builder)
         {
             // Add the authentication services to DI
-            builder.AddRabbitMqEventBus("eventbus")
-                   .AddEventBusSubscriptions();
-
-            builder.AddRedisClient("redis");
 
 
-            builder.Services.AddSingleton<RedisUserRepository>();
         }
 
-        private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
-        {
+        //private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
+        //{
 
-        }
+        //}
     }
 }

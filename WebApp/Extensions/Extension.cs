@@ -1,10 +1,4 @@
-﻿
-
-using eShop.WebApp.Services.OrderStatus.IntegrationEvents;
-using EventBus.RabbitMQ;
-using MultiAppServer.EventBus.Abstractions;
-
-namespace WebApp.Extensions
+﻿namespace WebApp.Extensions
 {
     public static class Extension
     {
@@ -12,16 +6,16 @@ namespace WebApp.Extensions
         public static void AddApplicationServices(this IHostApplicationBuilder builder)
         {
             // Add the authentication services to DI
-            builder.AddRabbitMqEventBus("eventbus")
-                   .AddEventBusSubscriptions();
+            //builder.AddRabbitMqEventBus("eventbus")
+            //       .AddEventBusSubscriptions();
 
-            builder.AddRedisClient("redis");
+            //builder.AddRedisClient("redis");
 
         }
 
-        private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
-        {
-            //eventBus.AddSubscription<UserProfileIntegrationEvent, UserProfileEventHandler>();
-        }
+        //private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
+        //{
+        //    //eventBus.AddSubscription<UserProfileIntegrationEvent, UserProfileEventHandler>();
+        //}
     }
 }
