@@ -21,7 +21,7 @@ namespace WebApp.Extensions
 
         private static void AddEventBusSubscriptions(this IEventBusBuilder eventBus)
         {
-            eventBus.AddSubscription<UserProfileIntegrationEvent, UserProfileEventHandler>();
+            //eventBus.AddSubscription<UserProfileIntegrationEvent, UserProfileEventHandler>();
         }
     }
 }

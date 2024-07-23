@@ -11,6 +11,6 @@ public class UserProfileEventHandler(
     public async Task Handle(UserProfileIntegrationEvent @event)
     {
         logger.LogInformation("Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.Id, @event);
-        await orderStatusNotificationService.NotifyOrderStatusChangedAsync(@event.UserId);
+        //await orderStatusNotificationService.NotifyOrderStatusChangedAsync(@event.UserId);
     }
 }

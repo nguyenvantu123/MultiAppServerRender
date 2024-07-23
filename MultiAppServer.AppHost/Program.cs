@@ -32,9 +32,8 @@ var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles");
 //builder.AddProject<Projects.WebApp>("webapp").WithReference(user);
 
 var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
-    .WithExternalHttpEndpoints().WithEnvironment("IdentityUrl", identityEndpoint);
-
-user.WithEnvironment("IdentityApiClient", user.GetEndpoint(launchProfileName));
+    .WithExternalHttpEndpoints().WithEnvironment("IdentityUrl", identityEndpoint).WithReference(rabbitMq)
+    .WithReference(redis).WithEnvironment("IdentityApiClient", user.GetEndpoint(launchProfileName));
 
 webApp.WithReference(user).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
 
