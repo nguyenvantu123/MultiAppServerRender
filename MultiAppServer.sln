@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAppServer.ServiceDefau
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csproj", "{383A21D9-769E-4CAF-94BE-8901E4FA9497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "EventBus\EventBus.csproj", "{8D9830FC-D6ED-4864-85DB-78F5F61E63A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "EventBus\EventBus.csproj", "{8D9830FC-D6ED-4864-85DB-78F5F61E63A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationEventLogEF", "IntegrationEventLogEF\IntegrationEventLogEF.csproj", "{2016F220-4AEA-460B-B803-B78B60FC44B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,10 @@ Global
 		{8D9830FC-D6ED-4864-85DB-78F5F61E63A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D9830FC-D6ED-4864-85DB-78F5F61E63A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D9830FC-D6ED-4864-85DB-78F5F61E63A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2016F220-4AEA-460B-B803-B78B60FC44B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2016F220-4AEA-460B-B803-B78B60FC44B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2016F220-4AEA-460B-B803-B78B60FC44B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2016F220-4AEA-460B-B803-B78B60FC44B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

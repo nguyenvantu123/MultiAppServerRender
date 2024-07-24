@@ -1,4 +1,4 @@
-﻿namespace eShop.Ordering.API.Infrastructure.Services;
+﻿namespace BlazorWebApiFiles.Infrastructure.Services;
 
 public class IdentityService(IHttpContextAccessor context) : IIdentityService
 {

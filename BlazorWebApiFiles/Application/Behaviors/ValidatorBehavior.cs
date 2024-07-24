@@ -1,4 +1,8 @@
-﻿namespace eShop.Ordering.API.Application.Behaviors;
+﻿
+using BlazorWebApiFiles.Exceptions;
+using MultiAppServer.EventBus.Extensions;
+
+namespace BlazorWebApiFiles.Application.Behaviors;
 
 public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
@@ -27,7 +31,7 @@ public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest
         {
             _logger.LogWarning("Validation errors - {CommandType} - Command: {@Command} - Errors: {@ValidationErrors}", typeName, request, failures);
 
-            throw new OrderingDomainException(
+            throw new FilesDomainException(
                 $"Command Validation Errors for type {typeof(TRequest).Name}", new ValidationException("Validation exception", failures));
         }
 

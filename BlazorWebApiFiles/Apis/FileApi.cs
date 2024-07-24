@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using CardType = eShop.Ordering.API.Application.Queries.CardType;
-using Order = eShop.Ordering.API.Application.Queries.Order;
-
+﻿
 public static class FileApi
 {
     public static RouteGroupBuilder MapFilesApiV1(this IEndpointRouteBuilder app)

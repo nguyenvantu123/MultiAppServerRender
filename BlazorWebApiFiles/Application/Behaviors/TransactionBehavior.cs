@@ -1,20 +1,24 @@
-﻿namespace eShop.Ordering.API.Application.Behaviors;
+﻿namespace BlazorWebApiFiles.Application.Behaviors;
 
 using BlazorWebApi.Files.Data;
+using BlazorWebApiFiles.Application.IntegrationEvents;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using MultiAppServer.EventBus.Extensions;
 
 public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
     private readonly ILogger<TransactionBehavior<TRequest, TResponse>> _logger;
     private readonly FileDbContext _dbContext;
-    private readonly IOrderingIntegrationEventService _orderingIntegrationEventService;
+    private readonly IFileIntegrationEventService _fileIntegrationEventService;
 
     public TransactionBehavior(FileDbContext dbContext,
-        IOrderingIntegrationEventService orderingIntegrationEventService,
+        IFileIntegrationEventService fileIntegrationEventService,
         ILogger<TransactionBehavior<TRequest, TResponse>> logger)
     {
         _dbContext = dbContext ?? throw new ArgumentException(nameof(FileDbContext));
-        _orderingIntegrationEventService = orderingIntegrationEventService ?? throw new ArgumentException(nameof(orderingIntegrationEventService));
+        _fileIntegrationEventService = fileIntegrationEventService ?? throw new ArgumentException(nameof(fileIntegrationEventService));
         _logger = logger ?? throw new ArgumentException(nameof(ILogger));
     }
 
@@ -30,7 +34,7 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
                 return await next();
             }
 
-            var strategy = _dbContext.Data.CreateExecutionStrategy();
+            var strategy = _dbContext.Database.CreateExecutionStrategy();
 
             await strategy.ExecuteAsync(async () =>
             {
@@ -50,7 +54,7 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
                     transactionId = transaction.TransactionId;
                 }
 
-                await _orderingIntegrationEventService.PublishEventsThroughEventBusAsync(transactionId);
+                await _fileIntegrationEventService.PublishEventsThroughEventBusAsync(transactionId);
             });
 
             return response;
