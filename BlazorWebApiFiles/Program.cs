@@ -4,6 +4,8 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using MultiAppServer.ServiceDefaults;
+using BlazorWebApi.Files.Data;
+using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,10 @@ builder.AddServiceDefaults();
 
 //builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<OrderingContext>>();
 
-builder.AddRabbitMQ("eventbus");
+builder.AddRabbitMQ("Eventbus");
+
+builder.AddSqlServerDbContext<FileDbContext>("FileDB");
+builder.AddMinIoClient("MinioClient");
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IIdentityService, IdentityService>();

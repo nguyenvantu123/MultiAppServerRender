@@ -14,7 +14,7 @@ namespace Aspire.Minio.Client
     {
 
         private static void AddMinIoClient(
-         IHostApplicationBuilder builder,
+         this IHostApplicationBuilder builder,
          string configurationSectionName,
          Action<MinIoClientSettings>? configureSettings)
         {
