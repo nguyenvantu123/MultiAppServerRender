@@ -6,6 +6,8 @@ using System.Text;
 using MultiAppServer.ServiceDefaults;
 using BlazorWebApi.Files.Data;
 using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
+using Aspire.Minio.Client;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,15 @@ builder.AddServiceDefaults();
 builder.AddRabbitMQ("Eventbus");
 
 builder.AddSqlServerDbContext<FileDbContext>("FileDB");
-builder.AddMinIoClient("MinioClient");
+
+var configSection = builder.Configuration.GetSection("MinioClient");
+
+var settings = new MinIoClientSettings();
+configSection.Bind(settings);
+
+builder.Services.AddMinio(configureClient => configureClient
+       .WithEndpoint(settings.Endpoint)
+       .WithCredentials(settings.AccessKey, settings.SecretKey));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IIdentityService, IdentityService>();

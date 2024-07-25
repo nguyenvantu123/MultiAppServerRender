@@ -26,7 +26,7 @@ namespace BlazorWebApi.Files.Data
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
 
-            System.Diagnostics.Debug.WriteLine("OrderingContext::ctor ->" + this.GetHashCode());
+            System.Diagnostics.Debug.WriteLine("FileDbContext::ctor ->" + this.GetHashCode());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

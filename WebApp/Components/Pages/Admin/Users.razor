@@ -20,14 +20,77 @@
 }
 else
 {
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<UserViewModel>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
+    @*  <MudTable ServerData="@(new Func<TableState, Task<TableData<UserViewModel>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table"> *@
+
+    <MudTable Hover="true" Elevation="25" Items="_userList" Dense="true" Bordered="true" Striped="true" Filter="new Func<UserViewModel, bool>(Search)" @bind-user="users">
+
+        <ToolBarContent>
+            <div class="justify-center mud-text-align-center">
+                @if (_canCreateUsers)
+                {
+                    <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">@_localizer["Register New User"]</MudButton>
+                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetUsersAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">@_localizer["Reload"]</MudButton>
+                    @if (_canExportUsers)
+                    {
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;">@_localizer["Export"]</MudButton>
+                    }
+                }
+                else
+                {
+                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetUsersAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">@_localizer["Reload"]</MudButton>
+                    @if (_canExportUsers)
+                    {
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;">@_localizer["Export"]</MudButton>
+                    }
+                }
+            </div>
+            <MudSpacer />
+            @if (_canSearchUsers)
+            {
+                <MudTextField @bind-Value="_searchString" Immediate="true" FullWidth=false Placeholder="@_localizer["Search For Users"]" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
+            }
+        </ToolBarContent>
+
         <HeaderContent>
-            <MudTh><MudButton StartIcon="@Icons.Material.Filled.PersonAdd" OnClick="@(e => { createUserDialogOpen = true; })" Variant="Variant.Filled" Color="Color.Primary">@L["New User"]</MudButton></MudTh>
-            <MudTh>@L["UserName"]</MudTh>
-            <MudTh>@L["Email"]</MudTh>
-            <MudTh>@L["Roles"]</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserResponse, object>(x => x.FirstName)">@_localizer["First Name"]</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserResponse, object>(x => x.LastName)">@_localizer["Last Name"]</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserResponse, object>(x => x.UserName)">@_localizer["UserName"]</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserResponse, object>(x => x.Email)">@_localizer["Email"]</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserResponse, object>(x => x.PhoneNumber)">@_localizer["PhoneNumber"]</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserResponse, object>(x => x.EmailConfirmed)">@_localizer["Email Confirmation"]</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserResponse, object>(x => x.IsActive)">@_localizer["Active"]</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align:right">@_localizer["Actions"]</MudTh>
         </HeaderContent>
-        <RowTemplate Context="UserRow">
+
+        <RowTemplate>
+            <MudTd DataLabel="FirstName">
+                <MudHighlighter Text="@context.FirstName" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel="LastName">
+                <MudHighlighter Text="@context.LastName" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel="UserName">
+                <MudHighlighter Text="@context.UserName" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel="Email">
+                <MudHighlighter Text="@context.Email" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel="PhoneNumber">
+                <MudHighlighter Text="@context.PhoneNumber" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel="EmailConfirmed"><MudCheckBox @bind-Checked="@context.EmailConfirmed" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
+            <MudTd DataLabel="Active"><MudCheckBox @bind-Checked="@context.IsActive" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
+            <MudTd DataLabel="Actions" Style="text-align:right">
+                <MudMenu Label="@_localizer["Actions"]" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Filled.KeyboardArrowDown" IconColor="Color.Secondary" Direction="Direction.Left" OffsetX="true">
+                    <MudMenuItem OnClick="(()=>ViewProfile(context.Id))">@_localizer["View Profile"]</MudMenuItem>
+                    @if (_canViewRoles)
+                    {
+                        <MudMenuItem OnClick="(()=>ManageRoles(context.Id, context.Email))">@_localizer["Manage Roles"]</MudMenuItem>
+                    }
+                </MudMenu>
+            </MudTd>
+        </RowTemplate>
+        @* <RowTemplate Context="UserRow">
             <MudTd>
                 <div style="width:155px;">
                     <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => OpenEditDialog(UserRow))"></MudIconButton>
@@ -53,7 +116,7 @@ else
                     </MudChipSet>
                 }
             </MudTd>
-        </RowTemplate>
+        </RowTemplate> *@
         <PagerContent>
             <MudTablePager RowsPerPageString=@L["Rows per page"] />
         </PagerContent>
@@ -80,10 +143,10 @@ else
             <MudTextField @bind-Value="@newUserViewModel.PasswordConfirm" Label=@L["Password Confirmation"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
         </EditForm>
     </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="@(e => { createUserDialogOpen = false; })">@L["Cancel"]</MudButton>
-        <MudButton ButtonType="ButtonType.Submit" form="createUserForm" Disabled="@disableCreateUserButton" Variant="Variant.Filled" Color="Color.Primary">@L["Create"]</MudButton>
-    </DialogActions>
+    @*    <DialogActions>
+    <MudButton OnClick="@(e => { createUserDialogOpen = false; })">@L["Cancel"]</MudButton>
+    <MudButton ButtonType="ButtonType.Submit" form="createUserForm" Disabled="@disableCreateUserButton" Variant="Variant.Filled" Color="Color.Primary">@L["Create"]</MudButton>
+    </DialogActions> *@
 </MudDialog>
 
 <MudDialog @bind-IsVisible="@editDialogOpen">
@@ -187,11 +250,25 @@ else
     protected RegisterViewModel newUserViewModel { get; set; } = new RegisterViewModel();
     protected ChangePasswordViewModel changePasswordViewModel { get; set; } = new ChangePasswordViewModel();
 
+    // private ClaimP _currentUser;
+    private bool _canCreateUsers;
+    private bool _canSearchUsers;
+    private bool _canExportUsers;
+    private bool _canViewRoles;
+    private bool _loaded;
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+
+            var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            _canCreateUsers = (await _authorizationService.AuthorizeAsync(state.User, Permissions.User.Create)).Succeeded;
+            _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, Permissions.Users.Search)).Succeeded;
+            _canExportUsers = (await _authorizationService.AuthorizeAsync(state.User, Permissions.Users.Export)).Succeeded;
+            _canViewRoles = (await _authorizationService.AuthorizeAsync(state.User, Permissions.Roles.View)).Succeeded;
 
             _items = new List<BreadcrumbItem>
         {
@@ -206,10 +283,32 @@ else
         {
             _loaded = true;
         };
+    }
 
-
-
-
+    private bool Search(UserViewModel user)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString)) return true;
+        if (user.FirstName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+        if (user.LastName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+        if (user.Email?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+        if (user.PhoneNumber?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+        if (user.UserName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+        return false;
     }
 
     protected async Task OnPage(int index, int size)
@@ -406,5 +505,28 @@ else
         await OnPage(state.Page, state.PageSize);
 
         return new TableData<UserViewModel>() { TotalItems = totalItemsCount, Items = users };
+    }
+
+    private async Task InvokeModal()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, DisableBackdropClick = true };
+        var dialog = _dialogService.Show<RegisterUserModal>(_localizer["Register New User"], parameters, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            await GetUsersAsync();
+        }
+    }
+
+    private void ViewProfile(string userId)
+    {
+        _navigationManager.NavigateTo($"/user-profile/{userId}");
+    }
+
+    private void ManageRoles(string userId, string email)
+    {
+        if (email == "mukesh@blazorhero.com") _snackBar.Add(_localizer["Not Allowed."], Severity.Error);
+        else _navigationManager.NavigateTo($"/identity/user-roles/{userId}");
     }
 }
