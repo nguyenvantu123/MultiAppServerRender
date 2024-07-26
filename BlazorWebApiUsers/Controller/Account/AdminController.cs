@@ -11,7 +11,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
+using System.ComponentModel;
 using System.Net;
+using System.Reflection;
 using WebApp.Models;
 using static BlazorWebApi.Users.Models.Permissions;
 
@@ -506,6 +508,99 @@ namespace BlazorWebApi.Users.Controller.Account
 
 
             return userProfileResult;
+        }
+
+        [Authorize(Policy = Permissions.RoleClaims.View)]
+        [HttpGet]
+        [Route("[action]/{roleId}")]
+        public async Task<ApiResponse<PermissionModel>> GetAllPermissionByRoleIdAsync(string roleId)
+        {
+            var model = new PermissionModel();
+            var allPermissions = GetAllPermissions();
+            var role = await _roleManager.FindByIdAsync(roleId);
+            if (role != null)
+            {
+                model.RoleId = role.Id.ToString();
+                model.RoleName = role.Name;
+                var roleClaimsResult = await GetAllByRoleIdAsync(role.Id.ToString());
+                var roleClaims = roleClaimsResult;
+                var allClaimValues = allPermissions.Select(a => a.Value).ToList();
+                var roleClaimValues = roleClaims.Select(a => a.Value).ToList();
+                var authorizedClaims = allClaimValues.Intersect(roleClaimValues).ToList();
+                foreach (var permission in allPermissions)
+                {
+                    if (authorizedClaims.Any(a => a == permission.Value))
+                    {
+                        permission.Selected = true;
+                        var roleClaim = roleClaims.SingleOrDefault(a => a.Value == permission.Value);
+                        if (roleClaim?.Description != null)
+                        {
+                            permission.Description = roleClaim.Description;
+                        }
+                        if (roleClaim?.Group != null)
+                        {
+                            permission.Group = roleClaim.Group;
+                        }
+                    }
+                }
+
+            }
+            model.RoleClaims = allPermissions;
+            return new ApiResponse<PermissionModel>(200, "Success", model);
+            /*Result<PermissionModel>.SuccessAsync(model);*/
+        }
+
+        private async Task<List<RoleClaimModel>> GetAllByRoleIdAsync(string roleId)
+        {
+            var roleClaims = await _dbContext.RoleClaims
+                .Include(x => x.Role)
+                .Where(x => x.RoleId.ToString() == roleId)
+                .ToListAsync();
+            var roleClaimsResponse = _autoMapper.Map<List<RoleClaimModel>>(roleClaims);
+            return roleClaimsResponse;
+        }
+
+        private List<RoleClaimModel> GetAllPermissions()
+        {
+            var allPermissions = GetAllPermissionsValues();
+
+            #region GetPermissions
+            #endregion GetPermissions
+
+            return allPermissions;
+        }
+
+        private List<RoleClaimModel> GetAllPermissionsValues()
+        {
+            List<RoleClaimModel> allPermissions = new List<RoleClaimModel>();
+                var modules = typeof(Permissions).GetNestedTypes();
+
+            foreach (var module in modules)
+            {
+                var moduleName = string.Empty;
+                var moduleDescription = string.Empty;
+
+                if (module.GetCustomAttributes(typeof(DisplayNameAttribute), true)
+                    .FirstOrDefault() is DisplayNameAttribute displayNameAttribute)
+                    moduleName = displayNameAttribute.DisplayName;
+
+                if (module.GetCustomAttributes(typeof(DescriptionAttribute), true)
+                    .FirstOrDefault() is DescriptionAttribute descriptionAttribute)
+                    moduleDescription = descriptionAttribute.Description;
+
+                var fields = module.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+                foreach (var fi in fields)
+                {
+                    var propertyValue = fi.GetValue(null);
+
+                    if (propertyValue is not null)
+                        allPermissions.Add(new RoleClaimModel { Value = propertyValue.ToString(), Type = ApplicationClaimTypes.Permission, Group = moduleName, Description = moduleDescription });
+                }
+            }
+
+            return allPermissions;
+
         }
         #endregion
     }

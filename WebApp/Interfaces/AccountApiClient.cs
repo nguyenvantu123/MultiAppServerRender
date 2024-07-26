@@ -312,6 +312,12 @@ namespace WebApp.Interfaces
             return apiResponse;
         }
 
+        public async Task<ApiResponse<PermissionModel>> GetAllByRoleIdAsync(string roleId)
+        {
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponse<PermissionModel>>($"api/admin/getallbyroleidasync/roleId");
+            return apiResponse;
+        }
+
         //public async Task<ApiResponseDto<RoleDto>> GetRoleByName(string roleName)
         //{
         //    //Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}")

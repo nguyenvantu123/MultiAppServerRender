@@ -122,10 +122,10 @@ else
     {
         // _mapper = new MapperConfiguration(c => { c.AddProfile<RoleProfile>(); }).CreateMapper();
         var roleId = Id;
-        var result = await _acc.GetPermissionsAsync(roleId);
-        if (result.Succeeded)
+        var result = await _accountApiClient.GetAllByRoleIdAsync(roleId);
+        if (result.IsSuccessStatusCode)
         {
-            _model = result.Data;
+            _model = result.Result;
             GroupedRoleClaims.Add("All Permissions", _model.RoleClaims);
             foreach (var claim in _model.RoleClaims)
             {
@@ -145,7 +145,7 @@ else
         }
         else
         {
-            viewNotifier.Show(result.Message, Severity.Error);
+            viewNotifier.Show(result.Message, ViewNotifierType.Error);
 
             _navigationManager.NavigateTo("/identity/roles");
         }
@@ -153,22 +153,24 @@ else
 
     private async Task SaveAsync()
     {
-        var request = _mapper.Map<PermissionResponse, PermissionRequest>(_model);
-        var result = await _accountApiClient.UpdatePermissionsAsync(request);
-        if (result.Succeeded)
-        {
-            view.Add(result.Messages[0], Severity.Success);
-            // await HubConnection.SendAsync(ApplicationConstants.SignalR.SendRegenerateTokens);
-            // await HubConnection.SendAsync(ApplicationConstants.SignalR.OnChangeRolePermissions, _currentUser.GetUserId(), request.RoleId);
-            _navigationManager.NavigateTo("/admin/roles");
-        }
-        else
-        {
-            foreach (var error in result.Messages)
-            {
-                _snackBar.Add(error, Severity.Error);
-            }
-        }
+        // var request = _mapper.Map<PermissionResponse, PermissionRequest>(_model);
+        // var result = await _accountApiClient.UpdatePermissionsAsync(request);
+        // if (result.Succeeded)
+        // {
+        //     viewNotifier.Show(result.Message, Severity.Success);
+        //     // await HubConnection.SendAsync(ApplicationConstants.SignalR.SendRegenerateTokens);
+        //     // await HubConnection.SendAsync(ApplicationConstants.SignalR.OnChangeRolePermissions, _currentUser.GetUserId(), request.RoleId);
+        //     _navigationManager.NavigateTo("/admin/roles");
+        // }
+        // else
+        // {
+        //     viewNotifier.Show(result.Message, Severity.Error);
+
+        //     // foreach (var error in result.Messages)
+        //     // {
+        //     //     _snackBar.Add(error, Severity.Error);
+        //     // }
+        // }
     }
 
     private bool Search(RoleClaimModel roleClaims)
