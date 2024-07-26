@@ -1,8 +1,7 @@
 ﻿@page "/user-profile/{Id}"
-@using BlazorHero.CleanArchitecture.Shared.Constants.Role
 @inject Microsoft.Extensions.Localization.IStringLocalizer<UserProfile> _localizer
 
-<PageTitle>User Profile</PageTitle>
+<PageTitle>@Title</PageTitle>
 @if (!_loaded)
 {
     <LoadingBackground>
@@ -11,7 +10,7 @@
 else
 {
     <MudGrid>
-        <AuthorizeView Roles="@RoleConstants.AdministratorRole">
+        <AuthorizeView Roles="Role.AdministratorRole">
             <MudItem xs="12" sm="12" md="12">
                 <MudCard Elevation="25">
                     <MudCardHeader>
@@ -81,7 +80,68 @@ else
 }
 
 @code {
-    private bool _loaded = false;
-
     [Parameter] public string Id { get; set; }
+
+    private bool _active;
+    private char _firstLetterOfName;
+    private string _firstName;
+    private string _lastName;
+    private string _phoneNumber;
+    private string _email;
+
+    public string Title;
+
+    private bool _loaded;
+
+    private async Task ToggleUserStatus()
+    {
+        var request = new ToggleUserStatusRequest { ActivateUser = _active, UserId = Id };
+        var result = await _accountApiClient.ToggleUserStatusAsync(request);
+        if (result.IsSuccessStatusCode)
+        {
+            viewNotifier.Show(_localizer["Updated User Status."], ViewNotifierType.Success);
+            _navigationManager.NavigateTo("/identity/users");
+        }
+        else
+        {
+            viewNotifier.Show(result.Message, ViewNotifierType.Error);
+        }
+    }
+
+    [Parameter] public string ImageDataUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userId = Id;
+        var result = await _accountApiClient.GetUserById(userId);
+
+        if (result != null)
+        {
+            _firstName = result.FirstName;
+            _lastName = result.LastName;
+            _email = result.Email;
+            _phoneNumber = result.PhoneNumber;
+            _active = result.IsActive;
+            // var data = await _accountManager.GetProfilePictureAsync(userId);
+            // if (data.Succeeded)
+            // {
+            //     ImageDataUrl = data.Data;
+            // }
+        }
+        Title = $"{_firstName} {_lastName}' Profile";
+        // Description = _email;
+        if (_firstName.Length > 0)
+        {
+            _firstLetterOfName = _firstName[0];
+        }
+
+        _loaded = true;
+    }
+
+    public class ToggleUserStatusRequest
+    {
+        public bool ActivateUser { get; set; }
+        public string UserId { get; set; }
+    }
 }
+

@@ -673,7 +673,7 @@ namespace BlazorWebApi.Users.Controller.Account
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    UserId = user.Id,
+                    Id = user.Id,
                     HasPassword = await _userManager.HasPasswordAsync(user),
                     PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
                     TwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user),
@@ -936,7 +936,7 @@ namespace BlazorWebApi.Users.Controller.Account
 
                 var userViewModel = new UserViewModel
                 {
-                    UserId = user.Id,
+                    Id = user.Id,
                     IsAuthenticated = false,
                     UserName = user.UserName,
                     Email = user.Email,
@@ -996,7 +996,7 @@ namespace BlazorWebApi.Users.Controller.Account
                 return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
             }
 
-            var user = await _userManager.FindByIdAsync(userViewModel.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(userViewModel.Id.ToString());
 
             if (user.UserName.ToLower() != "admin" && userViewModel.UserName.ToLower() != "admin")
                 user.UserName = userViewModel.UserName;

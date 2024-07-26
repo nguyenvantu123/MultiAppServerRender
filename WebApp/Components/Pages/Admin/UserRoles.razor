@@ -1,0 +1,124 @@
+﻿@page "/admin/user-roles/{Id}"
+@attribute [Authorize(Policy = PermissionsWebApp.Role.View)]
+@using Microsoft.AspNetCore.Components
+
+<PageTitle Title="@Title" />
+@if (!_loaded)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudTable Hover="true" Elevation="25" Items="UserRolesList" Dense="true" Bordered="true" Striped="true" Filter="new Func<UserRoleModel, bool>(Search)" @bind-userRole="_userRole">
+        <ToolBarContent>
+            <div class="justify-center mud-text-align-center">
+                @if (_canEditUsers)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="SaveAsync" ButtonType="ButtonType.Submit">Update User Roles</MudButton>
+                }
+            </div>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Immediate="true" FullWidth=false Placeholder="Search For User Roles" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserRoleModel, object>(x => x.RoleName)">Role Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserRoleModel, object>(x => x.RoleDescription)">Description</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserRoleModel, object>(x => x.Selected)">Status</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Role Name">
+                <MudHighlighter Text="@context.RoleName" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel="Description">
+                <MudHighlighter Text="@context.RoleDescription" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel="Role"><MudCheckBox @bind-Checked="@context.Selected" Disabled="@(!_canEditUsers)" Color="Color.Secondary"></MudCheckBox></MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+}
+
+@code {
+
+    [Parameter] public string Id { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Description { get; set; }
+    public List<UserRoleModel> UserRolesList { get; set; } = new();
+
+    private UserRoleModel _userRole = new();
+    private string _searchString = "";
+    private bool _dense = false;
+    private bool _striped = true;
+    private bool _bordered = false;
+
+    private bool _canEditUsers;
+    private bool _canSearchRoles;
+    private bool _loaded = false;
+
+    protected IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+
+        var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        _canEditUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Update)).Succeeded;
+        // _canSearchRoles = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.Role.Search)).Succeeded;
+
+        var userId = Id;
+        var result = await _accountApiClient.GetUserById(userId);
+        if (result != null)
+        {
+            var user = result;
+            if (user != null)
+            {
+                Title = $"{user.FirstName} {user.LastName}";
+                // Description = string.Format(_localizer["Manage {0} {1}'s Roles"], user.FirstName, user.LastName);
+                var response = await _accountApiClient.GetRolesByUserId(user.Id.ToString());
+                UserRolesList = response.Result.UserRoles;
+            }
+        }
+
+        _loaded = true;
+    }
+
+    private async Task SaveAsync()
+    {
+        var request = new UpdateUserRolesRequest()
+            {
+                UserId = Id,
+                UserRoles = UserRolesList
+            };
+        var result = await _accountApiClient.UpdateUserRolesAsync(request);
+        if (result.IsSuccessStatusCode)
+        {
+            viewNotifier.Show(result.Message, ViewNotifierType.Success);
+            _navigationManager.NavigateTo("/admin/users");
+        }
+        else
+        {
+
+            viewNotifier.Show(result.Message, ViewNotifierType.Error);
+        }
+    }
+
+    private bool Search(UserRoleModel userRole)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString)) return true;
+        if (userRole.RoleName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+        if (userRole.RoleDescription?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+        return false;
+    }
+}
+

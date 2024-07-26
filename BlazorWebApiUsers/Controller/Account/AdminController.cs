@@ -4,13 +4,16 @@ using BlazorWebApi.Users.Constants;
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Extensions;
 using BlazorWebApi.Users.Models;
+using BlazorWebApi.Users.Request;
 using Finbuckle.MultiTenant;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 using System.Net;
 using WebApp.Models;
+using static BlazorWebApi.Users.Models.Permissions;
 
 namespace BlazorWebApi.Users.Controller.Account
 {
@@ -34,6 +37,9 @@ namespace BlazorWebApi.Users.Controller.Account
         private readonly IServiceProvider _serviceProvider;
 
         private readonly RedisUserRepository _redisUserRepository;
+
+        protected readonly IHttpContextAccessor httpContextAccessor;
+
 
         public AdminController(IMapper autoMapper, TenantStoreDbContext tenantStoreDbContext, UserManager<ApplicationUser> userManager, EntityPermissions entityPermissions, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger, ApplicationDbContext dbContext, IHttpContextAccessor accessor, IServiceProvider serviceProvider, RedisUserRepository redisUserRepository)
         {
@@ -166,28 +172,116 @@ namespace BlazorWebApi.Users.Controller.Account
         {
             var userList = _userManager.Users.Include(x => x.UserRoles).AsQueryable();
             var count = userList.Count();
-            var listResponse = userList.OrderBy(x => x.Id).Skip(pageNumber * pageSize).Take(pageSize).ToList();
+            var listUsers = userList.OrderBy(x => x.Id).Skip(pageNumber * pageSize).Take(pageSize).ToList();
 
-            var userDtoList = new List<UserViewModel>(); // This sucks, but Select isn't async happy, and the passing into a 'ProcessEventAsync' is another level of misdirection
-            foreach (var applicationUser in listResponse)
-            {
-                userDtoList.Add(new UserViewModel
-                {
-                    FirstName = applicationUser.FirstName,
-                    LastName = applicationUser.LastName,
-                    UserName = applicationUser.UserName,
-                    Email = applicationUser.Email,
-                    UserId = applicationUser.Id,
-                    UserRoles = applicationUser.UserRoles.Select(x => new UserRoleViewModel
-                    {
-                        RoleId = x.RoleId
-                    }).ToList(),
-                    Roles = await _userManager.GetRolesAsync(applicationUser).ConfigureAwait(true) as List<string>
-
-                });
-            }
+            var userDtoList = _autoMapper.Map<List<UserViewModel>>(listUsers);
 
             return new ApiResponseDto<List<UserViewModel>>(200, $"{count} users fetched", userDtoList, count);
+        }
+
+        [HttpGet]
+        [Authorize(Permissions.User.Read)]
+        [Route("[action]/{id}")]
+        public async Task<ApiResponseDto<UserViewModel>> UserById([FromQuery] string id)
+        {
+            var userById = await _userManager.FindByIdAsync(id);
+
+            if (userById == null)
+            {
+                return new ApiResponseDto<UserViewModel>(404, "User Not Found", null);
+            }
+
+            var result = _autoMapper.Map<UserViewModel>(userById);
+
+            return new ApiResponseDto<UserViewModel>(200, "Success", result);
+        }
+
+
+        [HttpGet]
+        [Authorize(Permissions.User.Read)]
+        [Route("[action]/{id}")]
+        public async Task<ApiResponseDto<UserRolesResponse>> UserRoles([FromQuery] string id)
+        {
+            var viewModel = new List<UserRoleModel>();
+            var user = await _userManager.FindByIdAsync(id);
+            var roles = await _roleManager.Roles.ToListAsync();
+
+            foreach (var role in roles)
+            {
+                var userRolesViewModel = new UserRoleModel
+                {
+                    RoleName = role.Name,
+                    RoleDescription = role.Description
+                };
+                if (await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    userRolesViewModel.Selected = true;
+                }
+                else
+                {
+                    userRolesViewModel.Selected = false;
+                }
+                viewModel.Add(userRolesViewModel);
+            }
+            var result = new UserRolesResponse { UserRoles = viewModel };
+            return new ApiResponseDto<UserRolesResponse>(200, "Success", result);
+        }
+
+        [HttpPut]
+        [Authorize(Permissions.User.Update)]
+        [Route("[action]")]
+        public async Task<ApiResponseDto> UserRoles(UpdateUserRolesRequest request)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(request.UserId);
+            if (user.UserName == DefaultUserNames.Administrator)
+            {
+                return new ApiResponseDto(400, "Not Allowed");
+            }
+
+            var userAccessor = httpContextAccessor.HttpContext.User;
+            var userId = new Guid(userAccessor.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var selectedRoles = request.UserRoles.Where(x => x.Selected).ToList();
+
+            var currentUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (!await _userManager.IsInRoleAsync(currentUser, DefaultRoleNames.Administrator))
+            {
+                var tryToAddAdministratorRole = selectedRoles
+                    .Any(x => x.RoleName == DefaultRoleNames.Administrator);
+                var userHasAdministratorRole = roles.Any(x => x == DefaultRoleNames.Administrator);
+                if (tryToAddAdministratorRole && !userHasAdministratorRole || !tryToAddAdministratorRole && userHasAdministratorRole)
+                {
+
+                    return new ApiResponseDto(400, "Not Allowed to add or delete Administrator Role if you have not this role.");
+                    //return await Result.FailAsync(_localizer["Not Allowed to add or delete Administrator Role if you have not this role."]);
+                }
+            }
+
+            var result = await _userManager.RemoveFromRolesAsync(user, roles);
+            result = await _userManager.AddToRolesAsync(user, selectedRoles.Select(y => y.RoleName));
+
+            return new ApiResponseDto(200, "Roles Updated");
+            //return await Result.SuccessAsync(_localizer["Roles Updated"]);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        [Authorize(Permissions.User.Update)]
+        public async Task<ApiResponseDto> ToggleUserStatus([FromBody] ToggleUserStatusRequest toggleUserStatusRequest)
+        {
+            var userById = await _userManager.FindByIdAsync(toggleUserStatusRequest.UserId);
+
+            if (userById == null)
+            {
+                return new ApiResponseDto(404, "User Not Found", null);
+            }
+
+            userById.IsActive = toggleUserStatusRequest.ActivateUser;
+
+            await _userManager.UpdateAsync(userById);
+
+            return new ApiResponseDto(200, "Success", null);
         }
 
         [HttpGet]
@@ -324,6 +418,33 @@ namespace BlazorWebApi.Users.Controller.Account
         [Route("[action]/{name}")]
         [Authorize(Permissions.Role.Delete)]
         public async Task<ApiResponse> DeleteRoleAsync(string name)
+        {
+            var response = new ApiResponse(200, $"Role {name} deleted", name);
+
+            // Check if the role is used by a user
+            var users = await _userManager.GetUsersInRoleAsync(name);
+            if (users.Any())
+                response = new ApiResponse(404, name);
+            else
+            {
+                if (name == DefaultRoleNames.Administrator)
+                    response = new ApiResponse(403, $"Role {name} cannot be deleted", name);
+                else
+                {
+                    // Delete the role
+                    var role = await _roleManager.FindByNameAsync(name);
+                    await _roleManager.DeleteAsync(role);
+                }
+            }
+
+            return response;
+        }
+
+
+        [HttpDelete]
+        [Route("[action]/{name}")]
+        [Authorize(Permissions.Role.Delete)]
+        public async Task<ApiResponse> GetRolesAsync(string name)
         {
             var response = new ApiResponse(200, $"Role {name} deleted", name);
 

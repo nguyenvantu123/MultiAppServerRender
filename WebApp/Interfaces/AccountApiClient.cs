@@ -12,6 +12,7 @@ using WebApp.Models;
 using WebApp.Settings;
 using WebApp.State;
 using static System.Net.WebRequestMethods;
+using static WebApp.Components.Pages.Admin.UserProfile;
 
 namespace WebApp.Interfaces
 {
@@ -139,7 +140,7 @@ namespace WebApp.Interfaces
 
         public async Task<UserViewModel> GetUserViewModel()
         {
-            UserViewModel userViewModel = new() { IsAuthenticated = false};
+            UserViewModel userViewModel = new() { IsAuthenticated = false };
 
             var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>("api/account/user-view-model");
 
@@ -203,7 +204,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<List<UserViewModel>>> GetUsers(int pageSize, int currentPage, string search)
         {
-            return await _httpClient.GetJsonAsync<ApiResponseDto<List<UserViewModel>>>($"api/admin/Users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<UserViewModel>>>($"api/admin/users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
 
         public Task<QueryResult<DbLog>> GetLogs(Expression<Func<DbLog, bool>> predicate = null, int? take = null, int? skip = null)
@@ -254,9 +255,9 @@ namespace WebApp.Interfaces
         {
             return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/tenant/delete/{name}");
         }
-        public async Task<ApiResponseDto> DeleteRole(string name)
+        public async Task<ApiResponseDto> DeleteRole(string id)
         {
-            return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/role/{name}");
+            return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/role/{id}");
         }
 
         public async Task<ApiResponseDto<List<RoleDto>>> GetRoles(int pageSize, int currentPage, string search)
@@ -264,14 +265,14 @@ namespace WebApp.Interfaces
             return await _httpClient.GetJsonAsync<ApiResponseDto<List<RoleDto>>>($"api/admin/get-roles?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
 
-        public async Task<ApiResponseDto> UpdateRole(RoleDto request)
-        {
-            return await _httpClient.PutJsonAsync<ApiResponseDto>("api/account/update-user", request);
-        }
+        //public async Task<ApiResponseDto> UpdateRole(RoleDto request)
+        //{
+        //    return await _httpClient.PutJsonAsync<ApiResponseDto>("api/account/update-user", request);
+        //}
 
-        public async Task<ApiResponseDto> CreateRole(RoleDto request)
+        public async Task<ApiResponseDto> SaveRoleAsync(RoleDto request)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/update-user", request);
+            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/update-role", request);
         }
 
         public async Task<ApiResponseDto<List<string>>> GetAllPermissions()
@@ -284,6 +285,38 @@ namespace WebApp.Interfaces
             //Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}")
             return await _httpClient.GetJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
         }
+
+        public async Task<UserViewModel> GetUserById(string id)
+        {
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>($"api/admin/user-by-id/{id}");
+            return apiResponse.Result;
+        }
+
+        public async Task<ApiResponseDto> ToggleUserStatusAsync(ToggleUserStatusRequest request)
+        {
+            var apiResponse = await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/toggle-user-status", request);
+            return apiResponse;
+        }
+
+        //Task<IResult<UserRolesResponse>> GetRolesAsync(string userId);
+
+        public async Task<ApiResponseDto<UserRolesResponse>> GetRolesByUserId(string userId)
+        {
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<UserRolesResponse>>($"api/admin/user-roles/{userId}");
+            return apiResponse;
+        }
+
+        public async Task<ApiResponseDto> UpdateUserRolesAsync(UpdateUserRolesRequest request)
+        {
+            var apiResponse = await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/user-roles", request);
+            return apiResponse;
+        }
+
+        //public async Task<ApiResponseDto<RoleDto>> GetRoleByName(string roleName)
+        //{
+        //    //Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}")
+        //    return await _httpClient.GetJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
+        //}
 
         //public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)
         //{

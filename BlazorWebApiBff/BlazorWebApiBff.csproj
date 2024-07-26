@@ -25,4 +25,8 @@
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\User\" />
+  </ItemGroup>
+
 </Project>

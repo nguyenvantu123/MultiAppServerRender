@@ -1,4 +1,5 @@
-﻿using MultiAppServer.EventBus.Extensions;
+﻿
+using MultiAppServer.EventBus.Extensions;
 
 namespace BlazorWebApiFiles.Application.Behaviors;
 public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>

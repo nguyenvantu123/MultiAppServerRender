@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\UserProfile\**" />
+    <Content Remove="Services\UserProfile\**" />
+    <EmbeddedResource Remove="Services\UserProfile\**" />
+    <None Remove="Services\UserProfile\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Asp.Versioning.Http.Client" Version="8.1.0" />
     <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
     <PackageReference Include="Breeze.AspNetCore.NetCore" Version="7.3.0" />
@@ -41,9 +48,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Handler\" />
     <Folder Include="Localizer\" />
-    <Folder Include="Services\UserProfile\" />
+    <Folder Include="Response\" />
   </ItemGroup>
 
 </Project>

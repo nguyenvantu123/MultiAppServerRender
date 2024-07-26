@@ -1,7 +1,6 @@
 using BlazorWebApi.Bff;
 using BlazorWebApi.Bff.ApiClients;
 using BlazorWebApi.Bff.Services.Identity;
-using BlazorWebApi.Bff.Services.User;
 using BlazorWebApi.Bff.Wrapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,10 +72,6 @@ builder.Services.AddRefitClient<IIdentityApiClient>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://blazorwebapi.users"))
                 .AddHttpMessageHandler<AuthenticationHeaderHandler>();
 
-builder.Services.AddRefitClient<IUserApiClient>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://blazorwebapi.users"))
-                .AddHttpMessageHandler<AuthenticationHeaderHandler>();
-
 builder.Services.AddTransient<AuthenticationHeaderHandler>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -88,7 +83,6 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 app.AddIdentityEndpoint();
-app.AddUserEndpoint();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

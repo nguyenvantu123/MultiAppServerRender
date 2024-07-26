@@ -5,9 +5,10 @@ using System.Security.Claims;
 using System.Text;
 using MultiAppServer.ServiceDefaults;
 using BlazorWebApi.Files.Data;
-using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
-using Aspire.Minio.Client;
+using BlazorWebApiFiles.Application.Behaviors;
 using Minio;
+using Aspire.Minio.Client;
+using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
