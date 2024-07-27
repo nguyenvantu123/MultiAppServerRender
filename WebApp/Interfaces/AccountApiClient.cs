@@ -314,7 +314,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponse<PermissionModel>> GetAllByRoleIdAsync(string roleId)
         {
-            var apiResponse = await _httpClient.GetJsonAsync<ApiResponse<PermissionModel>>($"api/admin/getallbyroleidasync/roleId");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponse<PermissionModel>>($"api/admin/get-all-permission-by-role-id/{roleId}");
             return apiResponse;
         }
 

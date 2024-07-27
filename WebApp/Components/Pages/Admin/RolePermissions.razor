@@ -1,6 +1,6 @@
 ﻿@page "/admin/role-permissions/{Id}"
 @using AutoMapper
-@attribute [Authorize(Policy = PermissionsWebApp.RoleClaims.View)]
+@attribute [Authorize(Policies.IsAdmin)]
 
 <PageTitle Title="Manage Permission" />
 @if (!_loaded)
@@ -82,8 +82,8 @@ else
 
     // [CascadingParameter] private HubConnection HubConnection { get; set; }
     [Parameter] public string Id { get; set; }
-    [Parameter] public string Title { get; set; }
-    [Parameter] public string Description { get; set; }
+    // [Parameter] public string Title { get; set; }
+    // [Parameter] public string Description { get; set; }
 
     private PermissionModel _model;
     private Dictionary<string, List<RoleClaimModel>> GroupedRoleClaims { get; } = new();
@@ -106,8 +106,12 @@ else
 
         var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        _canEditRolePermissions = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.RoleClaims.Edit)).Succeeded;
-        _canSearchRolePermissions = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.RoleClaims.Search)).Succeeded;
+        //state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
+        // _canEditRolePermissions = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.RoleClaims.Edit)).Succeeded;
+        // _canSearchRolePermissions = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.RoleClaims.Search)).Succeeded;
+
+        _canEditRolePermissions = state.User.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.Edit).FirstOrDefault() != null;
+        _canSearchRolePermissions = state.User.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.Search).FirstOrDefault() != null;
 
         await GetRolePermissionsAsync();
         _loaded = true;

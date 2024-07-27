@@ -260,11 +260,10 @@ else
 
             var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            _canCreateUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Create)).Succeeded;
+            _canCreateUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Create).FirstOrDefault() != null;
             // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
-            _canExportUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Export)).Succeeded;
-            _canViewRoles = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.Role.View)).Succeeded;
-
+            _canExportUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
+            _canViewRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.View).FirstOrDefault() != null;
             _items = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
@@ -365,15 +364,15 @@ else
     //     }
     // }
 
-    protected void OpenEditDialog(UserViewModel user)
-    {
-        currentUser = user;
+    // protected void OpenEditDialog(UserViewModel user)
+    // {
+    //     currentUser = user;
 
-        foreach (var role in roleSelections)
-            role.Selected = user.UserRoles.Any(i => i.RoleId == role.Id);
+    //     foreach (var role in roleSelections)
+    //         role.Selected = user.UserRoles.Any(i => i.RoleId == role.Id);
 
-        editDialogOpen = true;
-    }
+    //     editDialogOpen = true;
+    // }
 
     protected void OpenResetPasswordDialog(UserViewModel user)
     {
@@ -516,7 +515,7 @@ else
 
     private void ViewProfile(string userId)
     {
-        _navigationManager.NavigateTo($"/user-profile/{userId}");
+        _navigationManager.NavigateTo($"/admin/user-profile/{userId}");
     }
 
     private void ManageRoles(string userId, string userName)

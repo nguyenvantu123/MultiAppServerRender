@@ -1015,48 +1015,48 @@ namespace BlazorWebApi.Users.Controller.Account
                 return new ApiResponse((int)HttpStatusCode.InternalServerError, "Operation Failed");
             }
 
-            if (userViewModel.UserRoles != null)
-            {
-                try
-                {
-                    var rolesToAdd = new List<string>();
-                    var currentUserRoles = (List<string>)await _userManager.GetRolesAsync(user);
+            //if (userViewModel.UserRoles != null)
+            //{
+            //    try
+            //    {
+            //        var rolesToAdd = new List<string>();
+            //        var currentUserRoles = (List<string>)await _userManager.GetRolesAsync(user);
 
-                    foreach (var newUserRole in userViewModel.Roles)
-                    {
-                        if (!currentUserRoles.Contains(newUserRole))
-                            rolesToAdd.Add(newUserRole);
-                    }
+            //        foreach (var newUserRole in userViewModel.Roles)
+            //        {
+            //            if (!currentUserRoles.Contains(newUserRole))
+            //                rolesToAdd.Add(newUserRole);
+            //        }
 
-                    if (rolesToAdd.Count > 0)
-                    {
-                        await _userManager.AddToRolesAsync(user, rolesToAdd);
+            //        if (rolesToAdd.Count > 0)
+            //        {
+            //            await _userManager.AddToRolesAsync(user, rolesToAdd);
 
-                        //HACK to switch to claims auth
-                        foreach (var role in rolesToAdd)
-                            await _userManager.AddClaimAsync(user, new Claim($"Is{role}", ClaimValues.trueString));
-                    }
+            //            //HACK to switch to claims auth
+            //            foreach (var role in rolesToAdd)
+            //                await _userManager.AddClaimAsync(user, new Claim($"Is{role}", ClaimValues.trueString));
+            //        }
 
-                    var rolesToRemove = currentUserRoles.Where(role => !userViewModel.Roles.Contains(role)).ToList();
+            //        var rolesToRemove = currentUserRoles.Where(role => !userViewModel.Roles.Contains(role)).ToList();
 
-                    if (rolesToRemove.Count > 0)
-                    {
-                        if (user.UserName.ToLower() == "admin")
-                            rolesToRemove.Remove("admin");
+            //        if (rolesToRemove.Count > 0)
+            //        {
+            //            if (user.UserName.ToLower() == "admin")
+            //                rolesToRemove.Remove("admin");
 
-                        await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+            //            await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
 
-                        //HACK to switch to claims auth
-                        foreach (var role in rolesToRemove)
-                            await _userManager.RemoveClaimAsync(user, new Claim($"Is{role}", ClaimValues.trueString));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Updating Roles exception: {ex.GetBaseException().Message}");
-                    return new ApiResponse((int)HttpStatusCode.InternalServerError, "Operation Failed");
-                }
-            }
+            //            //HACK to switch to claims auth
+            //            foreach (var role in rolesToRemove)
+            //                await _userManager.RemoveClaimAsync(user, new Claim($"Is{role}", ClaimValues.trueString));
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _logger.LogError($"Updating Roles exception: {ex.GetBaseException().Message}");
+            //        return new ApiResponse((int)HttpStatusCode.InternalServerError, "Operation Failed");
+            //    }
+            //}
 
             return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful");
         }

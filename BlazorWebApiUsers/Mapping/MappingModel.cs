@@ -14,6 +14,11 @@ namespace WebApp.Mapping
         public MappingModel()
         {
             CreateMap<AppTenantInfo, TenantModel>().ReverseMap();
+
+            CreateMap<ApplicationUser, UserViewModel>();
+
+            CreateMap<ApplicationRoleClaim, RoleClaimModel>();
+
             //CreateMap<Message, MessageDto>().ReverseMap();
         }
     }
