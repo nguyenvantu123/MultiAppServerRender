@@ -10,6 +10,13 @@
     </Breadcrumbs>
 </TopSection> *@
 
+<style>
+    .mud-table-container {
+        overflow: auto;
+    }
+</style>
+
+
 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
 <PageTitle>Users</PageTitle>
@@ -23,7 +30,7 @@ else
 {
     @*  <MudTable ServerData="@(new Func<TableState, Task<TableData<UserViewModel>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table"> *@
 
-    <MudTable Hover="true" Elevation="25" Items="users" Dense="true" Bordered="true" Striped="true" Filter="new Func<UserViewModel, bool>(Search)" @bind-user="users">
+    <MudTable Hover="true" Elevation="25" Items="users" Dense="true" Filter="new Func<UserViewModel, bool>(Search)" @bind-user="users">
 
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
@@ -50,6 +57,7 @@ else
         </ToolBarContent>
 
         <HeaderContent>
+            <MudTh>Actions</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.FirstName)">First Name</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.LastName)">Last Name</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.UserName)">UserName</MudTableSortLabel></MudTh>
@@ -57,11 +65,20 @@ else
             <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.PhoneNumber)">PhoneNumber</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.EmailConfirmed)">Email Confirmation</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.IsActive)">Active</MudTableSortLabel></MudTh>
-            <MudTh Style="text-align:right">Actions</MudTh>
+
         </HeaderContent>
 
         <RowTemplate>
-            <MudTd DataLabel="Fir">
+            <MudTd DataLabel="Actions">
+                <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary">
+                    <MudMenuItem OnClick="(()=>ViewProfile(context.Id.ToString()))">View Profile</MudMenuItem>
+                    @if (_canViewRoles)
+                    {
+                        <MudMenuItem OnClick="(()=>ManageRoles(context.Id.ToString(), context.UserName))">Manage Roles</MudMenuItem>
+                    }
+                </MudMenu>
+            </MudTd>
+            <MudTd DataLabel="FirstName">
                 <MudHighlighter Text="@context.FirstName" HighlightedText="@_searchString" />
             </MudTd>
             <MudTd DataLabel="LastName">
@@ -78,15 +95,6 @@ else
             </MudTd>
             <MudTd DataLabel="EmailConfirmed"><MudCheckBox @bind-Checked="@context.EmailConfirmed" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
             <MudTd DataLabel="Active"><MudCheckBox @bind-Checked="@context.IsActive" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
-            <MudTd DataLabel="Actions" Style="text-align:right">
-                <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary">
-                    <MudMenuItem OnClick="(()=>ViewProfile(context.Id.ToString()))">View Profile</MudMenuItem>
-                    @if (_canViewRoles)
-                    {
-                        <MudMenuItem OnClick="(()=>ManageRoles(context.Id.ToString(), context.UserName))">Manage Roles</MudMenuItem>
-                    }
-                </MudMenu>
-            </MudTd>
         </RowTemplate>
         @* <RowTemplate Context="UserRow">
     <MudTd>
@@ -263,7 +271,7 @@ else
             _canCreateUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Create).FirstOrDefault() != null;
             // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
             _canExportUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
-            _canViewRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.View).FirstOrDefault() != null;
+            _canViewRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
             _items = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),

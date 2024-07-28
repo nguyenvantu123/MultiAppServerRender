@@ -4,6 +4,13 @@
 @attribute [Authorize(Policies.IsAdmin)]
 @layout AdminMainLayout
 
+<style>
+    .mud-table-container {
+        overflow: auto;
+    }
+</style>
+
+
 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
 <PageTitle>Manage Roles</PageTitle>
@@ -15,25 +22,31 @@
 }
 else
 {
-    <MudTable Hover="true" Elevation="25" Items="rolesList" Dense="true" Bordered="true" Striped="true" Filter="new Func<RoleDto, bool>(Search)" @bind-role="role">
+    <MudTable Hover="true" Striped="true" LoadingProgressColor="Color.Info" Elevation="4" Items="rolesList" Filter="new Func<RoleDto, bool>(Search)" @bind-role="role">
 
         <ToolBarContent>
-            <div class="justify-center mud-text-align-center">
-                @if (_canCreateRoles)
-                {
-                    <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Create</MudButton>
-                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-                }
-                else
-                {
-                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-                }
-            </div>
-            <MudSpacer />
-            @if (_canSearchRoles)
+
+            @*             <div class="justify-center mud-text-align-center">
+        *@                @if (_canCreateRoles)
             {
-                <MudTextField @bind-Value="_searchString" Immediate="true" Placeholder="Search for Roles..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
+                <MudTooltip Text="Add new Role">
+                    <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
+                </MudTooltip>
+                @*                 <MudSpacer />
+
+        *@     <MudTooltip Text="Reload">
+                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                </MudTooltip>
             }
+            else
+            {
+                <MudTooltip Text="Reload">
+                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                </MudTooltip>
+            }
+            @*             </div>
+        *@            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Immediate="true" Placeholder="Search for Roles..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
         </ToolBarContent>
 
         @*       <HeaderContent>
@@ -43,23 +56,19 @@ else
     </HeaderContent> *@
 
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<RoleDto, object>(x => x.Id)">Id</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<RoleDto, object>(x => x.Name)">Role</MudTableSortLabel></MudTh>
-            <MudTh Style="text-align:right">Actions</MudTh>
+            @*             <MudTh><MudTableSortLabel SortBy="new Func<RoleDto, object>(x => x.Id)">Id</MudTableSortLabel></MudTh>
+        *@
+            <MudTh>Actions</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<RoleDto, object>(x => x.Name)">Role Name</MudTableSortLabel></MudTh>
         </HeaderContent>
 
         <RowTemplate>
-            <MudTd DataLabel="Id">@context.Id.ToString()</MudTd>
-            <MudTd DataLabel="Role">
-                <MudHighlighter Text="@context.Name" HighlightedText="@_searchString" />
-            </MudTd>
-            @*     <MudTd DataLabel="@_localizer["Description"]">
-        <MudHighlighter Text="@context.Description" HighlightedText="@_searchString" />
-        </MudTd> *@
-            <MudTd DataLabel="Actions" Style="text-align: right">
+            @*             <MudTd DataLabel="Id">@context.Id.ToString()</MudTd>
+
+        *@             <MudTd DataLabel="Actions">
                 @if (_canViewRoleClaims || _canEditRoles || _canDeleteRoles)
                 {
-                    <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Filled.KeyboardArrowDown" IconColor="Color.Secondary" AnchorOrigin="Origin.CenterLeft">
+                    <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary" AnchorOrigin="Origin.CenterLeft">
                         @if (_canViewRoleClaims)
                         {
                             <MudMenuItem @onclick="@(() => ManagePermissions(@context.Id.ToString()))">Manage Permission</MudMenuItem>
@@ -86,6 +95,13 @@ else
                     </MudButton>
                 }
             </MudTd>
+            <MudTd DataLabel="Role">
+                <MudHighlighter Text="@context.Name" HighlightedText="@_searchString" />
+            </MudTd>
+            @*     <MudTd DataLabel="@_localizer["Description"]">
+        <MudHighlighter Text="@context.Description" HighlightedText="@_searchString" />
+        </MudTd> *@
+
         </RowTemplate>
 
         @*  <RowTemplate Context="RoleRow">
@@ -193,7 +209,7 @@ else
             // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
             _canEditRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
             _canDeleteRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Delete).FirstOrDefault() != null;
-            _canSearchRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.View).FirstOrDefault() != null;
+            // _canSearchRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.View).FirstOrDefault() != null;
             _canViewRoleClaims = state.User.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.View).FirstOrDefault() != null;
 
             await InitializeRolesListAsync();
@@ -229,60 +245,60 @@ else
 
     #region OpenUpsertRoleDialog
 
-    protected bool isUpsertRoleDialogOpen = false;
-    protected bool isInsertOperation;
-    protected List<SelectItem<string>> permissionsSelections = new();
+    // protected bool isUpsertRoleDialogOpen = false;
+    // protected bool isInsertOperation;
+    // protected List<SelectItem<string>> permissionsSelections = new();
 
-    protected string labelUpsertDialogTitle;
-    protected string labelUpsertDialogOkButton;
+    // protected string labelUpsertDialogTitle;
+    // protected string labelUpsertDialogOkButton;
 
-    protected async Task OpenUpsertRoleDialog(string roleName = "")
-    {
-        try
-        {
-            currentRoleName = roleName;
+    // protected async Task OpenUpsertRoleDialog(string roleName = "")
+    // {
+    //     try
+    //     {
+    //         currentRoleName = roleName;
 
-            isInsertOperation = string.IsNullOrWhiteSpace(roleName);
+    //         isInsertOperation = string.IsNullOrWhiteSpace(roleName);
 
-            if (isInsertOperation)
-            {
-                labelUpsertDialogTitle = L["New Role"];
-                labelUpsertDialogOkButton = L["Create"];
-            }
-            else
-            {
-                labelUpsertDialogTitle = L["Edit {0}", roleName];
-                labelUpsertDialogOkButton = L["Update"];
-            }
+    //         if (isInsertOperation)
+    //         {
+    //             labelUpsertDialogTitle = L["New Role"];
+    //             labelUpsertDialogOkButton = L["Create"];
+    //         }
+    //         else
+    //         {
+    //             labelUpsertDialogTitle = L["Edit {0}", roleName];
+    //             labelUpsertDialogOkButton = L["Update"];
+    //         }
 
-            RoleDto role = null;
-            isCurrentRoleReadOnly = !isInsertOperation;
+    //         RoleDto role = null;
+    //         isCurrentRoleReadOnly = !isInsertOperation;
 
-            if (isCurrentRoleReadOnly)
-            {
-                var roleResponse = await accountApiClient.GetRoleByName(roleName);
-                role = roleResponse.Result;
-            }
+    //         if (isCurrentRoleReadOnly)
+    //         {
+    //             var roleResponse = await accountApiClient.GetRoleByName(roleName);
+    //             role = roleResponse.Result;
+    //         }
 
-            var response = await accountApiClient.GetAllPermissions();
-            permissionsSelections.Clear();
+    //         var response = await accountApiClient.GetAllPermissions();
+    //         permissionsSelections.Clear();
 
 
-            foreach (var name in response.Result)
-                permissionsSelections.Add(new SelectItem<string>
-                    {
-                        Id = name,
-                        DisplayValue = name,
-                        Selected = role != null && role.Permissions.Contains(name)
-                    });
+    //         foreach (var name in response.Result)
+    //             permissionsSelections.Add(new SelectItem<string>
+    //                 {
+    //                     Id = name,
+    //                     DisplayValue = name,
+    //                     Selected = role != null
+    //                 });
 
-            isUpsertRoleDialogOpen = true;
-        }
-        catch (Exception ex)
-        {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
-        }
-    }
+    //         isUpsertRoleDialogOpen = true;
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+    //     }
+    // }
 
     // protected async Task UpsertRole()
     // {
@@ -390,7 +406,7 @@ else
             }
         }
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, DisableBackdropClick = true };
-        var dialog = _dialogService.Show<RoleModal>(id == null ? "Create" : "Edit", parameters, options);
+        var dialog = _dialogService.Show<RoleModal>(id == Guid.Empty.ToString() ? "Create" : "Edit", parameters, options);
         var result = await dialog.Result;
         if (!result.Canceled)
         {

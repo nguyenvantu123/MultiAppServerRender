@@ -1,8 +1,8 @@
 ﻿@page "/admin/user-roles/{Id}"
-@attribute [Authorize(Policy = PermissionsWebApp.Role.View)]
+@attribute [Authorize(Policies.IsAdmin)]
 @using Microsoft.AspNetCore.Components
-
-<PageTitle Title="@Title" />
+@layout AdminMainLayout
+<PageTitle>User Roles</PageTitle>
 @if (!_loaded)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -67,7 +67,10 @@ else
 
         var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        _canEditUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Update)).Succeeded;
+        // _canEditUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Update)).Succeeded;
+
+        _canEditUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Update).FirstOrDefault() != null;
+
         // _canSearchRoles = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.Role.Search)).Succeeded;
 
         var userId = Id;

@@ -181,10 +181,10 @@ namespace BlazorWebApi.Users.Controller.Account
             return new ApiResponseDto<List<UserViewModel>>(200, $"{count} users fetched", userDtoList, count);
         }
 
-        [HttpGet]
         [Authorize(Permissions.User.Read)]
+        [HttpGet]
         [Route("[action]/{id}")]
-        public async Task<ApiResponseDto<UserViewModel>> UserById([FromQuery] string id)
+        public async Task<ApiResponseDto<UserViewModel>> UserById(string id)
         {
             var userById = await _userManager.FindByIdAsync(id);
 
@@ -198,11 +198,10 @@ namespace BlazorWebApi.Users.Controller.Account
             return new ApiResponseDto<UserViewModel>(200, "Success", result);
         }
 
-
-        [HttpGet]
         [Authorize(Permissions.User.Read)]
+        [HttpGet]
         [Route("[action]/{id}")]
-        public async Task<ApiResponseDto<UserRolesResponse>> UserRoles([FromQuery] string id)
+        public async Task<ApiResponseDto<UserRolesResponse>> UserRoles(string id)
         {
             var viewModel = new List<UserRoleModel>();
             var user = await _userManager.FindByIdAsync(id);
@@ -317,7 +316,7 @@ namespace BlazorWebApi.Users.Controller.Account
                 {
                     Id = role.Id,
                     Name = role.Name,
-                    Permissions = permissions
+                    //Permissions = permissions
                 });
             }
 
@@ -337,7 +336,7 @@ namespace BlazorWebApi.Users.Controller.Account
             var roleDto = new RoleDto
             {
                 Name = name,
-                Permissions = permissions
+                //Permissions = permissions
             };
 
             return new ApiResponse(200, "Role fetched", roleDto);
@@ -364,13 +363,13 @@ namespace BlazorWebApi.Users.Controller.Account
             // Re-create the permissions
             var role = await _roleManager.FindByNameAsync(roleDto.Name);
 
-            foreach (var claim in roleDto.Permissions)
-            {
-                var resultAddClaim = await _roleManager.AddClaimAsync(role, new Claim(ApplicationClaimTypes.Permission, _entityPermissions.GetPermissionByName(claim)));
+            //foreach (var claim in roleDto.Permissions)
+            //{
+            //    var resultAddClaim = await _roleManager.AddClaimAsync(role, new Claim(ApplicationClaimTypes.Permission, _entityPermissions.GetPermissionByName(claim)));
 
-                if (!resultAddClaim.Succeeded)
-                    await _roleManager.DeleteAsync(role);
-            }
+            //    if (!resultAddClaim.Succeeded)
+            //        await _roleManager.DeleteAsync(role);
+            //}
 
             return new ApiResponse(200, $"Role {roleDto.Name} created", roleDto); //fix a strange System.Text.Json exception shown only in Debug_SSB
         }
@@ -402,13 +401,13 @@ namespace BlazorWebApi.Users.Controller.Account
                         await _roleManager.RemoveClaimAsync(role, new Claim(ApplicationClaimTypes.Permission, permission));
                     }
 
-                    foreach (var claim in roleDto.Permissions)
-                    {
-                        var result = await _roleManager.AddClaimAsync(role, new Claim(ApplicationClaimTypes.Permission, _entityPermissions.GetPermissionByName(claim)));
+                    //foreach (var claim in roleDto.Permissions)
+                    //{
+                    //    var result = await _roleManager.AddClaimAsync(role, new Claim(ApplicationClaimTypes.Permission, _entityPermissions.GetPermissionByName(claim)));
 
-                        if (!result.Succeeded)
-                            await _roleManager.DeleteAsync(role);
-                    }
+                    //    if (!result.Succeeded)
+                    //        await _roleManager.DeleteAsync(role);
+                    //}
                 }
             }
 
@@ -573,7 +572,7 @@ namespace BlazorWebApi.Users.Controller.Account
         private List<RoleClaimModel> GetAllPermissionsValues()
         {
             List<RoleClaimModel> allPermissions = new List<RoleClaimModel>();
-                var modules = typeof(Permissions).GetNestedTypes();
+            var modules = typeof(Permissions).GetNestedTypes();
 
             foreach (var module in modules)
             {

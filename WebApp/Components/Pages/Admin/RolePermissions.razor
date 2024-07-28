@@ -1,6 +1,7 @@
 ﻿@page "/admin/role-permissions/{Id}"
 @using AutoMapper
 @attribute [Authorize(Policies.IsAdmin)]
+@layout AdminMainLayout
 
 <PageTitle>Manage Permission</PageTitle>
 @if (!_loaded)

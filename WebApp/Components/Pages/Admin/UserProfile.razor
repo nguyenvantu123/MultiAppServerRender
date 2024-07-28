@@ -1,5 +1,6 @@
 ﻿@page "/admin/user-profile/{Id}"
 @inject Microsoft.Extensions.Localization.IStringLocalizer<UserProfile> _localizer
+@layout AdminMainLayout
 
 <PageTitle>@Title</PageTitle>
 @if (!_loaded)

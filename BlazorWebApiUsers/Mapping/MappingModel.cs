@@ -17,7 +17,13 @@ namespace WebApp.Mapping
 
             CreateMap<ApplicationUser, UserViewModel>();
 
-            CreateMap<ApplicationRoleClaim, RoleClaimModel>();
+            CreateMap<ApplicationRoleClaim, RoleClaimModel>()
+                .ForMember(x => x.RoleId, opt => opt.MapFrom(map => map.RoleId))
+                .ForMember(x => x.Id, opt => opt.MapFrom(map => map.Id))
+                //.ForMember(x => x.Type, opt => opt.MapFrom(map => map.Type))
+                .ForMember(x => x.Value, opt => opt.MapFrom(map => map.ClaimValue))
+                .ForMember(x => x.Description, opt => opt.MapFrom(map => map.Description))
+                .ForMember(x => x.Group, opt => opt.MapFrom(map => map.Group));
 
             //CreateMap<Message, MessageDto>().ReverseMap();
         }

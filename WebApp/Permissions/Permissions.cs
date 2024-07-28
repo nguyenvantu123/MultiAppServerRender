@@ -50,8 +50,8 @@ namespace WebApp.Permissions
             [Display(Name = "DeleteRolePermission")]
             public const string Delete = "Role.Delete";
 
-            [Display(Name = "ViewRolePermission")]
-            public const string View = "Role.View";
+            //[Display(Name = "ViewRolePermission")]
+            //public const string View = "Role.View";
 
         }
 
