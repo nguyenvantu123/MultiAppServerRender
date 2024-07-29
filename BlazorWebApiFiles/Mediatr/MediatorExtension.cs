@@ -1,5 +1,5 @@
 ﻿using BlazorWebApi.Files.Data;
-using BlazorWebApiFiles.Seedwork;
+using BlazorWebApiFiles.Entity._base;
 
 namespace BlazorWebApiFiles.Mediatr;
 
@@ -8,7 +8,7 @@ static class MediatorExtension
     public static async Task DispatchDomainEventsAsync(this IMediator mediator, FileDbContext ctx)
     {
         var domainEntities = ctx.ChangeTracker
-            .Entries<Entity>()
+            .Entries<EntityBase>()
             .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any());
 
         var domainEvents = domainEntities
