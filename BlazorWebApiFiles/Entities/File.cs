@@ -1,10 +1,9 @@
 ﻿using BlazorWebApiFiles.Entity._base;
 using Finbuckle.MultiTenant;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorWebApi.Files.Entities
 {
-
-    [MultiTenant]
     public class FileData : EntityBase
     {
 
@@ -26,6 +25,7 @@ namespace BlazorWebApi.Files.Entities
 
         public string Mime { get; set; }
 
+        [Column(TypeName = "decimal(18,4)")]
         public decimal? Size { get; set; }
 
         public string PreviewUrl { get; set; }
@@ -39,5 +39,7 @@ namespace BlazorWebApi.Files.Entities
         public Guid? FolderId { get; set; }
 
         public Folder Folder { get; set; }
+
+        public string TenantId { get; set; }
     }
 }

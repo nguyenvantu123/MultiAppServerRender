@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34518.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebApiBff", "BlazorWebApiBff\BlazorWebApiBff.csproj", "{2BB3003F-B892-491E-B349-4FE59602C294}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebApiFiles", "BlazorWebApiFiles\BlazorWebApiFiles.csproj", "{349A6E2F-DD1F-41D3-A2D8-8424AE387348}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebApiUsers", "BlazorWebApiUsers\BlazorWebApiUsers.csproj", "{A42B8CFC-5EAB-4B1E-8887-08009A69D3BB}"
@@ -31,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "EventBus\EventBus.csproj", "{8D9830FC-D6ED-4864-85DB-78F5F61E63A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationEventLogEF", "IntegrationEventLogEF\IntegrationEventLogEF.csproj", "{2016F220-4AEA-460B-B803-B78B60FC44B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationEventLogEF", "IntegrationEventLogEF\IntegrationEventLogEF.csproj", "{2016F220-4AEA-460B-B803-B78B60FC44B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +37,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2BB3003F-B892-491E-B349-4FE59602C294}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BB3003F-B892-491E-B349-4FE59602C294}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BB3003F-B892-491E-B349-4FE59602C294}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BB3003F-B892-491E-B349-4FE59602C294}.Release|Any CPU.Build.0 = Release|Any CPU
 		{349A6E2F-DD1F-41D3-A2D8-8424AE387348}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{349A6E2F-DD1F-41D3-A2D8-8424AE387348}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{349A6E2F-DD1F-41D3-A2D8-8424AE387348}.Release|Any CPU.ActiveCfg = Release|Any CPU

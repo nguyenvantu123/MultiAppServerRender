@@ -20,7 +20,7 @@ builder.AddServiceDefaults();
 
 builder.AddRabbitMQ("Eventbus");
 
-builder.AddSqlServerDbContext<FileDbContext>("FileDB");
+builder.AddSqlServerDbContext<FileDbContext>("FileDb");
 
 var configSection = builder.Configuration.GetSection("MinioClient");
 
@@ -82,5 +82,12 @@ app.UseAuthorization();
 app.UseAuthentication();
 
 app.MapControllers();
+
+var orders = app.NewVersionedApi("Orders");
+
+orders.MapFilesApiV1()
+      .RequireAuthorization();
+
+app.UseDefaultOpenApi();
 
 app.Run();

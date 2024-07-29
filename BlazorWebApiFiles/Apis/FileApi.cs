@@ -1,11 +1,16 @@
 ﻿
+using Minio;
+using Minio.DataModel.Args;
+using Minio.DataModel;
+using MultiAppServer.ServiceDefaults;
+
 public static class FileApi
 {
     public static RouteGroupBuilder MapFilesApiV1(this IEndpointRouteBuilder app)
     {
         var api = app.MapGroup("api/files").HasApiVersion(1.0);
 
-        //api.MapPut("/cancel", CancelOrderAsync);
+        api.MapGet("/getPresignedUrl", GetPresignedAsync);
         //api.MapPut("/ship", ShipOrderAsync);
         //api.MapGet("{orderId:int}", GetOrderAsync);
         //api.MapGet("/", GetOrdersByUserAsync);
@@ -16,34 +21,19 @@ public static class FileApi
         return api;
     }
 
-    //public static async Task<Results<Ok, BadRequest<string>, ProblemHttpResult>> CancelOrderAsync(
-    //    [FromHeader(Name = "x-requestid")] Guid requestId,
-    //    CancelOrderCommand command,
-    //    [AsParameters] FileServices services)
-    //{
-    //    if (requestId == Guid.Empty)
-    //    {
-    //        return TypedResults.BadRequest("Empty GUID is not valid for request ID");
-    //    }
+    public static async Task<ApiResponseDto<string>> GetPresignedAsync(
+        string objectName,
+        [AsParameters] FileServices services,
+        IMinioClient minioClient)
+    {
+        //    return Ok(await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
+        //           .WithBucket(bucketID))
+        //       .ConfigureAwait(false));
 
-    //    var requestCancelOrder = new IdentifiedCommand<CancelOrderCommand, bool>(command, requestId);
+        string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappbucket").WithObject(objectName));
 
-    //    services.Logger.LogInformation(
-    //        "Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
-    //        requestCancelOrder.GetGenericTypeName(),
-    //        nameof(requestCancelOrder.Command.OrderNumber),
-    //        requestCancelOrder.Command.OrderNumber,
-    //        requestCancelOrder);
-
-    //    var commandResult = await services.Mediator.Send(requestCancelOrder);
-
-    //    if (!commandResult)
-    //    {
-    //        return TypedResults.Problem(detail: "Cancel order failed to process.", statusCode: 500);
-    //    }
-
-    //    return TypedResults.Ok();
-    //}
+        return new ApiResponseDto<string>(200, "Success", file);
+    }
 
     //public static async Task<Results<Ok, BadRequest<string>, ProblemHttpResult>> ShipOrderAsync(
     //    [FromHeader(Name = "x-requestid")] Guid requestId,
@@ -117,9 +107,9 @@ public static class FileApi
     //    CreateOrderRequest request,
     //    [AsParameters] FileServices services)
     //{
-        
+
     //    //mask the credit card number
-        
+
     //    services.Logger.LogInformation(
     //        "Sending command: {CommandName} - {IdProperty}: {CommandId}",
     //        request.GetGenericTypeName(),
