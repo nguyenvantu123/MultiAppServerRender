@@ -68,11 +68,11 @@ public static class FileApi
             fileData.Size = command.FormFile.Length;
             if (HttpPostedFileBaseExtensions.IsImage(command.FormFile))
             {
-                fileData.Width = command.FormFile.wi.FileName;
+                //fileData.Width = command.FormFile.wi.FileName;
             }
 
             fileData.FileTypeData = command.FileType;
-
+            fileData.Ext = Path.GetExtension(command.FormFile.FileName);
 
         }
 
