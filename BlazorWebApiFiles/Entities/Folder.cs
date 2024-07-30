@@ -1,9 +1,10 @@
 ﻿using BlazorWebApiFiles.Entity._base;
+using BlazorWebApiFiles.Seedwork;
 using Finbuckle.MultiTenant;
 
 namespace BlazorWebApi.Files.Entities
 {
-    public class Folder : EntityBase
+    public class Folder : EntityBase, IAggregateRoot
     {
         public string Name { get; set; }
 

@@ -12,6 +12,12 @@ namespace BlazorWebApiFiles.Entity._base
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [JsonIgnore]
+        public Guid? DeletedById { get; set; }
+
+        [JsonIgnore]
+        public string UserNameDeleted { get; set; }
+
+        [JsonIgnore]
         public bool IsDeleted { get; set; }
 
         [JsonIgnore]
@@ -32,6 +38,7 @@ namespace BlazorWebApiFiles.Entity._base
         [JsonIgnore]
         public string UserNameUpdated { get; set; }
 
+        [JsonIgnore]
         public bool IsActive { get; set; } = true;
 
         public int? RequestedHashCode { get; set; }

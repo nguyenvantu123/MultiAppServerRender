@@ -1,10 +1,11 @@
-﻿using BlazorWebApiFiles.Entity._base;
-using Finbuckle.MultiTenant;
+﻿using BlazorWebApi.Files.Constant;
+using BlazorWebApiFiles.Entity._base;
+using BlazorWebApiFiles.Seedwork;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorWebApi.Files.Entities
 {
-    public class FileData : EntityBase
+    public class FileData : EntityBase, IAggregateRoot
     {
 
         public string Name { get; set; }
@@ -38,8 +39,8 @@ namespace BlazorWebApi.Files.Entities
 
         public Guid? FolderId { get; set; }
 
-        public Folder Folder { get; set; }
-
         public string TenantId { get; set; }
+
+        public FileType FileTypeData { get; set; }
     }
 }

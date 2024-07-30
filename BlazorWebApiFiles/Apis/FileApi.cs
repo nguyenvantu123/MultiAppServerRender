@@ -3,6 +3,11 @@ using Minio;
 using Minio.DataModel.Args;
 using Minio.DataModel;
 using MultiAppServer.ServiceDefaults;
+using Google.Protobuf.WellKnownTypes;
+using Minio.DataModel.Encryption;
+using BlazorWebApiFiles.Application.Commands;
+using BlazorWebApi.Files.Entities;
+using BlazorWebApi.Files.Exceptions;
 
 public static class FileApi
 {
@@ -11,7 +16,7 @@ public static class FileApi
         var api = app.MapGroup("api/files").HasApiVersion(1.0);
 
         api.MapGet("/getPresignedUrl", GetPresignedAsync);
-        //api.MapPut("/ship", ShipOrderAsync);
+        api.MapPost("/uploadFile", UploadFile);
         //api.MapGet("{orderId:int}", GetOrderAsync);
         //api.MapGet("/", GetOrdersByUserAsync);
         //api.MapGet("/cardtypes", GetCardTypesAsync);
@@ -35,34 +40,44 @@ public static class FileApi
         return new ApiResponseDto<string>(200, "Success", file);
     }
 
-    //public static async Task<Results<Ok, BadRequest<string>, ProblemHttpResult>> ShipOrderAsync(
-    //    [FromHeader(Name = "x-requestid")] Guid requestId,
-    //    ShipOrderCommand command,
-    //    [AsParameters] FileServices services)
-    //{
-    //    if (requestId == Guid.Empty)
-    //    {
-    //        return TypedResults.BadRequest("Empty GUID is not valid for request ID");
-    //    }
+    public static async Task<ApiResponseDto<bool>> UploadFile(
+        UploadFileCommand command,
+        [AsParameters] FileServices services,
+         IMinioClient minioClient)
+    {
 
-    //    var requestShipOrder = new IdentifiedCommand<ShipOrderCommand, bool>(command, requestId);
+        if (command.FormFile != null && command.FormFile.Length > 0)
+        {
 
-    //    services.Logger.LogInformation(
-    //        "Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
-    //        requestShipOrder.GetGenericTypeName(),
-    //        nameof(requestShipOrder.Command.OrderNumber),
-    //        requestShipOrder.Command.OrderNumber,
-    //        requestShipOrder);
+            var memoryStream = new MemoryStream();
+            await command.FormFile.CopyToAsync(memoryStream);
 
-    //    var commandResult = await services.Mediator.Send(requestShipOrder);
 
-    //    if (!commandResult)
-    //    {
-    //        return TypedResults.Problem(detail: "Ship order failed to process.", statusCode: 500);
-    //    }
+            PutObjectArgs putObjectArgs = new PutObjectArgs()
+                                      .WithBucket("multiapp")
+                                      .WithStreamData(memoryStream)
+                                      .WithObject(command.FormFile.FileName)
+                                      .WithFileName(command.FormFile.FileName)
+                                      .WithContentType(command.FormFile.ContentType);
 
-    //    return TypedResults.Ok();
-    //}
+            await minioClient.PutObjectAsync(putObjectArgs);
+
+            FileData fileData = new FileData();
+
+            fileData.Name = command.FormFile.FileName;
+            fileData.Size = command.FormFile.Length;
+            if (HttpPostedFileBaseExtensions.IsImage(command.FormFile))
+            {
+                fileData.Width = command.FormFile.wi.FileName;
+            }
+
+            fileData.FileTypeData = command.FileType;
+
+
+        }
+
+        return new ApiResponseDto<bool>(400, "File Is Require!!!", false);
+    }
 
     //public static async Task<Results<Ok<Order>, NotFound>> GetOrderAsync(int orderId, [AsParameters] FileServices services)
     //{
