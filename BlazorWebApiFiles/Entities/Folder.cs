@@ -1,5 +1,5 @@
 ﻿using BlazorWebApiFiles.Entity._base;
-using BlazorWebApiFiles.Seedwork;
+using BlazorWebApiFiles.SeedWork;
 using Finbuckle.MultiTenant;
 
 namespace BlazorWebApi.Files.Entities

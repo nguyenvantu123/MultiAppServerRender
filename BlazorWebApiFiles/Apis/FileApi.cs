@@ -8,6 +8,13 @@ using Minio.DataModel.Encryption;
 using BlazorWebApiFiles.Application.Commands;
 using BlazorWebApi.Files.Entities;
 using BlazorWebApi.Files.Exceptions;
+using BetkingLol.DataAccess.UnitOfWork;
+using SixLabors.ImageSharp;
+using BlazorWebApi.Repository;
+using BetkingLol.Domain.Request.Queries.BankInfoByUser;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 public static class FileApi
 {
@@ -27,13 +34,30 @@ public static class FileApi
     }
 
     public static async Task<ApiResponseDto<string>> GetPresignedAsync(
-        string objectName,
+        GetPresignedUserProfileUrl queries,
         [AsParameters] FileServices services,
-        IMinioClient minioClient)
+        IMinioClient minioClient,
+        IHttpContextAccessor HttpContextAccessor)
     {
-        //    return Ok(await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
-        //           .WithBucket(bucketID))
-        //       .ConfigureAwait(false));
+        var getObjectName = services.UnitOfWork.Repository<FileMapWithEntity>().GetQuery(x => x.RelationType == queries.RelationType && x.FileName == queries.ObjectName);
+        if (queries.RelationType == "UserProfile")
+        {
+
+            string userIdString = HttpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            getObjectName = getObjectName.Where(x => x.RelationId.ToString() == userIdString);
+        }
+        else
+        {
+            getObjectName = getObjectName.Where(x => x.RelationId == queries.RelationId);
+        }
+
+        string objectName = (await getObjectName.FirstOrDefaultAsync())!.FileName;
+
+        if (objectName.Equals(null) || string.IsNullOrEmpty(objectName))
+        {
+            return new ApiResponseDto<string>(400, "Not Found File", string.Empty);
+        }
 
         string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappbucket").WithObject(objectName));
 
@@ -43,7 +67,7 @@ public static class FileApi
     public static async Task<ApiResponseDto<bool>> UploadFile(
         UploadFileCommand command,
         [AsParameters] FileServices services,
-         IMinioClient minioClient)
+        IMinioClient minioClient)
     {
 
         if (command.FormFile != null && command.FormFile.Length > 0)
@@ -52,7 +76,6 @@ public static class FileApi
             var memoryStream = new MemoryStream();
             await command.FormFile.CopyToAsync(memoryStream);
 
-
             PutObjectArgs putObjectArgs = new PutObjectArgs()
                                       .WithBucket("multiapp")
                                       .WithStreamData(memoryStream)
@@ -60,7 +83,7 @@ public static class FileApi
                                       .WithFileName(command.FormFile.FileName)
                                       .WithContentType(command.FormFile.ContentType);
 
-            await minioClient.PutObjectAsync(putObjectArgs);
+            var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
 
             FileData fileData = new FileData();
 
@@ -68,12 +91,36 @@ public static class FileApi
             fileData.Size = command.FormFile.Length;
             if (HttpPostedFileBaseExtensions.IsImage(command.FormFile))
             {
-                //fileData.Width = command.FormFile.wi.FileName;
+                var fileBytes = memoryStream.ToArray();
+
+                using Image image = Image.Load(fileBytes);
+
+                fileData.Width = image.Width;
+                fileData.Height = image.Height;
             }
 
             fileData.FileTypeData = command.FileType;
             fileData.Ext = Path.GetExtension(command.FormFile.FileName);
 
+            fileData.Mime = HttpPostedFileBaseExtensions.GetMimeType(fileData.Ext);
+
+            if (command.FolerId.HasValue)
+            {
+                fileData.FolderId = command.FolerId;
+            }
+
+            services.UnitOfWork.Repository<FileData>().Add(fileData);
+
+
+            FileMapWithEntity fileMapWithEntity = new FileMapWithEntity();
+            fileMapWithEntity.RelationType = command.RelationType;
+            fileMapWithEntity.RelationId = command.RelationId;
+            fileMapWithEntity.FileName = dataUpload.ObjectName;
+            fileMapWithEntity.FileId = fileData.Id;
+
+            await services.UnitOfWork.SaveEntitiesAsync();
+
+            return new ApiResponseDto<bool>(200, "Success!!!", true);
         }
 
         return new ApiResponseDto<bool>(400, "File Is Require!!!", false);

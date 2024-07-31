@@ -11,7 +11,15 @@ namespace BlazorWebApiFiles.Entity._base
 
         bool IsDeleted { get; set; }
 
+        Guid? DeletedById { get; set; }
+
+        string DeletedBy { get; set; }
+
+        DateTime? DeletedAt { get; set; }
+
         Guid? InsertedById { get; set; }
+
+        string InsertedBy {  get; set; }
 
         DateTime InsertedAt { get; set; }
 
@@ -19,8 +27,6 @@ namespace BlazorWebApiFiles.Entity._base
 
         DateTime UpdatedAt { get; set; }
 
-        public string UserNameInserted { get; set; }
-
-        public string UserNameUpdated { get; set; }
+        string UpdatedBy { get; set; }
     }
 }

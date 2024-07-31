@@ -1,5 +1,5 @@
 ﻿using BlazorWebApi.Files.Entities;
-using BlazorWebApiFiles.Seedwork;
+using BlazorWebApiFiles.SeedWork;
 
 namespace BlazorWebApi.Repository;
 
@@ -10,5 +10,4 @@ public interface IFileRepository : IRepository<FileData>
 {
     //UploadFile Add(Order order);
 
- 
 }

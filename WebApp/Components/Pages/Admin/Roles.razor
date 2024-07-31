@@ -25,24 +25,40 @@ else
     <MudTable Hover="true" Striped="true" LoadingProgressColor="Color.Info" Elevation="4" Items="rolesList" Filter="new Func<RoleDto, bool>(Search)" @bind-role="role">
 
         <ToolBarContent>
-
-            @*             <div class="justify-center mud-text-align-center">
-        *@                @if (_canCreateRoles)
+            @if (_canCreateRoles)
             {
-                <MudTooltip Text="Add new Role">
-                    <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
-                </MudTooltip>
-                @*                 <MudSpacer />
 
-        *@     <MudTooltip Text="Reload">
-                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
-                </MudTooltip>
+                <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                    <MudTooltip Text="Add new Role">
+                        <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Add New Role</MudButton>
+                    </MudTooltip>
+                    <MudTooltip Text="Reload">
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                    </MudTooltip>
+                </MudHidden>
+
+                <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                    <MudTooltip Text="Add new Role">
+                        <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
+                    </MudTooltip>
+                    <MudTooltip Text="Reload">
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                    </MudTooltip>
+                </MudHidden>
             }
             else
             {
-                <MudTooltip Text="Reload">
-                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
-                </MudTooltip>
+                <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                    <MudTooltip Text="Reload">
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                    </MudTooltip>
+                </MudHidden>
+
+                <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                    <MudTooltip Text="Reload">
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                    </MudTooltip>
+                </MudHidden>
             }
             @*             </div>
         *@            <MudSpacer />
@@ -56,8 +72,7 @@ else
     </HeaderContent> *@
 
         <HeaderContent>
-            @*             <MudTh><MudTableSortLabel SortBy="new Func<RoleDto, object>(x => x.Id)">Id</MudTableSortLabel></MudTh>
-        *@
+
             <MudTh>Actions</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<RoleDto, object>(x => x.Name)">Role Name</MudTableSortLabel></MudTh>
         </HeaderContent>

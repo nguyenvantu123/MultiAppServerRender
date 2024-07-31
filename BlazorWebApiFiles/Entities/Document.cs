@@ -1,6 +1,6 @@
 ﻿using BlazorWebApi.Files.Constant;
 using BlazorWebApiFiles.Entity._base;
-using BlazorWebApiFiles.Seedwork;
+using BlazorWebApiFiles.SeedWork;
 using OpenTelemetry.Metrics;
 
 namespace BlazorWebApi.Files.Entities

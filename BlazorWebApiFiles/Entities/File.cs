@@ -1,6 +1,6 @@
 ﻿using BlazorWebApi.Files.Constant;
 using BlazorWebApiFiles.Entity._base;
-using BlazorWebApiFiles.Seedwork;
+using BlazorWebApiFiles.SeedWork;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorWebApi.Files.Entities

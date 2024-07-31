@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace BlazorWebApiFiles.Seedwork;
+namespace BlazorWebApiFiles.SeedWork;
 
 public abstract class Enumeration : IComparable
 {

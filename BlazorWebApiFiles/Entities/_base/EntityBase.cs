@@ -15,9 +15,6 @@ namespace BlazorWebApiFiles.Entity._base
         public Guid? DeletedById { get; set; }
 
         [JsonIgnore]
-        public string UserNameDeleted { get; set; }
-
-        [JsonIgnore]
         public bool IsDeleted { get; set; }
 
         [JsonIgnore]
@@ -33,18 +30,22 @@ namespace BlazorWebApiFiles.Entity._base
         public DateTime UpdatedAt { get; set; }
 
         [JsonIgnore]
-        public string UserNameInserted { get; set; }
-
-        [JsonIgnore]
-        public string UserNameUpdated { get; set; }
-
-        [JsonIgnore]
         public bool IsActive { get; set; } = true;
 
         public int? RequestedHashCode { get; set; }
 
         private List<INotification> _domainEvents;
         public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
+
+        [JsonIgnore]
+        public string DeletedBy { get; set; }
+
+        [JsonIgnore]
+        public string InsertedBy { get; set; }
+
+        [JsonIgnore]
+        public string UpdatedBy { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         public void AddDomainEvent(INotification eventItem)
         {
