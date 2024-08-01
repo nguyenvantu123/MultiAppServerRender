@@ -1,6 +1,6 @@
 -- Migration Command
 
-add-migration InitMigrate -OutputDir  Data/Migrations  -StartupProject BlazorWebApiFiles -Context FileDbContext
+add-migration AddFileCS -OutputDir  Data/Migrations  -StartupProject BlazorWebApiFiles -Context FileDbContext
 
 add-migration GenerateApplicationTenantDB1 -OutputDir  Data/Migrations/TenantStoreDb  -StartupProject BlazorWebApiUsers -Context TenantStoreDbContext
 

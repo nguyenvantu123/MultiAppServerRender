@@ -9,18 +9,26 @@ using BlazorWebApiFiles.Application.Behaviors;
 using Minio;
 using Aspire.Minio.Client;
 using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
+using IntegrationEventLogEF.Services;
+using BlazorWebApi.Repository;
+using BlazorWebApiFiles.SeedWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-// Add services to the container.
-
-//builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<OrderingContext>>();
 
 builder.AddRabbitMQ("Eventbus");
 
 builder.AddSqlServerDbContext<FileDbContext>("FileDb");
+
+//builder.Services.AddSingleton<FileServices>();
+
+builder.AddDefaultAuthentication();
+
+builder.Services.AddScoped<IFilesQueries, FilesQueries>();
+
+builder.Services.AddScoped<IRequestManager, RequestManager>();
 
 var configSection = builder.Configuration.GetSection("MinioClient");
 
@@ -34,6 +42,8 @@ builder.Services.AddMinio(configureClient => configureClient
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IIdentityService, IdentityService>();
 
+builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<FileDbContext>>();
+
 // Configure mediatR
 builder.Services.AddMediatR(cfg =>
 {
@@ -44,48 +54,20 @@ builder.Services.AddMediatR(cfg =>
     cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
 });
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+var withApiVersioning = builder.Services.AddApiVersioning();
 
-//builder.ConfigureJwtBearToken();
+builder.AddDefaultOpenApi(withApiVersioning);
 
-//builder.AddRabbitMQ("messaging");
-
-builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
-var cs = builder.GetAppConfiguration();
+var files = app.NewVersionedApi("Files");
 
-if (cs.BehindSSLProxy)
-{
-    app.UseCors();
-    app.UseForwardedHeaders();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.UseAuthentication();
-
-app.MapControllers();
-
-var orders = app.NewVersionedApi("Orders");
-
-orders.MapFilesApiV1()
+files.MapFilesApiV1()
       .RequireAuthorization();
 
 app.UseDefaultOpenApi();

@@ -10,7 +10,7 @@ namespace eShop.ServiceDefaults;
 
 public static class AuthenticationExtensions
 {
-    public static IServiceCollection AuthenticationService(this IHostApplicationBuilder builder)
+    public static IServiceCollection AddDefaultAuthentication(this IHostApplicationBuilder builder)
     {
 
         var services = builder.Services;

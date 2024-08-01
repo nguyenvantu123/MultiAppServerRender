@@ -10,7 +10,7 @@ namespace BlazorWebApi.Users.Configuration
             return new List<ApiResource>
             {
                 new ApiResource("identity", "Identity Service"),
-                new ApiResource("basket", "Basket Service"),
+                new ApiResource("files", "File Service"),
                 new ApiResource("webhooks", "Webhooks registration Service"),
             };
         }
@@ -22,7 +22,7 @@ namespace BlazorWebApi.Users.Configuration
             return new List<ApiScope>
             {
                 new ApiScope("identity", "Identity Service"),
-                new ApiScope("basket", "Basket Service"),
+                new ApiScope("files", "File Service"),
                 new ApiScope("webhooks", "Webhooks registration Service"),
             };
         }
@@ -142,17 +142,17 @@ namespace BlazorWebApi.Users.Configuration
                 },
                 new Client
                 {
-                    ClientId = "basketswaggerui",
-                    ClientName = "Basket Swagger UI",
+                    ClientId = "fileswaggerui",
+                    ClientName = "Files Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris = { $"{configuration["BasketApiClient"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{configuration["BasketApiClient"]}/swagger/" },
+                    RedirectUris = { $"{configuration["FileApiClient"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{configuration["FileApiClient"]}/swagger/" },
 
                     AllowedScopes =
                     {
-                        "basket"
+                        "files"
                     }
                 },
                 new Client
@@ -163,7 +163,7 @@ namespace BlazorWebApi.Users.Configuration
                     AllowAccessTokensViaBrowser = true,
 
                     RedirectUris = { $"{configuration["IdentityApiClient"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{configuration["IdentityApiClient"]}/swagger/" },
+                    PostLogoutRedirectUris = { $"{configuration["IdentityApiClient"]}/Account/Logout" },
 
                     AllowedScopes =
                     {

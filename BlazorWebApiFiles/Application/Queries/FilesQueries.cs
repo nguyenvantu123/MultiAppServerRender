@@ -3,10 +3,9 @@ using BlazorWebApi.Files.Data;
 using Minio;
 using Minio.DataModel.Args;
 
-namespace eShop.Ordering.API.Application.Queries;
+namespace BlazorWebApiFiles.Application.Queries;
 
-public class FilesQueries([AsParameters] FileServices services,
-        IMinioClient minioClient)
+public class FilesQueries(IMinioClient minioClient)
     : IFilesQueries
 {
     public async Task<string> GetPresignedUserProfileAsync(GetPresignedUserProfileUrl getPresignedUrl)

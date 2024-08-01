@@ -34,10 +34,11 @@ public static class FileApi
     }
 
     public static async Task<ApiResponseDto<string>> GetPresignedAsync(
-        GetPresignedUserProfileUrl queries,
-        [AsParameters] FileServices services,
-        IMinioClient minioClient,
-        IHttpContextAccessor HttpContextAccessor)
+         [AsParameters] GetPresignedUserProfileUrl queries,
+         [FromServices] FileServices services,
+         IMinioClient minioClient,
+         IHttpContextAccessor HttpContextAccessor
+        )
     {
         var getObjectName = services.UnitOfWork.Repository<FileMapWithEntity>().GetQuery(x => x.RelationType == queries.RelationType && x.FileName == queries.ObjectName);
         if (queries.RelationType == "UserProfile")
@@ -61,12 +62,12 @@ public static class FileApi
 
         string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappbucket").WithObject(objectName));
 
-        return new ApiResponseDto<string>(200, "Success", file);
+        return new ApiResponseDto<string>(200, "Success", "");
     }
 
     public static async Task<ApiResponseDto<bool>> UploadFile(
-        UploadFileCommand command,
-        [AsParameters] FileServices services,
+        [FromForm] UploadFileCommand command,
+        [FromServices] FileServices services,
         IMinioClient minioClient)
     {
 
