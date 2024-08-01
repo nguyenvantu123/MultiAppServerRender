@@ -62,8 +62,12 @@ builder.AddDefaultOpenApi(withApiVersioning);
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
+app.UseAuthentication();
 
+
+app.UseRouting();
+app.UseAuthorization();
+app.MapDefaultEndpoints();
 
 var files = app.NewVersionedApi("Files");
 

@@ -58,6 +58,7 @@ public static class AuthenticationExtensions
             options.TokenValidationParameters.ValidateAudience = false;
         });
 
+        services.AddAuthorization();
         return services;
     }
 }

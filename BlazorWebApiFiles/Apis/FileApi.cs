@@ -66,7 +66,7 @@ public static class FileApi
     }
 
     public static async Task<ApiResponseDto<bool>> UploadFile(
-        [FromForm] UploadFileCommand command,
+        [AsParameters] UploadFileCommand command,
         [FromServices] FileServices services,
         IMinioClient minioClient)
     {
