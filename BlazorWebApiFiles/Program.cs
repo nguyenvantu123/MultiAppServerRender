@@ -40,6 +40,7 @@ configSection.Bind(settings);
 
 builder.Services.AddMinio(configureClient => configureClient
        .WithEndpoint(settings.Endpoint)
+       .WithSSL(false)
        .WithCredentials(settings.AccessKey, settings.SecretKey));
 
 builder.Services.AddHttpContextAccessor();

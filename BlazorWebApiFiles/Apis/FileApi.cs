@@ -61,9 +61,9 @@ public static class FileApi
             return new ApiResponseDto<string>(400, "Not Found File", string.Empty);
         }
 
-        string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappbucket").WithObject(objectName));
+        string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappbucket").WithObject(objectName).WithExpiry(60 * 60));
 
-        return new ApiResponseDto<string>(200, "Success", "");
+        return new ApiResponseDto<string>(200, "Success", file);
     }
 
     public static async Task<ApiResponseDto<bool>> UploadFile(
@@ -86,8 +86,9 @@ public static class FileApi
             PutObjectArgs putObjectArgs = new PutObjectArgs()
                                       .WithBucket("multiappbucket")
                                       .WithStreamData(memoryStream)
-                                      .WithObject(FormFile.FileName)
+                                      .WithObject("img/file" + FormFile.FileName)
                                       .WithObjectSize(memoryStream.Length)
+                                      .WithVersionId("1.0")
                                       .WithContentType(FormFile.ContentType);
 
             var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
