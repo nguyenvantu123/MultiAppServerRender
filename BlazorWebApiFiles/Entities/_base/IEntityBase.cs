@@ -13,20 +13,20 @@ namespace BlazorWebApiFiles.Entity._base
 
         Guid? DeletedById { get; set; }
 
-        string DeletedBy { get; set; }
+        string? DeletedBy { get; set; }
 
         DateTime? DeletedAt { get; set; }
 
         Guid? InsertedById { get; set; }
 
-        string InsertedBy {  get; set; }
+        string? InsertedBy { get; set; }
 
-        DateTime InsertedAt { get; set; }
+        DateTime? InsertedAt { get; set; }
 
         Guid? UpdatedById { get; set; }
 
-        DateTime UpdatedAt { get; set; }
+        DateTime? UpdatedAt { get; set; }
 
-        string UpdatedBy { get; set; }
+        string? UpdatedBy { get; set; }
     }
 }

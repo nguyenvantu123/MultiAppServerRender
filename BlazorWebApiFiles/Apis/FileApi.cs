@@ -15,6 +15,7 @@ using BetkingLol.Domain.Request.Queries.BankInfoByUser;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using BlazorWebApi.Files.Constant;
 
 public static class FileApi
 {
@@ -22,8 +23,8 @@ public static class FileApi
     {
         var api = app.MapGroup("api/files").HasApiVersion(1.0);
 
-        api.MapGet("/getPresignedUrl", GetPresignedAsync);
-        api.MapPost("/uploadFile", UploadFile);
+        api.MapGet("/get-presigned-url", GetPresignedAsync);
+        api.MapPost("/upload-file", UploadFile).DisableAntiforgery();
         //api.MapGet("{orderId:int}", GetOrderAsync);
         //api.MapGet("/", GetOrdersByUserAsync);
         //api.MapGet("/cardtypes", GetCardTypesAsync);
@@ -44,7 +45,7 @@ public static class FileApi
         if (queries.RelationType == "UserProfile")
         {
 
-            string userIdString = HttpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            string userIdString = HttpContextAccessor.HttpContext!.User.FindFirst("sub")!.Value;
 
             getObjectName = getObjectName.Where(x => x.RelationId.ToString() == userIdString);
         }
@@ -66,31 +67,36 @@ public static class FileApi
     }
 
     public static async Task<ApiResponseDto<bool>> UploadFile(
-        [AsParameters] UploadFileCommand command,
-        [FromServices] FileServices services,
+         IFormFile FormFile,
+         [FromForm] FileType FileType,
+         Guid? FolerId,
+         [FromForm] string RelationType,
+         [FromForm] Guid RelationId,
+         FileServices services,
         IMinioClient minioClient)
     {
 
-        if (command.FormFile != null && command.FormFile.Length > 0)
+        if (FormFile != null && FormFile.Length > 0)
         {
 
             var memoryStream = new MemoryStream();
-            await command.FormFile.CopyToAsync(memoryStream);
+            await FormFile.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
 
             PutObjectArgs putObjectArgs = new PutObjectArgs()
-                                      .WithBucket("multiapp")
+                                      .WithBucket("multiappbucket")
                                       .WithStreamData(memoryStream)
-                                      .WithObject(command.FormFile.FileName)
-                                      .WithFileName(command.FormFile.FileName)
-                                      .WithContentType(command.FormFile.ContentType);
+                                      .WithObject(FormFile.FileName)
+                                      .WithObjectSize(memoryStream.Length)
+                                      .WithContentType(FormFile.ContentType);
 
             var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
 
             FileData fileData = new FileData();
 
-            fileData.Name = command.FormFile.FileName;
-            fileData.Size = command.FormFile.Length;
-            if (HttpPostedFileBaseExtensions.IsImage(command.FormFile))
+            fileData.Name = FormFile.FileName;
+            fileData.Size = FormFile.Length;
+            if (HttpPostedFileBaseExtensions.IsImage(FormFile))
             {
                 var fileBytes = memoryStream.ToArray();
 
@@ -100,24 +106,30 @@ public static class FileApi
                 fileData.Height = image.Height;
             }
 
-            fileData.FileTypeData = command.FileType;
-            fileData.Ext = Path.GetExtension(command.FormFile.FileName);
+            fileData.FileTypeData = FileType;
+            fileData.Ext = Path.GetExtension(FormFile.FileName);
 
             fileData.Mime = HttpPostedFileBaseExtensions.GetMimeType(fileData.Ext);
 
-            if (command.FolerId.HasValue)
+            if (FolerId != Guid.Empty)
             {
-                fileData.FolderId = command.FolerId;
+                fileData.FolderId = FolerId;
+            }
+            else
+            {
+                fileData.FolderId = null;
             }
 
             services.UnitOfWork.Repository<FileData>().Add(fileData);
 
 
             FileMapWithEntity fileMapWithEntity = new FileMapWithEntity();
-            fileMapWithEntity.RelationType = command.RelationType;
-            fileMapWithEntity.RelationId = command.RelationId;
+            fileMapWithEntity.RelationType = RelationType;
+            fileMapWithEntity.RelationId = RelationId;
             fileMapWithEntity.FileName = dataUpload.ObjectName;
             fileMapWithEntity.FileId = fileData.Id;
+
+            services.UnitOfWork.Repository<FileMapWithEntity>().Add(fileMapWithEntity);
 
             await services.UnitOfWork.SaveEntitiesAsync();
 

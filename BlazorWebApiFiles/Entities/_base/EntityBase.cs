@@ -15,19 +15,19 @@ namespace BlazorWebApiFiles.Entity._base
         public Guid? DeletedById { get; set; }
 
         [JsonIgnore]
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
         [JsonIgnore]
         public Guid? InsertedById { get; set; }
 
         [JsonIgnore]
-        public DateTime InsertedAt { get; set; }
+        public DateTime? InsertedAt { get; set; }
 
         [JsonIgnore]
         public Guid? UpdatedById { get; set; }
 
         [JsonIgnore]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         [JsonIgnore]
         public bool IsActive { get; set; } = true;
@@ -38,13 +38,13 @@ namespace BlazorWebApiFiles.Entity._base
         public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
 
         [JsonIgnore]
-        public string DeletedBy { get; set; }
+        public string? DeletedBy { get; set; }
 
         [JsonIgnore]
-        public string InsertedBy { get; set; }
+        public string? InsertedBy { get; set; }
 
         [JsonIgnore]
-        public string UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
         public DateTime? DeletedAt { get; set; }
 
         public void AddDomainEvent(INotification eventItem)

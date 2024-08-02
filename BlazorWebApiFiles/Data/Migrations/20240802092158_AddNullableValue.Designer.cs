@@ -4,16 +4,19 @@ using BlazorWebApi.Files.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BlazorWebApi.Files.Migrations
+namespace BlazorWebApi.Files.Data.Migrations
 {
     [DbContext(typeof(FileDbContext))]
-    partial class FileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240802092158_AddNullableValue")]
+    partial class AddNullableValue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,6 +42,7 @@ namespace BlazorWebApi.Files.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DeletedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("DeletedById")
@@ -65,10 +69,11 @@ namespace BlazorWebApi.Files.Migrations
                     b.Property<int?>("Height")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("InsertedAt")
+                    b.Property<DateTime>("InsertedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InsertedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("InsertedById")
@@ -105,10 +110,11 @@ namespace BlazorWebApi.Files.Migrations
                     b.Property<string>("TenantId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
@@ -134,6 +140,7 @@ namespace BlazorWebApi.Files.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DeletedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("DeletedById")
@@ -146,10 +153,11 @@ namespace BlazorWebApi.Files.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("InsertedAt")
+                    b.Property<DateTime>("InsertedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InsertedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("InsertedById")
@@ -171,10 +179,11 @@ namespace BlazorWebApi.Files.Migrations
                     b.Property<int?>("RequestedHashCode")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")
@@ -195,6 +204,7 @@ namespace BlazorWebApi.Files.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DeletedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("DeletedById")
@@ -204,10 +214,11 @@ namespace BlazorWebApi.Files.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("InsertedAt")
+                    b.Property<DateTime>("InsertedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InsertedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("InsertedById")
@@ -233,10 +244,11 @@ namespace BlazorWebApi.Files.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdatedById")

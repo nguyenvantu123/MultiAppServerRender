@@ -146,10 +146,9 @@ namespace BlazorWebApi.Users.Configuration
                     ClientName = "Files Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
-
                     RedirectUris = { $"{configuration["FileApiClient"]}/swagger/oauth2-redirect.html" },
                     PostLogoutRedirectUris = { $"{configuration["FileApiClient"]}/swagger/" },
-
+                    AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedScopes =
                     {
                         "files"

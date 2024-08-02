@@ -76,7 +76,7 @@ namespace BetkingLol.DataAccess.UnitOfWork
 
             Guid userId;
 
-            string userIdString = HttpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            string userIdString = HttpContextAccessor.HttpContext!.User.FindFirst("sub")!.Value;
 
             string userName = HttpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Name)!.Value ?? "System";
 

@@ -12,6 +12,7 @@ using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 using IntegrationEventLogEF.Services;
 using BlazorWebApi.Repository;
 using BlazorWebApiFiles.SeedWork;
+using BetkingLol.DataAccess.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +23,15 @@ builder.AddRabbitMQ("Eventbus");
 
 builder.AddSqlServerDbContext<FileDbContext>("FileDb");
 
-//builder.Services.AddSingleton<FileServices>();
-
 builder.AddDefaultAuthentication();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IFilesQueries, FilesQueries>();
 
 builder.Services.AddScoped<IRequestManager, RequestManager>();
+
+builder.Services.AddScoped<FileServices>();
 
 var configSection = builder.Configuration.GetSection("MinioClient");
 
@@ -43,6 +46,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IIdentityService, IdentityService>();
 
 builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<FileDbContext>>();
+builder.Services.AddAntiforgery();
 
 // Configure mediatR
 builder.Services.AddMediatR(cfg =>
@@ -66,6 +70,7 @@ app.UseAuthentication();
 
 
 app.UseRouting();
+app.UseAntiforgery();
 app.UseAuthorization();
 app.MapDefaultEndpoints();
 
