@@ -18,19 +18,10 @@
                     <MudToolBar DisableGutters="true">
                         <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
                     </MudToolBar>
-                    @* <MudSpacer />
-                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-                        <MudTooltip Text="Toggle Dark Mode">
-                            <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
-                        </MudTooltip>
-                    </MudHidden>
-                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-                        <MudMenu StartIcon="@Icons.Material.Filled.Settings" Color="Color.Inherit" Dense="true">
-                            <div class="px-2">
-                                <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
-                            </div>
-                        </MudMenu>
-                    </MudHidden> *@
+                    <MudSpacer />
+                    <MudTooltip Text="Toggle Dark Mode">
+                        <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
+                    </MudTooltip>
                     <AccountProfile />
                 </MudAppBar>
                 <MudDrawer @bind-Open="_navMenuOpened" Elevation="25" ClipMode="DrawerClipMode.Always">

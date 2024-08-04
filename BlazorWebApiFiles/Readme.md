@@ -1,6 +1,6 @@
 -- Migration Command
 
-add-migration AddNullableValue -OutputDir  Data/Migrations  -StartupProject BlazorWebApiFiles -Context FileDbContext
+add-migration AddFileUrl -OutputDir  Data/Migrations  -StartupProject BlazorWebApiFiles -Context FileDbContext
 
 add-migration GenerateApplicationTenantDB1 -OutputDir  Data/Migrations/TenantStoreDb  -StartupProject BlazorWebApiUsers -Context TenantStoreDbContext
 

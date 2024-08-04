@@ -16,6 +16,12 @@ namespace BlazorWebApi.Files.Entities
 
         public DocumentStatus DocumentStatus { get; set; }
 
+        public string DocumentPassword { get; set; }
+
+        public string DocumentKey { get; set; }
+
+        public string DocumentUrl { get; set; }
+
         public int Version { get; set; }
     }
 }

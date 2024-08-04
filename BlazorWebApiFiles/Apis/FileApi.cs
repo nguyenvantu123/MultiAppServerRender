@@ -83,10 +83,12 @@ public static class FileApi
             await FormFile.CopyToAsync(memoryStream);
             memoryStream.Position = 0;
 
+            string fileUrl = "img/file/" + FormFile.FileName;
+
             PutObjectArgs putObjectArgs = new PutObjectArgs()
                                       .WithBucket("multiappbucket")
                                       .WithStreamData(memoryStream)
-                                      .WithObject("img/file" + FormFile.FileName)
+                                      .WithObject(fileUrl)
                                       .WithObjectSize(memoryStream.Length)
                                       .WithVersionId("1.0")
                                       .WithContentType(FormFile.ContentType);
@@ -97,6 +99,7 @@ public static class FileApi
 
             fileData.Name = FormFile.FileName;
             fileData.Size = FormFile.Length;
+            fileData.FileUrl = fileUrl;
             if (HttpPostedFileBaseExtensions.IsImage(FormFile))
             {
                 var fileBytes = memoryStream.ToArray();

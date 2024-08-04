@@ -10,7 +10,6 @@ namespace BlazorWebApi.Files.Entities
 
         public Guid RelationId { get; set; }
 
-
         public string FileName { get; set; }
 
         public Guid FileId { get; set; }

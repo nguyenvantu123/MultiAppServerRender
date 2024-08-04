@@ -42,5 +42,7 @@ namespace BlazorWebApi.Files.Entities
         public string? TenantId { get; set; }
 
         public FileType FileTypeData { get; set; }
+
+        public string FileUrl { get; set; }
     }
 }
