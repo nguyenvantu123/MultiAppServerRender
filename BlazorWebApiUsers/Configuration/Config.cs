@@ -100,7 +100,7 @@ namespace BlazorWebApi.Users.Configuration
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
-                        "orders",
+                        "files",
                         "basket",
                         "webshoppingagg",
                         "webhooks"

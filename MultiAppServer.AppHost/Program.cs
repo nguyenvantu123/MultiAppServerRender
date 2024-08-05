@@ -1,3 +1,4 @@
+using Aspire.Hosting;
 using IdentityModel;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -36,6 +37,8 @@ var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
     .WithEnvironment("IdentityApiClient", identityEndpoint);
 
 webApp.WithReference(user).WithReference(file).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
+
+user.WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
 
 builder.Build().Run();
 
