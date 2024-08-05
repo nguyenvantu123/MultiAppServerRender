@@ -1,5 +1,4 @@
-﻿using BetkingLol.Domain.Request.Queries.BankInfoByUser;
-using BlazorWebApi.Files.Entities;
+﻿using BlazorWebApi.Files.Entities;
 using MultiAppServer.ServiceDefaults;
 
 namespace BlazorWebApiFiles.Application.Queries;

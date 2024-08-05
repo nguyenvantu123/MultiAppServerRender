@@ -45,5 +45,7 @@ namespace BlazorWebApi.Users.Models
 
         public virtual ICollection<Message> Messages { get; set; }
 
+        public string AvatarUrl { get; set; }
+
     }
 }

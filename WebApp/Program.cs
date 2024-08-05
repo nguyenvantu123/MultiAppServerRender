@@ -81,35 +81,35 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-builder.Services.AddScoped(s =>
-{
-    // creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
-    var navigationManager = s.GetRequiredService<NavigationManager>();
-    var httpContextAccessor = s.GetRequiredService<IHttpContextAccessor>();
-    var cookies = httpContextAccessor.HttpContext.Request.Cookies;
-    var httpClientHandler = new HttpClientHandler() { UseCookies = false };
-    if (builder.Environment.IsDevelopment())
-    {
-        // Return 'true' to allow certificates that are untrusted/invalid
-        httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
-    }
-    var client = new HttpClient(httpClientHandler);
-    if (cookies.Any())
-    {
-        var cks = new List<string>();
+//builder.Services.AddScoped(s =>
+//{
+//    // creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
+//    var navigationManager = s.GetRequiredService<NavigationManager>();
+//    var httpContextAccessor = s.GetRequiredService<IHttpContextAccessor>();
+//    var cookies = httpContextAccessor.HttpContext.Request.Cookies;
+//    var httpClientHandler = new HttpClientHandler() { UseCookies = false };
+//    if (builder.Environment.IsDevelopment())
+//    {
+//        // Return 'true' to allow certificates that are untrusted/invalid
+//        httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+//    }
+//    var client = new HttpClient(httpClientHandler);
+//    if (cookies.Any())
+//    {
+//        var cks = new List<string>();
 
-        foreach (var cookie in cookies)
-        {
-            cks.Add($"{cookie.Key}={cookie.Value}");
-        }
+//        foreach (var cookie in cookies)
+//        {
+//            cks.Add($"{cookie.Key}={cookie.Value}");
+//        }
 
-        client.DefaultRequestHeaders.Add("Cookie", string.Join(';', cks));
-    }
+//        client.DefaultRequestHeaders.Add("Cookie", string.Join(';', cks));
+//    }
 
-    client.BaseAddress = new Uri(navigationManager.BaseUri);
+//    client.BaseAddress = new Uri(navigationManager.BaseUri);
 
-    return client;
-});
+//    return client;
+//});
 
 builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
 
@@ -168,7 +168,12 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new("http://blazorwebapiusers");
-}).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12));
+}).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12)).AddAuthToken();
+
+builder.Services.AddHttpClient<FileApiClient>(httpClient =>
+{
+    httpClient.BaseAddress = new("http://blazorwebapifiles");
+}).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12)).AddAuthToken();
 
 
 #region Cookies

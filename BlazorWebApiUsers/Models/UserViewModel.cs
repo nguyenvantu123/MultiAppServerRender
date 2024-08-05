@@ -27,6 +27,8 @@
         public bool EmailConfirmed { get; set; }
 
         public bool IsActive { get; set; }
+
+        public string AvatarUrl { get; set; }
     }
 
     public class UserRoleViewModel

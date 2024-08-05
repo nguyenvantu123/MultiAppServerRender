@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 
-namespace BetkingLol.Domain.Request.Queries.BankInfoByUser
+namespace BlazorWebApiFiles.Application.Queries
 {
     public class GetPresignedUserProfileUrl
     {

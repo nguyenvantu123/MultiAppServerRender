@@ -686,7 +686,8 @@ namespace BlazorWebApi.Users.Controller.Account
                     ExposedClaims = authenticatedUser.Claims.Select(c => new KeyValuePair<string, string>(c.Type, c.Value)).ToList(),
                     Roles = ((ClaimsIdentity)authenticatedUser.Identity).Claims
                             .Where(c => c.Type == "role")
-                            .Select(c => c.Value).ToList()
+                            .Select(c => c.Value).ToList(),
+                    AvatarUrl = user.AvatarUrl
                 };
 
                 if (!userViewModel.TwoFactorEnabled)

@@ -11,7 +11,6 @@ using BlazorWebApi.Files.Exceptions;
 using BetkingLol.DataAccess.UnitOfWork;
 using SixLabors.ImageSharp;
 using BlazorWebApi.Repository;
-using BetkingLol.Domain.Request.Queries.BankInfoByUser;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -66,7 +65,7 @@ public static class FileApi
         return new ApiResponseDto<string>(200, "Success", file);
     }
 
-    public static async Task<ApiResponseDto<bool>> UploadFile(
+    public static async Task<ApiResponseDto<string>> UploadFile(
          IFormFile FormFile,
          [FromForm] FileType FileType,
          Guid? FolerId,
@@ -115,7 +114,7 @@ public static class FileApi
 
             fileData.Mime = HttpPostedFileBaseExtensions.GetMimeType(fileData.Ext);
 
-            if (FolerId != Guid.Empty)
+            if (FolerId.HasValue)
             {
                 fileData.FolderId = FolerId;
             }
@@ -130,17 +129,17 @@ public static class FileApi
             FileMapWithEntity fileMapWithEntity = new FileMapWithEntity();
             fileMapWithEntity.RelationType = RelationType;
             fileMapWithEntity.RelationId = RelationId;
-            fileMapWithEntity.FileName = dataUpload.ObjectName;
+            fileMapWithEntity.FileName = fileUrl;
             fileMapWithEntity.FileId = fileData.Id;
 
             services.UnitOfWork.Repository<FileMapWithEntity>().Add(fileMapWithEntity);
 
             await services.UnitOfWork.SaveEntitiesAsync();
 
-            return new ApiResponseDto<bool>(200, "Success!!!", true);
+            return new ApiResponseDto<string>(200, "Success!!!", fileUrl);
         }
 
-        return new ApiResponseDto<bool>(400, "File Is Require!!!", false);
+        return new ApiResponseDto<string>(400, "File Is Require!!!", "");
     }
 
     //public static async Task<Results<Ok<Order>, NotFound>> GetOrderAsync(int orderId, [AsParameters] FileServices services)

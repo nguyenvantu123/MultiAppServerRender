@@ -1,11 +1,18 @@
 ﻿@page "/account/profile"
+@using BlazorWebApiFiles.Application.Queries
 @using WebApp.Components.Pages.Admin
 @attribute [Authorize]
 
 @layout AdminMainLayout
 
-@if (userViewModel != null)
+@if (!_loaded)
 {
+    <LoadingBackground>
+    </LoadingBackground>
+}
+else
+{
+
     @* <MudGrid>
 
         <MudItem xs="12" sm="4" md="3">
@@ -96,25 +103,34 @@
     <MudGrid>
 
         <MudItem xs="12" sm="4" md="3">
-            <MudCard Elevation="5">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText>Avatar</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <div class="d-flex justify-center mb-4">
-                        @if (!string.IsNullOrEmpty(@ImageDataUrl))
-                        {
-                            <MudAvatar Image="@ImageDataUrl" Style="height:115px; width:115px;"> </MudAvatar>
-                        }
-                        else
-                        {
-                            <MudAvatar Color="Color.Secondary" Style="height:115px; width:115px;">@_firstLetterOfName</MudAvatar>
-                        }
-                    </div>
-                </MudCardContent>
-            </MudCard>
+            <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles">
+                <ActivatorContent>
+
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary">
+                        Upload Image
+                    </MudButton>
+                    <MudCard Elevation="5">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText>Avatar</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <div class="d-flex justify-center mb-4">
+                                @if (!string.IsNullOrEmpty(@ImageDataUrl))
+                                {
+                                    <MudAvatar Image="@ImageDataUrl" Style="height:115px; width:115px;"> </MudAvatar>
+                                }
+                                else
+                                {
+                                    <MudAvatar Color="Color.Secondary" Style="height:115px; width:115px;">@_firstLetterOfName</MudAvatar>
+                                }
+                            </div>
+                        </MudCardContent>
+                    </MudCard>
+                    <ActivatorContent>
+            </MudFileUpload>
         </MudItem>
         <MudItem xs="12" sm="8" md="9">
             <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
@@ -229,6 +245,7 @@
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private bool _loaded;
 
     protected bool BrowserRemembered
     {
@@ -269,6 +286,13 @@
         {
             _firstLetterOfName = userViewModel.FirstName[0];
         }
+
+        if (!string.IsNullOrEmpty(userViewModel.AvatarUrl))
+        {
+            ImageDataUrl = await GetPresisignedUrl(userViewModel.AvatarUrl);
+
+        }
+        _loaded = true;
     }
 
     protected void OpenUpdatePasswordDialog()
@@ -407,5 +431,57 @@
             _passwordInputIcon = Icons.Material.Filled.Visibility;
             _passwordInput = InputType.Text;
         }
+    }
+
+    private async void UploadFiles(IBrowserFile file)
+    {
+        //TODO upload the files to the server
+
+        _loaded = false;
+
+        var dataFileName = file.OpenReadStream();
+
+        var ms = new MemoryStream();
+        await ms.CopyToAsync(dataFileName);
+
+        MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent
+        {
+        // Send form text values here
+        {new StringContent("0"),"FileType"},
+        {new StringContent("UserProfile"),"RelationType" },
+        {new StringContent(userViewModel.Id.ToString()),"RelationId" },
+        {new StreamContent(ms,(int) ms.Length ),"FormFile",  file.Name }
+        };
+        try
+        {
+            var data = await _fileApiClient.UploadFile(null, multipartFormDataContent);
+
+            if (data.IsSuccessStatusCode)
+            {
+                ImageDataUrl = await GetPresisignedUrl(data.Result);
+            }
+        }
+        catch (Exception ex)
+        {
+            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+
+        finally
+        {
+            _loaded = true;
+        }
+    }
+
+    public async Task<string> GetPresisignedUrl(string objectName)
+    {
+
+        GetPresignedUserProfileUrl getPresignedUserProfileUrl = new GetPresignedUserProfileUrl();
+
+        getPresignedUserProfileUrl.ObjectName = objectName;
+        getPresignedUserProfileUrl.RelationType = "UserProfile";
+
+        return (await _fileApiClient.GetPresignedUrl(getPresignedUserProfileUrl)).Result;
+
+
     }
 }

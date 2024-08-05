@@ -1,5 +1,4 @@
-﻿using BetkingLol.Domain.Request.Queries.BankInfoByUser;
-using BlazorWebApi.Files.Data;
+﻿using BlazorWebApi.Files.Data;
 using Minio;
 using Minio.DataModel.Args;
 
