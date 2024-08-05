@@ -32,7 +32,7 @@ else
             <MudTd DataLabel="Description">
                 <MudHighlighter Text="@context.RoleDescription" HighlightedText="@_searchString" />
             </MudTd>
-            <MudTd DataLabel="Role"><MudCheckBox @bind-Checked="@context.Selected" Disabled="@(!_canEditUsers)" Color="Color.Secondary"></MudCheckBox></MudTd>
+            <MudTd DataLabel="Role"><MudCheckBox T="bool" @bind-Checked="@context.Selected" Disabled="@(!_canEditUsers)" Color="Color.Secondary"></MudCheckBox></MudTd>
         </RowTemplate>
         <PagerContent>
             <TablePager />

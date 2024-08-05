@@ -45,7 +45,7 @@ else
                         <MudTd DataLabel="Description">
                             <MudHighlighter Text="@context.Description" HighlightedText="@_searchString" />
                         </MudTd>
-                        <MudTd DataLabel="Status"><MudCheckBox @bind-Checked="@context.Selected" Disabled="@(!_canEditRolePermissions)" Color="Color.Secondary" /></MudTd>
+                        <MudTd DataLabel="Status"><MudCheckBox T="bool" @bind-Checked="@context.Selected" Disabled="@(!_canEditRolePermissions)" Color="Color.Secondary" /></MudTd>
                     </RowTemplate>
                     <RowEditingTemplate>
                         <MudTd DataLabel="Type">@context.Type</MudTd>
@@ -62,7 +62,7 @@ else
                                 @context.Description
                             }
                         </MudTd>
-                        <MudTd DataLabel="Statuss"><MudCheckBox @bind-Checked="@context.Selected" Disabled="@(!_canEditRolePermissions)" Color="Color.Secondary" /></MudTd>
+                        <MudTd DataLabel="Status"><MudCheckBox T="bool" @bind-Checked="@context.Selected" Disabled="@(!_canEditRolePermissions)" Color="Color.Secondary" /></MudTd>
                     </RowEditingTemplate>
                     @* <FooterContent>
             <MudSwitch @bind-Checked="@_dense" Color="Color.Secondary" Style="margin-left: 5px;">@_localizer["Dense"]</MudSwitch>

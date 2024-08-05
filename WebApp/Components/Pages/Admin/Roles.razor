@@ -420,7 +420,7 @@ else
                     });
             }
         }
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, DisableBackdropClick = true };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
         var dialog = _dialogService.Show<RoleModal>(id == Guid.Empty.ToString() ? "Create" : "Edit", parameters, options);
         var result = await dialog.Result;
         if (!result.Canceled)
@@ -447,7 +447,7 @@ else
             {
                 {nameof(DeleteConfirmation.ContentText), string.Format(deleteContent, id)}
             };
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, DisableBackdropClick = true };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
         var dialog = _dialogService.Show<DeleteConfirmation>("Delete", parameters, options);
         var result = await dialog.Result;
         if (!result.Canceled)

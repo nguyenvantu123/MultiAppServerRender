@@ -111,11 +111,11 @@ namespace WebApp.Components
 
         public static MudTheme DefaultTheme = new MudTheme()
         {
-            Palette = new Palette()
+            PaletteLight = new PaletteLight()
             {
                 Primary = "#1E88E5",
                 AppbarBackground = "#1E88E5",
-                Background = Colors.Grey.Lighten5,
+                Background = Colors.LightBlue.Lighten5,
                 DrawerBackground = "#FFF",
                 DrawerText = "rgba(0,0,0, 0.7)",
                 Success = "#007E33"
@@ -126,13 +126,13 @@ namespace WebApp.Components
 
         public static MudTheme DarkTheme = new MudTheme()
         {
-            Palette = new Palette()
+            PaletteDark = new PaletteDark()
             {
                 Primary = "#1E88E5",
                 Success = "#007E33",
                 Black = "#27272f",
                 Background = "#32333d",
-                BackgroundGrey = "#27272f",
+                BackgroundGray = "#27272f",
                 Surface = "#373740",
                 DrawerBackground = "#27272f",
                 DrawerText = "rgba(255,255,255, 0.50)",

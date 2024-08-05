@@ -17,12 +17,12 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<string>> UploadFile(Guid? folderId, MultipartFormDataContent content)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto<string>>($"/api/files/api-version=1.0&FolerId={(folderId.HasValue ? folderId.Value.ToString() : "")}", content);
+            return await _httpClient.PostJsonAsync<ApiResponseDto<string>>($"/api/files/upload-file", content);
         }
 
         public async Task<ApiResponseDto<string>> GetPresignedUrl(GetPresignedUserProfileUrl presignedUserProfileUrl)
         {
-            return await _httpClient.GetFromJsonAsync<ApiResponseDto<string>>($"/api/files/get-presigned-url/api-version=1.0&RelationType={presignedUserProfileUrl.RelationType}&ObjectName={presignedUserProfileUrl.ObjectName}&RelationId={(presignedUserProfileUrl.RelationId.HasValue ? presignedUserProfileUrl.RelationId.Value.ToString() : "")}");
+            return await _httpClient.GetFromJsonAsync<ApiResponseDto<string>>($"/api/files/get-presigned-url?RelationType={presignedUserProfileUrl.RelationType}&ObjectName={presignedUserProfileUrl.ObjectName}&RelationId={(presignedUserProfileUrl.RelationId.HasValue ? presignedUserProfileUrl.RelationId.Value.ToString() : "")}");
         }
     }
 }

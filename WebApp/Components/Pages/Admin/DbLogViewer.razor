@@ -34,7 +34,7 @@ else
         </MudItem>
     </MudGrid>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<DbLog>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
+    @* <MudTable ServerData="@(new Func<TableState, Task<TableData<DbLog>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
         <HeaderContent>
             <MudTh>Timestamp</MudTh>
             <MudTh>Logging Level</MudTh>
@@ -62,7 +62,7 @@ else
         <PagerContent>
             <MudTablePager RowsPerPageString=@L["Rows per page"] />
         </PagerContent>
-    </MudTable>
+    </MudTable> *@
 }
 
 @code {

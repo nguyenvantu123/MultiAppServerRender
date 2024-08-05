@@ -21,7 +21,7 @@ var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers", l
 //.WithReference(redis);
 
 var identityEndpoint = user.GetEndpoint(launchProfileName);
-var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles");
+var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles", launchProfileName).WithExternalHttpEndpoints();
 
 user.WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", user.GetEndpoint(launchProfileName)).WithEnvironment("IdentityApiClient", identityEndpoint).WithEnvironment("FileApiClient", file.GetEndpoint(launchProfileName));
 
@@ -35,7 +35,7 @@ var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
     //.WithReference(redis)
     .WithEnvironment("IdentityApiClient", identityEndpoint);
 
-webApp.WithReference(user).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
+webApp.WithReference(user).WithReference(file).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
 
 builder.Build().Run();
 

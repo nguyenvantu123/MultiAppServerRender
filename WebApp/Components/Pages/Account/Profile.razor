@@ -103,34 +103,34 @@ else
     <MudGrid>
 
         <MudItem xs="12" sm="4" md="3">
-            <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles">
+            <MudCard Elevation="5">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText>Avatar</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div class="d-flex justify-center mb-4">
+                        @if (!string.IsNullOrEmpty(@ImageDataUrl))
+                        {
+                            <MudAvatar Image="@ImageDataUrl" Style="height:115px; width:115px;"> </MudAvatar>
+                        }
+                        else
+                        {
+                            <MudAvatar Color="Color.Secondary" Style="height:115px; width:115px;">@_firstLetterOfName</MudAvatar>
+                        }
+                    </div>
+                </MudCardContent>
+            </MudCard>
+            <InputFile OnChange="@SingleUpload" />
+          @*   <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles">
                 <ActivatorContent>
-
                     <MudButton Variant="Variant.Filled"
                                Color="Color.Primary">
                         Upload Image
                     </MudButton>
-                    <MudCard Elevation="5">
-                        <MudCardHeader>
-                            <CardHeaderContent>
-                                <MudText>Avatar</MudText>
-                            </CardHeaderContent>
-                        </MudCardHeader>
-                        <MudCardContent>
-                            <div class="d-flex justify-center mb-4">
-                                @if (!string.IsNullOrEmpty(@ImageDataUrl))
-                                {
-                                    <MudAvatar Image="@ImageDataUrl" Style="height:115px; width:115px;"> </MudAvatar>
-                                }
-                                else
-                                {
-                                    <MudAvatar Color="Color.Secondary" Style="height:115px; width:115px;">@_firstLetterOfName</MudAvatar>
-                                }
-                            </div>
-                        </MudCardContent>
-                    </MudCard>
-                    <ActivatorContent>
-            </MudFileUpload>
+                </ActivatorContent>
+            </MudFileUpload> *@
         </MudItem>
         <MudItem xs="12" sm="8" md="9">
             <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
@@ -156,7 +156,7 @@ else
                         <MudTextField @bind-Value="@userViewModel.LastName" Label=@L["LastName"] FullWidth="true"></MudTextField>
 
                         <strong>@L["Roles"]</strong><br />
-                        <MudChipSet>
+                        <MudChipSet T="bool">
                             @foreach (var role in userViewModel.Roles)
                             {
                                 <MudChip Text="@role"></MudChip>
@@ -178,10 +178,10 @@ else
                         }
                         if (userViewModel.RecoveryCodes != null)
                         {
-                            <MudChipSet>
+                            <MudChipSet T="bool">
                                 @foreach (var rCode in userViewModel.RecoveryCodes)
                                 {
-                                    <MudChip Text="@rCode"></MudChip>
+                                    <MudChip T="bool" Text="@rCode"></MudChip>
                                 }
                             </MudChipSet>
                         }
@@ -433,16 +433,14 @@ else
         }
     }
 
-    private async void UploadFiles(IBrowserFile file)
+    private async Task SingleUpload(InputFileChangeEventArgs e)
     {
         //TODO upload the files to the server
 
         _loaded = false;
 
-        var dataFileName = file.OpenReadStream();
-
-        var ms = new MemoryStream();
-        await ms.CopyToAsync(dataFileName);
+        MemoryStream ms = new MemoryStream();
+        await e.File.OpenReadStream().CopyToAsync(ms);
 
         MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent
         {
@@ -450,7 +448,7 @@ else
         {new StringContent("0"),"FileType"},
         {new StringContent("UserProfile"),"RelationType" },
         {new StringContent(userViewModel.Id.ToString()),"RelationId" },
-        {new StreamContent(ms,(int) ms.Length ),"FormFile",  file.Name }
+        {new StreamContent(ms,(int) ms.Length ),"FormFile",  e.File.Name }
         };
         try
         {
