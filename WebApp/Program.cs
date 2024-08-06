@@ -181,12 +181,12 @@ builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
-    httpClient.BaseAddress = new("http://blazorwebapiusers");
+    httpClient.BaseAddress = new("https://blazorwebapiusers");
 }).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12)).AddAuthToken();
 
 builder.Services.AddHttpClient<FileApiClient>(httpClient =>
 {
-    httpClient.BaseAddress = new("http://blazorwebapifiles");
+    httpClient.BaseAddress = new("https://blazorwebapifiles");
 }).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12)).AddAuthToken();
 
 

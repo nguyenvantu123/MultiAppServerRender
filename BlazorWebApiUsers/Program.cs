@@ -46,6 +46,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 using BlazorWebApi.Users.Extensions;
 using Aspire.StackExchange.Redis;
 using BlazorWebApi.Repositories;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +70,33 @@ builder.Services.AddControllers(options =>
 });
 
 var identitySection = builder.Configuration.GetSection("Identity");
+
+if (identitySection.Exists())
+{
+    // No identity section, so no authentication
+    JsonWebTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+    builder.Services.AddAuthentication().AddJwtBearer(options =>
+    {
+        var identityUrl = identitySection.GetRequiredValue("Url");
+        var audience = identitySection.GetRequiredValue("Audience");
+
+        options.Authority = identityUrl;
+        options.RequireHttpsMetadata = false;
+        options.Audience = audience;
+
+#if DEBUG
+        //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
+        options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
+#else
+            options.TokenValidationParameters.ValidIssuers = [identityUrl];
+#endif
+
+        options.TokenValidationParameters.ValidateAudience = false;
+    });
+
+    builder.Services.AddAuthorization();
+}
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
@@ -162,6 +190,7 @@ app.UseRouting();
 
 app.UseIdentityServer();
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapDefaultControllerRoute();
 

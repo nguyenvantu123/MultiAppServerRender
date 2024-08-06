@@ -439,8 +439,10 @@ else
 
         _loaded = false;
 
-        MemoryStream ms = new MemoryStream();
-        await e.File.OpenReadStream().CopyToAsync(ms);
+        FileUploadEntry fileUploadEntry = new FileUploadEntry(e.File);
+
+        using var ms = new MemoryStream();
+        await fileUploadEntry.WriteToStreamAsync(ms);
 
         MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent
         {
@@ -448,7 +450,7 @@ else
         {new StringContent("0"),"FileType"},
         {new StringContent("UserProfile"),"RelationType" },
         {new StringContent(userViewModel.Id.ToString()),"RelationId" },
-        {new StreamContent(ms,(int) ms.Length ),"FormFile",  e.File.Name }
+        { new ByteArrayContent(ms.GetBuffer()), "\"uploadedFile\"", fileUploadEntry.Name }
         };
         try
         {
