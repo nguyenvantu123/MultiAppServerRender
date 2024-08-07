@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Models;
+﻿using BlazorWebApi.Quickstart;
+using IdentityServer4.Models;
 
 namespace BlazorWebApi.Users.Models.ConsentViewModels
 {

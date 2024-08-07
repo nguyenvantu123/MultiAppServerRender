@@ -2,10 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+namespace BlazorWebApi.Quickstart;
 
-namespace BlazorWebApi.Users.Controller.Account;
-
-public class RedirectViewModel
+public class LogoutInputModel
 {
-    public string RedirectUrl { get; set; }
+    public string LogoutId { get; set; }
 }

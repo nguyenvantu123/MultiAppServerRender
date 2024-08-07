@@ -36,12 +36,23 @@ else
             <div class="justify-center mud-text-align-center">
                 @if (_canCreateUsers)
                 {
-                    <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Register New User</MudButton>
-                    <MudButton DisableElevation Variant="Variant.Filled" OnClick="LoadUsers" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-                    @if (_canExportUsers)
-                    {
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;">Export</MudButton>
-                    }
+                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                        <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Register New User</MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="LoadUsers" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        @if (_canExportUsers)
+                        {
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;">Export</MudButton>
+                        }
+                    </MudHidden>
+
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                        <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="LoadUsers" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                        @if (_canExportUsers)
+                        {
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;"></MudButton>
+                        }
+                    </MudHidden>
                 }
                 else
                 {

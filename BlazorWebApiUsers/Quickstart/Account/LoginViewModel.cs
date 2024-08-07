@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-namespace BlazorWebApi.Users.Controller.Account;
+namespace BlazorWebApi.Quickstart;
 
 public class LoginViewModel : LoginInputModel
 {

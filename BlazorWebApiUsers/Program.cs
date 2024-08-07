@@ -47,6 +47,7 @@ using BlazorWebApi.Users.Extensions;
 using Aspire.StackExchange.Redis;
 using BlazorWebApi.Repositories;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,42 +62,82 @@ builder.AddRabbitMQ("EventBus");
 
 builder.Services.AddSingleton<RedisUserRepository>();
 
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddControllers(options =>
 {
     var parameterTransformer = new SlugifyParameterTransformer();
     options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
     options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
+
+    var policy = new AuthorizationPolicyBuilder()
+       .RequireAuthenticatedUser()
+       .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
 });
 
 var identitySection = builder.Configuration.GetSection("Identity");
 
-if (identitySection.Exists())
+
+// No identity section, so no authentication
+JsonWebTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
-    // No identity section, so no authentication
-    JsonWebTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+    var identityUrl = identitySection.GetRequiredValue("Url");
+    var audience = identitySection.GetRequiredValue("Audience");
 
-    builder.Services.AddAuthentication().AddJwtBearer(options =>
-    {
-        var identityUrl = identitySection.GetRequiredValue("Url");
-        var audience = identitySection.GetRequiredValue("Audience");
-
-        options.Authority = identityUrl;
-        options.RequireHttpsMetadata = false;
-        options.Audience = audience;
+    options.Authority = identityUrl;
+    options.RequireHttpsMetadata = false;
+    options.Audience = audience;
 
 #if DEBUG
-        //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
-        options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
+    //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
+    options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
 #else
             options.TokenValidationParameters.ValidIssuers = [identityUrl];
 #endif
 
-        options.TokenValidationParameters.ValidateAudience = false;
-    });
+    options.TokenValidationParameters.ValidateAudience = false;
+});
 
-    builder.Services.AddAuthorization();
-}
+builder.Services.AddAuthorization();
+
+var withApiVersioning = builder.Services.AddApiVersioning();
+
+builder.AddDefaultOpenApi(withApiVersioning);
+//builder.Services.AddSwaggerGen(c =>
+//{
+//    //c.SwaggerDoc("v1", new OpenApiInfo { Title = "Identity Api" });
+//    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//    {
+//        Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+//                      Enter 'Bearer' [space] and then your token in the text input below.
+//                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+//        Name = "Authorization",
+//        In = ParameterLocation.Header,
+//        Type = SecuritySchemeType.ApiKey,
+//        Scheme = "Bearer"
+//    });
+//    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+//                {
+//                    {
+//                        new OpenApiSecurityScheme
+//                        {
+//                            Reference = new OpenApiReference
+//                            {
+//                                Type = ReferenceType.SecurityScheme,
+//                                Id = "Bearer"
+//                            },
+//                            Scheme = "oauth2",
+//                            Name = "Bearer",
+//                            In = ParameterLocation.Header,
+
+//                        },
+//                        new List<string>()
+//                    }
+//                });
+//});
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
@@ -122,9 +163,6 @@ builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
 builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
-var withApiVersioning = builder.Services.AddApiVersioning();
-
-builder.AddDefaultOpenApi(withApiVersioning);
 
 #region Automapper
 //Automapper to map DTO to Models https://www.c-sharpcorner.com/UploadFile/1492b1/crud-operations-using-automapper-in-mvc-application/
@@ -196,8 +234,17 @@ app.MapDefaultControllerRoute();
 
 app.UseDeveloperExceptionPage();
 app.UseMultiTenant();
-app.UseMiddleware<UserSessionMiddleware>();
+//app.UseMiddleware<UserSessionMiddleware>();
+
+var files = app.NewVersionedApi("Files");
+
+files.MapControllers()
+      .RequireAuthorization();
+
 app.UseDefaultOpenApi();
+
+//app.UseSwagger();
+//app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Identity.Api v1"));
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {

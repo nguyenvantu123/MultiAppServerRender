@@ -32,8 +32,9 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<LoginResponseModel>> Login(LoginInputModel parameters)
         {
-            var response = await _httpClient.PostJsonAsync<ApiResponseDto<LoginResponseModel>>("api/account/login", parameters);
+            var response = await _httpClient.PostJsonAsync<ApiResponseDto<LoginResponseModel>>("account/login", parameters);
 
+            //if (AppState.Runtime == BlazorRuntime.Server)
             //if (AppState.Runtime == BlazorRuntime.Server)
             //    if (response.IsSuccessStatusCode)
             //        await SubmitServerForm("/server/login/", parameters);

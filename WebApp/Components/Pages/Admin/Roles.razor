@@ -25,43 +25,45 @@ else
     <MudTable Hover="true" Striped="true" LoadingProgressColor="Color.Info" Elevation="4" Items="rolesList" Filter="new Func<RoleDto, bool>(Search)" @bind-role="role">
 
         <ToolBarContent>
-            @if (_canCreateRoles)
-            {
+            <div class="justify-center mud-text-align-center">
 
-                <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-                    <MudTooltip Text="Add new Role">
-                        <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Add New Role</MudButton>
-                    </MudTooltip>
-                    <MudTooltip Text="Reload">
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-                    </MudTooltip>
-                </MudHidden>
+                @if (_canCreateRoles)
+                {
 
-                <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-                    <MudTooltip Text="Add new Role">
-                        <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
-                    </MudTooltip>
-                    <MudTooltip Text="Reload">
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
-                    </MudTooltip>
-                </MudHidden>
-            }
-            else
-            {
-                <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-                    <MudTooltip Text="Reload">
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-                    </MudTooltip>
-                </MudHidden>
+                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                        <MudTooltip Text="Add new Role">
+                            <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Add New Role</MudButton>
+                        </MudTooltip>
+                        <MudTooltip Text="Reload">
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        </MudTooltip>
+                    </MudHidden>
 
-                <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-                    <MudTooltip Text="Reload">
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
-                    </MudTooltip>
-                </MudHidden>
-            }
-            @*             </div>
-        *@            <MudSpacer />
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                        <MudTooltip Text="Add new Role">
+                            <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
+                        </MudTooltip>
+                        <MudTooltip Text="Reload">
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                        </MudTooltip>
+                    </MudHidden>
+                }
+                else
+                {
+                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                        <MudTooltip Text="Reload">
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        </MudTooltip>
+                    </MudHidden>
+
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                        <MudTooltip Text="Reload">
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                        </MudTooltip>
+                    </MudHidden>
+                }
+            </div>
+            <MudSpacer />
             <MudTextField @bind-Value="_searchString" Immediate="true" Placeholder="Search for Roles..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
         </ToolBarContent>
 

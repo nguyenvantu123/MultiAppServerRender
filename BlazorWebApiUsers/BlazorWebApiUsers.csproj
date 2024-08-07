@@ -79,6 +79,7 @@
     <None Include="Views\Consent\Index.cshtml" />
     <None Include="Views\Device\Success.cshtml" />
     <None Include="Views\Device\UserCodeCapture.cshtml" />
+    <None Include="Views\Diagnostics\Index.cshtml" />
     <None Include="Views\Home\Index.cshtml" />
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\Redirect.cshtml" />

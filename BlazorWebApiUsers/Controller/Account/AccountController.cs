@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using Azure;
 using BlazorBoilerplate.Constants;
+using BlazorWebApi.Quickstart;
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Extensions;
 using BlazorWebApi.Users.Models;

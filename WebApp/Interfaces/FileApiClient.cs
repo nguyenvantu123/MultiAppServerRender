@@ -42,7 +42,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<string>> GetPresignedUrl(GetPresignedUserProfileUrl presignedUserProfileUrl)
         {
-            return await _httpClient.GetFromJsonAsync<ApiResponseDto<string>>($"/api/files/get-presigned-url?RelationType={presignedUserProfileUrl.RelationType}&ObjectName={presignedUserProfileUrl.ObjectName}&RelationId={(presignedUserProfileUrl.RelationId.HasValue ? presignedUserProfileUrl.RelationId.Value.ToString() : "")}");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<string>>($"/api/files/get-presigned-url?RelationType={presignedUserProfileUrl.RelationType}&ObjectName={presignedUserProfileUrl.ObjectName}&RelationId={(presignedUserProfileUrl.RelationId.HasValue ? presignedUserProfileUrl.RelationId.Value.ToString() : "")}");
         }
     }
 }
