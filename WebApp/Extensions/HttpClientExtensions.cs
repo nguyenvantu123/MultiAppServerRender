@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace WebApp.Extensions;
@@ -35,7 +36,7 @@ public static class HttpClientExtensions
         {
             if (_httpContextAccessor.HttpContext is HttpContext context)
             {
-                var accessToken = await context.GetTokenAsync("access_token");
+                var accessToken = _httpContextAccessor.HttpContext.Request.Cookies["access_token"];
 
                 if (accessToken is not null)
                 {
