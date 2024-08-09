@@ -135,6 +135,9 @@
     {
         try
         {
+
+            string urlData = "/connect/authorize";
+
             loginViewModel.ReturnUrl = ReturnUrl;
 
             var response = await identityAuthenticationStateProvider.Login(loginViewModel);

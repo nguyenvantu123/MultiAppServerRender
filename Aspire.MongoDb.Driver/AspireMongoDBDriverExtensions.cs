@@ -160,14 +160,14 @@ namespace Aspire.MongoDb.Driver
                 return;
             }
 
-            builder.TryAddHealthCheck(
-                healthCheckName,
-                healthCheck => healthCheck.AddMongoDb(
-                    settings.ConnectionString,
-                    healthCheckName,
-                    null,
-                    null,
-                    settings.HealthCheckTimeout > 0 ? TimeSpan.FromMilliseconds(settings.HealthCheckTimeout.Value) : null));
+            //builder.TryAddHealthCheck(
+            //    healthCheckName,
+            //    healthCheck => healthCheck.AddMongoDb(
+            //        settings.ConnectionString,
+            //        healthCheckName,
+            //        null,
+            //        null,
+            //        settings.HealthCheckTimeout > 0 ? TimeSpan.FromMilliseconds(settings.HealthCheckTimeout.Value) : null));
         }
 
         private static MongoClient CreateMongoClient(
@@ -181,10 +181,10 @@ namespace Aspire.MongoDb.Driver
 
             var clientSettings = MongoClientSettings.FromConnectionString(mongoDbSettings.ConnectionString);
 
-            if (mongoDbSettings.Tracing)
-            {
-                clientSettings.ClusterConfigurator = cb => cb.Subscribe(new DiagnosticsActivityEventSubscriber());
-            }
+            //if (mongoDbSettings.Tracing)
+            //{
+            //    clientSettings.ClusterConfigurator = cb => cb.Subscribe(new DiagnosticsActivityEventSubscriber());
+            //}
 
             configureClientSettings?.Invoke(clientSettings);
 

@@ -236,12 +236,12 @@ app.UseDeveloperExceptionPage();
 app.UseMultiTenant();
 //app.UseMiddleware<UserSessionMiddleware>();
 
-var files = app.NewVersionedApi("Files");
+//var files = app.NewVersionedApi("Files");
 
-files.MapControllers()
-      .RequireAuthorization();
+//files.MapControllers()
+//      .RequireAuthorization();
 
-app.UseDefaultOpenApi();
+//app.UseDefaultOpenApi();
 
 //app.UseSwagger();
 //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Identity.Api v1"));
