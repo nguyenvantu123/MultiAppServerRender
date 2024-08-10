@@ -10,14 +10,7 @@
                     <MudProgressCircular />
                 </Authorizing>
                 <NotAuthorized>
-                    @if (context.User!.Identity!.IsAuthenticated)
-                    {
-                        <Login />
-                    }
-                    else
-                    {
-                        <UserNotAuthorized />
-                    }
+                    <Login />
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />

@@ -137,7 +137,7 @@ namespace BlazorWebApi.Users.Controller.Account
 
                 var user = await _userManager.FindByNameAsync(parameters.Username);
 
-                var lastPageVisited = (await _context.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == parameters.Username.ToUpper()))?.LastPageVisited ?? "/";
+                //var lastPageVisited = (await _context.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == parameters.Username.ToUpper()))?.LastPageVisited ?? "/";
 
                 if (result.RequiresTwoFactor)
                 {
@@ -148,7 +148,7 @@ namespace BlazorWebApi.Users.Controller.Account
                         Result = new LoginResponseModel()
                         {
                             RequiresTwoFactor = true,
-                            LastPageVisited = lastPageVisited
+                            LastPageVisited = ""
                         }
                     };
                 }
@@ -172,30 +172,32 @@ namespace BlazorWebApi.Users.Controller.Account
 
                     _logger.LogInformation("Logged In user {0}", parameters.Username);
 
+                    //var properties = GetAuthProperties(returnUrl);
+
                     //TODO parameters.IsValidReturnUrl is set true above 
                     //if (!parameters.IsValidReturnUrl)
                     //    // user might have clicked on a malicious link - should be logged
                     //    throw new Exception("invalid return URL");
 
-                    if (User.IsInRole("Administrator"))
-                    {
-                        if (string.IsNullOrEmpty(parameters.ReturnUrl) || parameters.ReturnUrl == "/")
-                        {
-                            parameters.ReturnUrl = "/admin";
-                        }
+                    //if (User.IsInRole("Administrator"))
+                    //{
+                    //    if (string.IsNullOrEmpty(parameters.ReturnUrl) || parameters.ReturnUrl == "/")
+                    //    {
+                    //        parameters.ReturnUrl = "/admin";
+                    //    }
 
-                        if (string.IsNullOrEmpty(lastPageVisited) || lastPageVisited == "/")
-                        {
-                            lastPageVisited = "/admin";
-                        }
-                    }
+                    //    if (string.IsNullOrEmpty(lastPageVisited) || lastPageVisited == "/")
+                    //    {
+                    //        lastPageVisited = "/admin";
+                    //    }
+                    //}
 
                     return new ApiResponse((int)HttpStatusCode.OK, "Two factor authentication required")
                     {
                         Result = new LoginResponseModel()
                         {
                             RequiresTwoFactor = false,
-                            LastPageVisited = lastPageVisited,
+                            LastPageVisited = parameters.ReturnUrl,
                             ReturnUrl = parameters.ReturnUrl
                         }
                     };
@@ -209,6 +211,27 @@ namespace BlazorWebApi.Users.Controller.Account
                 _logger.LogError($"Login Failed: {ex.GetBaseException().Message}");
                 return new ApiResponse((int)HttpStatusCode.InternalServerError, "LoginFailed");
             }
+        }
+
+        private static AuthenticationProperties GetAuthProperties(string? returnUrl)
+        {
+            const string pathBase = "/";
+
+            // Prevent open redirects.
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                returnUrl = pathBase;
+            }
+            else if (!Uri.IsWellFormedUriString(returnUrl, UriKind.Relative))
+            {
+                returnUrl = new Uri(returnUrl, UriKind.Absolute).PathAndQuery;
+            }
+            else if (returnUrl[0] != '/')
+            {
+                returnUrl = $"{pathBase}{returnUrl}";
+            }
+
+            return new AuthenticationProperties { RedirectUri = returnUrl };
         }
 
         // POST: api/Account/LoginWithRecoveryCode

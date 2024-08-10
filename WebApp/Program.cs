@@ -28,6 +28,9 @@ using WebApp.State;
 using BlazorWebApi.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using BlazorWebApi.Users.Models;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,15 +73,14 @@ var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
 
 builder.Services.AddAuthentication(options =>
 {
+
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie(x =>
+}).AddCookie().AddOpenIdConnect(options =>
 {
-    x.LoginPath = WebApp.Settings.Settings.LoginPath;
-    x.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-}).AddOpenIdConnect(options =>
-{
+
+    //x.LoginPath = WebApp.Settings.Settings.LoginPath;
+    //x.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = identityUrl;
     options.SignedOutRedirectUri = callBackUrl;
@@ -96,86 +98,60 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-//builder.Services.AddScoped(s =>
-//{
-//    // creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
-//    var navigationManager = s.GetRequiredService<NavigationManager>();
-//    var httpContextAccessor = s.GetRequiredService<IHttpContextAccessor>();
-//    var cookies = httpContextAccessor.HttpContext.Request.Cookies;
-//    var httpClientHandler = new HttpClientHandler() { UseCookies = false };
-//    if (builder.Environment.IsDevelopment())
-//    {
-//        // Return 'true' to allow certificates that are untrusted/invalid
-//        httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
-//    }
-//    var client = new HttpClient(httpClientHandler);
-//    if (cookies.Any())
-//    {
-//        var cks = new List<string>();
-
-//        foreach (var cookie in cookies)
-//        {
-//            cks.Add($"{cookie.Key}={cookie.Value}");
-//        }
-
-//        client.DefaultRequestHeaders.Add("Cookie", string.Join(';', cks));
-//    }
-
-//    client.BaseAddress = new Uri(navigationManager.BaseUri);
-
-//    return client;
-//});
+builder.Services.AddRazorPages().AddMvcOptions(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
 
 builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
 
-//var authBuilder = builder.Services.AddAuthentication(options =>
-//        {
-//            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//            //options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-//            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//        }).AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(60));
-
 builder.Services.AddScoped<EntityPermissions>();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequireDigit = false;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
-    //options.Password.RequiredUniqueChars = 6;
+//builder.Services.Configure<IdentityOptions>(options =>
+//{
+//    options.Password.RequireDigit = false;
+//    options.Password.RequiredLength = 6;
+//    options.Password.RequireNonAlphanumeric = false;
+//    options.Password.RequireUppercase = false;
+//    options.Password.RequireLowercase = false;
+//    //options.Password.RequiredUniqueChars = 6;
 
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-    options.Lockout.MaxFailedAccessAttempts = 10;
-    options.Lockout.AllowedForNewUsers = true;
+//    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+//    options.Lockout.MaxFailedAccessAttempts = 10;
+//    options.Lockout.AllowedForNewUsers = true;
 
-    if (Convert.ToBoolean(configuration[$"{projectName}:RequireConfirmedEmail"] ?? "false"))
-    {
-        options.User.RequireUniqueEmail = true;
-        options.SignIn.RequireConfirmedEmail = true;
-    }
-});
+//    if (Convert.ToBoolean(configuration[$"{projectName}:RequireConfirmedEmail"] ?? "false"))
+//    {
+//        options.User.RequireUniqueEmail = true;
+//        options.SignIn.RequireConfirmedEmail = true;
+//    }
+//});
+
+builder.Services.AddControllersWithViews(options =>
+      options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
 //builder.Services.AddHttpClient("MyHttpClient").SetHandlerLifetime(TimeSpan.FromHours(12));
 
-builder.Services.AddMvc().AddNewtonsoftJson(opt =>
-{
-    // Set Breeze defaults for entity serialization
-    var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
-    if (ss.ContractResolver is DefaultContractResolver resolver)
-    {
-        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
-    }
-})   // Add Breeze exception filter to send errors back to the client
-           .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
-           .AddViewLocalization().AddDataAnnotationsLocalization(options =>
-           {
-               options.DataAnnotationLocalizerProvider = (type, factory) =>
-               {
-                   return factory.Create(typeof(WebApp.Localizer.Global));
-               };
-           });
+//builder.Services.AddMvc().AddNewtonsoftJson(opt =>
+//{
+//    // Set Breeze defaults for entity serialization
+//    var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
+//    if (ss.ContractResolver is DefaultContractResolver resolver)
+//    {
+//        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
+//    }
+//})   // Add Breeze exception filter to send errors back to the client
+//           .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
+//           .AddViewLocalization().AddDataAnnotationsLocalization(options =>
+//           {
+//               options.DataAnnotationLocalizerProvider = (type, factory) =>
+//               {
+//                   return factory.Create(typeof(WebApp.Localizer.Global));
+//               };
+//           });
 //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LocalizationRecordValidator>());
 
 builder.Services.AddFluentValidationAutoValidation();
@@ -211,7 +187,9 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
+JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+//app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (builder.Environment.IsDevelopment())
@@ -220,6 +198,7 @@ if (builder.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -231,6 +210,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode().RequireAuthorization();
 
 app.Run();

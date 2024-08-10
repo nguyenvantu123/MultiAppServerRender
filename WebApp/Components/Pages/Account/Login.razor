@@ -120,13 +120,15 @@
 
     [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 
-    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+    // [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
     [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
     [CascadingParameter] public HttpContext? HttpContext { get; set; }
 
     [Inject] protected HttpClient httpClient { get; set; }
+
+    [Inject] protected IConfiguration configuration { get; set; }
 
     private IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
 
@@ -136,9 +138,10 @@
         try
         {
 
-            string urlData = "/connect/authorize";
+            // var identityUrl = configuration.GetRequiredValue("IdentityUrl");
+            // string urlData = $"{identityUrl}/connect/authorize?client_id=webapp&redirect_uri={identityUrl}/signin-oidc&response_type=code&scope=openid profile files identity";
 
-            loginViewModel.ReturnUrl = ReturnUrl;
+            // loginViewModel.ReturnUrl = urlData;
 
             var response = await identityAuthenticationStateProvider.Login(loginViewModel);
 
@@ -148,18 +151,18 @@
             }
             else
             {
-                if (string.IsNullOrEmpty(response.Result.ReturnUrl) || response.Result.ReturnUrl == "/" || response.Result.ReturnUrl == "/admin")
-                    loginViewModel.ReturnUrl = response.Result.LastPageVisited;
+                // if (string.IsNullOrEmpty(response.Result.ReturnUrl) || response.Result.ReturnUrl == "/" || response.Result.ReturnUrl == "/admin")
+                //     loginViewModel.ReturnUrl = response.Result.LastPageVisited;
 
-                if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
-                    loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
+                // if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
+                //     loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
 
-                _navigationManager.NavigateTo($"{loginViewModel.ReturnUrl}", true);
+                _navigationManager.NavigateTo($"/admin", true);
             }
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["LoginFailed"]);
+            viewNotifier.Show(ex.Message, ViewNotifierType.Error, "LoginFailed");
         }
     }
 
