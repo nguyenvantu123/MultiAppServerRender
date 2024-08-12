@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @using System.Net
+@using System.Web
 
 
 @attribute [AllowAnonymous]
@@ -135,7 +136,7 @@
     {
         try
         {
-            loginViewModel.ReturnUrl = ReturnUrl;
+            loginViewModel.ReturnUrl = "";
 
             var response = await identityAuthenticationStateProvider.Login(loginViewModel);
 
@@ -151,7 +152,7 @@
                 if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
                     loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
 
-                _navigationManager.NavigateTo($"{loginViewModel.ReturnUrl}", true);
+                _navigationManager.NavigateTo($"/connect/authorize/callback?client_id=webapp&redirect_uri=https://localhost:7221/signin-oidc&response_type=code&scope=openid profile files identity&code_challenge=V0te2O-lTHtnzs31DPq0k1XDgo02XJ6XMwsJ--lmw0M&code_challenge_method=S256&response_mode=form_post&nonce=638590784428127388.ZDQ5ZjVjMjUtNTllNS00YjY5LWIzNmItMzUyMGM5Zjk3ZjY3NTNkMGRjNGItNTE3ZC00NWVlLTgxOGItM2RiNDcxZThjZWI4&state=CfDJ8K9yim51j7VOoa-D8gVl_ParnjovbajHT1gs4uA5YO2ZOHGDjjZuuBL-HUquBZtG6HIM-g_1AiZL_xzDkLAsSe23jYziP_MlLBkCgnU8JZLESq-WAoCj66wN-eHhjuIUvALNTiwie7AUFxD1cLQcNsgJ3OnIAoNOzzWDvuORNmmIaV4T7tCWiAYQGlwlpg2ZS0h0yBJtxrIz2t2TwKqALdH_zZ4AEzbjyaHvD4caYKjEC_2ptQy8gETvIQAqqPnLYtoJYlwYs4fc-QZQu_9o6TgiAoD-A_QdZR_R2zC5kDvF6hwnYWU_KyuS_jW1O4_JHzVgEXCauBlj8quVkVeyl1v-sybgGNjJbAshngOrBubK8MDY8bugSCxBAId6nVvlzg&x-client-SKU=ID_NET8_0&x-client-ver=7.1.2.0", true);
             }
         }
         catch (Exception ex)
