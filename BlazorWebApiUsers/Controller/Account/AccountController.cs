@@ -189,12 +189,15 @@ namespace BlazorWebApi.Users.Controller.Account
                         }
                     }
 
+                    // check if we are in the context of an authorization request
+                    var context = await _interaction.GetAuthorizationContextAsync(parameters.ReturnUrl);
+
                     return new ApiResponse((int)HttpStatusCode.OK, "Two factor authentication required")
                     {
                         Result = new LoginResponseModel()
                         {
                             RequiresTwoFactor = false,
-                            LastPageVisited = lastPageVisited,
+                            LastPageVisited = parameters.ReturnUrl,
                             ReturnUrl = parameters.ReturnUrl
                         }
                     };
