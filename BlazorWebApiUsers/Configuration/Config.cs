@@ -103,7 +103,8 @@ namespace BlazorWebApi.Users.Configuration
                         "files",
                         "basket",
                         "webshoppingagg",
-                        "webhooks"
+                        "webhooks",
+                        "identity"
                     },
                     AccessTokenLifetime = 60*60*2, // 2 hours
                     IdentityTokenLifetime= 60*60*2 // 2 hours
