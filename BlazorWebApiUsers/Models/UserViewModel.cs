@@ -29,6 +29,10 @@
         public bool IsActive { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public string RequiresTwoFactor { get; set; }
+
+        public string LastPageVisited { get; set; }
     }
 
     public class UserRoleViewModel

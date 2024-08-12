@@ -1,9 +1,7 @@
 ﻿@page "/login"
 @using System.Net
 
-
 @attribute [AllowAnonymous]
-
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center" Style="height: 100vh;">
     <MudPaper Elevation="25" Class="pa-8" Style="width: 500px;">
@@ -120,13 +118,15 @@
 
     [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 
-    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+    // [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
     [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
     [CascadingParameter] public HttpContext? HttpContext { get; set; }
 
     [Inject] protected HttpClient httpClient { get; set; }
+
+    [Inject] protected IConfiguration configuration { get; set; }
 
     private IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
 
@@ -135,6 +135,10 @@
     {
         try
         {
+
+            // var identityUrl = configuration.GetRequiredValue("IdentityUrl");
+            // string urlData = $"{identityUrl}/connect/authorize?client_id=webapp&redirect_uri={identityUrl}/signin-oidc&response_type=code&scope=openid profile files identity";
+
             loginViewModel.ReturnUrl = ReturnUrl;
 
             var response = await identityAuthenticationStateProvider.Login(loginViewModel);
@@ -143,20 +147,10 @@
             {
                 viewNotifier.Show(string.Join(';', response.Message), ViewNotifierType.Error);
             }
-            else
-            {
-                if (string.IsNullOrEmpty(response.Result.ReturnUrl) || response.Result.ReturnUrl == "/" || response.Result.ReturnUrl == "/admin")
-                    loginViewModel.ReturnUrl = response.Result.LastPageVisited;
-
-                if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
-                    loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
-
-                _navigationManager.NavigateTo($"{loginViewModel.ReturnUrl}", true);
-            }
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["LoginFailed"]);
+            viewNotifier.Show(ex.Message, ViewNotifierType.Error, "LoginFailed");
         }
     }
 
@@ -218,13 +212,16 @@
 
         if (user.Identity!.IsAuthenticated)
         {
+
+            var state = await identityAuthenticationStateProvider.GetUserViewModel();
+
             if (user.IsInRole("Administrator"))
             {
-                _navigationManager.NavigateTo(ReturnUrl ?? "/admin");
+                _navigationManager.NavigateTo(state.LastPageVisited ?? "/admin");
             }
             else
             {
-                _navigationManager.NavigateTo(ReturnUrl ?? "/");
+                _navigationManager.NavigateTo(state.LastPageVisited ?? "/");
             }
         }
         else
@@ -243,8 +240,11 @@
                     {
                         if (!string.IsNullOrEmpty(ReturnUrl))
                             ReturnUrl = Uri.EscapeDataString(ReturnUrl);
+
+                        var identityUrl = configuration.GetRequiredValue("IdentityUrl");
+
                         // we only have one option for logging in and it's an external provider
-                        _navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
+                        _navigationManager.NavigateTo($"{identityUrl}/api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
                     }
                 }
                 else

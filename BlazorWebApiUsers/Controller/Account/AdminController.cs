@@ -6,6 +6,7 @@ using BlazorWebApi.Users.Extensions;
 using BlazorWebApi.Users.Models;
 using BlazorWebApi.Users.Request;
 using Finbuckle.MultiTenant;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +24,7 @@ namespace BlazorWebApi.Users.Controller.Account
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AdminController : ControllerBase
     {
 
