@@ -218,6 +218,9 @@
 
         if (user.Identity!.IsAuthenticated)
         {
+
+            var accessToken = user.Claims.Where(a => a.Type == "access_token").FirstOrDefault()?.Value;
+
             if (user.IsInRole("Administrator"))
             {
                 _navigationManager.NavigateTo(ReturnUrl ?? "/admin");
