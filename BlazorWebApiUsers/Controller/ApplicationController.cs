@@ -4,6 +4,7 @@ using BlazorWebApi.Users.Models;
 using Breeze.AspNetCore;
 using Breeze.Persistence;
 using Breeze.Persistence.EFCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace BlazorBoilerplate.Server.Controllers
 {
     [Route("api/data/[action]")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [BreezeQueryFilter]
     public class ApplicationController : Controller
     {

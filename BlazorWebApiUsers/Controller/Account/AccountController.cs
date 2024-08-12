@@ -16,6 +16,7 @@ using BlazorWebApi.Users.Models.ManageViewModels;
 using BlazorWebApi.Users.Services;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Localization;
 using NSwag.Annotations;
 
@@ -25,7 +26,7 @@ namespace BlazorWebApi.Users.Controller.Account
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -121,12 +122,12 @@ namespace BlazorWebApi.Users.Controller.Account
         [AllowAnonymous]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        public async Task<ApiResponse> Login(LoginInputModel parameters)
+        public async Task<IActionResult> Login(LoginInputModel parameters)
         {
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
+                return BadRequest("Invalid Data!!!");
             }
 
             try
@@ -135,42 +136,43 @@ namespace BlazorWebApi.Users.Controller.Account
 
                 var result = await _signInManager.PasswordSignInAsync(parameters.Username, parameters.Password, parameters.RememberLogin, true);
 
-                var user = await _userManager.FindByNameAsync(parameters.Username);
-
                 //var lastPageVisited = (await _context.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == parameters.Username.ToUpper()))?.LastPageVisited ?? "/";
 
-                if (result.RequiresTwoFactor)
-                {
-                    _logger.LogInformation("Two factor authentication required for user {0}", parameters.Username);
+                //if (result.RequiresTwoFactor)
+                //{
+                //    _logger.LogInformation("Two factor authentication required for user {0}", parameters.Username);
 
-                    return new ApiResponse((int)HttpStatusCode.OK, "Two factor authentication required")
-                    {
-                        Result = new LoginResponseModel()
-                        {
-                            RequiresTwoFactor = true,
-                            LastPageVisited = ""
-                        }
-                    };
-                }
+                //    return new ApiResponse((int)HttpStatusCode.OK, "Two factor authentication required")
+                //    {
+                //        Result = new LoginResponseModel()
+                //        {
+                //            RequiresTwoFactor = true,
+                //            LastPageVisited = ""
+                //        }
+                //    };
+                //}
 
                 // If lock out activated and the max. amounts of attempts is reached.
                 if (result.IsLockedOut)
                 {
                     _logger.LogInformation("User Locked out: {0}", parameters.Username);
-                    return new ApiResponse((int)HttpStatusCode.Unauthorized, "LockedUser");
+                    return BadRequest("User Locked!!!");
                 }
 
                 // If your email is not confirmed but you require it in the settings for login.
                 if (result.IsNotAllowed)
                 {
                     _logger.LogInformation("User {0} not allowed to log in, because email is not confirmed", parameters.Username);
-                    return new ApiResponse((int)HttpStatusCode.Unauthorized, "EmailNotConfirmed");
+                    return BadRequest("Email Not Confirmed!!!");
                 }
 
                 if (result.Succeeded)
                 {
 
                     _logger.LogInformation("Logged In user {0}", parameters.Username);
+
+                    var user = await _userManager.FindByNameAsync(parameters.Username);
+
 
                     //var properties = GetAuthProperties(returnUrl);
 
@@ -179,37 +181,29 @@ namespace BlazorWebApi.Users.Controller.Account
                     //    // user might have clicked on a malicious link - should be logged
                     //    throw new Exception("invalid return URL");
 
-                    //if (User.IsInRole("Administrator"))
-                    //{
-                    //    if (string.IsNullOrEmpty(parameters.ReturnUrl) || parameters.ReturnUrl == "/")
-                    //    {
-                    //        parameters.ReturnUrl = "/admin";
-                    //    }
-
-                    //    if (string.IsNullOrEmpty(lastPageVisited) || lastPageVisited == "/")
-                    //    {
-                    //        lastPageVisited = "/admin";
-                    //    }
-                    //}
-
-                    return new ApiResponse((int)HttpStatusCode.OK, "Two factor authentication required")
+                    if (User.IsInRole("Administrator"))
                     {
-                        Result = new LoginResponseModel()
+                        if (string.IsNullOrEmpty(parameters.ReturnUrl) || parameters.ReturnUrl == "/")
                         {
-                            RequiresTwoFactor = false,
-                            LastPageVisited = parameters.ReturnUrl,
-                            ReturnUrl = parameters.ReturnUrl
+                            parameters.ReturnUrl = "/admin";
                         }
-                    };
-                }
+                    }
 
-                _logger.LogInformation("Invalid Password for user {0}", parameters.Username);
-                return new ApiResponse((int)HttpStatusCode.Unauthorized, "LoginFailed");
+                    _logger.LogInformation("Invalid Password for user {0}", parameters.Username);
+
+                    var properties = GetAuthProperties(parameters.ReturnUrl);
+
+                    return Challenge(properties);
+                }
+                else
+                {
+                    return BadRequest("User Not Found!!!");
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Login Failed: {ex.GetBaseException().Message}");
-                return new ApiResponse((int)HttpStatusCode.InternalServerError, "LoginFailed");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -395,18 +389,18 @@ namespace BlazorWebApi.Users.Controller.Account
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ApiResponse> Register(RegisterViewModel parameters)
+        public async Task<IActionResult> Register(RegisterViewModel parameters)
         {
 
             if (!ModelState.IsValid)
             {
-                return new ApiResponse((int)HttpStatusCode.BadRequest, "InvalidData");
+                return BadRequest("InvalidData");
             }
 
             await RegisterNewUserAsync(parameters.UserName, parameters.Email, parameters.Password, _userManager.Options.SignIn.RequireConfirmedEmail);
 
             if (_userManager.Options.SignIn.RequireConfirmedEmail)
-                return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful");
+                return Ok("Operation Successful");
             else
             {
                 return await Login(new LoginInputModel
@@ -998,14 +992,21 @@ namespace BlazorWebApi.Users.Controller.Account
 
         [HttpGet]
         [Route("[action]")]
-        public ApiResponse GetUser()
+        public async Task<ApiResponse> GetUser()
         {
-            UserViewModel userViewModel = User != null && User.Identity.IsAuthenticated
-              ? new UserViewModel { UserName = User.Identity.Name, IsAuthenticated = true }
-              : new()
-              {
-                  IsAuthenticated = false
-              };
+            UserViewModel userViewModel = new UserViewModel();
+
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                userViewModel.IsAuthenticated = true;
+                userViewModel.UserName = User.Identity.Name;
+
+                userViewModel.LastPageVisited = (await _context.UserProfiles.FirstOrDefaultAsync(i => i.ApplicationUser.UserName == userViewModel.UserName))?.LastPageVisited ?? "/admin";
+            }
+            else
+            {
+                userViewModel.IsAuthenticated = false;
+            }
 
             return new ApiResponse((int)HttpStatusCode.OK, "Operation Successful", userViewModel);
         }

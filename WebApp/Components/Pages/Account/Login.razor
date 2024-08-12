@@ -1,9 +1,7 @@
 ﻿@page "/login"
 @using System.Net
 
-
 @attribute [AllowAnonymous]
-
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center" Style="height: 100vh;">
     <MudPaper Elevation="25" Class="pa-8" Style="width: 500px;">
@@ -141,23 +139,13 @@
             // var identityUrl = configuration.GetRequiredValue("IdentityUrl");
             // string urlData = $"{identityUrl}/connect/authorize?client_id=webapp&redirect_uri={identityUrl}/signin-oidc&response_type=code&scope=openid profile files identity";
 
-            // loginViewModel.ReturnUrl = urlData;
+            loginViewModel.ReturnUrl = ReturnUrl;
 
             var response = await identityAuthenticationStateProvider.Login(loginViewModel);
 
             if (response.StatusCode != (int)HttpStatusCode.OK)
             {
                 viewNotifier.Show(string.Join(';', response.Message), ViewNotifierType.Error);
-            }
-            else
-            {
-                // if (string.IsNullOrEmpty(response.Result.ReturnUrl) || response.Result.ReturnUrl == "/" || response.Result.ReturnUrl == "/admin")
-                //     loginViewModel.ReturnUrl = response.Result.LastPageVisited;
-
-                // if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
-                //     loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
-
-                _navigationManager.NavigateTo($"/admin", true);
             }
         }
         catch (Exception ex)
@@ -224,13 +212,16 @@
 
         if (user.Identity!.IsAuthenticated)
         {
+
+            var state = await identityAuthenticationStateProvider.GetUserViewModel();
+
             if (user.IsInRole("Administrator"))
             {
-                _navigationManager.NavigateTo(ReturnUrl ?? "/admin");
+                _navigationManager.NavigateTo(state.LastPageVisited ?? "/admin");
             }
             else
             {
-                _navigationManager.NavigateTo(ReturnUrl ?? "/");
+                _navigationManager.NavigateTo(state.LastPageVisited ?? "/");
             }
         }
         else
@@ -249,8 +240,11 @@
                     {
                         if (!string.IsNullOrEmpty(ReturnUrl))
                             ReturnUrl = Uri.EscapeDataString(ReturnUrl);
+
+                        var identityUrl = configuration.GetRequiredValue("IdentityUrl");
+
                         // we only have one option for logging in and it's an external provider
-                        _navigationManager.NavigateTo($"{httpClient.BaseAddress}api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
+                        _navigationManager.NavigateTo($"{identityUrl}/api/externalauth/challenge/{loginViewModel.ExternalLoginScheme}/{ReturnUrl}", true);
                     }
                 }
                 else
