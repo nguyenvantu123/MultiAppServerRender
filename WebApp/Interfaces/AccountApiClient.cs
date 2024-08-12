@@ -1,5 +1,6 @@
 ﻿using BlazorWebApi.Users.Models;
 using Breeze.Sharp;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
 using System.Linq.Expressions;
@@ -30,9 +31,9 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto<LoginViewModel>>("/api/account/build-login-view-model", returnUrl);
         }
 
-        public async Task<ApiResponseDto<LoginResponseModel>> Login(LoginInputModel parameters)
+        public async Task<HttpResponseMessage> Login(LoginInputModel parameters)
         {
-            var response = await _httpClient.PostJsonAsync<ApiResponseDto<LoginResponseModel>>("/api/account/login", parameters);
+            var response = await _httpClient.PostJsonAsync<HttpResponseMessage>("/api/account/login", parameters);
 
             //if (AppState.Runtime == BlazorRuntime.Server)
             //if (AppState.Runtime == BlazorRuntime.Server)

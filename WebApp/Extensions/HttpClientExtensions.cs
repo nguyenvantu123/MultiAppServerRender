@@ -36,7 +36,7 @@ public static class HttpClientExtensions
         {
             if (_httpContextAccessor.HttpContext is HttpContext context)
             {
-                var accessToken = _httpContextAccessor.HttpContext.Request.Cookies["access_token"];
+                var accessToken = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
 
                 if (accessToken is not null)
                 {

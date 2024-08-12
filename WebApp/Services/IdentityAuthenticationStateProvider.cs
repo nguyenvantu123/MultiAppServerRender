@@ -28,9 +28,9 @@ namespace WebApp.Services
             return await _accountApiClient.BuildLoginViewModel(returnUrl);
         }
 
-        public async Task<ApiResponseDto<LoginResponseModel>> Login(LoginInputModel parameters)
+        public async Task<HttpResponseMessage> Login(LoginInputModel parameters)
         {
-            ApiResponseDto<LoginResponseModel> apiResponse = await _accountApiClient.Login(parameters);
+            HttpResponseMessage apiResponse = await _accountApiClient.Login(parameters);
             return apiResponse;
         }
 
