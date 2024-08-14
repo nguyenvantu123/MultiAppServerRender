@@ -19,30 +19,30 @@ public static class HttpClientExtensions
 
     private class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
     {
-        //private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HttpClientAuthorizationDelegatingHandler()
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
         {
-            //_httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor, HttpMessageHandler innerHandler) : base(innerHandler)
         {
-            //_httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
 
-            //if (.HttpContext is HttpContext context)
-            //{
-            //    var accessToken = await context.GetTokenAsync("access_token");
+            if (_httpContextAccessor.HttpContext is HttpContext context)
+            {
+                var accessToken = await context.GetTokenAsync("access_token");
 
-            //    if (accessToken is not null)
-            //    {
-            //        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            //    }
-            //}
+                if (accessToken is not null)
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                }
+            }
 
             return await base.SendAsync(request, cancellationToken);
         }

@@ -71,12 +71,12 @@ var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    //options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 }).AddCookie(x =>
 {
     x.LoginPath = WebApp.Settings.Settings.LoginPath;
-}).AddOpenIdConnect(options =>
+}).AddOpenIdConnect("oidc", options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = identityUrl;

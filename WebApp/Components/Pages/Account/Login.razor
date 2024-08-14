@@ -4,6 +4,7 @@
 @using IdentityModel.Client
 @using IdentityServer4
 @using Microsoft.AspNetCore.Authentication
+@using System.Security.Claims
 
 
 @attribute [AllowAnonymous]
@@ -166,20 +167,33 @@
             else
             {
 
-                          _httpContextAccessor!.HttpContext!.Response.Cookies.Append("token", tokenResponse.AccessToken,
-                new Microsoft.AspNetCore.Http.CookieOptions { Expires = DateTime.Now.AddMinutes(tokenResponse.ExpiresIn) });
+                //      if ((_httpContextAccessor.HttpContext is HttpContext context))
+                //      {
+                //          _httpContextAccessor.HttpContext!.Response.Cookies.Append("accessToken", tokenResponse.AccessToken,
+                // new CookieOptions
+                //     {
+                //         Expires = DateTimeOffset.UtcNow.AddMinutes(5),
+                //         HttpOnly = true,
+                //         IsEssential = true,
+                //         Secure = true,
+                //         SameSite = SameSiteMode.None
+                //     });
+                //      }
 
-                // // var accessToken = await _httpContextAccessor!.HttpContext!.GetTokenAsync("access_token");
+                // // // var accessToken = await _httpContextAccessor!.HttpContext!.GetTokenAsync("access_token");
 
-                //var auth = await _httpContextAccessor!.HttpContext!.AuthenticateAsync("Cookies");
+                //var auth = await _httpContextAccessor!.HttpContext!.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                // await _httpContextAccessor!.HttpContext!.ChallengeAsync(");
 
                 // var data =  auth.Properties.Items.;
 
                 //  auth.Properties.UpdateTokenValue("refresh_token", tokenResponse.RefreshToken);
 
-               // var data = auth.Properties.Items;
+                // var data = auth.Properties.Items;
                 //data.Add("access_token", tokenResponse.AccessToken);
-                // auth.Properties.Items.Add().StoreTokens(new List<AuthenticationToken>()
+
+                // auth.Properties.StoreTokens(new List<AuthenticationToken>()
                 // {
                 //     new AuthenticationToken()
                 //     {
@@ -198,9 +212,49 @@
                 //     }
                 // });
 
-                // await _httpContextAccessor!.HttpContext!.SignInAsync(auth.Principal, auth.Properties);
+                var data = GetAuthProperties(ReturnUrl ?? "/admin");
 
-                _navigationManager.NavigateTo(ReturnUrl ?? "/admin", true);
+                data.StoreTokens(new List<AuthenticationToken>()
+                {
+                    new AuthenticationToken()
+                    {
+                        Name = "access_token",
+                        Value = tokenResponse.AccessToken
+                    },
+                    new AuthenticationToken()
+                    {
+                        Name = "refresh_token",
+                        Value = tokenResponse.RefreshToken
+                    },
+                    new AuthenticationToken()
+                    {
+                        Name = "expire_in",
+                        Value = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn/2).ToString("dd/MM/yyyy")
+                    }
+                });
+
+                _httpContextAccessor!.HttpContext!.ChallengeAsync("oidc", new
+                AuthenticationProperties
+                    { RedirectUri = "/admin" });
+
+                // _httpContextAccessor.HttpContext.User.Identity.isAuthenticated
+
+                // ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal
+                //     {
+                //         Identities = new IEnumerable
+                //     };
+
+                var identity = new ClaimsIdentity();
+
+                identity = new ClaimsIdentity(null, "Server authentication", "name", "role");
+
+                _httpContextAccessor!.HttpContext!.SignInAsync(new ClaimsPrincipal(identity), data);
+
+                // var accessToken = await _httpContextAccessor!.HttpContext!.GetTokenAsync("access_token");
+
+
+
+                _navigationManager.NavigateTo("/signin-oidc", true);
 
             }
 
@@ -234,6 +288,11 @@
     {
     }
 
+    private static AuthenticationProperties GetAuthProperties(string? returnUrl)
+    {
+
+        return new AuthenticationProperties { RedirectUri = "/admin" };
+    }
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
