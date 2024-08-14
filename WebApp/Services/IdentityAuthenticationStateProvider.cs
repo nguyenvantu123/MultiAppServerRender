@@ -118,9 +118,10 @@ namespace WebApp.Services
 
         public async Task<UserViewModel> GetUserViewModel()
         {
+
             UserViewModel userViewModel = await _accountApiClient.GetUser();
 
-            if (userViewModel!=null&&userViewModel.IsAuthenticated)
+            if (userViewModel != null && userViewModel.IsAuthenticated)
                 userViewModel = await _accountApiClient.GetUserViewModel();
             else
                 userViewModel = new UserViewModel { IsAuthenticated = false, Roles = new List<string>() };

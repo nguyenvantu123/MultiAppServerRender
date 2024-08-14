@@ -1,6 +1,9 @@
 ﻿@page "/login"
 @using System.Net
 @using System.Web
+@using IdentityModel.Client
+@using IdentityServer4
+@using Microsoft.AspNetCore.Authentication
 
 
 @attribute [AllowAnonymous]
@@ -125,8 +128,6 @@
 
     [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    [CascadingParameter] public HttpContext? HttpContext { get; set; }
-
     [Inject] protected HttpClient httpClient { get; set; }
 
     private IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
@@ -136,24 +137,92 @@
     {
         try
         {
-            loginViewModel.ReturnUrl = "";
+            HttpClient httpClient = new HttpClient();
 
-            var response = await identityAuthenticationStateProvider.Login(loginViewModel);
+            var identityUrl = _configuration.GetRequiredValue("IdentityUrl");
 
-            if (response.StatusCode != (int)HttpStatusCode.OK)
+            var disco = await httpClient.GetDiscoveryDocumentAsync(identityUrl);
+
+            if (disco.IsError)
             {
-                viewNotifier.Show(string.Join(';', response.Message), ViewNotifierType.Error);
+                viewNotifier.Show("", ViewNotifierType.Error, "Login Failed!!!");
+            }
+
+            TokenClientOptions tokenClientOptions = new TokenClientOptions
+                {
+                    Address = disco.TokenEndpoint,
+                    ClientId = "webapp",
+                    ClientSecret = "secret"
+                };
+
+            var tokenclient = new TokenClient(httpClient, tokenClientOptions);
+
+            var tokenResponse = await tokenclient.RequestPasswordTokenAsync(userName: loginViewModel.UserName, password: loginViewModel.Password, scope: $"openid identity offline_access");
+
+            if (tokenResponse.IsError)
+            {
+                viewNotifier.Show("", ViewNotifierType.Error, "Login Failed!!!");
             }
             else
             {
-                if (string.IsNullOrEmpty(response.Result.ReturnUrl) || response.Result.ReturnUrl == "/" || response.Result.ReturnUrl == "/admin")
-                    loginViewModel.ReturnUrl = response.Result.LastPageVisited;
 
-                if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
-                    loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
+                          _httpContextAccessor!.HttpContext!.Response.Cookies.Append("token", tokenResponse.AccessToken,
+                new Microsoft.AspNetCore.Http.CookieOptions { Expires = DateTime.Now.AddMinutes(tokenResponse.ExpiresIn) });
 
-                _navigationManager.NavigateTo($"/connect/authorize/callback?client_id=webapp&redirect_uri=https://localhost:7221/signin-oidc&response_type=code&scope=openid profile files identity&code_challenge=V0te2O-lTHtnzs31DPq0k1XDgo02XJ6XMwsJ--lmw0M&code_challenge_method=S256&response_mode=form_post&nonce=638590784428127388.ZDQ5ZjVjMjUtNTllNS00YjY5LWIzNmItMzUyMGM5Zjk3ZjY3NTNkMGRjNGItNTE3ZC00NWVlLTgxOGItM2RiNDcxZThjZWI4&state=CfDJ8K9yim51j7VOoa-D8gVl_ParnjovbajHT1gs4uA5YO2ZOHGDjjZuuBL-HUquBZtG6HIM-g_1AiZL_xzDkLAsSe23jYziP_MlLBkCgnU8JZLESq-WAoCj66wN-eHhjuIUvALNTiwie7AUFxD1cLQcNsgJ3OnIAoNOzzWDvuORNmmIaV4T7tCWiAYQGlwlpg2ZS0h0yBJtxrIz2t2TwKqALdH_zZ4AEzbjyaHvD4caYKjEC_2ptQy8gETvIQAqqPnLYtoJYlwYs4fc-QZQu_9o6TgiAoD-A_QdZR_R2zC5kDvF6hwnYWU_KyuS_jW1O4_JHzVgEXCauBlj8quVkVeyl1v-sybgGNjJbAshngOrBubK8MDY8bugSCxBAId6nVvlzg&x-client-SKU=ID_NET8_0&x-client-ver=7.1.2.0", true);
+                // // var accessToken = await _httpContextAccessor!.HttpContext!.GetTokenAsync("access_token");
+
+                //var auth = await _httpContextAccessor!.HttpContext!.AuthenticateAsync("Cookies");
+
+                // var data =  auth.Properties.Items.;
+
+                //  auth.Properties.UpdateTokenValue("refresh_token", tokenResponse.RefreshToken);
+
+               // var data = auth.Properties.Items;
+                //data.Add("access_token", tokenResponse.AccessToken);
+                // auth.Properties.Items.Add().StoreTokens(new List<AuthenticationToken>()
+                // {
+                //     new AuthenticationToken()
+                //     {
+                //         Name = "access_token",
+                //         Value = tokenResponse.AccessToken
+                //     },
+                //     new AuthenticationToken()
+                //     {
+                //         Name = "refresh_token",
+                //         Value = tokenResponse.RefreshToken
+                //     },
+                //     new AuthenticationToken()
+                //     {
+                //         Name = "expire_in",
+                //         Value = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn/2).ToString("dd/MM/yyyy")
+                //     }
+                // });
+
+                // await _httpContextAccessor!.HttpContext!.SignInAsync(auth.Principal, auth.Properties);
+
+                _navigationManager.NavigateTo(ReturnUrl ?? "/admin", true);
+
             }
+
+
+            // loginViewModel.ReturnUrl = "";
+
+            // var response = await identityAuthenticationStateProvider.Login(loginViewModel);
+
+            // if (response.StatusCode != (int)HttpStatusCode.OK)
+            // {
+            //     viewNotifier.Show(string.Join(';', response.Message), ViewNotifierType.Error);
+            // }
+            // else
+            // {
+            //     if (string.IsNullOrEmpty(response.Result.ReturnUrl) || response.Result.ReturnUrl == "/" || response.Result.ReturnUrl == "/admin")
+            //         loginViewModel.ReturnUrl = response.Result.LastPageVisited;
+
+            //     if ((response.Result as LoginResponseModel)?.RequiresTwoFactor == true)
+            //         loginViewModel.ReturnUrl = $"{AuthenPath.LoginWith2faPath}?returnurl={Uri.EscapeDataString(loginViewModel.ReturnUrl)}";
+
+            //     _navigationManager.NavigateTo($"/connect/authorize/callback?client_id=webapp&redirect_uri=https://localhost:7221/signin-oidc&response_type=code&scope=openid profile files identity&code_challenge=V0te2O-lTHtnzs31DPq0k1XDgo02XJ6XMwsJ--lmw0M&code_challenge_method=S256&response_mode=form_post&nonce=638590784428127388.ZDQ5ZjVjMjUtNTllNS00YjY5LWIzNmItMzUyMGM5Zjk3ZjY3NTNkMGRjNGItNTE3ZC00NWVlLTgxOGItM2RiNDcxZThjZWI4&state=CfDJ8K9yim51j7VOoa-D8gVl_ParnjovbajHT1gs4uA5YO2ZOHGDjjZuuBL-HUquBZtG6HIM-g_1AiZL_xzDkLAsSe23jYziP_MlLBkCgnU8JZLESq-WAoCj66wN-eHhjuIUvALNTiwie7AUFxD1cLQcNsgJ3OnIAoNOzzWDvuORNmmIaV4T7tCWiAYQGlwlpg2ZS0h0yBJtxrIz2t2TwKqALdH_zZ4AEzbjyaHvD4caYKjEC_2ptQy8gETvIQAqqPnLYtoJYlwYs4fc-QZQu_9o6TgiAoD-A_QdZR_R2zC5kDvF6hwnYWU_KyuS_jW1O4_JHzVgEXCauBlj8quVkVeyl1v-sybgGNjJbAshngOrBubK8MDY8bugSCxBAId6nVvlzg&x-client-SKU=ID_NET8_0&x-client-ver=7.1.2.0", true);
+            // }
         }
         catch (Exception ex)
         {

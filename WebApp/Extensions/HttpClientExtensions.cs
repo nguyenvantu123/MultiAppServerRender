@@ -19,21 +19,22 @@ public static class HttpClientExtensions
 
     private class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        public HttpClientAuthorizationDelegatingHandler()
         {
-            _httpContextAccessor = httpContextAccessor;
+            //_httpContextAccessor = httpContextAccessor;
         }
 
         public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor, HttpMessageHandler innerHandler) : base(innerHandler)
         {
-            _httpContextAccessor = httpContextAccessor;
+            //_httpContextAccessor = httpContextAccessor;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            //if (_httpContextAccessor.HttpContext is HttpContext context)
+
+            //if (.HttpContext is HttpContext context)
             //{
             //    var accessToken = await context.GetTokenAsync("access_token");
 

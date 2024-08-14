@@ -15,6 +15,8 @@ using BlazorWebApi.Users.Models.ManageViewModels;
 using BlazorWebApi.Users.Services;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Localization;
 using NSwag.Annotations;
 
@@ -24,7 +26,7 @@ namespace BlazorWebApi.Users.Controller.Account
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -190,7 +192,7 @@ namespace BlazorWebApi.Users.Controller.Account
                     }
 
                     // check if we are in the context of an authorization request
-                    var context = await _interaction.GetAuthorizationContextAsync("/connect/authorize/callback?client_id=webapp&redirect_uri=https://localhost:7221/signin-oidc&response_type=code&scope=openid profile files identity&code_challenge=V0te2O-lTHtnzs31DPq0k1XDgo02XJ6XMwsJ--lmw0M&code_challenge_method=S256&response_mode=form_post&nonce=638590784428127388.ZDQ5ZjVjMjUtNTllNS00YjY5LWIzNmItMzUyMGM5Zjk3ZjY3NTNkMGRjNGItNTE3ZC00NWVlLTgxOGItM2RiNDcxZThjZWI4&state=CfDJ8K9yim51j7VOoa-D8gVl_ParnjovbajHT1gs4uA5YO2ZOHGDjjZuuBL-HUquBZtG6HIM-g_1AiZL_xzDkLAsSe23jYziP_MlLBkCgnU8JZLESq-WAoCj66wN-eHhjuIUvALNTiwie7AUFxD1cLQcNsgJ3OnIAoNOzzWDvuORNmmIaV4T7tCWiAYQGlwlpg2ZS0h0yBJtxrIz2t2TwKqALdH_zZ4AEzbjyaHvD4caYKjEC_2ptQy8gETvIQAqqPnLYtoJYlwYs4fc-QZQu_9o6TgiAoD-A_QdZR_R2zC5kDvF6hwnYWU_KyuS_jW1O4_JHzVgEXCauBlj8quVkVeyl1v-sybgGNjJbAshngOrBubK8MDY8bugSCxBAId6nVvlzg&x-client-SKU=ID_NET8_0&x-client-ver=7.1.2.0");
+                    //var context = await _interaction.GetAuthorizationContextAsync("/connect/authorize/callback?client_id=webapp&redirect_uri=https://localhost:7221/signin-oidc&response_type=code&scope=openid profile files identity&code_challenge=V0te2O-lTHtnzs31DPq0k1XDgo02XJ6XMwsJ--lmw0M&code_challenge_method=S256&response_mode=form_post&nonce=638590784428127388.ZDQ5ZjVjMjUtNTllNS00YjY5LWIzNmItMzUyMGM5Zjk3ZjY3NTNkMGRjNGItNTE3ZC00NWVlLTgxOGItM2RiNDcxZThjZWI4&state=CfDJ8K9yim51j7VOoa-D8gVl_ParnjovbajHT1gs4uA5YO2ZOHGDjjZuuBL-HUquBZtG6HIM-g_1AiZL_xzDkLAsSe23jYziP_MlLBkCgnU8JZLESq-WAoCj66wN-eHhjuIUvALNTiwie7AUFxD1cLQcNsgJ3OnIAoNOzzWDvuORNmmIaV4T7tCWiAYQGlwlpg2ZS0h0yBJtxrIz2t2TwKqALdH_zZ4AEzbjyaHvD4caYKjEC_2ptQy8gETvIQAqqPnLYtoJYlwYs4fc-QZQu_9o6TgiAoD-A_QdZR_R2zC5kDvF6hwnYWU_KyuS_jW1O4_JHzVgEXCauBlj8quVkVeyl1v-sybgGNjJbAshngOrBubK8MDY8bugSCxBAId6nVvlzg&x-client-SKU=ID_NET8_0&x-client-ver=7.1.2.0");
 
                     return new ApiResponse((int)HttpStatusCode.OK, "Two factor authentication required")
                     {

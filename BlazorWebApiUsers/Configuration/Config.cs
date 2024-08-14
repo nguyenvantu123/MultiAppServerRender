@@ -21,7 +21,7 @@ namespace BlazorWebApi.Users.Configuration
         {
             return new List<ApiScope>
             {
-                new ApiScope("identity", "Identity Service"),
+                new ApiScope("identity", "Identity Service", userClaims:new string[]{"scope.claim" }),
                 new ApiScope("files", "File Service"),
                 new ApiScope("webhooks", "Webhooks registration Service"),
             };
@@ -34,7 +34,7 @@ namespace BlazorWebApi.Users.Configuration
             return new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile()
+                new IdentityResources.Profile(),
             };
         }
 
@@ -81,7 +81,7 @@ namespace BlazorWebApi.Users.Configuration
                         new Secret("secret".Sha256())
                     },
                     ClientUri = $"{configuration["WebAppClient"]}",                             // public uri of the client
-                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AllowAccessTokensViaBrowser = false,
                     RequireConsent = false,
                     AllowOfflineAccess = true,
@@ -103,7 +103,8 @@ namespace BlazorWebApi.Users.Configuration
                         "files",
                         "basket",
                         "webshoppingagg",
-                        "webhooks"
+                        "webhooks",
+                        "identity"
                     },
                     AccessTokenLifetime = 60*60*2, // 2 hours
                     IdentityTokenLifetime= 60*60*2 // 2 hours

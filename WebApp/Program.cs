@@ -71,12 +71,11 @@ var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    //options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 }).AddCookie(x =>
 {
     x.LoginPath = WebApp.Settings.Settings.LoginPath;
-    x.ExpireTimeSpan = TimeSpan.FromMinutes(60);
 }).AddOpenIdConnect(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -91,9 +90,27 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("openid");
     options.Scope.Add("profile");
     options.Scope.Add("files");
-}); ;
+    options.Scope.Add("identity");
+});
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+//.AddOpenIdConnect( options =>
+//{
+//    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.Authority = identityUrl;
+//    options.SignedOutRedirectUri = callBackUrl;
+//    options.ClientId = "webapp";
+//    options.ClientSecret = "secret";
+//    options.ResponseType = "code";
+//    options.SaveTokens = true;
+//    options.GetClaimsFromUserInfoEndpoint = true;
+//    options.RequireHttpsMetadata = false;
+//    options.Scope.Add("openid");
+//    options.Scope.Add("profile");
+//    options.Scope.Add("files");
+//}); ;
+
+//builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
 
 //builder.Services.AddScoped(s =>
 //{
