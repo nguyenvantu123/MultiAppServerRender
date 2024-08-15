@@ -5,6 +5,10 @@
 @using IdentityServer4
 @using Microsoft.AspNetCore.Authentication
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.IdentityModel.Protocols.OpenIdConnect
+@using System.Globalization
+@using WebApp.Pages
 
 
 @attribute [AllowAnonymous]
@@ -133,6 +137,7 @@
 
     private IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
 
+    [CascadingParameter] HttpContext Context { get; set; } = default!;
 
     private async Task SubmitAsync()
     {
@@ -166,6 +171,15 @@
             }
             else
             {
+
+                SaveTokenModel loginInputModel = new SaveTokenModel();
+
+                loginInputModel.Access_Token = tokenResponse.AccessToken;
+                loginInputModel.Refresh_Token = tokenResponse.RefreshToken;
+                loginInputModel.Expire_In = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn / 2);
+                loginInputModel.ReturnUrl = "/admin";
+
+                await SubmitServerForm("/server/login/", loginInputModel);
 
                 //      if ((_httpContextAccessor.HttpContext is HttpContext context))
                 //      {
@@ -212,30 +226,30 @@
                 //     }
                 // });
 
-                var data = GetAuthProperties(ReturnUrl ?? "/admin");
+                // var data = GetAuthProperties(ReturnUrl ?? "/admin");
 
-                data.StoreTokens(new List<AuthenticationToken>()
-                {
-                    new AuthenticationToken()
-                    {
-                        Name = "access_token",
-                        Value = tokenResponse.AccessToken
-                    },
-                    new AuthenticationToken()
-                    {
-                        Name = "refresh_token",
-                        Value = tokenResponse.RefreshToken
-                    },
-                    new AuthenticationToken()
-                    {
-                        Name = "expire_in",
-                        Value = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn/2).ToString("dd/MM/yyyy")
-                    }
-                });
+                // data.StoreTokens(new List<AuthenticationToken>()
+                // {
+                //     new AuthenticationToken()
+                //     {
+                //         Name = "access_token",
+                //         Value = tokenResponse.AccessToken
+                //     },
+                //     new AuthenticationToken()
+                //     {
+                //         Name = "refresh_token",
+                //         Value = tokenResponse.RefreshToken
+                //     },
+                //     new AuthenticationToken()
+                //     {
+                //         Name = "expire_in",
+                //         Value = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn / 2).ToString("dd/MM/yyyy")
+                //     }
+                // });
 
-                _httpContextAccessor!.HttpContext!.ChallengeAsync("oidc", new
-                AuthenticationProperties
-                    { RedirectUri = "/admin" });
+                // _httpContextAccessor!.HttpContext!.ChallengeAsync("oidc", new
+                // AuthenticationProperties
+                //     { RedirectUri = "/admin" });
 
                 // _httpContextAccessor.HttpContext.User.Identity.isAuthenticated
 
@@ -244,17 +258,37 @@
                 //         Identities = new IEnumerable
                 //     };
 
-                var identity = new ClaimsIdentity();
-
-                identity = new ClaimsIdentity(null, "Server authentication", "name", "role");
-
-                _httpContextAccessor!.HttpContext!.SignInAsync(new ClaimsPrincipal(identity), data);
+                // _httpContextAccessor!.HttpContext!.SignInAsync(new ClaimsPrincipal(identity), data);
 
                 // var accessToken = await _httpContextAccessor!.HttpContext!.GetTokenAsync("access_token");
 
 
+                // var tokens = new List<AuthenticationToken>
+                // {
+                //     new AuthenticationToken {Name = OpenIdConnectParameterNames.AccessToken, Value = tokenResponse.AccessToken},
+                //     new AuthenticationToken {Name = OpenIdConnectParameterNames.RefreshToken, Value = tokenResponse.RefreshToken}
+                // };
 
-                _navigationManager.NavigateTo("/signin-oidc", true);
+                // var expiresAt = DateTime.UtcNow + TimeSpan.FromSeconds(tokenResponse.ExpiresIn / 2);
+
+                // tokens.Add(new AuthenticationToken
+                //     {
+                //         Name = "expires_at",
+                //         Value = expiresAt.ToString("o", CultureInfo.InvariantCulture)
+                //     });
+
+                // var prop = new AuthenticationProperties();
+
+                // prop.StoreTokens(tokens);
+                // prop.IsPersistent = true;
+
+                // var identity = new ClaimsIdentity();
+
+                // identity = new ClaimsIdentity(null, "Server authentication", "name", "role");
+
+                // await Context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), prop);
+
+                // _navigationManager.NavigateTo("/admin", true);
 
             }
 
@@ -282,6 +316,13 @@
         {
             viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["LoginFailed"]);
         }
+    }
+
+    private async Task SubmitServerForm(string path, AccountFormModel model)
+    {
+        model.__RequestVerificationToken = await _jsRuntime.InvokeAsync<string>("interop.getElementByName", "__RequestVerificationToken");
+
+        await _jsRuntime.InvokeAsync<string>("interop.submitForm", path, model);
     }
 
     private async Task SignInWith(ExternalProvider externalProvider)

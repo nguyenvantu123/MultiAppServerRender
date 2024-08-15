@@ -28,6 +28,8 @@ using WebApp.State;
 using BlazorWebApi.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using BlazorWebApi.Users.Models;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -206,6 +208,16 @@ builder.Services.AddHttpClient<FileApiClient>(httpClient =>
     httpClient.BaseAddress = new("https://blazorwebapifiles");
 }).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12)).AddAuthToken();
 
+builder.Services.AddRazorPages().AddMvcOptions(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
+
+builder.Services.AddControllersWithViews(options =>
+         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
 #region Cookies
 // cookie policy to deal with temporary browser incompatibilities
@@ -239,8 +251,6 @@ if (builder.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.UseAuthentication();
@@ -248,5 +258,8 @@ app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapRazorPages();
+app.MapControllers();
 
 app.Run();
