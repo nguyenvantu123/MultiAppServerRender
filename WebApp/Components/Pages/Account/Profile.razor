@@ -12,94 +12,6 @@
 }
 else
 {
-
-    @* <MudGrid>
-
-        <MudItem xs="12" sm="4" md="3">
-            <MudCard Elevation="5">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText>Avatar</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <div class="d-flex justify-center mb-4">
-                        @if (!string.IsNullOrEmpty(@ImageDataUrl))
-                        {
-                            <MudAvatar Image="@ImageDataUrl" Style="height:115px; width:115px;"> </MudAvatar>
-                        }
-                        else
-                        {
-                            <MudAvatar Color="Color.Secondary" Style="height:115px; width:115px;">@_firstLetterOfName</MudAvatar>
-                        }
-                    </div>
-                </MudCardContent>
-            </MudCard>
-        </MudItem>
-        <MudItem xs="12" sm="8" md="9">
-            <PageTitle>@L["User Profile"]</PageTitle>
-            @if (userViewModel.HasPassword)
-            {
-                <MudButton StartIcon="@Icons.Material.Filled.RotateRight" OnClick="@(() => OpenUpdatePasswordDialog())" Style="margin-left: 10px">@L["Change Password"]</MudButton>
-            }
-            @if (userViewModel.HasAuthenticator)
-            {
-                <MudButton StartIcon="@Icons.Material.Filled.RotateRight" OnClick="@(() => DisableAuthenticator())" Style="margin-left: 10px">@L["ResetAuthenticator"]</MudButton>
-            }
-
-            <EditForm id="mainForm" Model="@userViewModel" OnValidSubmit="@UpdateUser">
-                <FluentValidationValidator />
-                <MudValidationSummary />
-                <MudTextField @bind-Value="@userViewModel.UserName" Label=@L["UserName"] AdornmentIcon="@Icons.Material.Filled.Person" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] ReadOnly="true"></MudTextField>
-
-                <MudTextField @bind-Value="@userViewModel.Email" Label="Email" AdornmentIcon="@Icons.Material.Outlined.Mail" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
-
-                <MudTextField @bind-Value="@userViewModel.FirstName" Label=@L["FirstName"] FullWidth="true"></MudTextField>
-
-                <MudTextField @bind-Value="@userViewModel.LastName" Label=@L["LastName"] FullWidth="true"></MudTextField>
-
-                <strong>@L["Roles"]</strong><br />
-                <MudChipSet>
-                    @foreach (var role in userViewModel.Roles)
-                    {
-                        <MudChip Text="@role"></MudChip>
-                    }
-                </MudChipSet>
-
-                <MudButton ButtonType="ButtonType.Submit" form="mainForm" Variant="Variant.Filled" Color="Color.Primary">@L["Save"]</MudButton>
-                <MudButton Href="/admin" form="mainForm" Variant="Variant.Filled" Color="Color.Secondary">@L["Cancel"]</MudButton>
-            </EditForm>
-            @if (userViewModel.TwoFactorEnabled)
-            {
-                <MudSwitch Value="@TwoFactorEnabled" Label=@L["TwoFactorAuthentication"] Color="Color.Primary" />
-
-                @if (userViewModel.BrowserRemembered)
-                {
-                    <MudSwitch Value="@BrowserRemembered" Label=@L["BrowserRemembered"] Color="Color.Primary" />
-                }
-                if (userViewModel.RecoveryCodes != null)
-                {
-                    <MudChipSet>
-                        @foreach (var rCode in userViewModel.RecoveryCodes)
-                        {
-                            <MudChip Text="@rCode"></MudChip>
-                        }
-                    </MudChipSet>
-                }
-                else
-                {
-                    <span>@L["RecoveryCodesLeft"]</span> @userViewModel.CountRecoveryCodes
-                }
-            }
-            else
-            {
-                <h3>@L["TwoFactorAuthentication"]</h3>
-                @L["EnableAuthenticatorInstructions", userViewModel.SharedKey, $"https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl={userViewModel.AuthenticatorUri}"].ToMarkup()
-                <MudTextField @bind-Value="@authenticatorVerificationCodeViewModel.Code" Label=@L["Code"] FullWidth="true"></MudTextField>
-                <MudButton OnClick="@EnableAuthenticator">@L["VerifyCode"]</MudButton>
-            }
-        </MudItem>
-    </MudGrid> *@
     <MudGrid>
 
         <MudItem xs="12" sm="4" md="3">
@@ -123,14 +35,6 @@ else
                 </MudCardContent>
             </MudCard>
             <InputFile OnChange="@SingleUpload" />
-          @*   <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles">
-                <ActivatorContent>
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Primary">
-                        Upload Image
-                    </MudButton>
-                </ActivatorContent>
-            </MudFileUpload> *@
         </MudItem>
         <MudItem xs="12" sm="8" md="9">
             <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
@@ -481,7 +385,5 @@ else
         getPresignedUserProfileUrl.RelationType = "UserProfile";
 
         return (await _fileApiClient.GetPresignedUrl(getPresignedUserProfileUrl)).Result;
-
-
     }
 }

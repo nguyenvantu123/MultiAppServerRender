@@ -81,7 +81,7 @@ namespace BlazorWebApi.Users.Configuration
                         new Secret("secret".Sha256())
                     },
                     ClientUri = $"{configuration["WebAppClient"]}",                             // public uri of the client
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    AllowedGrantTypes = GrantTypes.Code,
                     AllowAccessTokensViaBrowser = false,
                     RequireConsent = false,
                     AllowOfflineAccess = true,

@@ -1,22 +1,16 @@
 ﻿@using Microsoft.AspNetCore.Components.WebAssembly.Services
 @using WebApp.Components.Pages.Account
 @using WebApp.Components.Pages.Admin
+@inject NavigationManager NavigationManager
 
 <Error>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                <Authorizing>
-                    <MudProgressCircular />
-                </Authorizing>
                 <NotAuthorized>
-                    @if (context.User!.Identity!.IsAuthenticated)
-                    {
-                        <Login />
-                    }
-                    else
-                    {
-                        <UserNotAuthorized />
+                    @{
+                        var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+                        NavigationManager.NavigateTo($"account/login?redirectUri={returnUrl}", forceLoad: true);
                     }
                 </NotAuthorized>
             </AuthorizeRouteView>

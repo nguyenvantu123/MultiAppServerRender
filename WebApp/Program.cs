@@ -74,11 +74,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie(x =>
-{
-    x.LoginPath = WebApp.Settings.Settings.LoginPath;
-}).AddOpenIdConnect("oidc", options =>
+}).AddCookie().AddOpenIdConnect(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = identityUrl;
@@ -153,27 +149,27 @@ builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
 //            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 //        }).AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(60));
 
-builder.Services.AddScoped<EntityPermissions>();
+//builder.Services.AddScoped<EntityPermissions>();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequireDigit = false;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
-    //options.Password.RequiredUniqueChars = 6;
+//builder.Services.Configure<IdentityOptions>(options =>
+//{
+//    options.Password.RequireDigit = false;
+//    options.Password.RequiredLength = 6;
+//    options.Password.RequireNonAlphanumeric = false;
+//    options.Password.RequireUppercase = false;
+//    options.Password.RequireLowercase = false;
+//    //options.Password.RequiredUniqueChars = 6;
 
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-    options.Lockout.MaxFailedAccessAttempts = 10;
-    options.Lockout.AllowedForNewUsers = true;
+//    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+//    options.Lockout.MaxFailedAccessAttempts = 10;
+//    options.Lockout.AllowedForNewUsers = true;
 
-    if (Convert.ToBoolean(configuration[$"{projectName}:RequireConfirmedEmail"] ?? "false"))
-    {
-        options.User.RequireUniqueEmail = true;
-        options.SignIn.RequireConfirmedEmail = true;
-    }
-});
+//    if (Convert.ToBoolean(configuration[$"{projectName}:RequireConfirmedEmail"] ?? "false"))
+//    {
+//        options.User.RequireUniqueEmail = true;
+//        options.SignIn.RequireConfirmedEmail = true;
+//    }
+//});
 
 //builder.Services.AddHttpClient("MyHttpClient").SetHandlerLifetime(TimeSpan.FromHours(12));
 
