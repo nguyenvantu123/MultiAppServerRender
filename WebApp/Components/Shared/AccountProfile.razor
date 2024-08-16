@@ -33,10 +33,10 @@
     protected override async Task OnInitializedAsync()
     {
         // userViewModel = null;
-        var user = (await authenticationStateTask).User;
+        // var user = (await authenticationStateTask).User;
 
-        if (user.Identity!.IsAuthenticated)
-            userViewModel = await ((IdentityAuthenticationStateProvider)authStateProvider).GetUserViewModel();
+        // if (user.Identity!.IsAuthenticated)
+        //     userViewModel = await ((IdentityAuthenticationStateProvider)authStateProvider).GetUserViewModel();
     }
 
     private void Logout()

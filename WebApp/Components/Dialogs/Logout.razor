@@ -33,21 +33,21 @@
     async Task Submit()
     {
 
-        var respone = await ((IdentityAuthenticationStateProvider)authStateProvider).Logout();
+        // var respone = await ((IdentityAuthenticationStateProvider)authStateProvider).Logout();
 
-        if (respone.IsSuccessStatusCode)
-        {
-            appState.ClearUserProfile();
+        // if (respone.IsSuccessStatusCode)
+        // {
+        //     appState.ClearUserProfile();
 
-            MudDialog.Close(DialogResult.Ok(true));
+        //     MudDialog.Close(DialogResult.Ok(true));
 
-            _navigationManager.NavigateTo($"{WebApp.Settings.Settings.LoginPath}", true);
-        }
-        else
-        {
-            viewNotifier.Show("LogoutFailed", ViewNotifierType.Error, "LogoutFailed");
+        //     _navigationManager.NavigateTo($"{WebApp.Settings.Settings.LoginPath}", true);
+        // }
+        // else
+        // {
+        //     viewNotifier.Show("LogoutFailed", ViewNotifierType.Error, "LogoutFailed");
 
-        }
+        // }
 
     }
     void Cancel() => MudDialog.Cancel();

@@ -182,20 +182,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+        // identityAuthenticationStateProvider = (AuthenticationState)authStateProvider;
 
-        userViewModel = await identityAuthenticationStateProvider.GetUserViewModel();
+        // userViewModel = await identityAuthenticationStateProvider.getus();
 
-        if (userViewModel.FirstName.Length > 0)
-        {
-            _firstLetterOfName = userViewModel.FirstName[0];
-        }
+        // if (userViewModel.FirstName.Length > 0)
+        // {
+        //     _firstLetterOfName = userViewModel.FirstName[0];
+        // }
 
-        if (!string.IsNullOrEmpty(userViewModel.AvatarUrl))
-        {
-            ImageDataUrl = await GetPresisignedUrl(userViewModel.AvatarUrl);
+        // if (!string.IsNullOrEmpty(userViewModel.AvatarUrl))
+        // {
+        //     ImageDataUrl = await GetPresisignedUrl(userViewModel.AvatarUrl);
 
-        }
+        // }
         _loaded = true;
     }
 

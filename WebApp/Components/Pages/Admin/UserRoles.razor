@@ -63,13 +63,13 @@ else
     protected override async Task OnInitializedAsync()
     {
 
-        identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+        // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
 
-        var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
+        // var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        // _canEditUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Update)).Succeeded;
+        // // _canEditUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Update)).Succeeded;
 
-        _canEditUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Update).FirstOrDefault() != null;
+        // _canEditUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Update).FirstOrDefault() != null;
 
         // _canSearchRoles = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.Role.Search)).Succeeded;
 

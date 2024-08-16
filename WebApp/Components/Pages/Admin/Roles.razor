@@ -216,16 +216,16 @@ else
     {
         try
         {
-            identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+            // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
 
-            var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
+            // var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            _canCreateRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Create).FirstOrDefault() != null;
-            // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
-            _canEditRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
-            _canDeleteRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Delete).FirstOrDefault() != null;
-            // _canSearchRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.View).FirstOrDefault() != null;
-            _canViewRoleClaims = state.User.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.View).FirstOrDefault() != null;
+            // _canCreateRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Create).FirstOrDefault() != null;
+            // // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
+            // _canEditRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
+            // _canDeleteRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Delete).FirstOrDefault() != null;
+            // // _canSearchRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.View).FirstOrDefault() != null;
+            // _canViewRoleClaims = state.User.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.View).FirstOrDefault() != null;
 
             await InitializeRolesListAsync();
 

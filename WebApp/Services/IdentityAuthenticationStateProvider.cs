@@ -7,7 +7,7 @@ using WebApp.Models;
 
 namespace WebApp.Services
 {
-    public class IdentityAuthenticationStateProvider : AuthenticationStateProvider
+    public class IdentityAuthenticationStateProvider
     {
         private readonly AccountApiClient _accountApiClient;
 
@@ -71,14 +71,14 @@ namespace WebApp.Services
         public async Task<ApiResponseDto> ResetPassword(ResetPasswordViewModel parameters)
         {
             ApiResponseDto apiResponse = await _accountApiClient.ResetPassword(parameters);
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            //NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             return apiResponse;
         }
 
         public async Task<ApiResponseDto> UpdatePassword(UpdatePasswordViewModel parameters)
         {
             ApiResponseDto apiResponse = await _accountApiClient.UpdatePassword(parameters);
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            //NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             return apiResponse;
         }
 
@@ -116,44 +116,44 @@ namespace WebApp.Services
             return await _accountApiClient.Disable2fa();
         }
 
-        public async Task<UserViewModel> GetUserViewModel()
-        {
+        //public async Task<UserViewModel> GetUserViewModel()
+        //{
 
-            UserViewModel userViewModel = await _accountApiClient.GetUser();
+        //    UserViewModel userViewModel = await _accountApiClient.GetUser();
 
-            if (userViewModel != null && userViewModel.IsAuthenticated)
-                userViewModel = await _accountApiClient.GetUserViewModel();
-            else
-                userViewModel = new UserViewModel { IsAuthenticated = false, Roles = new List<string>() };
+        //    if (userViewModel != null && userViewModel.IsAuthenticated)
+        //        userViewModel = await _accountApiClient.GetUserViewModel();
+        //    else
+        //        userViewModel = new UserViewModel { IsAuthenticated = false, Roles = new List<string>() };
 
-            return userViewModel;
-        }
+        //    return userViewModel;
+        //}
 
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-        {
-            var identity = new ClaimsIdentity();
+        //public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        //{
+        //    var identity = new ClaimsIdentity();
 
-            try
-            {
-                var userViewModel = await GetUserViewModel();
+        //    try
+        //    {
+        //        var userViewModel = await GetUserViewModel();
 
-                if (userViewModel.IsAuthenticated)
-                {
-                    var claims = new[] { new Claim(ClaimTypes.Name, userViewModel.UserName) }.Concat(userViewModel.ExposedClaims.Select(c => new Claim(c.Key, c.Value)));
-                    identity = new ClaimsIdentity(claims, "Server authentication", "name", "role");
-                }
-            }
-            catch (Exception)
-            {
-            }
+        //        if (userViewModel.IsAuthenticated)
+        //        {
+        //            var claims = new[] { new Claim(ClaimTypes.Name, userViewModel.UserName) }.Concat(userViewModel.ExposedClaims.Select(c => new Claim(c.Key, c.Value)));
+        //            identity = new ClaimsIdentity(claims, "Server authentication", "name", "role");
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
 
-            return new AuthenticationState(new ClaimsPrincipal(identity));
-        }
+        //    return new AuthenticationState(new ClaimsPrincipal(identity));
+        //}
 
         public async Task<ApiResponseDto> UpdateUser(UserViewModel userViewModel)
         {
             ApiResponseDto apiResponse = await _accountApiClient.UpdateUser(userViewModel);
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            //NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             return apiResponse;
         }
 

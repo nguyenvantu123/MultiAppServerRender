@@ -30,6 +30,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using BlazorWebApi.Users.Models;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,7 +63,7 @@ string projectName = nameof(WebApp);
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
+//builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
 
 builder.Services.AddAuthorization();
 
@@ -70,11 +71,14 @@ builder.Services.AddAuthorization();
 var identityUrl = configuration.GetRequiredValue("IdentityUrl");
 var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
 
+JsonWebTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+var sessionCookieLifetime = configuration.GetValue("SessionCookieLifetimeMinutes", 60);
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-}).AddCookie().AddOpenIdConnect(options =>
+}).AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime)).AddOpenIdConnect(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = identityUrl;
@@ -91,6 +95,9 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("identity");
 });
 
+
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+builder.Services.AddCascadingAuthenticationState();
 
 //.AddOpenIdConnect( options =>
 //{

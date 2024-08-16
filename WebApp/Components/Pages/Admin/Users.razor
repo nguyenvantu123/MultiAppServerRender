@@ -264,14 +264,14 @@ else
     {
         try
         {
-            identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+            // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
 
-            var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
+            // var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            _canCreateUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Create).FirstOrDefault() != null;
-            // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
-            _canExportUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
-            _canViewRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
+            // _canCreateUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Create).FirstOrDefault() != null;
+            // // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
+            // _canExportUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
+            // _canViewRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
             _items = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
