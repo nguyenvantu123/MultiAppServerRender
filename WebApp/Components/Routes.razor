@@ -8,10 +8,7 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    @{
-                        var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-                        NavigationManager.NavigateTo($"account/login?redirectUri={returnUrl}", forceLoad: true);
-                    }
+                    <Login />
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />

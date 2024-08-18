@@ -57,12 +57,19 @@
 
     [Inject] protected AccountApiClient accountApiClient { get; set; }
 
+    private bool _canViewUsers;
+    private bool _canViewRoles;
+
     protected override async Task OnParametersSetAsync()
     {
         var user = (await authenticationStateTask).User;
 
         if (user!.Identity!.IsAuthenticated)
         {
+            _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
+            _canViewUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null;
+
+
             var apiResponse = await accountApiClient.GetTenant();
             if (apiResponse.StatusCode == 200)
             {

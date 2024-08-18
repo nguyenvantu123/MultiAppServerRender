@@ -67,18 +67,15 @@
 
         var user = (await authenticationStateTask).User;
 
-        if (user.Identity!.IsAuthenticated)
-        {
-            profile = await appState.GetUserProfile();
+        // if (user.Identity!.IsAuthenticated)
+        // {
+        //     profile = await appState.GetUserProfile();
 
-            _navMenuOpened = profile.IsNavOpen;
+        _navMenuOpened = true;
 
-            _toggleDarkMode = profile.IsDarkMode;
-            _currentTheme = _toggleDarkMode
-
-        ? BlazorHeroTheme.DefaultTheme
-        : BlazorHeroTheme.DarkTheme;
-        }
+        _toggleDarkMode = true;
+        _currentTheme = _toggleDarkMode ? BlazorHeroTheme.DefaultTheme : BlazorHeroTheme.DarkTheme;
+        // }
 
         await Task.CompletedTask;
 

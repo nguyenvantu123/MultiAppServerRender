@@ -477,34 +477,32 @@ namespace BlazorWebApi.Users.Controller.Account
             var user = _accessor.HttpContext.User;
 
             var userProfileResult = new UserProfile();
-            var userId = new Guid(user.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            userProfileResult = await _redisUserRepository.GetUserProfileAsync(userId);
-
-            if (userProfileResult == null)
-            {
-                userProfileResult = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == user.Identity.Name.ToUpper());
-
-                if (userProfileResult == null)
-                {
-                    var tenantId = _accessor.HttpContext.GetMultiTenantContext<AppTenantInfo>().TenantInfo.Id;
+            //var userId = new Guid(user.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            //userProfileResult = await _redisUserRepository.GetUserProfileAsync(userId);
 
 
-                    userProfileResult = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.TenantId == tenantId && i.UserId == userId);
+            userProfileResult = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.ApplicationUser.NormalizedUserName == user.Identity.Name.ToUpper());
 
-                    if (userProfileResult == null)
-                    {
-                        userProfileResult = new UserProfile { TenantId = tenantId, UserId = userId };
+            //if (userProfileResult == null)
+            //{
+            //    var tenantId = _accessor.HttpContext.GetMultiTenantContext<AppTenantInfo>().TenantInfo.Id;
 
-                        _dbContext.UserProfiles.Add(userProfileResult);
-                    }
 
-                    userProfileResult.LastUpdatedDate = DateTime.Now;
+            //    //userProfileResult = await _dbContext.UserProfiles.SingleOrDefaultAsync(i => i.TenantId == tenantId && i. == userId);
 
-                    await _dbContext.SaveChangesAsync();
-                }
+            //    if (userProfileResult == null)
+            //    {
+            //        userProfileResult = new UserProfile { TenantId = tenantId, UserId = userId };
 
-                await _redisUserRepository.UpdateUserProfileAsync(userProfileResult);
-            }
+            //        _dbContext.UserProfiles.Add(userProfileResult);
+            //    }
+
+            //    userProfileResult.LastUpdatedDate = DateTime.Now;
+
+            //    await _dbContext.SaveChangesAsync();
+
+            await _redisUserRepository.UpdateUserProfileAsync(userProfileResult);
+            //}
 
 
             return userProfileResult;

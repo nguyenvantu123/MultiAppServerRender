@@ -97,22 +97,22 @@ else
     private bool _canSearchRolePermissions;
     private bool _loaded;
 
-    protected IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
-
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
 
         // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
 
-        // var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = (await authenticationStateTask).User;
 
-        // //state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
-        // // _canEditRolePermissions = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.RoleClaims.Edit)).Succeeded;
-        // // _canSearchRolePermissions = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.RoleClaims.Search)).Succeeded;
+        //state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
+        // _canEditRolePermissions = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.RoleClaims.Edit)).Succeeded;
+        // _canSearchRolePermissions = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.RoleClaims.Search)).Succeeded;
 
-        // _canEditRolePermissions = state.User.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.Edit).FirstOrDefault() != null;
-        // _canSearchRolePermissions = state.User.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.Search).FirstOrDefault() != null;
+        _canEditRolePermissions = user.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.Edit).FirstOrDefault() != null;
+        _canSearchRolePermissions = user.Claims.Where(x => x.Value == PermissionsWebApp.RoleClaims.Search).FirstOrDefault() != null;
 
         await GetRolePermissionsAsync();
         _loaded = true;

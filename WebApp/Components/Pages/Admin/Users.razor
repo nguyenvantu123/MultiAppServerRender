@@ -1,21 +1,13 @@
 ﻿@page "/admin/users"
 @using WebApp.Components.Dialogs
-@attribute [Authorize(Policies.IsAdmin)]
+@attribute [Authorize]
 @layout AdminMainLayout
-
-@* <TopSection>
-    <Breadcrumbs>
-        <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
-        <Breadcrumb Title=@L["BreadCrumbadminusers"] />
-    </Breadcrumbs>
-</TopSection> *@
 
 <style>
     .mud-table-container {
         overflow: auto;
     }
 </style>
-
 
 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
@@ -227,7 +219,10 @@ else
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
     private bool _loaded = false;
-    protected IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+    // protected IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
 
     protected int pageSize { get; set; } = 10;
     private int pageIndex { get; set; } = 0;
@@ -264,14 +259,14 @@ else
     {
         try
         {
-            // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
+            var user = (await authenticationStateTask).User;
 
-            // var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
+            // user!.Identity!.IsAuthenticated
 
-            // _canCreateUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Create).FirstOrDefault() != null;
-            // // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
-            // _canExportUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
-            // _canViewRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
+            _canCreateUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Create).FirstOrDefault() != null;
+            // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
+            _canExportUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
+            _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
             _items = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
@@ -468,7 +463,7 @@ else
         {
             disableChangePasswordButton = true;
 
-            var apiResponse = await identityAuthenticationStateProvider.AdminChangePassword(changePasswordViewModel);
+            var apiResponse = await _accountApiClient.AdminChangePassword(changePasswordViewModel);
 
             if (apiResponse.IsSuccessStatusCode)
                 viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success, apiResponse.Message);

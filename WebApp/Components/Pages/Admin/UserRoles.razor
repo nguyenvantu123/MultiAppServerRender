@@ -57,19 +57,16 @@ else
     private bool _canSearchRoles;
     private bool _loaded = false;
 
-    protected IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+    [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
+        var userState = (await authenticationStateTask).User;
+     
+        // _canEditUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Update)).Succeeded;
 
-        // identityAuthenticationStateProvider = (IdentityAuthenticationStateProvider)authStateProvider;
-
-        // var state = await identityAuthenticationStateProvider.GetAuthenticationStateAsync();
-
-        // // _canEditUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Update)).Succeeded;
-
-        // _canEditUsers = state.User.Claims.Where(x => x.Value == PermissionsWebApp.User.Update).FirstOrDefault() != null;
+        _canEditUsers = userState.Claims.Where(x => x.Value == PermissionsWebApp.User.Update).FirstOrDefault() != null;
 
         // _canSearchRoles = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.Role.Search)).Succeeded;
 

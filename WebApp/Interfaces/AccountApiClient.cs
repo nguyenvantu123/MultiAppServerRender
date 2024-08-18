@@ -138,17 +138,17 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto<UserViewModel>>("api/account/disable2fa", userId);
         }
 
-        //public async Task<UserViewModel> GetUserViewModel()
-        //{
-        //    UserViewModel userViewModel = new() { IsAuthenticated = false };
+        public async Task<UserViewModel> GetUserViewModel()
+        {
+            UserViewModel userViewModel = new() { IsAuthenticated = false };
 
-        //    var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>("api/account/user-view-model");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>("api/account/user-view-model");
 
-        //    if (apiResponse.IsSuccessStatusCode)
-        //        userViewModel = apiResponse.Result;
+            if (apiResponse.IsSuccessStatusCode)
+                userViewModel = apiResponse.Result;
 
-        //    return userViewModel;
-        //}
+            return userViewModel;
+        }
 
         //public async Task<ApiResponseDto<UserViewModel>> GetUserViewModel(string id)
         //{

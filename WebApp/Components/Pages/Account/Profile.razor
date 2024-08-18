@@ -144,7 +144,8 @@ else
     protected AuthenticatorVerificationCodeViewModel authenticatorVerificationCodeViewModel { get; set; } = new AuthenticatorVerificationCodeViewModel();
     [Parameter] public string ImageDataUrl { get; set; }
     private char _firstLetterOfName;
-    IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
+
+    [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;
@@ -182,13 +183,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var user = (await authenticationStateTask).User;
+
         // identityAuthenticationStateProvider = (AuthenticationState)authStateProvider;
 
-        // userViewModel = await identityAuthenticationStateProvider.getus();
+        userViewModel = await _accountApiClient.GetUserViewModel();
 
         // if (userViewModel.FirstName.Length > 0)
         // {
-        //     _firstLetterOfName = userViewModel.FirstName[0];
+        _firstLetterOfName = userViewModel.UserName[0];
         // }
 
         // if (!string.IsNullOrEmpty(userViewModel.AvatarUrl))
@@ -215,7 +218,7 @@ else
         {
             try
             {
-                var apiResponse = await identityAuthenticationStateProvider.UpdatePassword(updatePasswordViewModel);
+                var apiResponse = await _accountApiClient.UpdatePassword(updatePasswordViewModel);
 
                 if (apiResponse.IsSuccessStatusCode)
                     viewNotifier.Show(L["UpdatePasswordSuccessful"], ViewNotifierType.Success);
@@ -235,7 +238,7 @@ else
     {
         try
         {
-            var apiResponse = await identityAuthenticationStateProvider.UpdateUser(userViewModel);
+            var apiResponse = await _accountApiClient.UpdateUser(userViewModel);
 
             if (apiResponse.IsSuccessStatusCode)
                 viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
@@ -250,7 +253,7 @@ else
 
     protected async Task EnableAuthenticator()
     {
-        var apiResponse = await identityAuthenticationStateProvider.EnableAuthenticator(authenticatorVerificationCodeViewModel);
+        var apiResponse = await _accountApiClient.EnableAuthenticator(authenticatorVerificationCodeViewModel);
 
         if (apiResponse.IsSuccessStatusCode)
         {
@@ -267,7 +270,7 @@ else
     {
         try
         {
-            var apiResponse = await identityAuthenticationStateProvider.DisableAuthenticator();
+            var apiResponse = await _accountApiClient.DisableAuthenticator();
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -290,7 +293,7 @@ else
     {
         if (userViewModel.BrowserRemembered)
         {
-            var apiResponse = await identityAuthenticationStateProvider.ForgetTwoFactorClient();
+            var apiResponse = await _accountApiClient.ForgetTwoFactorClient();
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -307,7 +310,7 @@ else
 
     async Task EnableDisable2fa()
     {
-        var apiResponse = userViewModel.TwoFactorEnabled ? await identityAuthenticationStateProvider.Disable2fa() : await identityAuthenticationStateProvider.Enable2fa();
+        var apiResponse = userViewModel.TwoFactorEnabled ? await _accountApiClient.Disable2fa() : await _accountApiClient.Enable2fa();
 
         if (apiResponse.IsSuccessStatusCode)
         {

@@ -4,23 +4,16 @@
 
 <AuthorizeView>
     <Authorized>
-        @if (userViewModel == null)
-        {
-            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-        }
-        else
-        {
-            <MudMenu AnchorOrigin="Origin.TopLeft">
-                <ActivatorContent>
-                    <MudAvatar Color="Color.Secondary">@userViewModel.UserName.Substring(0, 1)</MudAvatar>
-                </ActivatorContent>
-                <ChildContent>
-                    <MudDivider Class="mb-2" />
-                    <MudListItem T="string" Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
-                    <MudListItem T="string" Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
-                </ChildContent>
-            </MudMenu>
-        }
+        <MudMenu AnchorOrigin="Origin.TopLeft">
+            <ActivatorContent>
+                <MudAvatar Color="Color.Secondary">@userName</MudAvatar>
+            </ActivatorContent>
+            <ChildContent>
+                <MudDivider Class="mb-2" />
+                <MudListItem T="string" Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
+                <MudListItem T="string" Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
+            </ChildContent>
+        </MudMenu>
     </Authorized>
 </AuthorizeView>
 
@@ -28,12 +21,15 @@
 
     [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    UserViewModel userViewModel;
+    private char userName;
 
     protected override async Task OnInitializedAsync()
     {
         // userViewModel = null;
-        // var user = (await authenticationStateTask).User;
+
+        var user = (await authenticationStateTask).User;
+
+        userName = user.FindFirst("name")?.Value == null ? 'a' : user.FindFirst("name").Value[0];
 
         // if (user.Identity!.IsAuthenticated)
         //     userViewModel = await ((IdentityAuthenticationStateProvider)authStateProvider).GetUserViewModel();

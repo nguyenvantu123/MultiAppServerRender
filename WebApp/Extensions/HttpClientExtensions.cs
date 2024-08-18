@@ -40,11 +40,16 @@ public static class HttpClientExtensions
 
                 if (accessToken is not null)
                 {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    if (request.Headers.Authorization?.Scheme != "Bearer")
+                    {
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    }
                 }
             }
 
-            return await base.SendAsync(request, cancellationToken);
+            var data = await base.SendAsync(request, cancellationToken);
+
+            return data;
         }
     }
 
