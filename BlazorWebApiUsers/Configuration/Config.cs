@@ -35,6 +35,7 @@ namespace BlazorWebApi.Users.Configuration
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResource("roles", new[] {ClaimTypes.Role})
             };
         }
 

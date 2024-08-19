@@ -19,20 +19,27 @@
             @L["Email"]
         </MudNavLink>
     </MudNavGroup>
-   @*  <MudNavGroup Title="@L["Localization"]" Icon="@Icons.Material.Filled.Public">
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/translations").AbsoluteUri" Icon="@Icons.Material.Filled.Translate">
-            @L["Translations"]
-        </MudNavLink>
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/pluralizationrules").AbsoluteUri" Icon="@Icons.Material.Filled.Group">
-            @L["Pluralization rules"]
-        </MudNavLink>
+    @*  <MudNavGroup Title="@L["Localization"]" Icon="@Icons.Material.Filled.Public">
+    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/translations").AbsoluteUri" Icon="@Icons.Material.Filled.Translate">
+    @L["Translations"]
+    </MudNavLink>
+    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/pluralizationrules").AbsoluteUri" Icon="@Icons.Material.Filled.Group">
+    @L["Pluralization rules"]
+    </MudNavLink>
     </MudNavGroup> *@
-    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/users").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
-        @L["Users"]
-    </MudNavLink>
-    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/roles").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
-        @L["Roles"]
-    </MudNavLink>
+    @if (_canViewUsers)
+    {
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/users").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
+            @L["Users"]
+        </MudNavLink>
+    }
+
+    @if (_canViewRoles)
+    {
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/roles").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
+            @L["Roles"]
+        </MudNavLink>
+    }
     @if (tenant.Id == DefaultTenant.DefaultTenantId)
     {
         <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/multitenancy").AbsoluteUri" Icon="@Icons.Material.Filled.AccountBalance">
@@ -57,8 +64,8 @@
 
     [Inject] protected AccountApiClient accountApiClient { get; set; }
 
-    private bool _canViewUsers;
-    private bool _canViewRoles;
+    private bool _canViewUsers = true;
+    private bool _canViewRoles = true;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -66,8 +73,11 @@
 
         if (user!.Identity!.IsAuthenticated)
         {
-            _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
-            _canViewUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null;
+            //_canViewRoles = (await _authorizationService.AuthorizeAsync(user, PermissionsWebApp.Role.Read)).Succeeded;
+            // _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
+
+            // //_canViewUsers = (await _authorizationService.AuthorizeAsync(user, PermissionsWebApp.User.Read)).Succeeded;
+            // _canViewUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null;
 
 
             var apiResponse = await accountApiClient.GetTenant();

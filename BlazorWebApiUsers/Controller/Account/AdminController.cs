@@ -24,7 +24,7 @@ namespace BlazorWebApi.Users.Controller.Account
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AdminController : ControllerBase
     {
 
@@ -477,6 +477,9 @@ namespace BlazorWebApi.Users.Controller.Account
             var user = _accessor.HttpContext.User;
 
             var userProfileResult = new UserProfile();
+
+
+
             //var userId = new Guid(user.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
             //userProfileResult = await _redisUserRepository.GetUserProfileAsync(userId);
 

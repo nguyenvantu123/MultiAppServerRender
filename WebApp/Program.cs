@@ -31,6 +31,8 @@ using BlazorWebApi.Users.Models;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,7 +87,7 @@ builder.Services.AddAuthentication(options =>
     options.SignedOutRedirectUri = callBackUrl;
     options.ClientId = "webapp";
     options.ClientSecret = "secret";
-    options.ResponseType = "code";
+    options.ResponseType = "code id_token token";
     options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
     options.RequireHttpsMetadata = false;
@@ -93,6 +95,10 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("profile");
     options.Scope.Add("files");
     options.Scope.Add("identity");
+    options.Scope.Add("offline_access");
+    options.Scope.Add("roles");
+    options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
+    options.MapInboundClaims = false;
 });
 
 

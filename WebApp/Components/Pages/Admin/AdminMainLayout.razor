@@ -67,6 +67,8 @@
 
         var user = (await authenticationStateTask).User;
 
+        var dataClaims = _accountApiClient.GetUserViewModel();
+
         // if (user.Identity!.IsAuthenticated)
         // {
         //     profile = await appState.GetUserProfile();

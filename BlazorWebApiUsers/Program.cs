@@ -143,16 +143,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddDefaultTokenProviders();
 
 
-builder.Services.AddIdentityServer(options =>
-{
-    options.Authentication.CookieLifetime = TimeSpan.FromMinutes(5);
-
-    options.Events.RaiseErrorEvents = true;
-    options.Events.RaiseInformationEvents = true;
-    options.Events.RaiseFailureEvents = true;
-    options.Events.RaiseSuccessEvents = true;
-
-})
+builder.Services.AddIdentityServer()
 .AddInMemoryIdentityResources(Config.GetResources())
 .AddInMemoryApiScopes(Config.GetApiScopes())
 .AddInMemoryApiResources(Config.GetApis())
@@ -166,7 +157,7 @@ builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
 builder.Services.AddTransient<IEmailFactory, EmailFactory>();
-builder.Services.AddSingleton<CustomAuthService>();
+//builder.Services.AddSingleton<CustomAuthService>();
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();

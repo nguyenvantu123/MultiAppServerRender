@@ -34,10 +34,6 @@ namespace WebApp.Interfaces
         {
             var response = await _httpClient.PostJsonAsync<ApiResponseDto<LoginResponseModel>>("api/account/login", parameters);
 
-            //if (AppState.Runtime == BlazorRuntime.Server)
-            //    if (response.IsSuccessStatusCode)
-            //        await SubmitServerForm("/server/login/", parameters);
-
             return response;
         }
 
