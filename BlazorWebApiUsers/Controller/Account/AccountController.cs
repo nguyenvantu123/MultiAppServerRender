@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -13,8 +14,8 @@ using BlazorWebApi.Users.Models.AccountViewModels;
 using BlazorWebApi.Users.Models.Email;
 using BlazorWebApi.Users.Models.ManageViewModels;
 using BlazorWebApi.Users.Services;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Localization;
@@ -26,7 +27,7 @@ namespace BlazorWebApi.Users.Controller.Account
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -1100,6 +1101,25 @@ namespace BlazorWebApi.Users.Controller.Account
                 _logger.LogWarning($"Error while resetting password of {user.UserName}: {msg}");
                 return new ApiResponse((int)HttpStatusCode.BadRequest, msg);
             }
+        }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<List<string>> GetPermissionByUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                var roleList = _context.UserRoles.Where(x => x.UserId == user.Id).Select(x => x.RoleId).ToList();
+
+                var roleClaims = _context.RoleClaims.Where(x => roleList.Contains(x.RoleId)).ToList();
+
+                return roleClaims.Select(x => x.ClaimValue).ToList();
+            }
+
+            return new List<string>();
         }
     }
 }

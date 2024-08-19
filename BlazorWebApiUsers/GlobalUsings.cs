@@ -6,7 +6,6 @@ global using System.Linq;
 global using System.Security.Claims;
 global using System.Text.RegularExpressions;
 global using System.Threading.Tasks;
-global using IdentityServer4;
 global using IdentityModel;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authorization;

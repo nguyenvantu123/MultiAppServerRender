@@ -24,7 +24,7 @@ namespace BlazorWebApi.Users.Controller.Account
     [SecurityHeaders]
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AdminController : ControllerBase
     {
 
@@ -299,7 +299,7 @@ namespace BlazorWebApi.Users.Controller.Account
         #region Roles
         [HttpGet]
         [Route("[action]")]
-        [Authorize(Permissions.Role.Read)]
+        //[Authorize(Permissions.Role.Read)]
         public async Task<ApiResponse> GetRoles([FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 0, [FromQuery] string search = "")
         {
             var roleQuery = _roleManager.Roles.AsQueryable().OrderBy(x => x.Name);

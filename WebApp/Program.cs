@@ -101,6 +101,7 @@ builder.Services.AddAuthentication(options =>
     options.MapInboundClaims = false;
 });
 
+//builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 builder.Services.AddCascadingAuthenticationState();

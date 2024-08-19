@@ -4,11 +4,13 @@
 using BlazorWebApi.Users.Controller;
 using BlazorWebApi.Users.Controller.Account;
 using BlazorWebApi.Users.Models;
-using IdentityServer4.Events;
-using IdentityServer4.Extensions;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Extensions;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
+
 
 namespace BlazorWebApi.Quickstart
 {

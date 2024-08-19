@@ -18,7 +18,6 @@ using BlazorWebApi.Users;
 using BlazorWebApi.Users.Data;
 using BlazorWebApi.Users.Models;
 using LazyCache;
-using IdentityServer4.Services;
 using Finbuckle.MultiTenant;
 using Breeze.AspNetCore;
 using Breeze.Core;
@@ -29,8 +28,6 @@ using Finbuckle.MultiTenant.Abstractions;
 using BlazorWebApi.Users.Configuration;
 using BlazorWebApi.Users.Services;
 using BlazorWebApi.Users.Constants;
-using AutoMapper;
-using WebApp.Mapping;
 using Microsoft.AspNetCore.Authorization;
 using BlazorWebApi.Authorization;
 using BlazorWebApi.Users.Middleware;
@@ -47,6 +44,8 @@ using BlazorWebApi.Users.Extensions;
 using Aspire.StackExchange.Redis;
 using BlazorWebApi.Repositories;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Duende.IdentityServer.Services;
+using AutoMapper;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -128,14 +127,14 @@ builder.AddDefaultOpenApi(withApiVersioning);
 
 #region Automapper
 //Automapper to map DTO to Models https://www.c-sharpcorner.com/UploadFile/1492b1/crud-operations-using-automapper-in-mvc-application/
-var automapperConfig = new MapperConfiguration(configuration =>
-{
-    configuration.AddProfile(new MappingModel());
-});
+//var automapperConfig = new MapperConfiguration(configuration =>
+//{
+//    configuration.AddProfile(new MappingModel());
+//});
 
-var autoMapper = automapperConfig.CreateMapper();
+//var autoMapper = automapperConfig.CreateMapper();
 
-builder.Services.AddSingleton(autoMapper);
+//builder.Services.AddSingleton(autoMapper);
 #endregion
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()

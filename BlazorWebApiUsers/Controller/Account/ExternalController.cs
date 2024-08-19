@@ -1,8 +1,8 @@
 using BlazorWebApi.Users.Models;
-using IdentityServer4.Events;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
-
+using Duende.IdentityServer;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
 namespace BlazorWebApi.Users.Controller.Account;
 
 [SecurityHeaders]
@@ -124,15 +124,15 @@ public class ExternalController : Microsoft.AspNetCore.Mvc.Controller
         var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
         await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.Id.ToString(), name, true, context?.Client.ClientId));
 
-        if (context != null)
-        {
-            if (context.IsNativeClient())
-            {
-                // The client is native, so this change in how to
-                // return the response is for better UX for the end user.
-                return this.LoadingPage("Redirect", returnUrl);
-            }
-        }
+        //if (context != null)
+        //{
+        //    if (context.isva())
+        //    {
+        //        // The client is native, so this change in how to
+        //        // return the response is for better UX for the end user.
+        //        return this.LoadingPage("Redirect", returnUrl);
+        //    }
+        //}
 
         return Redirect(returnUrl);
     }

@@ -1,4 +1,6 @@
-﻿using IdentityServer4.Models;
+﻿
+using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
 
 namespace BlazorWebApi.Users.Configuration
 {
@@ -21,7 +23,7 @@ namespace BlazorWebApi.Users.Configuration
         {
             return new List<ApiScope>
             {
-                new ApiScope("identity", "Identity Service", userClaims:new string[]{"scope.claim" }),
+                new ApiScope("identity", "Identity Service" ),
                 new ApiScope("files", "File Service"),
                 new ApiScope("webhooks", "Webhooks registration Service"),
             };

@@ -1,5 +1,6 @@
 @using Microsoft.AspNetCore.Components;
 @using MultiAppServer.ServiceDefaults
+@using System.Security.Claims
 @inject HttpClient Http
 @inject IStringLocalizer<Localizer.Global> L
 
@@ -73,11 +74,19 @@
 
         if (user!.Identity!.IsAuthenticated)
         {
+
+            var data = await _accountApiClient.GetPermissionByUser();
+
+            foreach (var item in data)
+            {
+                user.AddIdentity(new ClaimsIdentity(new List<Claim>() { new Claim(ClaimTypes.Role, item) }));
+            }
+
             //_canViewRoles = (await _authorizationService.AuthorizeAsync(user, PermissionsWebApp.Role.Read)).Succeeded;
-            // _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
+            _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
 
             // //_canViewUsers = (await _authorizationService.AuthorizeAsync(user, PermissionsWebApp.User.Read)).Succeeded;
-            // _canViewUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null;
+            _canViewUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null;
 
 
             var apiResponse = await accountApiClient.GetTenant();

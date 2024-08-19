@@ -1,6 +1,7 @@
 ﻿using BlazorWebApi.Users.Models;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
+
 
 namespace BlazorWebApi.Users.Services
 {

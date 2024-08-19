@@ -1,6 +1,5 @@
 using BlazorWebApi.Users.Controller.Account;
-using IdentityServer4.Models;
-
+using Duende.IdentityServer.Models;
 namespace BlazorWebApi.Users.Controller;
 
 public static class Extensions

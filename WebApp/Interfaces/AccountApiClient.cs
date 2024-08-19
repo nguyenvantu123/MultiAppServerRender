@@ -314,16 +314,22 @@ namespace WebApp.Interfaces
             return apiResponse;
         }
 
-        //public async Task<ApiResponseDto<RoleDto>> GetRoleByName(string roleName)
-        //{
-        //    //Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}")
-        //    return await _httpClient.GetJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
-        //}
-
-        //public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)
-        //{
-        //    return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
-
-        //}
+        public async Task<List<string>> GetPermissionByUser()
+        {
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<List<string>>($"api/account/get-permission-by-user");
+            return apiResponse;
+        }
     }
+
+    //public async Task<ApiResponseDto<RoleDto>> GetRoleByName(string roleName)
+    //{
+    //    //Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}")
+    //    return await _httpClient.GetJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
+    //}
+
+    //public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)
+    //{
+    //    return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
+
+    //}
 }
