@@ -26,6 +26,7 @@ namespace BlazorWebApi.Users.Configuration
                 new ApiScope("identity", "Identity Service" ),
                 new ApiScope("files", "File Service"),
                 new ApiScope("webhooks", "Webhooks registration Service"),
+                new ApiScope("role", "Role Service"),
             };
         }
 
@@ -36,8 +37,7 @@ namespace BlazorWebApi.Users.Configuration
             return new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
-                new IdentityResource("roles", new[] {ClaimTypes.Role})
+                new IdentityResources.Profile()
             };
         }
 
@@ -108,7 +108,7 @@ namespace BlazorWebApi.Users.Configuration
                         "webshoppingagg",
                         "webhooks",
                         "identity",
-                        "roles"
+                        "role"
                     },
                     AccessTokenLifetime = 60*60*2, // 2 hours
                     IdentityTokenLifetime= 60*60*2 // 2 hours
@@ -171,7 +171,8 @@ namespace BlazorWebApi.Users.Configuration
 
                     AllowedScopes =
                     {
-                        "identity"
+                        "identity",
+                        "role"
                     }
                 },
                 new Client

@@ -96,7 +96,7 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("files");
     options.Scope.Add("identity");
     options.Scope.Add("offline_access");
-    options.Scope.Add("roles");
+    options.Scope.Add("role");
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
     options.MapInboundClaims = false;
 });

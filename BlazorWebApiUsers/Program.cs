@@ -148,11 +148,12 @@ builder.Services.AddIdentityServer()
 .AddInMemoryApiResources(Config.GetApis())
 .AddInMemoryClients(Config.GetClients(builder.Configuration))
 .AddAspNetIdentity<ApplicationUser>()
+//.AddProfileService<ProfileService>()
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
 
 builder.Services.AddScoped<EntityPermissions>();
-builder.Services.AddTransient<IProfileService, ProfileService>();
+//builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
 builder.Services.AddTransient<IEmailFactory, EmailFactory>();
