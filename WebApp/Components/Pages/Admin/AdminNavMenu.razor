@@ -79,11 +79,11 @@
 
             _canViewUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null;
 
-            var apiResponse = await accountApiClient.GetTenant();
-            if (apiResponse.StatusCode == 200)
-            {
-                tenant = apiResponse.Result;
-            }
+            // var apiResponse = await accountApiClient.GetTenant();
+            // if (apiResponse.StatusCode == 200)
+            // {
+            //     tenant = apiResponse.Result;
+            // }
         }
     }
 }

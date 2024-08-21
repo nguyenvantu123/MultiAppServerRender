@@ -170,7 +170,7 @@ namespace BlazorWebApi.Users.Controller.Account
         #region Users
         [HttpGet]
         [Route("[action]")]
-        [Authorize(Permissions.User.Read)]
+        [Authorize]
         public async Task<ApiResponseDto<List<UserViewModel>>> Users([FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 0)
         {
             var userList = _userManager.Users.Include(x => x.UserRoles).AsQueryable();

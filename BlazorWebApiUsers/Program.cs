@@ -46,6 +46,8 @@ using BlazorWebApi.Repositories;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Duende.IdentityServer.Services;
 using AutoMapper;
+using System.Text;
+using AspNet.Security.OpenIdConnect.Primitives;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,14 +85,15 @@ if (identitySection.Exists())
         options.Authority = identityUrl;
         options.RequireHttpsMetadata = false;
         options.Audience = audience;
+        options.SaveToken = true;
 
 #if DEBUG
         //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
         options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            NameClaimType = "email",
-            RoleClaimType = "role"
+            NameClaimType = JwtClaimTypes.Email,
+            RoleClaimType = JwtClaimTypes.Role
         };
 #else
             options.TokenValidationParameters.ValidIssuers = [identityUrl];
