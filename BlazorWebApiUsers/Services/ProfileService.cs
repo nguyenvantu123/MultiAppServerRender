@@ -1,4 +1,5 @@
-﻿using BlazorWebApi.Users.Models;
+﻿using BlazorWebApi.Users.Data;
+using BlazorWebApi.Users.Models;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 
@@ -8,10 +9,14 @@ namespace BlazorWebApi.Users.Services
     public class ProfileService : IProfileService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly ApplicationDbContext _applicationDbContext;
 
-        public ProfileService(UserManager<ApplicationUser> userManager)
+        public ProfileService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ApplicationDbContext applicationDbContext)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
+            _applicationDbContext = applicationDbContext;
         }
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
@@ -24,7 +29,7 @@ namespace BlazorWebApi.Users.Services
             if (user == null)
                 throw new ArgumentException("Invalid subject identifier");
 
-            var claims = GetClaimsFromUser(user);
+            var claims = await GetClaimsFromUser(user);
             context.IssuedClaims = claims.ToList();
         }
 
@@ -57,7 +62,7 @@ namespace BlazorWebApi.Users.Services
             }
         }
 
-        private IEnumerable<Claim> GetClaimsFromUser(ApplicationUser user)
+        private async Task<List<Claim>> GetClaimsFromUser(ApplicationUser user)
         {
             var claims = new List<Claim>
             {
@@ -115,6 +120,18 @@ namespace BlazorWebApi.Users.Services
                     new Claim(JwtClaimTypes.PhoneNumber, user.PhoneNumber),
                     new Claim(JwtClaimTypes.PhoneNumberVerified, user.PhoneNumberConfirmed ? "true" : "false", ClaimValueTypes.Boolean)
                 });
+            }
+
+            var lstRole = await _applicationDbContext.UserRoles.Where(x => x.UserId == user.Id).Include(x => x.Role).Select(x => x.Role).ToListAsync();
+
+            foreach (var item in lstRole)
+            {
+                claims.Add(new Claim(JwtClaimTypes.Role, item.Name));
+
+                foreach (var item2 in await _roleManager.GetClaimsAsync(item))
+                {
+                    claims.Add(new Claim(JwtClaimTypes.Role, item2.Value));
+                }
             }
 
             return claims;

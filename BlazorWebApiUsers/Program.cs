@@ -87,6 +87,11 @@ if (identitySection.Exists())
 #if DEBUG
         //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
         options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            NameClaimType = "email",
+            RoleClaimType = "role"
+        };
 #else
             options.TokenValidationParameters.ValidIssuers = [identityUrl];
 #endif
@@ -148,7 +153,7 @@ builder.Services.AddIdentityServer()
 .AddInMemoryApiResources(Config.GetApis())
 .AddInMemoryClients(Config.GetClients(builder.Configuration))
 .AddAspNetIdentity<ApplicationUser>()
-//.AddProfileService<ProfileService>()
+.AddProfileService<ProfileService>()
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
 

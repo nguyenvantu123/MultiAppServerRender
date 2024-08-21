@@ -108,7 +108,7 @@ namespace BlazorWebApi.Users.Configuration
                         "webshoppingagg",
                         "webhooks",
                         "identity",
-                        "role"
+                        //"role"
                     },
                     AccessTokenLifetime = 60*60*2, // 2 hours
                     IdentityTokenLifetime= 60*60*2 // 2 hours
