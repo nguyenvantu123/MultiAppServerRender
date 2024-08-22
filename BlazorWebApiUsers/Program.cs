@@ -47,7 +47,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Duende.IdentityServer.Services;
 using AutoMapper;
 using System.Text;
-using AspNet.Security.OpenIdConnect.Primitives;
+using System.Security.Claims;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -72,38 +72,48 @@ builder.Services.AddControllers(options =>
 
 var identitySection = builder.Configuration.GetSection("Identity");
 
-if (identitySection.Exists())
+
+// No identity section, so no authentication
+JsonWebTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+builder.Services.AddAuthentication().AddJwtBearer(options =>
 {
-    // No identity section, so no authentication
-    JsonWebTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+    var identityUrl = identitySection.GetRequiredValue("Url");
+    var audience = identitySection.GetRequiredValue("Audience");
 
-    builder.Services.AddAuthentication().AddJwtBearer(options =>
-    {
-        var identityUrl = identitySection.GetRequiredValue("Url");
-        var audience = identitySection.GetRequiredValue("Audience");
-
-        options.Authority = identityUrl;
-        options.RequireHttpsMetadata = false;
-        options.Audience = audience;
-        options.SaveToken = true;
+    options.Authority = identityUrl;
+    options.RequireHttpsMetadata = false;
+    options.Audience = audience;
+    options.SaveToken = true;
 
 #if DEBUG
-        //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
-        options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            NameClaimType = JwtClaimTypes.Email,
-            RoleClaimType = JwtClaimTypes.Role
-        };
+    //Needed if using Android Emulator Locally. See https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#android
+    options.TokenValidationParameters.ValidIssuers = [identityUrl, "https://10.0.2.2:5243"];
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        NameClaimType = JwtClaimTypes.Email,
+        RoleClaimType = JwtClaimTypes.Role
+    };
+
+    //options.Events = new JwtBearerEvents()
+    //{
+    //    OnTokenValidated = context =>
+    //    {
+
+    //        var appIdentity = new ClaimsIdentity(claims,
+    //               JwtBearerDefaults.AuthenticationScheme);context.Principal.AddIdentity(appIdentity);
+
+    //        return Task.CompletedTask;
+    //    }
+    //};
 #else
             options.TokenValidationParameters.ValidIssuers = [identityUrl];
 #endif
 
-        options.TokenValidationParameters.ValidateAudience = false;
-    });
+    options.TokenValidationParameters.ValidateAudience = false;
+});
 
-    builder.Services.AddAuthorization();
-}
+builder.Services.AddAuthorization();
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
@@ -197,6 +207,7 @@ app.UseDeveloperExceptionPage();
 app.UseMultiTenant();
 app.UseMiddleware<UserSessionMiddleware>();
 app.UseDefaultOpenApi();
+app.MapControllers();
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {

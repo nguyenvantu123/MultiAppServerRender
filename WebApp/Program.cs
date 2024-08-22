@@ -47,11 +47,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddMudServices();
-builder.Services.AddCascadingAuthenticationState();
+//builder.Services.AddCascadingAuthenticationState();
 
 
-builder.Services.AddSingleton<CookieEvents>();
-builder.Services.AddScoped<AppState>();
+//builder.Services.AddSingleton<CookieEvents>();
+//builder.Services.AddScoped<AppState>();
 
 var configuration = builder.Configuration;
 
@@ -60,11 +60,11 @@ var configuration = builder.Configuration;
 //var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
 //var sessionCookieLifetime = configuration.GetValue("SessionCookieLifetimeMinutes", 60);
 
-string projectName = nameof(WebApp);
+//string projectName = nameof(WebApp);
 
-builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
-builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
-builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
+//builder.Services.AddSingleton<IAuthorizationPolicyProvider, SharedAuthorizationPolicyProvider>();
+//builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
+//builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
 //builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
 
 builder.Services.AddAuthorization();
@@ -204,44 +204,46 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
                    return factory.Create(typeof(WebApp.Localizer.Global));
                };
            });
-//.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LocalizationRecordValidator>());
 
 builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new("https://blazorwebapiusers");
-}).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12)).AddAuthToken();
+}).AddApiVersion(1.0).AddAuthToken();
 
 builder.Services.AddHttpClient<FileApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new("https://blazorwebapifiles");
-}).AddApiVersion(1.0).SetHandlerLifetime(TimeSpan.FromHours(12)).AddAuthToken();
+}).AddApiVersion(1.0).AddAuthToken();
 
-builder.Services.AddRazorPages().AddMvcOptions(options =>
-{
-    var policy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
-});
+//builder.Services.AddHttpForwarderWithServiceDiscovery();
 
-builder.Services.AddControllersWithViews(options =>
-         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+
+//builder.Services.AddRazorPages().AddMvcOptions(options =>
+//{
+//    var policy = new AuthorizationPolicyBuilder()
+//        .RequireAuthenticatedUser()
+//        .Build();
+//    options.Filters.Add(new AuthorizeFilter(policy));
+//});
+
+//builder.Services.AddControllersWithViews(options =>
+//         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
 #region Cookies
 // cookie policy to deal with temporary browser incompatibilities
-builder.Services.AddSameSiteCookiePolicy();
+//builder.Services.AddSameSiteCookiePolicy();
 
 //https://docs.microsoft.com/en-us/aspnet/core/security/gdpr
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    // This lambda determines whether user consent for non-essential
-    // cookies is needed for a given request.
-    options.CheckConsentNeeded = context => false; //consent not required
-                                                   // requires using Microsoft.AspNetCore.Http;
-                                                   //options.MinimumSameSitePolicy = SameSiteMode.None;
-});
+//builder.Services.Configure<CookiePolicyOptions>(options =>
+//{
+//    // This lambda determines whether user consent for non-essential
+//    // cookies is needed for a given request.
+//    options.CheckConsentNeeded = context => false; //consent not required
+//                                                   // requires using Microsoft.AspNetCore.Http;
+//                                                   //options.MinimumSameSitePolicy = SameSiteMode.None;
+//});
 
 #endregion
 
@@ -269,7 +271,7 @@ app.UseAuthorization();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.MapRazorPages();
-app.MapControllers();
+//app.MapRazorPages();
+//app.MapControllers();
 
 app.Run();

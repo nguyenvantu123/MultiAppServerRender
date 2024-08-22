@@ -54,7 +54,7 @@
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    [Inject] AppState appState { get; set; }
+    // [Inject] AppState appState { get; set; }
 
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
@@ -66,19 +66,10 @@
         _currentTheme = BlazorHeroTheme.DefaultTheme;
 
         var user = (await authenticationStateTask).User;
-
-        var dataClaims = await _accountApiClient.GetUserViewModel();
-
-        // if (user.Identity!.IsAuthenticated)
-        // {
-        //     profile = await appState.GetUserProfile();
-
         _navMenuOpened = true;
 
         _toggleDarkMode = true;
         _currentTheme = _toggleDarkMode ? BlazorHeroTheme.DefaultTheme : BlazorHeroTheme.DarkTheme;
-        // }
-
         await Task.CompletedTask;
 
     }
