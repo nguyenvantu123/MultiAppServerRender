@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApi.Files.Constant
+﻿namespace BlazorIdentity.Files.Constant
 {
     public enum FileType
     {

@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApiFiles.SeedWork;
+﻿namespace BlazorIdentityFiles.SeedWork;
 
 public abstract class ValueObject
 {

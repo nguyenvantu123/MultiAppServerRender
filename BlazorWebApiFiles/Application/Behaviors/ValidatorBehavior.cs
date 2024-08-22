@@ -1,8 +1,8 @@
 ﻿
-using BlazorWebApiFiles.Exceptions;
+using BlazorIdentityFiles.Exceptions;
 using MultiAppServer.EventBus.Extensions;
 
-namespace BlazorWebApiFiles.Application.Behaviors;
+namespace BlazorIdentityFiles.Application.Behaviors;
 
 public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {

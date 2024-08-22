@@ -1,6 +1,6 @@
-﻿using BlazorWebApi.Files.Entities;
-using BlazorWebApi.Repository;
-using BlazorWebApiFiles.SeedWork;
+﻿using BlazorIdentity.Files.Entities;
+using BlazorIdentity.Repository;
+using BlazorIdentityFiles.SeedWork;
 
 public class FileServices(
     IMediator mediator,

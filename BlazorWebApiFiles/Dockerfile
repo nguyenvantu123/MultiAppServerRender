@@ -9,18 +9,18 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["BlazorWebApi.Files/BlazorWebApi.Files.csproj", "BlazorWebApi.Files/"]
+COPY ["BlazorIdentity.Files/BlazorIdentity.Files.csproj", "BlazorIdentity.Files/"]
 COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "MultiAppServer.ServiceDefaults/"]
-RUN dotnet restore "./BlazorWebApi.Files/BlazorWebApi.Files.csproj"
+RUN dotnet restore "./BlazorIdentity.Files/BlazorIdentity.Files.csproj"
 COPY . .
-WORKDIR "/src/BlazorWebApi.Files"
-RUN dotnet build "./BlazorWebApi.Files.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/BlazorIdentity.Files"
+RUN dotnet build "./BlazorIdentity.Files.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./BlazorWebApi.Files.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./BlazorIdentity.Files.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BlazorWebApi.Files.dll"]
+ENTRYPOINT ["dotnet", "BlazorIdentity.Files.dll"]

@@ -1,9 +1,9 @@
-﻿using BlazorWebApi.Files.Constant;
-using BlazorWebApiFiles.Entity._base;
-using BlazorWebApiFiles.SeedWork;
+﻿using BlazorIdentity.Files.Constant;
+using BlazorIdentityFiles.Entity._base;
+using BlazorIdentityFiles.SeedWork;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BlazorWebApi.Files.Entities
+namespace BlazorIdentity.Files.Entities
 {
     public class FileData : EntityBase, IAggregateRoot
     {

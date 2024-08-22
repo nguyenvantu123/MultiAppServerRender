@@ -1,7 +1,7 @@
-﻿using BlazorWebApiFiles.Entity._base;
-using BlazorWebApiFiles.SeedWork;
+﻿using BlazorIdentityFiles.Entity._base;
+using BlazorIdentityFiles.SeedWork;
 
-namespace BlazorWebApi.Files.Entities
+namespace BlazorIdentity.Files.Entities
 {
     public class FileMapWithEntity : EntityBase, IAggregateRoot
     {

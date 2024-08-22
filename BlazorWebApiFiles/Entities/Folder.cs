@@ -1,8 +1,8 @@
-﻿using BlazorWebApiFiles.Entity._base;
-using BlazorWebApiFiles.SeedWork;
+﻿using BlazorIdentityFiles.Entity._base;
+using BlazorIdentityFiles.SeedWork;
 using Finbuckle.MultiTenant;
 
-namespace BlazorWebApi.Files.Entities
+namespace BlazorIdentity.Files.Entities
 {
     public class Folder : EntityBase, IAggregateRoot
     {

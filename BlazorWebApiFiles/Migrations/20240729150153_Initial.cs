@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BlazorWebApi.Files.Migrations
+namespace BlazorIdentity.Files.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

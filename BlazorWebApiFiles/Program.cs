@@ -4,14 +4,14 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using MultiAppServer.ServiceDefaults;
-using BlazorWebApi.Files.Data;
-using BlazorWebApiFiles.Application.Behaviors;
+using BlazorIdentity.Files.Data;
+using BlazorIdentityFiles.Application.Behaviors;
 using Minio;
 using Aspire.Minio.Client;
 using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 using IntegrationEventLogEF.Services;
-using BlazorWebApi.Repository;
-using BlazorWebApiFiles.SeedWork;
+using BlazorIdentity.Repository;
+using BlazorIdentityFiles.SeedWork;
 using BetkingLol.DataAccess.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);

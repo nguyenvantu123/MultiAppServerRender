@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApi.Repository;
+﻿namespace BlazorIdentity.Repository;
 
 public interface IRequestManager
 {

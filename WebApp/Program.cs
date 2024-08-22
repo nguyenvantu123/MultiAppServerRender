@@ -25,9 +25,9 @@ using WebApp.Extensions;
 using WebApp.Permissions;
 using Microsoft.AspNetCore.Components;
 using WebApp.State;
-using BlazorWebApi.Authorization;
+using BlazorIdentity.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using BlazorWebApi.Users.Models;
+using BlazorIdentity.Users.Models;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -209,12 +209,12 @@ builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
-    httpClient.BaseAddress = new("https://blazorwebapiusers");
+    httpClient.BaseAddress = new("https://BlazorIdentityusers");
 }).AddApiVersion(1.0).AddAuthToken();
 
 builder.Services.AddHttpClient<FileApiClient>(httpClient =>
 {
-    httpClient.BaseAddress = new("https://blazorwebapifiles");
+    httpClient.BaseAddress = new("https://BlazorIdentityfiles");
 }).AddApiVersion(1.0).AddAuthToken();
 
 //builder.Services.AddHttpForwarderWithServiceDiscovery();

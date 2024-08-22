@@ -11,18 +11,18 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 //var rabbitMq = builder.AddRabbitMQ("eventbus");
 
-//var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers").WithReference(sqlIndentity).WithReference(messaging);
+//var user = builder.AddProject<Projects.BlazorIdentityUsers>("BlazorIdentityusers").WithReference(sqlIndentity).WithReference(messaging);
 
 var launchProfileName = ShouldUseHttpForEndpoints() ? "http" : "https";
 
-var user = builder.AddProject<Projects.BlazorWebApiUsers>("blazorwebapiusers", launchProfileName)
+var user = builder.AddProject<Projects.BlazorIdentity>("blazorwebidentity", launchProfileName)
     .WithExternalHttpEndpoints();
 //.WithReference(sqlIndentity)
 //.WithReference(rabbitMq)
 //.WithReference(redis);
 
 var identityEndpoint = user.GetEndpoint(launchProfileName);
-var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorwebapifiles", launchProfileName);
+var file = builder.AddProject<Projects.BlazorApiUser>("blazoruser", launchProfileName);
 
 user.WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", user.GetEndpoint(launchProfileName)).WithEnvironment("IdentityApiClient", identityEndpoint).WithEnvironment("FileApiClient", file.GetEndpoint(launchProfileName));
 
@@ -38,6 +38,8 @@ var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName).Wi
 webApp.WithReference(user).WithReference(file).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
 
 user.WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
+
+builder.AddProject<Projects.BlazorApiUser>("blazorapiuser");
 
 builder.Build().Run();
 

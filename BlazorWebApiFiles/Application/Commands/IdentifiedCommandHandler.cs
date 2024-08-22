@@ -1,7 +1,7 @@
-﻿using BlazorWebApi.Repository;
+﻿using BlazorIdentity.Repository;
 using MultiAppServer.EventBus.Extensions;
 
-namespace BlazorWebApiFiles.Application.Commands;
+namespace BlazorIdentityFiles.Application.Commands;
 
 /// <summary>
 /// Provides a base implementation for handling duplicate request and ensuring idempotent updates, in the cases where

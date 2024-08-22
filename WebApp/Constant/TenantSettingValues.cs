@@ -1,4 +1,4 @@
-﻿using BlazorWebApi.Users.Models;
+﻿using BlazorIdentity.Users.Models;
 using System.Security.Authentication;
 
 namespace WebApp.Constant

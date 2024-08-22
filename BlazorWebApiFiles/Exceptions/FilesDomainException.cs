@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApiFiles.Exceptions;
+﻿namespace BlazorIdentityFiles.Exceptions;
 
 /// <summary>
 /// Exception type for domain exceptions

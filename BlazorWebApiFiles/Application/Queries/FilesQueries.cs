@@ -1,8 +1,8 @@
-﻿using BlazorWebApi.Files.Data;
+﻿using BlazorIdentity.Files.Data;
 using Minio;
 using Minio.DataModel.Args;
 
-namespace BlazorWebApiFiles.Application.Queries;
+namespace BlazorIdentityFiles.Application.Queries;
 
 public class FilesQueries(IMinioClient minioClient)
     : IFilesQueries

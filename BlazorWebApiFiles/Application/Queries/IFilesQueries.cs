@@ -1,7 +1,7 @@
-﻿using BlazorWebApi.Files.Entities;
+﻿using BlazorIdentity.Files.Entities;
 using MultiAppServer.ServiceDefaults;
 
-namespace BlazorWebApiFiles.Application.Queries;
+namespace BlazorIdentityFiles.Application.Queries;
 
 public interface IFilesQueries
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlazorWebApi.Repository;
+namespace BlazorIdentity.Repository;
 
 public class ClientRequest
 {

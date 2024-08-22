@@ -1,4 +1,4 @@
-﻿namespace BlazorWebApiFiles.Infrastructure.Services;
+﻿namespace BlazorIdentityFiles.Infrastructure.Services;
 
 public interface IIdentityService
 {

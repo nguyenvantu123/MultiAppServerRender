@@ -1,7 +1,7 @@
-﻿using BlazorWebApi.Files.Data;
-using BlazorWebApiFiles.Exceptions;
+﻿using BlazorIdentity.Files.Data;
+using BlazorIdentityFiles.Exceptions;
 
-namespace BlazorWebApi.Repository;
+namespace BlazorIdentity.Repository;
 
 public class RequestManager : IRequestManager
 {

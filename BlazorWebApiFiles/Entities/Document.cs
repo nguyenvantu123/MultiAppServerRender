@@ -1,9 +1,9 @@
-﻿using BlazorWebApi.Files.Constant;
-using BlazorWebApiFiles.Entity._base;
-using BlazorWebApiFiles.SeedWork;
+﻿using BlazorIdentity.Files.Constant;
+using BlazorIdentityFiles.Entity._base;
+using BlazorIdentityFiles.SeedWork;
 using OpenTelemetry.Metrics;
 
-namespace BlazorWebApi.Files.Entities
+namespace BlazorIdentity.Files.Entities
 {
     public class Document : EntityBase, IAggregateRoot
     {

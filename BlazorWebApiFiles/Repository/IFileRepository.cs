@@ -1,7 +1,7 @@
-﻿using BlazorWebApi.Files.Entities;
-using BlazorWebApiFiles.SeedWork;
+﻿using BlazorIdentity.Files.Entities;
+using BlazorIdentityFiles.SeedWork;
 
-namespace BlazorWebApi.Repository;
+namespace BlazorIdentity.Repository;
 
 //This is just the RepositoryContracts or Interface defined at the Domain Layer
 //as requisite for the Order Aggregate

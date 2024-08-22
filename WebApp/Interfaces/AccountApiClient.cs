@@ -1,4 +1,4 @@
-﻿using BlazorWebApi.Users.Models;
+﻿using BlazorIdentity.Users.Models;
 using Breeze.Sharp;
 using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;

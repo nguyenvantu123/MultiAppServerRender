@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BlazorWebApi.Files.Data.Migrations
+namespace BlazorIdentity.Files.Data.Migrations
 {
     /// <inheritdoc />
     public partial class AddFileCS : Migration

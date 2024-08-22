@@ -5,16 +5,16 @@ using Minio.DataModel;
 using MultiAppServer.ServiceDefaults;
 using Google.Protobuf.WellKnownTypes;
 using Minio.DataModel.Encryption;
-using BlazorWebApiFiles.Application.Commands;
-using BlazorWebApi.Files.Entities;
-using BlazorWebApi.Files.Exceptions;
+using BlazorIdentityFiles.Application.Commands;
+using BlazorIdentity.Files.Entities;
+using BlazorIdentity.Files.Exceptions;
 using BetkingLol.DataAccess.UnitOfWork;
 using SixLabors.ImageSharp;
-using BlazorWebApi.Repository;
+using BlazorIdentity.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using BlazorWebApi.Files.Constant;
+using BlazorIdentity.Files.Constant;
 
 public static class FileApi
 {

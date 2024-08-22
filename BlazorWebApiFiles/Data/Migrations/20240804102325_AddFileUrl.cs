@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BlazorWebApi.Files.Data.Migrations
+namespace BlazorIdentity.Files.Data.Migrations
 {
     /// <inheritdoc />
     public partial class AddFileUrl : Migration

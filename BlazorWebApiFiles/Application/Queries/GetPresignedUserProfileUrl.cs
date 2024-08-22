@@ -1,8 +1,8 @@
-﻿using BlazorWebApi.Files.Constant;
+﻿using BlazorIdentity.Files.Constant;
 using System.Runtime.Serialization;
 
 
-namespace BlazorWebApiFiles.Application.Queries
+namespace BlazorIdentityFiles.Application.Queries
 {
     public class GetPresignedUserProfileUrl
     {

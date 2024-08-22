@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using BlazorWebApi.Files.Data;
-using BlazorWebApiFiles.Entity._base;
+using BlazorIdentity.Files.Data;
+using BlazorIdentityFiles.Entity._base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;
 
-namespace BlazorWebApiFiles.SeedWork;
+namespace BlazorIdentityFiles.SeedWork;
 
 public abstract class RepositoryBase<T, TC> : IRepository<T>
     where T : class, IEntityBase

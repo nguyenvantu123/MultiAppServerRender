@@ -22,8 +22,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aspire.Minio.Client\Aspire.Minio.Client.csproj" />
+    <ProjectReference Include="..\BlazorApiUser\BlazorApiUser.csproj" />
+    <ProjectReference Include="..\BlazorIdentity\BlazorIdentity.csproj" />
     <ProjectReference Include="..\BlazorWebApiFiles\BlazorWebApiFiles.csproj" />
-    <ProjectReference Include="..\BlazorWebApiUsers\BlazorWebApiUsers.csproj" />
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
     <ProjectReference Include="..\WebApp\WebApp.csproj" />
   </ItemGroup>

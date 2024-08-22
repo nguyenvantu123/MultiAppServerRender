@@ -1,9 +1,9 @@
 ﻿
 
-using BlazorWebApi.Files.Data;
-using BlazorWebApiFiles.Entity._base;
+using BlazorIdentity.Files.Data;
+using BlazorIdentityFiles.Entity._base;
 
-namespace BlazorWebApiFiles.SeedWork;
+namespace BlazorIdentityFiles.SeedWork;
 
 public class Repository<T> : RepositoryBase<T, FileDbContext> where T : class, IEntityBase
 {

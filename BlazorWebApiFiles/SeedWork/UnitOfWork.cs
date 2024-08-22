@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BlazorWebApi.Files.Data;
-using BlazorWebApiFiles.Entity._base;
-using BlazorWebApiFiles.Mediatr;
-using BlazorWebApiFiles.SeedWork;
+using BlazorIdentity.Files.Data;
+using BlazorIdentityFiles.Entity._base;
+using BlazorIdentityFiles.Mediatr;
+using BlazorIdentityFiles.SeedWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,7 @@
-﻿using BlazorWebApiFiles.Entity._base;
+﻿using BlazorIdentityFiles.Entity._base;
 using System.Linq.Expressions;
 
-namespace BlazorWebApiFiles.SeedWork;
+namespace BlazorIdentityFiles.SeedWork;
 
 public interface IRepository<T> where T : IEntityBase
 {

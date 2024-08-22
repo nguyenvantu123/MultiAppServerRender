@@ -1,0 +1,155 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>BlazorIdentity</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Commands\**" />
+    <Compile Remove="UserConst\**" />
+    <Content Remove="Commands\**" />
+    <Content Remove="UserConst\**" />
+    <EmbeddedResource Remove="Commands\**" />
+    <EmbeddedResource Remove="UserConst\**" />
+    <None Remove="Commands\**" />
+    <None Remove="UserConst\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageReference Include="AspectInjector" Version="2.8.2" />
+    <PackageReference Include="AspNet.Security.OpenIdConnect.Primitives" Version="2.0.0" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Breeze.AspNetCore.NetCore" Version="7.3.0" />
+    <PackageReference Include="Breeze.Persistence" Version="7.3.0" />
+    <PackageReference Include="Breeze.Persistence.EFCore" Version="7.3.0" />
+    <PackageReference Include="Duende.IdentityServer" Version="7.0.6" />
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.0.6" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="7.0.6" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.0.6" />
+    <PackageReference Include="Duende.IdentityServer.Storage" Version="7.0.6" />
+    <PackageReference Include="Finbuckle.MultiTenant" Version="7.0.1" />
+    <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="7.0.1" />
+    <PackageReference Include="Finbuckle.MultiTenant.EntityFrameworkCore" Version="7.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.9.2" />
+    <PackageReference Include="FormatWith" Version="3.0.1" />
+    <PackageReference Include="Humanizer" Version="2.14.1" />
+    <PackageReference Include="LazyCache" Version="2.4.0" />
+    <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />
+    <PackageReference Include="MediatR" Version="12.4.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjectionFixed" Version="5.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NSwag.Annotations" Version="14.0.8" />
+    <PackageReference Include="ObjectCloner.Extensions" Version="2.0.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
+    <ProjectReference Include="..\Aspire.Minio.Client\Aspire.Minio.Client.csproj" />
+    <ProjectReference Include="..\Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj" />
+    <ProjectReference Include="..\Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj" />
+    <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Migrations\ApplicationDb\" />
+    <Folder Include="Data\Migrations\TenantStoreDb\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Account\AccessDenied.cshtml" />
+    <None Include="Views\Account\LoggedOut.cshtml" />
+    <None Include="Views\Account\Login.cshtml" />
+    <None Include="Views\Account\Logout.cshtml" />
+    <None Include="Views\Consent\Index.cshtml" />
+    <None Include="Views\Device\Success.cshtml" />
+    <None Include="Views\Device\UserCodeCapture.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\Redirect.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_ScopeListItem.cshtml" />
+    <None Include="Views\Shared\_ValidationSummary.cshtml" />
+    <None Include="Views\_ViewImports.cshtml" />
+    <None Include="Views\_ViewStart.cshtml" />
+    <None Include="wwwroot\fonts\Montserrat-Bold.svg" />
+    <None Include="wwwroot\fonts\Montserrat-Bold.woff2" />
+    <None Include="wwwroot\fonts\Montserrat-Regular.svg" />
+    <None Include="wwwroot\fonts\Montserrat-Regular.woff2" />
+    <None Include="wwwroot\fonts\Oswald-Bold.svg" />
+    <None Include="wwwroot\fonts\Oswald-Bold.woff2" />
+    <None Include="wwwroot\fonts\Oswald-ExtraLight.svg" />
+    <None Include="wwwroot\fonts\Oswald-ExtraLight.woff2" />
+    <None Include="wwwroot\fonts\Oswald-Light.svg" />
+    <None Include="wwwroot\fonts\Oswald-Light.woff2" />
+    <None Include="wwwroot\fonts\Oswald-Medium.svg" />
+    <None Include="wwwroot\fonts\Oswald-Medium.woff2" />
+    <None Include="wwwroot\fonts\Oswald-Regular.svg" />
+    <None Include="wwwroot\fonts\Oswald-Regular.woff2" />
+    <None Include="wwwroot\fonts\Oswald-SemiBold.svg" />
+    <None Include="wwwroot\fonts\Oswald-SemiBold.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-200.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-200italic.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-300.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-300italic.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-500.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-500italic.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-600.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-600italic.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-700.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-700italic.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-800.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-800italic.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-italic.woff2" />
+    <None Include="wwwroot\fonts\plus-jakarta-sans-v8-latin-regular.woff2" />
+    <None Include="wwwroot\images\arrow-right.svg" />
+    <None Include="wwwroot\images\banner1.svg" />
+    <None Include="wwwroot\images\banner2.svg" />
+    <None Include="wwwroot\images\banner3.svg" />
+    <None Include="wwwroot\images\banner4.svg" />
+    <None Include="wwwroot\images\check.svg" />
+    <None Include="wwwroot\images\logo-footer.svg" />
+    <None Include="wwwroot\images\logo-header.svg" />
+    <None Include="wwwroot\images\logo.svg" />
+    <None Include="wwwroot\images\logo_color.svg" />
+    <None Include="wwwroot\images\main_banner_text.svg" />
+    <None Include="wwwroot\images\refresh.svg" />
+    <None Include="wwwroot\js\signin-redirect.js" />
+    <None Include="wwwroot\js\signout-redirect.js" />
+    <None Include="wwwroot\js\site.js" />
+    <None Include="wwwroot\js\site.min.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
+    <None Include="wwwroot\lib\jquery-validate\jquery.validate.js" />
+    <None Include="wwwroot\lib\jquery-validate\jquery.validate.min.js" />
+    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
+    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
+    <None Include="wwwroot\lib\jquery\jquery.js" />
+    <None Include="wwwroot\lib\jquery\jquery.min.js" />
+    <None Include="wwwroot\lib\jquery\jquery.min.map" />
+    <None Include="wwwroot\lib\jquery\jquery.slim.js" />
+    <None Include="wwwroot\lib\jquery\jquery.slim.min.js" />
+    <None Include="wwwroot\lib\jquery\jquery.slim.min.map" />
+  </ItemGroup>
+
+</Project>

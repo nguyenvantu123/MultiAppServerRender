@@ -1,6 +1,6 @@
 ﻿using MultiAppServer.EventBus.Events;
 
-namespace BlazorWebApiFiles.Application.IntegrationEvents;
+namespace BlazorIdentityFiles.Application.IntegrationEvents;
 
 public interface IFileIntegrationEventService
 {

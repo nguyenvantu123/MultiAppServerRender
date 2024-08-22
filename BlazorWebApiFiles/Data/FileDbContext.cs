@@ -1,13 +1,13 @@
 ﻿
 
-using BlazorWebApi.Files.Entities;
-using BlazorWebApiFiles.Mediatr;
-using BlazorWebApiFiles.SeedWork;
+using BlazorIdentity.Files.Entities;
+using BlazorIdentityFiles.Mediatr;
+using BlazorIdentityFiles.SeedWork;
 using IntegrationEventLogEF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace BlazorWebApi.Files.Data
+namespace BlazorIdentity.Files.Data
 {
     public class FileDbContext : DbContext
     {

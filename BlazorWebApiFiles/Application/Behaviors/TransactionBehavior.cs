@@ -1,7 +1,7 @@
-﻿namespace BlazorWebApiFiles.Application.Behaviors;
+﻿namespace BlazorIdentityFiles.Application.Behaviors;
 
-using BlazorWebApi.Files.Data;
-using BlazorWebApiFiles.Application.IntegrationEvents;
+using BlazorIdentity.Files.Data;
+using BlazorIdentityFiles.Application.IntegrationEvents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;

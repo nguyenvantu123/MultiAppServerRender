@@ -1,7 +1,7 @@
-﻿using BlazorWebApi.Files.Data;
-using BlazorWebApiFiles.Entity._base;
+﻿using BlazorIdentity.Files.Data;
+using BlazorIdentityFiles.Entity._base;
 
-namespace BlazorWebApiFiles.Mediatr;
+namespace BlazorIdentityFiles.Mediatr;
 
 static class MediatorExtension
 {

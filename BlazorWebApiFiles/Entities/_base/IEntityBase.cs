@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace BlazorWebApiFiles.Entity._base
+namespace BlazorIdentityFiles.Entity._base
 {
     public interface IEntityBase
     {

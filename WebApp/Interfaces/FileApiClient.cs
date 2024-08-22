@@ -1,5 +1,5 @@
 ﻿using Azure.Core;
-using BlazorWebApiFiles.Application.Queries;
+using BlazorIdentityFiles.Application.Queries;
 using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
 using System.Net.Http.Headers;

@@ -1,6 +1,6 @@
-﻿using BlazorWebApi.Files.Constant;
+﻿using BlazorIdentity.Files.Constant;
 
-namespace BlazorWebApiFiles.Application.Commands;
+namespace BlazorIdentityFiles.Application.Commands;
 
 public record UploadFileCommand() : IRequest<bool>;
 
