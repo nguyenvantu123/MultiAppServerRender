@@ -18,32 +18,37 @@ using AutoMapper;
 using System.ComponentModel.Design;
 using BlazorApiUser.Commands.Users;
 using BlazorApiUser.Queries.Users;
+using BlazorApiUser.Queries.Roles;
+using WebApp.Models;
 
-public static class UsersApi
+public static class RolesApi
 {
-    public static RouteGroupBuilder MapUsersApiV1(this IEndpointRouteBuilder app)
+    public static RouteGroupBuilder MapRolesApiV1(this IEndpointRouteBuilder app)
     {
-        var api = app.MapGroup("api/users").HasApiVersion(1.0);
+        var api = app.MapGroup("api/roles").HasApiVersion(1.0);
 
-        api.MapPost("/create", Create).AllowAnonymous();
+        api.MapGet("/admin/roles", [Authorize(Roles = "Administrator", Policy = Permissions.Role.Read)] () => GetRoles);
 
-        api.MapPost("/admin/update-user", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => AdminUpdateUser);
+        api.MapGet("/admin/get-role/{name}", [Authorize] () => GetRoleByName);
 
-        api.MapDelete("/admin/delete-user/{id}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Delete)] () => AdminUpdateUser);
+        api.MapPost("/admin/create", [Authorize(Roles = "Administrator", Policy = Permissions.Role.Create)] () => Create).AllowAnonymous();
 
-        api.MapPost("/admin/reset-password", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => ResetPasswordUser);
+        //api.MapPost("/admin/update-user", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => AdminUpdateUser);
 
-        api.MapGet("/admin/get-permission-by-user", [Authorize] (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
+        //api.MapDelete("/admin/delete-user/{id}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Delete)] () => AdminUpdateUser);
 
-        api.MapGet("/admin/users", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUser);
+        //api.MapPost("/admin/reset-password", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => ResetPasswordUser);
 
-        api.MapGet("/admin/user/{id}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUserById);
+        //api.MapGet("/admin/get-permission-by-user", [Authorize] (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
 
-        api.MapGet("/admin/user-roles/{roleId}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUserByRoleId);
 
-        api.MapPut("/admin/update-user-roles", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => UpdateUserRoles);
+        //api.MapGet("/admin/user/{id}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUserById);
 
-        api.MapPut("/admin/toggle-user-status", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => ToggleUserStatus);
+        //api.MapGet("/admin/user-roles/{roleId}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUserByRoleId);
+
+        //api.MapPut("/admin/update-user-roles", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => UpdateUserRoles);
+
+        //api.MapPut("/admin/toggle-user-status", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => ToggleUserStatus);
 
         //api.MapGet("{orderId:int}", GetOrderAsync);
         //api.MapGet("/", GetOrdersByUserAsync);
@@ -54,6 +59,45 @@ public static class UsersApi
         return api;
     }
 
+    public static async Task<ApiResponse<List<RoleDto>>> GetRoles([FromQuery] GetListRoleQuery getListRoleQuery, IMediator mediator)
+    {
+
+        var userLst = await mediator.Send(getListRoleQuery);
+
+        return new ApiResponse<List<RoleDto>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
+    }
+
+    public static async Task<ApiResponse<List<RoleDto>>> GetRoleByName(string name, [AsParameters] RoleManager<ApplicationRole> roleManager, [AsParameters] EntityPermissions entityPermissions)
+    {
+
+        var identityRole = await roleManager.FindByNameAsync(name);
+
+        if (identityRole == null)
+        {
+            return new ApiResponse(404, "Role not found!!!", null);
+        }
+
+        var claims = await roleManager.GetClaimsAsync(identityRole);
+        var permissions = claims.OrderBy(x => x.Value).Where(x => x.Type == ApplicationClaimTypes.Permission).Select(x => entityPermissions.GetPermissionByValue(x.Value).Name).ToList();
+
+        var roleDto = new RoleDto
+        {
+            Name = name,
+        };
+
+        return new ApiResponse(200, "Role fetched", roleDto);
+    }
+
+    public static async Task<ApiResponse> Create([FromBody] CreateRoleCommand command, IMediator mediator)
+    {
+        var sendCommand = await mediator.Send(command);
+
+        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
+    }
+
+
+
+
     public static async Task<ApiResponse> ToggleUserStatus([FromBody] ToogleUserRequestCommand toggleUserStatusCommand, IMediator mediator)
     {
         var sendCommand = await mediator.Send(toggleUserStatusCommand);
@@ -61,12 +105,6 @@ public static class UsersApi
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, sendCommand);
     }
 
-    public static async Task<ApiResponse> Create([FromBody] CreateUserCommand command, IMediator mediator)
-    {
-        var sendCommand = await mediator.Send(command);
-
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
-    }
 
     public static async Task<ApiResponse> AdminUpdateUser([FromBody] AdminUpdateUserCommand command, IMediator mediator)
     {
@@ -111,14 +149,6 @@ public static class UsersApi
         }
 
         return new ApiResponse<List<string>>(statusCode: 200, message: "", result: new List<string>());
-    }
-
-    public static async Task<ApiResponse<List<UserViewModel>>> GetUser([FromQuery] GetListUserQuery getListUserQuery, IMediator mediator)
-    {
-
-        var userLst = await mediator.Send(getListUserQuery);
-
-        return new ApiResponse<List<UserViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
     }
 
     public static async Task<ApiResponse<UserViewModel>> GetUserById([FromQuery] string id, [AsParameters] UserServices userServices, UserManager<ApplicationUser> userManager, IMapper autoMapper)

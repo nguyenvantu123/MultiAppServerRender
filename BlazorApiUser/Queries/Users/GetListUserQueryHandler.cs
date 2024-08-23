@@ -1,0 +1,70 @@
+﻿
+// Regular CommandHandler
+using AutoMapper;
+using BlazorApiUser.Repository;
+using BlazorBoilerplate.Constants;
+using BlazorIdentity.Users;
+using BlazorIdentity.Users.Extensions;
+using BlazorIdentity.Users.Models;
+using BlazorIdentity.Users.Models.Email;
+using IdentityModel;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MultiAppServer.ServiceDefaults;
+using System.Net;
+using System.Security.Claims;
+
+
+namespace BlazorApiUser.Queries.Users;
+
+public class GetListUserQueryHandler : IRequestHandler<GetListUserQuery, Tuple<int, List<UserViewModel>>>
+{
+    private readonly IUserRepository _userRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMapper _autoMapper;
+
+    public GetListUserQueryHandler(IUserRepository userRepository, UserManager<ApplicationUser> userManager, IMapper autoMapper)
+    {
+        _userRepository = userRepository;
+        _userManager = userManager;
+        _autoMapper = autoMapper;
+    }
+
+    /// <summary>
+    /// Handler which processes the command when
+    /// customer executes cancel order from app
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    public async Task<Tuple<int, List<UserViewModel>>> Handle(GetListUserQuery command, CancellationToken cancellationToken)
+    {
+        var userList = _userManager.Users.Include(x => x.UserRoles).AsQueryable();
+        var count = userList.Count();
+        var listUsers = await userList.OrderBy(x => x.Id).Skip(command.pageNumber * command.pageSize).Take(command.pageSize).ToListAsync();
+
+        var userDtoList = _autoMapper.Map<List<UserViewModel>>(listUsers);
+
+        return new Tuple<int, List<UserViewModel>>(count, userDtoList);
+
+        //return new Tuple<int, string>(200, $"User {user.UserName} deleted");
+    }
+}
+
+
+//// Use for Idempotency in Command process
+//public class CancelOrderIdentifiedCommandHandler : IdentifiedCommandHandler<CancelOrderCommand, bool>
+//{
+//    public CancelOrderIdentifiedCommandHandler(
+//        IMediator mediator,
+//        IRequestManager requestManager,
+//        ILogger<IdentifiedCommandHandler<CancelOrderCommand, bool>> logger)
+//        : base(mediator, requestManager, logger)
+//    {
+//    }
+
+//    protected override bool CreateResultForDuplicateRequest()
+//    {
+//        return true; // Ignore duplicate requests for processing order.
+//    }
+//}

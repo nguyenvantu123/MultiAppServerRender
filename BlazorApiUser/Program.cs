@@ -55,9 +55,14 @@ app.UseAntiforgery();
 app.UseAuthorization();
 app.MapDefaultEndpoints();
 
-var files = app.NewVersionedApi("Users");
+var users = app.NewVersionedApi("Users");
 
-files.MapUsersApiV1()
+users.MapUsersApiV1()
+      .RequireAuthorization();
+
+var roles = app.NewVersionedApi("Roles");
+
+roles.MapRolesApiV1()
       .RequireAuthorization();
 
 app.UseDefaultOpenApi();

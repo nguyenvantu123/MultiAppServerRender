@@ -1,11 +1,9 @@
 ﻿
 
+using BlazorIdentity.Data;
 using MediatR;
 
-public class UserServices(
-    IMediator mediator,
-    ILogger<UserServices> logger)
+
+public class UserServices()
 {
-    public IMediator Mediator { get; set; } = mediator;
-    public ILogger<UserServices> Logger { get; } = logger;
 }
