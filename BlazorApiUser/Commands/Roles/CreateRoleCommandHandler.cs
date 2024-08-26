@@ -18,12 +18,10 @@ namespace BlazorApiUser.Commands.Users;
 
 public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, Tuple<int, string>>
 {
-    private readonly IUserRepository _userRepository;
     private readonly RoleManager<ApplicationRole> _roleManager;
 
-    public CreateRoleCommandHandler(IUserRepository userRepository, RoleManager<ApplicationRole> roleManager)
+    public CreateRoleCommandHandler( RoleManager<ApplicationRole> roleManager)
     {
-        _userRepository = userRepository;
         _roleManager = roleManager;
     }
 

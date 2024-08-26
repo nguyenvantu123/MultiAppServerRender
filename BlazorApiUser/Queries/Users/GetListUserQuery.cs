@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorApiUser.Queries.Users
 {
-    public record GetListUserQuery : IRequest<Tuple<int, List<UserViewModel>>>
+    public record GetListUserQuery : IRequest<Tuple<int, List<UserDataViewModel>>>
     {
 
         public int pageSize = 10;

@@ -17,12 +17,10 @@ namespace BlazorApiUser.Commands.Users;
 
 public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, Tuple<int, string>>
 {
-    private readonly IUserRepository _userRepository;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public ChangePasswordCommandHandler(IUserRepository userRepository, UserManager<ApplicationUser> userManager)
+    public ChangePasswordCommandHandler(UserManager<ApplicationUser> userManager)
     {
-        _userRepository = userRepository;
         _userManager = userManager;
     }
 

@@ -17,12 +17,10 @@ namespace BlazorApiUser.Commands.Users;
 
 public class AdminDeleteUserCommandHandler : IRequestHandler<AdminDeleteUserCommand, Tuple<int, string>>
 {
-    private readonly IUserRepository _userRepository;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public AdminDeleteUserCommandHandler(IUserRepository userRepository, UserManager<ApplicationUser> userManager)
+    public AdminDeleteUserCommandHandler( UserManager<ApplicationUser> userManager)
     {
-        _userRepository = userRepository;
         _userManager = userManager;
     }
 

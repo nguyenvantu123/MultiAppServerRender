@@ -1,13 +1,13 @@
 -- Migration Command
 
-add-migration GenerateApplicationDB3 -OutputDir  Data/Migrations/ApplicationDb  -StartupProject BlazorIdentityUsers -Context ApplicationDbContext
+add-migration GenerateApplicationForDuende -OutputDir  Data/Migrations/ApplicationDb  -StartupProject BlazorIdentity -Context ApplicationDbContext
 
-add-migration GenerateApplicationTenantDB1 -OutputDir  Data/Migrations/TenantStoreDb  -StartupProject BlazorIdentityUsers -Context TenantStoreDbContext
+add-migration GenerateApplicationTenantDB1 -OutputDir  Data/Migrations/TenantStoreDb  -StartupProject BlazorIdentity -Context TenantStoreDbContext
 
 
 -- Update Database
 
-update-database -StartupProject BlazorIdentityUsers  -Context ApplicationDbContext
+update-database -StartupProject BlazorIdentity  -Context ApplicationDbContext
 
 
 update-database -StartupProject BlazorIdentityUsers  -Context TenantStoreDbContext

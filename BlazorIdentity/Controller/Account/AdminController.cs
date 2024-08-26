@@ -166,32 +166,32 @@ namespace BlazorIdentity.Users.Controller.Account
         [HttpGet]
         [Route("[action]")]
         [Authorize]
-        public async Task<ApiResponseDto<List<UserViewModel>>> Users([FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 0)
+        public async Task<ApiResponseDto<List<UserDataViewModel>>> Users([FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 0)
         {
             var userList = _userManager.Users.Include(x => x.UserRoles).AsQueryable();
             var count = userList.Count();
             var listUsers = userList.OrderBy(x => x.Id).Skip(pageNumber * pageSize).Take(pageSize).ToList();
 
-            var userDtoList = _autoMapper.Map<List<UserViewModel>>(listUsers);
+            var userDtoList = _autoMapper.Map<List<UserDataViewModel>>(listUsers);
 
-            return new ApiResponseDto<List<UserViewModel>>(200, $"{count} users fetched", userDtoList, count);
+            return new ApiResponseDto<List<UserDataViewModel>>(200, $"{count} users fetched", userDtoList, count);
         }
 
         [Authorize(Permissions.User.Read)]
         [HttpGet]
         [Route("[action]/{id}")]
-        public async Task<ApiResponseDto<UserViewModel>> UserById(string id)
+        public async Task<ApiResponseDto<UserDataViewModel>> UserById(string id)
         {
             var userById = await _userManager.FindByIdAsync(id);
 
             if (userById == null)
             {
-                return new ApiResponseDto<UserViewModel>(404, "User Not Found", null);
+                return new ApiResponseDto<UserDataViewModel>(404, "User Not Found", null);
             }
 
-            var result = _autoMapper.Map<UserViewModel>(userById);
+            var result = _autoMapper.Map<UserDataViewModel>(userById);
 
-            return new ApiResponseDto<UserViewModel>(200, "Success", result);
+            return new ApiResponseDto<UserDataViewModel>(200, "Success", result);
         }
 
         [Authorize(Permissions.User.Read)]

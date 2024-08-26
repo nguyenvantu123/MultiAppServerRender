@@ -661,7 +661,7 @@ namespace BlazorIdentity.Users.Controller.Account
             }
         }
 
-        private async Task<UserViewModel> BuildUserViewModel(ClaimsPrincipal authenticatedUser)
+        private async Task<UserDataViewModel> BuildUserViewModel(ClaimsPrincipal authenticatedUser)
         {
             var user = await _userManager.GetUserAsync(authenticatedUser);
 
@@ -669,7 +669,7 @@ namespace BlazorIdentity.Users.Controller.Account
             {
                 var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
 
-                var userViewModel = new UserViewModel
+                var userViewModel = new UserDataViewModel
                 {
                     IsAuthenticated = authenticatedUser.Identity.IsAuthenticated,
                     UserName = user.UserName,
@@ -713,7 +713,7 @@ namespace BlazorIdentity.Users.Controller.Account
             }
             else
             {
-                return new UserViewModel();
+                return new UserDataViewModel();
             }
         }
         private static string FormatKey(string unformattedKey)
@@ -846,7 +846,7 @@ namespace BlazorIdentity.Users.Controller.Account
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        public async Task<ApiResponse> UpdateUser(UserViewModel userViewModel)
+        public async Task<ApiResponse> UpdateUser(UserDataViewModel userViewModel)
         {
 
             var user = await _userManager.FindByEmailAsync(userViewModel.Email);
@@ -938,7 +938,7 @@ namespace BlazorIdentity.Users.Controller.Account
                 if (!response.IsSuccessStatusCode)
                     _logger.LogError($"New user email failed: {response.Message}");
 
-                var userViewModel = new UserViewModel
+                var userViewModel = new UserDataViewModel
                 {
                     Id = user.Id,
                     IsAuthenticated = false,
@@ -979,8 +979,8 @@ namespace BlazorIdentity.Users.Controller.Account
         [Route("[action]")]
         public ApiResponse GetUser()
         {
-            UserViewModel userViewModel = User != null && User.Identity.IsAuthenticated
-              ? new UserViewModel { UserName = User.Identity.Name, IsAuthenticated = true }
+            UserDataViewModel userViewModel = User != null && User.Identity.IsAuthenticated
+              ? new UserDataViewModel { UserName = User.Identity.Name, IsAuthenticated = true }
               : new()
               {
                   IsAuthenticated = false
@@ -992,7 +992,7 @@ namespace BlazorIdentity.Users.Controller.Account
         [HttpPost]
         [Route("[action]")]
         [Authorize(Permissions.User.Update)]
-        public async Task<ApiResponse> AdminUpdateUser([FromBody] UserViewModel userViewModel)
+        public async Task<ApiResponse> AdminUpdateUser([FromBody] UserDataViewModel userViewModel)
         {
 
             if (!ModelState.IsValid)

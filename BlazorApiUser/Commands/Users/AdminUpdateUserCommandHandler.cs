@@ -17,12 +17,10 @@ namespace BlazorApiUser.Commands.Users;
 
 public class AdminUpdateUserCommandHandler : IRequestHandler<AdminUpdateUserCommand, Tuple<int, string>>
 {
-    private readonly IUserRepository _userRepository;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public AdminUpdateUserCommandHandler(IUserRepository userRepository, UserManager<ApplicationUser> userManager)
+    public AdminUpdateUserCommandHandler( UserManager<ApplicationUser> userManager)
     {
-        _userRepository = userRepository;
         _userManager = userManager;
     }
 

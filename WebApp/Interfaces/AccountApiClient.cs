@@ -106,18 +106,18 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/forgot-password", parameters);
         }
 
-        public async Task<ApiResponseDto<UserViewModel>> EnableAuthenticator(AuthenticatorVerificationCodeViewModel parameters)
+        public async Task<ApiResponseDto<UserDataViewModel>> EnableAuthenticator(AuthenticatorVerificationCodeViewModel parameters)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto<UserViewModel>>("api/account/enable-authenticator", parameters);
+            return await _httpClient.PostJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/enable-authenticator", parameters);
         }
-        public async Task<ApiResponseDto<UserViewModel>> DisableAuthenticator()
+        public async Task<ApiResponseDto<UserDataViewModel>> DisableAuthenticator()
         {
 
-            return await _httpClient.PostJsonAsync<ApiResponseDto<UserViewModel>>("api/account/disable-authenticator", null);
+            return await _httpClient.PostJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/disable-authenticator", null);
         }
-        public async Task<ApiResponseDto<UserViewModel>> ForgetTwoFactorClient()
+        public async Task<ApiResponseDto<UserDataViewModel>> ForgetTwoFactorClient()
         {
-            var response = await _httpClient.PostJsonAsync<ApiResponseDto<UserViewModel>>("api/account/forget-two-factor-client", null);
+            var response = await _httpClient.PostJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/forget-two-factor-client", null);
 
             //if (AppState.Runtime == BlazorRuntime.Server)
             //    if (response.Success)
@@ -125,20 +125,20 @@ namespace WebApp.Interfaces
 
             return response;
         }
-        public async Task<ApiResponseDto<UserViewModel>> Enable2fa(string userId = null)
+        public async Task<ApiResponseDto<UserDataViewModel>> Enable2fa(string userId = null)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto<UserViewModel>>("api/account/enable2fa", userId);
+            return await _httpClient.PostJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/enable2fa", userId);
         }
-        public async Task<ApiResponseDto<UserViewModel>> Disable2fa(string userId = null)
+        public async Task<ApiResponseDto<UserDataViewModel>> Disable2fa(string userId = null)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto<UserViewModel>>("api/account/disable2fa", userId);
+            return await _httpClient.PostJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/disable2fa", userId);
         }
 
-        public async Task<UserViewModel> GetUserViewModel()
+        public async Task<UserDataViewModel> GetUserViewModel()
         {
-            UserViewModel userViewModel = new() { IsAuthenticated = false };
+            UserDataViewModel userViewModel = new() { IsAuthenticated = false };
 
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>("api/account/user-view-model");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/user-view-model");
 
             if (apiResponse.IsSuccessStatusCode)
                 userViewModel = apiResponse.Result;
@@ -157,12 +157,12 @@ namespace WebApp.Interfaces
         //    return apiResponse.Result;
         //}
 
-        public async Task<ApiResponseDto> UpdateUser(UserViewModel userViewModel)
+        public async Task<ApiResponseDto> UpdateUser(UserDataViewModel userViewModel)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/update-user", userViewModel);
         }
 
-        public async Task<ApiResponseDto> UpsertUser(UserViewModel userViewModel)
+        public async Task<ApiResponseDto> UpsertUser(UserDataViewModel userViewModel)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/UpsertUser", userViewModel);
         }
@@ -176,7 +176,7 @@ namespace WebApp.Interfaces
             return await _httpClient.DeleteAsync<ApiResponseDto>("api/account");
         }
 
-        public async Task<ApiResponseDto> AdminUpdateUser(UserViewModel userViewModel)
+        public async Task<ApiResponseDto> AdminUpdateUser(UserDataViewModel userViewModel)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/admin-update-user", userViewModel);
         }
@@ -198,9 +198,9 @@ namespace WebApp.Interfaces
             throw new NotImplementedException();
         }
 
-        public async Task<ApiResponseDto<List<UserViewModel>>> GetUsers(int pageSize, int currentPage, string search)
+        public async Task<ApiResponseDto<List<UserDataViewModel>>> GetUsers(int pageSize, int currentPage, string search)
         {
-            return await _httpClient.GetJsonAsync<ApiResponseDto<List<UserViewModel>>>($"api/admin/users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<UserDataViewModel>>>($"api/admin/users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
 
         public Task<QueryResult<DbLog>> GetLogs(Expression<Func<DbLog, bool>> predicate = null, int? take = null, int? skip = null)
@@ -282,9 +282,9 @@ namespace WebApp.Interfaces
             return await _httpClient.GetJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
         }
 
-        public async Task<UserViewModel> GetUserById(string id)
+        public async Task<UserDataViewModel> GetUserById(string id)
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>($"api/admin/user-by-id/{id}");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserDataViewModel>>($"api/admin/user-by-id/{id}");
             return apiResponse.Result;
         }
 

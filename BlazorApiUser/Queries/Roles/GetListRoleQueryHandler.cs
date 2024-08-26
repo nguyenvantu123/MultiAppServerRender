@@ -22,17 +22,13 @@ namespace BlazorApiUser.Queries.Users;
 
 public class GetListRoleQueryHandler : IRequestHandler<GetListRoleQuery, Tuple<int, List<RoleDto>>>
 {
-    private readonly IUserRepository _userRepository;
     private readonly RoleManager<ApplicationRole> _roleManager;
     //private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IMapper _autoMapper;
     private readonly EntityPermissions _entityPermissions;
 
 
-    public GetListRoleQueryHandler(IUserRepository userRepository, IMapper autoMapper, RoleManager<ApplicationRole> roleManager, EntityPermissions entityPermissions)
+    public GetListRoleQueryHandler(RoleManager<ApplicationRole> roleManager, EntityPermissions entityPermissions)
     {
-        _userRepository = userRepository;
-        _autoMapper = autoMapper;
         _roleManager = roleManager;
         _entityPermissions = entityPermissions;
     }

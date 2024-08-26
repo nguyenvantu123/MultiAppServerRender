@@ -18,15 +18,13 @@ using System.Security.Claims;
 
 namespace BlazorApiUser.Queries.Users;
 
-public class GetListUserQueryHandler : IRequestHandler<GetListUserQuery, Tuple<int, List<UserViewModel>>>
+public class GetListUserQueryHandler : IRequestHandler<GetListUserQuery, Tuple<int, List<UserDataViewModel>>>
 {
-    private readonly IUserRepository _userRepository;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _autoMapper;
 
-    public GetListUserQueryHandler(IUserRepository userRepository, UserManager<ApplicationUser> userManager, IMapper autoMapper)
+    public GetListUserQueryHandler( UserManager<ApplicationUser> userManager, IMapper autoMapper)
     {
-        _userRepository = userRepository;
         _userManager = userManager;
         _autoMapper = autoMapper;
     }
@@ -37,15 +35,15 @@ public class GetListUserQueryHandler : IRequestHandler<GetListUserQuery, Tuple<i
     /// </summary>
     /// <param name="command"></param>
     /// <returns></returns>
-    public async Task<Tuple<int, List<UserViewModel>>> Handle(GetListUserQuery command, CancellationToken cancellationToken)
+    public async Task<Tuple<int, List<UserDataViewModel>>> Handle(GetListUserQuery command, CancellationToken cancellationToken)
     {
         var userList = _userManager.Users.Include(x => x.UserRoles).AsQueryable();
         var count = userList.Count();
         var listUsers = await userList.OrderBy(x => x.Id).Skip(command.pageNumber * command.pageSize).Take(command.pageSize).ToListAsync();
 
-        var userDtoList = _autoMapper.Map<List<UserViewModel>>(listUsers);
+        var userDtoList = _autoMapper.Map<List<UserDataViewModel>>(listUsers);
 
-        return new Tuple<int, List<UserViewModel>>(count, userDtoList);
+        return new Tuple<int, List<UserDataViewModel>>(count, userDtoList);
 
         //return new Tuple<int, string>(200, $"User {user.UserName} deleted");
     }

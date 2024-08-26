@@ -138,7 +138,7 @@ else
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
     // [Inject] IViewNotifier viewNotifier { get; set; }
 
-    protected UserViewModel userViewModel;
+    protected UserDataViewModel userViewModel;
     protected bool updatePasswordDialogOpen = false;
     protected UpdatePasswordViewModel updatePasswordViewModel { get; set; } = new UpdatePasswordViewModel();
     protected AuthenticatorVerificationCodeViewModel authenticatorVerificationCodeViewModel { get; set; } = new AuthenticatorVerificationCodeViewModel();

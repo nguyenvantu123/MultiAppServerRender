@@ -3,13 +3,13 @@
 using BlazorIdentity.Data;
 using MediatR;
 
-public class UserServices(
+public class RolesServices(
     IMediator mediator,
     ApplicationDbContext context,
-    ILogger<UserServices> logger)
+    ILogger<RolesServices> logger)
 {
     public IMediator Mediator { get; } = mediator;
-    public ILogger<UserServices> Logger { get; } = logger;
+    public ILogger<RolesServices> Logger { get; } = logger;
 
     public ApplicationDbContext Context { get; } = context;
 }

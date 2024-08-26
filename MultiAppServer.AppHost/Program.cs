@@ -15,31 +15,29 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var launchProfileName = ShouldUseHttpForEndpoints() ? "http" : "https";
 
-var user = builder.AddProject<Projects.BlazorIdentity>("blazorwebidentity", launchProfileName)
+var identity = builder.AddProject<Projects.BlazorIdentity>("blazorwebidentity", launchProfileName)
     .WithExternalHttpEndpoints();
-//.WithReference(sqlIndentity)
-//.WithReference(rabbitMq)
-//.WithReference(redis);
 
-var identityEndpoint = user.GetEndpoint(launchProfileName);
-var file = builder.AddProject<Projects.BlazorApiUser>("blazoruser", launchProfileName);
+var file = builder.AddProject<Projects.BlazorWebApiFiles>("blazorfiles", launchProfileName);
 
-user.WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", user.GetEndpoint(launchProfileName)).WithEnvironment("IdentityApiClient", identityEndpoint).WithEnvironment("FileApiClient", file.GetEndpoint(launchProfileName));
+var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName);
+
+var identityEndpoint = identity.GetEndpoint(launchProfileName);
+
+var user = builder.AddProject<Projects.BlazorApiUser>("blazorapiuser");
+
+
+identity.WithEnvironment("IdentityApiClient", identityEndpoint).WithEnvironment("FileApiClient", file.GetEndpoint(launchProfileName));
 
 file.WithEnvironment("Identity__Url", identityEndpoint).WithEnvironment("CallBackUrl", file.GetEndpoint(launchProfileName));
 
-//builder.AddProject<Projects.WebApp>("webapp").WithReference(user);
+user.WithEnvironment("Identity__Url", identityEndpoint).WithEnvironment("CallBackUrl", user.GetEndpoint(launchProfileName));
 
-var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName).WithEnvironment("IdentityUrl", identityEndpoint)
-    //.WithReference(rabbitMq)
-    //.WithReference(redis)
+
+webApp.WithReference(identity).WithReference(file).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName)).WithEnvironment("IdentityUrl", identityEndpoint)
     .WithEnvironment("IdentityApiClient", identityEndpoint);
 
-webApp.WithReference(user).WithReference(file).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
-
-user.WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
-
-builder.AddProject<Projects.BlazorApiUser>("blazorapiuser");
+identity.WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
 
 builder.Build().Run();
 

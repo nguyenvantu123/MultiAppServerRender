@@ -17,12 +17,10 @@ namespace BlazorApiUser.Commands.Users;
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Tuple<int, string>>
 {
-    private readonly IUserRepository _userRepository;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public CreateUserCommandHandler(IUserRepository userRepository, UserManager<ApplicationUser> userManager)
+    public CreateUserCommandHandler( UserManager<ApplicationUser> userManager)
     {
-        _userRepository = userRepository;
         _userManager = userManager;
     }
 

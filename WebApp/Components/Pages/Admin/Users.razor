@@ -22,7 +22,7 @@ else
 {
     @*  <MudTable ServerData="@(new Func<TableState, Task<TableData<UserViewModel>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table"> *@
 
-    <MudTable Hover="true" Elevation="25" Items="users" Dense="true" Filter="new Func<UserViewModel, bool>(Search)" @bind-user="users">
+    <MudTable Hover="true" Elevation="25" Items="users" Dense="true" Filter="new Func<UserDataViewModel, bool>(Search)" @bind-user="users">
 
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
@@ -50,13 +50,13 @@ else
 
         <HeaderContent>
             <MudTh>Actions</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.FirstName)">First Name</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.LastName)">Last Name</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.UserName)">UserName</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.Email)">Email</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.PhoneNumber)">PhoneNumber</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.EmailConfirmed)">Email Confirmation</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserViewModel, object>(x => x.IsActive)">Active</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.FirstName)">First Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.LastName)">Last Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.UserName)">UserName</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.Email)">Email</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.PhoneNumber)">PhoneNumber</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.EmailConfirmed)">Email Confirmation</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.IsActive)">Active</MudTableSortLabel></MudTh>
 
         </HeaderContent>
 
@@ -211,7 +211,7 @@ else
 </MudDialog> *@
 
 @code {
-    private MudTable<UserViewModel> table;
+    private MudTable<UserDataViewModel> table;
 
     // [Inject] IViewNotifier viewNotifier { get; set; }
     // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
@@ -241,9 +241,9 @@ else
 
     private List<BreadcrumbItem> _items { get; set; }
 
-    protected List<UserViewModel> users { get; set; }
+    protected List<UserDataViewModel> users { get; set; }
     protected List<SelectItem<Guid>> roleSelections { get; set; } = new();
-    protected UserViewModel currentUser { get; set; } = new UserViewModel();
+    protected UserDataViewModel currentUser { get; set; } = new UserDataViewModel();
     protected RegisterViewModel newUserViewModel { get; set; } = new RegisterViewModel();
     protected ChangePasswordViewModel changePasswordViewModel { get; set; } = new ChangePasswordViewModel();
 
@@ -282,7 +282,7 @@ else
         };
     }
 
-    private bool Search(UserViewModel user)
+    private bool Search(UserDataViewModel user)
     {
         if (string.IsNullOrWhiteSpace(_searchString)) return true;
         if (user.FirstName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
@@ -377,7 +377,7 @@ else
     //     editDialogOpen = true;
     // }
 
-    protected void OpenResetPasswordDialog(UserViewModel user)
+    protected void OpenResetPasswordDialog(UserDataViewModel user)
     {
         currentUser = user;
 
@@ -386,7 +386,7 @@ else
         changePasswordDialogOpen = true;
     }
 
-    protected void OpenDeleteDialog(UserViewModel user)
+    protected void OpenDeleteDialog(UserDataViewModel user)
     {
         currentUser = user;
         deleteUserDialogOpen = true;
@@ -497,11 +497,11 @@ else
         }
     }
 
-    private async Task<TableData<UserViewModel>> ServerReload(TableState state)
+    private async Task<TableData<UserDataViewModel>> ServerReload(TableState state)
     {
         await OnPage(state.Page, state.PageSize);
 
-        return new TableData<UserViewModel>() { TotalItems = totalItemsCount, Items = users };
+        return new TableData<UserDataViewModel>() { TotalItems = totalItemsCount, Items = users };
     }
 
     private async Task InvokeModal()

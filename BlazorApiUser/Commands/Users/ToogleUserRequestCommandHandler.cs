@@ -22,14 +22,12 @@ namespace BlazorApiUser.Commands.Users;
 
 public class ToogleUserRequestCommandHandler : IRequestHandler<ToogleUserRequestCommand, Tuple<int, string>>
 {
-    private readonly IUserRepository _userRepository;
     private readonly UserManager<ApplicationUser> _userManager;
     protected readonly IHttpContextAccessor _httpContextAccessor;
 
 
-    public ToogleUserRequestCommandHandler(IUserRepository userRepository, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+    public ToogleUserRequestCommandHandler( UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
     {
-        _userRepository = userRepository;
         _userManager = userManager;
         _httpContextAccessor = httpContextAccessor;
     }

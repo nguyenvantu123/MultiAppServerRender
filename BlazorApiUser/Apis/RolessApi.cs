@@ -151,19 +151,19 @@ public static class RolesApi
         return new ApiResponse<List<string>>(statusCode: 200, message: "", result: new List<string>());
     }
 
-    public static async Task<ApiResponse<UserViewModel>> GetUserById([FromQuery] string id, [AsParameters] UserServices userServices, UserManager<ApplicationUser> userManager, IMapper autoMapper)
+    public static async Task<ApiResponse<UserDataViewModel>> GetUserById([FromQuery] string id, [AsParameters] UserServices userServices, UserManager<ApplicationUser> userManager, IMapper autoMapper)
     {
 
         var user = await userManager.FindByIdAsync(id);
 
         if (user == null)
         {
-            return new ApiResponse<UserViewModel>(404, "User Not Found", null);
+            return new ApiResponse<UserDataViewModel>(404, "User Not Found", null);
         }
 
-        var result = autoMapper.Map<UserViewModel>(user);
+        var result = autoMapper.Map<UserDataViewModel>(user);
 
-        return new ApiResponse<UserViewModel>(200, "Success", result);
+        return new ApiResponse<UserDataViewModel>(200, "Success", result);
     }
 
     public static async Task<ApiResponse<UserRolesResponse>> GetUserByRoleId([FromQuery] string id, [AsParameters] UserServices userServices, [AsParameters] UserManager<ApplicationUser> userManager, [AsParameters] RoleManager<ApplicationRole> roleManager, IMapper autoMapper)

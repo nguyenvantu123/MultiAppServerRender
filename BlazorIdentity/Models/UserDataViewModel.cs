@@ -1,6 +1,6 @@
 ﻿namespace BlazorIdentity.Users.Models
 {
-    public class UserViewModel : BaseDto
+    public class UserDataViewModel : BaseDto
     {
         public bool IsAuthenticated { get; set; }
         public Guid Id { get; set; }
