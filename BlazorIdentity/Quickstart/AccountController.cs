@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-using BlazorIdentity.Users.Controller;
-using BlazorIdentity.Users.Controller.Account;
+using BlazorIdentity.Users.Extensions;
 using BlazorIdentity.Users.Models;
+using BlazorIdentity.Users.Models.AccountViewModels;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
@@ -14,7 +14,7 @@ using Duende.IdentityServer.Stores;
 
 namespace BlazorIdentity.Quickstart
 {
-    [SecurityHeaders]
+    //[SecurityHeaders]
     [AllowAnonymous]
     public class AccountController : Controller
     {

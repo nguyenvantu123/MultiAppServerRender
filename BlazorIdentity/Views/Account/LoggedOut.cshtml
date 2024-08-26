@@ -1,7 +1,7 @@
-@using BlazorIdentity.Users.Controller.Account
+@using BlazorIdentity.Users.Models.AccountViewModels
 @model LoggedOutViewModel
 
-@{ 
+@{
     // set this so the layout rendering sees an anonymous user
     ViewData["signed-out"] = true;
 }
@@ -28,8 +28,5 @@
 
 @section scripts
 {
-    @if (Model.AutomaticRedirectAfterSignOut)
-    {
-        <script src="~/js/signout-redirect.js"></script>
-    }
+    <script src="~/js/signout-redirect.js"></script>
 }
