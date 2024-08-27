@@ -149,7 +149,7 @@ namespace BlazorIdentity.Data
 
             builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key });
 
-            builder.Entity<DeviceFlowCodes>().ToTable("DeviceFlowCodes").HasNoKey();
+            builder.Entity<DeviceFlowCodes>().ToTable("DeviceFlowCodes").HasKey(x => x.DeviceCode);
             //builder.Ignore<IdentityRole<Guid>>();
             //builder.Ignore<IdentityRoleClaim<Guid>>();
             //builder.Ignore<IdentityUser<Guid>>();

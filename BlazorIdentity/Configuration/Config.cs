@@ -14,6 +14,7 @@ namespace BlazorIdentity.Users.Configuration
                 new ApiResource("identity", "Identity Service"),
                 new ApiResource("files", "File Service"),
                 new ApiResource("webhooks", "Webhooks registration Service"),
+                new ApiResource("users", "Users Service"),
             };
         }
 
@@ -25,8 +26,8 @@ namespace BlazorIdentity.Users.Configuration
             {
                 new ApiScope("identity", "Identity Service" ),
                 new ApiScope("files", "File Service"),
-                new ApiScope("webhooks", "Webhooks registration Service"),
                 new ApiScope("role", "Role Service"),
+                new ApiScope("users", "User Service"),
             };
         }
 
@@ -46,35 +47,6 @@ namespace BlazorIdentity.Users.Configuration
         {
             return new List<Client>
             {
-                new Client
-                {
-                    ClientId = "xamarin",
-                    ClientName = "eShop Xamarin OpenId Client",
-                    AllowedGrantTypes = GrantTypes.Hybrid,                    
-                    //Used to retrieve the access token on the back channel.
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-                    RedirectUris = { configuration["XamarinCallback"] },
-                    RequireConsent = false,
-                    RequirePkce = true,
-                    PostLogoutRedirectUris = { $"{configuration["XamarinCallback"]}/Account/Redirecting" },
-                    //AllowedCorsOrigins = { "http://eshopxamarin" },
-                    AllowedScopes = new List<string>
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.OfflineAccess,
-                        "orders",
-                        "basket",
-                        "mobileshoppingagg",
-                        "webhooks"
-                    },
-                    //Allow requesting refresh tokens for long lived API access
-                    AllowOfflineAccess = true,
-                    AllowAccessTokensViaBrowser = true
-                },
                 new Client
                 {
                     ClientId = "webapp",
@@ -104,43 +76,9 @@ namespace BlazorIdentity.Users.Configuration
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
                         "files",
-                        "basket",
-                        "webshoppingagg",
-                        "webhooks",
+                        "users",
                         "identity",
-                        "role"
-                    },
-                    AccessTokenLifetime = 60*60*2, // 2 hours
-                    IdentityTokenLifetime= 60*60*2 // 2 hours
-                },
-                new Client
-                {
-                    ClientId = "webhooksclient",
-                    ClientName = "Webhooks Client",
-                    ClientSecrets = new List<Secret>
-                    {
-                        new Secret("secret".Sha256())
-                    },
-                    ClientUri = $"{configuration["WebhooksWebClient"]}",                             // public uri of the client
-                    AllowedGrantTypes = GrantTypes.Code,
-                    AllowAccessTokensViaBrowser = false,
-                    RequireConsent = false,
-                    AllowOfflineAccess = true,
-                    AlwaysIncludeUserClaimsInIdToken = true,
-                    RedirectUris = new List<string>
-                    {
-                        $"{configuration["WebhooksWebClient"]}/signin-oidc"
-                    },
-                    PostLogoutRedirectUris = new List<string>
-                    {
-                        $"{configuration["WebhooksWebClient"]}/signout-callback-oidc"
-                    },
-                    AllowedScopes = new List<string>
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.OfflineAccess,
-                        "webhooks"
+                        "roles"
                     },
                     AccessTokenLifetime = 60*60*2, // 2 hours
                     IdentityTokenLifetime= 60*60*2 // 2 hours
@@ -157,7 +95,7 @@ namespace BlazorIdentity.Users.Configuration
                     AllowedScopes =
                     {
                         "files",
-                        "role"
+                        "roles"
                     }
                 },
                 new Client
@@ -173,22 +111,23 @@ namespace BlazorIdentity.Users.Configuration
                     AllowedScopes =
                     {
                         "identity",
-                        "role"
+                        "roles"
                     }
                 },
                 new Client
                 {
-                    ClientId = "webhooksswaggerui",
-                    ClientName = "WebHooks Service Swagger UI",
+                    ClientId = "usersswaggerui",
+                    ClientName = "Users Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris = { $"{configuration["WebhooksApiClient"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{configuration["WebhooksApiClient"]}/swagger/" },
+                    RedirectUris = { $"{configuration["UsersApiClient"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{configuration["UsersApiClient"]}/swagger/" },
 
                     AllowedScopes =
                     {
-                        "webhooks"
+                        "users",
+                        "roles"
                     }
                 }
             };

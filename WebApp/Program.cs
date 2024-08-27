@@ -96,7 +96,6 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("files");
     options.Scope.Add("identity");
     options.Scope.Add("offline_access");
-    //options.Scope.Add("role");
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
     options.MapInboundClaims = false;
 });
@@ -209,12 +208,12 @@ builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
-    httpClient.BaseAddress = new("https://BlazorIdentityusers");
+    httpClient.BaseAddress = new("https://blazorapiuser");
 }).AddApiVersion(1.0).AddAuthToken();
 
 builder.Services.AddHttpClient<FileApiClient>(httpClient =>
 {
-    httpClient.BaseAddress = new("https://BlazorIdentityfiles");
+    httpClient.BaseAddress = new("https://blazorfiles");
 }).AddApiVersion(1.0).AddAuthToken();
 
 //builder.Services.AddHttpForwarderWithServiceDiscovery();
