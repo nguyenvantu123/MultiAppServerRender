@@ -23,72 +23,66 @@ public static class UsersApi
 {
     public static RouteGroupBuilder MapUsersApiV1(this IEndpointRouteBuilder app)
     {
-        var api = app.MapGroup("api/users").HasApiVersion(1.0);
+        var api = app.MapGroup("api/admin").HasApiVersion(1.0);
 
-        api.MapPost("/create", Create).AllowAnonymous();
+        api.MapPost("/users/create", Create);
 
-        api.MapPost("/admin/update-user", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => AdminUpdateUser);
+        api.MapPost("/users/update-user", AdminUpdateUser);
 
-        api.MapDelete("/admin/delete-user/{id}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Delete)] () => AdminUpdateUser);
+        //api.MapDelete("/users/delete-user/{id}", AdminUpdateUser);
 
-        api.MapPost("/admin/reset-password", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => ResetPasswordUser);
+        //api.MapPost("/users/reset-password", ResetPasswordUser);
 
-        api.MapGet("/admin/get-permission-by-user", [Authorize] (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
+        //api.MapGet("/users/get-permission-by-user", (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
 
-        api.MapGet("/admin/users", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUser);
+        api.MapGet("/users", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => GetUser);
 
-        api.MapGet("/admin/user/{id}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUserById);
+        //api.MapGet("/users/{id}", GetUserById);
 
-        api.MapGet("/admin/user-roles/{roleId}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUserByRoleId);
+        //api.MapGet("/users/user-roles/{roleId}", GetUserByRoleId);
 
-        api.MapPut("/admin/update-user-roles", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => UpdateUserRoles);
+        //api.MapPut("/users/update-user-roles", UpdateUserRoles);
 
-        api.MapPut("/admin/toggle-user-status", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => ToggleUserStatus);
-
-        //api.MapGet("{orderId:int}", GetOrderAsync);
-        //api.MapGet("/", GetOrdersByUserAsync);
-        //api.MapGet("/cardtypes", GetCardTypesAsync);
-        //api.MapPost("/draft", CreateOrderDraftAsync);
-        //api.MapPost("/", CreateOrderAsync);
+        //api.MapPut("/users/toggle-user-status", ToggleUserStatus);
 
         return api;
     }
 
-    public static async Task<ApiResponse> ToggleUserStatus([FromBody] ToogleUserRequestCommand toggleUserStatusCommand, IMediator mediator)
+    public static async Task<ApiResponse> ToggleUserStatus([FromBody] ToogleUserRequestCommand toggleUserStatusCommand, [AsParameters] UserServices userServices)
     {
-        var sendCommand = await mediator.Send(toggleUserStatusCommand);
+        var sendCommand = await userServices.Mediator.Send(toggleUserStatusCommand);
 
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, sendCommand);
     }
 
-    public static async Task<ApiResponse> Create([FromBody] CreateUserCommand command, IMediator mediator)
+    public static async Task<ApiResponse> Create([FromBody] CreateUserCommand command, [AsParameters] UserServices userServices)
     {
-        var sendCommand = await mediator.Send(command);
+        var sendCommand = await userServices.Mediator.Send(command);
 
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
     }
 
-    public static async Task<ApiResponse> AdminUpdateUser([FromBody] AdminUpdateUserCommand command, IMediator mediator)
+    public static async Task<ApiResponse> AdminUpdateUser([FromBody] AdminUpdateUserCommand command, [AsParameters] UserServices userServices)
     {
-        var sendCommand = await mediator.Send(command);
+        var sendCommand = await userServices.Mediator.Send(command);
 
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
     }
 
-    public static async Task<ApiResponse> AdminUpdateDelete([FromQuery] string id, IMediator mediator)
+    public static async Task<ApiResponse> AdminUpdateDelete([FromQuery] string id, [AsParameters] UserServices userServices)
     {
         AdminDeleteUserCommand adminDeleteUserCommand = new AdminDeleteUserCommand();
         adminDeleteUserCommand.Id = id;
 
-        var sendCommand = await mediator.Send(adminDeleteUserCommand);
+        var sendCommand = await userServices.Mediator.Send(adminDeleteUserCommand);
 
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, null);
     }
 
-    public static async Task<ApiResponse> ResetPasswordUser([FromBody] ChangePasswordCommand changePasswordCommand, IMediator mediator)
+    public static async Task<ApiResponse> ResetPasswordUser([FromBody] ChangePasswordCommand changePasswordCommand, [AsParameters] UserServices userServices)
     {
 
-        var sendCommand = await mediator.Send(changePasswordCommand);
+        var sendCommand = await userServices.Mediator.Send(changePasswordCommand);
 
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, null);
     }
@@ -113,15 +107,17 @@ public static class UsersApi
         return new ApiResponse<List<string>>(statusCode: 200, message: "", result: new List<string>());
     }
 
-    public static async Task<ApiResponse<List<UserDataViewModel>>> GetUser([FromQuery] GetListUserQuery getListUserQuery, IMediator mediator)
+    public static async Task<ApiResponse<List<UserDataViewModel>>> GetUser([FromQuery] int pageSize, [FromQuery] int pageNumber, [FromServices] UserServices userServices)
     {
-
-        var userLst = await mediator.Send(getListUserQuery);
+        GetListUserQuery query = new GetListUserQuery();
+        query.PageSize = pageSize;
+        query.PageNumber = pageNumber;
+        var userLst = await userServices.Mediator.Send(query);
 
         return new ApiResponse<List<UserDataViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
     }
 
-    public static async Task<ApiResponse<UserDataViewModel>> GetUserById([FromQuery] string id, [AsParameters] UserServices userServices, UserManager<ApplicationUser> userManager, IMapper autoMapper)
+    public static async Task<ApiResponse<UserDataViewModel>> GetUserById([AsParameters] string id, UserManager<ApplicationUser> userManager, IMapper autoMapper)
     {
 
         var user = await userManager.FindByIdAsync(id);
@@ -136,7 +132,7 @@ public static class UsersApi
         return new ApiResponse<UserDataViewModel>(200, "Success", result);
     }
 
-    public static async Task<ApiResponse<UserRolesResponse>> GetUserByRoleId([FromQuery] string id, [AsParameters] UserServices userServices, [AsParameters] UserManager<ApplicationUser> userManager, [AsParameters] RoleManager<ApplicationRole> roleManager, IMapper autoMapper)
+    public static async Task<ApiResponse<UserRolesResponse>> GetUserByRoleId([AsParameters] string id, [AsParameters] UserManager<ApplicationUser> userManager, [AsParameters] RoleManager<ApplicationRole> roleManager, IMapper autoMapper)
     {
 
         var viewModel = new List<UserRoleModel>();
@@ -169,7 +165,7 @@ public static class UsersApi
         return new ApiResponse<UserRolesResponse>(200, "Success", result);
     }
 
-    public static async Task<ApiResponse> UpdateUserRoles([FromBody] UpdateUserRolesCommand updateUserRolesCommand, IMediator mediator)
+    public static async Task<ApiResponse> UpdateUserRoles([FromBody] UpdateUserRolesCommand updateUserRolesCommand, [AsParameters] IMediator mediator)
     {
 
         var command = await mediator.Send(updateUserRolesCommand);

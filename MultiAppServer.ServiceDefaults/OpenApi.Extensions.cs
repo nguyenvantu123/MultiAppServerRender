@@ -27,17 +27,6 @@ public static partial class Extensions
         {
             app.UseSwaggerUI(setup =>
             {
-                /// {
-                ///   "OpenApi": {
-                ///     "Endpoint: {
-                ///         "Name": 
-                ///     },
-                ///     "Auth": {
-                ///         "ClientId": ..,
-                ///         "AppName": ..
-                ///     }
-                ///   }
-                /// }
 
                 var pathBase = configuration["PATH_BASE"] ?? string.Empty;
                 var authSection = openApiSection.GetSection("Auth");
@@ -58,7 +47,6 @@ public static partial class Extensions
                 }
             });
 
-            // Add a redirect from the root of the app to the swagger endpoint
             app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
         }
 
@@ -82,8 +70,6 @@ public static partial class Extensions
 
         if (apiVersioning is not null)
         {
-            // the default format will just be ApiVersion.ToString(); for example, 1.0.
-            // this will format the version as "'v'major[.minor][-status]"
             apiVersioning.AddApiExplorer(options => options.GroupNameFormat = "'v'VVV");
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen(options => options.OperationFilter<OpenApiDefaultValues>());

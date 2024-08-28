@@ -39,7 +39,7 @@ public class GetListUserQueryHandler : IRequestHandler<GetListUserQuery, Tuple<i
     {
         var userList = _userManager.Users.Include(x => x.UserRoles).AsQueryable();
         var count = userList.Count();
-        var listUsers = await userList.OrderBy(x => x.Id).Skip(command.pageNumber * command.pageSize).Take(command.pageSize).ToListAsync();
+        var listUsers = await userList.OrderBy(x => x.Id).Skip(command.PageNumber * command.PageSize).Take(command.PageSize).ToListAsync();
 
         var userDtoList = _autoMapper.Map<List<UserDataViewModel>>(listUsers);
 

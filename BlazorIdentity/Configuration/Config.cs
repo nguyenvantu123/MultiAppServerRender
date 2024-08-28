@@ -26,7 +26,6 @@ namespace BlazorIdentity.Users.Configuration
             {
                 new ApiScope("identity", "Identity Service" ),
                 new ApiScope("files", "File Service"),
-                new ApiScope("role", "Role Service"),
                 new ApiScope("users", "User Service"),
             };
         }
@@ -77,8 +76,7 @@ namespace BlazorIdentity.Users.Configuration
                         IdentityServerConstants.StandardScopes.OfflineAccess,
                         "files",
                         "users",
-                        "identity",
-                        "roles"
+                        "identity"
                     },
                     AccessTokenLifetime = 60*60*2, // 2 hours
                     IdentityTokenLifetime= 60*60*2 // 2 hours
@@ -94,8 +92,7 @@ namespace BlazorIdentity.Users.Configuration
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedScopes =
                     {
-                        "files",
-                        "roles"
+                        "files"
                     }
                 },
                 new Client
@@ -111,7 +108,6 @@ namespace BlazorIdentity.Users.Configuration
                     AllowedScopes =
                     {
                         "identity",
-                        "roles"
                     }
                 },
                 new Client
@@ -126,8 +122,7 @@ namespace BlazorIdentity.Users.Configuration
 
                     AllowedScopes =
                     {
-                        "users",
-                        "roles"
+                        "users"
                     }
                 }
             };
