@@ -35,7 +35,7 @@ public static class UsersApi
 
         //api.MapGet("/users/get-permission-by-user", (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
 
-        api.MapGet("/users", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => GetUser);
+        api.MapGet("/users", [Authorize(Roles = $"Administrator")] (int pageNumber = 0, int pageSize = 10) => GetUser).AllowAnonymous();
 
         //api.MapGet("/users/{id}", GetUserById);
 
@@ -107,12 +107,12 @@ public static class UsersApi
         return new ApiResponse<List<string>>(statusCode: 200, message: "", result: new List<string>());
     }
 
-    public static async Task<ApiResponse<List<UserDataViewModel>>> GetUser([FromQuery] int pageSize, [FromQuery] int pageNumber, [FromServices] UserServices userServices)
+    public static async Task<ApiResponse<List<UserDataViewModel>>> GetUser([FromServices] UserServices userServices)
     {
-        GetListUserQuery query = new GetListUserQuery();
-        query.PageSize = pageSize;
-        query.PageNumber = pageNumber;
-        var userLst = await userServices.Mediator.Send(query);
+        GetListUserQuery getListUserQuery = new GetListUserQuery();
+        getListUserQuery.PageNumber = 0;
+        getListUserQuery.PageSize = 10;
+        var userLst = await userServices.Mediator.Send(getListUserQuery);
 
         return new ApiResponse<List<UserDataViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
     }
