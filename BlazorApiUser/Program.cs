@@ -13,19 +13,21 @@ using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 using System.Reflection;
 using BlazorApiUser.IntegrationEvents;
+using IntegrationEventLogEF.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-
-builder.AddRabbitMQ("Eventbus");
-
 builder.AddSqlServerDbContext<ApplicationDbContext>("FileDb");
 
 builder.AddDefaultAuthentication();
 
+builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<ApplicationDbContext>>();
+
 builder.Services.AddScoped<IUserIntegrationEventService, UserIntegrationEventService>();
+
+builder.AddRabbitMQ("Eventbus");
 
 // Configure mediatR
 builder.Services.AddMediatR(cfg =>
