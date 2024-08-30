@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 using System.Reflection;
+using BlazorApiUser.IntegrationEvents;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.AddRabbitMQ("Eventbus");
 builder.AddSqlServerDbContext<ApplicationDbContext>("FileDb");
 
 builder.AddDefaultAuthentication();
+
+builder.Services.AddScoped<IUserIntegrationEventService, UserIntegrationEventService>();
 
 // Configure mediatR
 builder.Services.AddMediatR(cfg =>

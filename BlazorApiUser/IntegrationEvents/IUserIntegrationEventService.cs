@@ -1,6 +1,6 @@
 ﻿using MultiAppServer.EventBus.Events;
 
-namespace BlazorIdentityFiles.Application.IntegrationEvents;
+namespace BlazorApiUser.IntegrationEvents;
 
 public interface IUserIntegrationEventService
 {
