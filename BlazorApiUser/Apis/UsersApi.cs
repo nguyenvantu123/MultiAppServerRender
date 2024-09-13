@@ -37,7 +37,7 @@ public static class UsersApi
 
         api.MapGet("/users", [Authorize(Roles = $"Administrator")] (int pageNumber = 0, int pageSize = 10) => GetUser).AllowAnonymous();
 
-        //api.MapGet("/users/{id}", GetUserById);
+        api.MapGet("/users/{id:int}", GetUserById);
 
         //api.MapGet("/users/user-roles/{roleId}", GetUserByRoleId);
 
@@ -117,7 +117,7 @@ public static class UsersApi
         return new ApiResponse<List<UserDataViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
     }
 
-    public static async Task<ApiResponse<UserDataViewModel>> GetUserById([AsParameters] string id, UserManager<ApplicationUser> userManager, IMapper autoMapper)
+    public static async Task<ApiResponse<UserDataViewModel>> GetUserById(string id, UserManager<ApplicationUser> userManager, IMapper autoMapper)
     {
 
         var user = await userManager.FindByIdAsync(id);

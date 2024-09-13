@@ -115,7 +115,7 @@ namespace BlazorIdentity.Users.Models
         public async Task EnsureAdminIdentitiesAsync()
         {
             await EnsureRoleAsync(DefaultRoleNames.Administrator, _entityPermissions.GetAllPermissionValues());
-            await CreateUserAsync(DefaultUserNames.Administrator, "admin123", "Admin", "MultiApp", "nguyenvantu020794@gmail.com", "0334336232", new string[] { DefaultRoleNames.Administrator });
+            await CreateUserAsync(DefaultUserNames.Administrator, UserConstants.DefaultPassword, "Admin", "MultiApp", "nguyenvantu020794@gmail.com", "0334336232", new string[] { DefaultRoleNames.Administrator });
 
             ApplicationRole adminRole = await _roleManager.FindByNameAsync(DefaultRoleNames.Administrator);
             var AllClaims = _entityPermissions.GetAllPermissionValues().Distinct();
