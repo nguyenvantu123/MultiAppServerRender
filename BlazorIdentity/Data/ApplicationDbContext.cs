@@ -24,6 +24,7 @@ namespace BlazorIdentity.Data
 
 
         private IDbContextTransaction _currentTransaction;
+        public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
 
         public new ITenantInfo TenantInfo { get; }
 
