@@ -35,7 +35,7 @@ public static class UsersApi
 
         //api.MapGet("/users/get-permission-by-user", (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
 
-        api.MapGet("/users", async (int pageNumber, int pageSize, [AsParameters] UserServices userServices) =>
+        api.MapGet("/users", [Authorize(Roles = "Administrator")] async (int pageNumber, int pageSize, [AsParameters] UserServices userServices) =>
         {
             GetListUserQuery getListUserQuery = new GetListUserQuery();
             getListUserQuery.PageNumber = 0;

@@ -27,7 +27,7 @@ public static class RolesApi
     {
         var api = app.MapGroup("api/roles").HasApiVersion(1.0);
 
-        api.MapGet("/admin/roles", [Authorize(Roles = "Administrator", Policy = Permissions.Role.Read)] () => GetRoles);
+        api.MapGet("/admin/roles", GetRoles);
 
         api.MapGet("/admin/get-role/{name}", [Authorize] () => GetRoleByName);
 
@@ -59,10 +59,10 @@ public static class RolesApi
         return api;
     }
 
-    public static async Task<ApiResponse<List<RoleDto>>> GetRoles([FromQuery] GetListRoleQuery getListRoleQuery, IMediator mediator)
+    public static async Task<ApiResponse<List<RoleDto>>> GetRoles([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
     {
 
-        var userLst = await mediator.Send(getListRoleQuery);
+        var userLst = await userServices.Mediator.Send(getListRoleQuery);
 
         return new ApiResponse<List<RoleDto>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
     }

@@ -86,6 +86,17 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
+var users = app.NewVersionedApi("Users");
+
+users.MapUsersApiV1()
+      .RequireAuthorization();
+
+var roles = app.NewVersionedApi("Roles");
+
+roles.MapRolesApiV1()
+      .RequireAuthorization();
+
+
 app.UseRouting();
 app.UseAntiforgery();
 app.UseIdentityServer();
@@ -93,15 +104,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapDefaultEndpoints();
 
-var users = app.NewVersionedApi("Users");
 
-users.MapUsersApiV1()
-      .RequireAuthorization();
-
-//var roles = app.NewVersionedApi("Roles");
-
-//roles.MapRolesApiV1()
-//      .RequireAuthorization();
 
 app.UseDefaultOpenApi();
 app.UseHttpsRedirection();
