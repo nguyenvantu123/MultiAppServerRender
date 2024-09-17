@@ -6,14 +6,22 @@ namespace BlazorApiUser.MapperProfile
 {
     public class AutoMapperConfig : Profile
     {
-        public static IMapper Initialize()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<ApplicationUser, UserDataViewModel>();
-            });
 
-            return config.CreateMapper();
+        public AutoMapperConfig()
+        {
+            // Add as many of these lines as you need to map your objects
+            CreateMap<ApplicationUser, UserDataViewModel>();
+            //CreateMap<UserDto, User>();
         }
+
+        //public static IMapper Initialize()
+        //{
+        //    var config = new MapperConfiguration(cfg =>
+        //    {
+        //        cfg.CreateMap<ApplicationUser, UserDataViewModel>().ReverseMap();
+        //    });
+
+        //    return config.CreateMapper();
+        //}
     }
 }

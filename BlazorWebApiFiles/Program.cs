@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 
-builder.AddRabbitMQ("Eventbus");
+builder.AddRabbitMQ("ConnectionStrings:Eventbus");
 
 builder.AddSqlServerDbContext<FileDbContext>("FileDb");
 

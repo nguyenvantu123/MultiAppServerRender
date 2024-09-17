@@ -14,29 +14,39 @@ using MediatR;
 using System.Reflection;
 using BlazorApiUser.IntegrationEvents;
 using IntegrationEventLogEF.Services;
+using BlazorIdentity.Users.Constants;
+using BlazorIdentity.Users.Data;
+using Finbuckle.MultiTenant;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("FileDb");
+builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+
+builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
+
+builder.Services.AddMultiTenant<AppTenantInfo>()
+    .WithHostStrategy("__tenant__")
+    .WithEFCoreStore<TenantStoreDbContext, AppTenantInfo>()
+    .WithStaticStrategy(DefaultTenant.DefaultTenantId);
 
 builder.AddDefaultAuthentication();
 
-builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<ApplicationDbContext>>();
+//builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<ApplicationDbContext>>();
 
-builder.Services.AddScoped<IUserIntegrationEventService, UserIntegrationEventService>();
+//builder.Services.AddScoped<IUserIntegrationEventService, UserIntegrationEventService>();
 
-builder.AddRabbitMQ("Eventbus");
+builder.AddRabbitMQ("ConnectionStrings:Eventbus");
 
 // Configure mediatR
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining(typeof(Program));
     cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
-    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
-    cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
-    cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
 });
 
 
@@ -70,7 +80,7 @@ var config = new AutoMapper.MapperConfiguration(cfg =>
 {
     cfg.AddProfile(new AutoMapperConfig());
 });
-var mapper = config.CreateMapper();
+IMapper mapper = config.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

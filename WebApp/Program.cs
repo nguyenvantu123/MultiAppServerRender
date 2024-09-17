@@ -40,7 +40,7 @@ builder.AddServiceDefaults();
 
 builder.AddApplicationServices();
 
-builder.AddRabbitMQ("EventBus");
+builder.AddRabbitMQ("ConnectionStrings:Eventbus");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

@@ -21,9 +21,8 @@ namespace Microsoft.Extensions.Hosting;
 /// </summary>
 public static class AspireRabbitMQExtensions
 {
-    private const string ActivitySourceName = "Aspire.RabbitMQ.Client";
+    private const string ActivitySourceName = "RabbitMQ.Client";
     private static readonly ActivitySource s_activitySource = new ActivitySource(ActivitySourceName);
-    private const string DefaultConfigSectionName = "Aspire:RabbitMQ:Client";
 
     /// <summary>
     /// Registers <see cref="IConnection"/> as a singleton in the services provided by the <paramref name="builder"/>.
@@ -35,7 +34,7 @@ public static class AspireRabbitMQExtensions
     /// <param name="configureConnectionFactory">An optional method that can be used for customizing the <see cref="IConnectionFactory"/>. It's invoked after the options are read from the configuration.</param>
     /// <remarks>Reads the configuration from "Aspire:RabbitMQ:Client" section.</remarks>
     public static void AddRabbitMQ(this IHostApplicationBuilder builder, string connectionName, Action<RabbitMQClientSettings>? configureSettings = null, Action<IConnectionFactory>? configureConnectionFactory = null)
-        => AddRabbitMQ(builder, DefaultConfigSectionName, configureSettings, configureConnectionFactory, connectionName, serviceKey: null);
+        => AddRabbitMQ(builder, connectionName, configureSettings, configureConnectionFactory, connectionName, serviceKey: null);
 
     /// <summary>
     /// Registers <see cref="IConnection"/> as a keyed singleton for the given <paramref name="name"/> in the services provided by the <paramref name="builder"/>.
@@ -46,12 +45,12 @@ public static class AspireRabbitMQExtensions
     /// <param name="configureSettings">An optional method that can be used for customizing the <see cref="RabbitMQClientSettings"/>. It's invoked after the settings are read from the configuration.</param>
     /// <param name="configureConnectionFactory">An optional method that can be used for customizing the <see cref="IConnectionFactory"/>. It's invoked after the options are read from the configuration.</param>
     /// <remarks>Reads the configuration from "Aspire:RabbitMQ:Client:{name}" section.</remarks>
-    public static void AddKeyedRabbitMQ(this IHostApplicationBuilder builder, string name, Action<RabbitMQClientSettings>? configureSettings = null, Action<IConnectionFactory>? configureConnectionFactory = null)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(name);
+    //public static void AddKeyedRabbitMQ(this IHostApplicationBuilder builder, string name, Action<RabbitMQClientSettings>? configureSettings = null, Action<IConnectionFactory>? configureConnectionFactory = null)
+    //{
+    //    ArgumentException.ThrowIfNullOrEmpty(name);
 
-        AddRabbitMQ(builder, $"{DefaultConfigSectionName}:{name}", configureSettings, configureConnectionFactory, connectionName: name, serviceKey: name);
-    }
+    //    AddRabbitMQ(builder, $"{connectionName}:{name}", configureSettings, configureConnectionFactory, connectionName: name, serviceKey: name);
+    //}
 
     private static void AddRabbitMQ(
         IHostApplicationBuilder builder,
@@ -66,7 +65,9 @@ public static class AspireRabbitMQExtensions
         var configSection = builder.Configuration.GetSection(configurationSectionName);
 
         var settings = new RabbitMQClientSettings();
-        configSection.Bind(settings);
+
+        settings.ConnectionString = configSection.Value;
+        //configSection.Bind(settings);
 
         if (builder.Configuration.GetConnectionString(connectionName) is string connectionString)
         {
