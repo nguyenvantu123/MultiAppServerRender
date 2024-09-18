@@ -76,8 +76,8 @@ public static class AuthenticationExtensions
                     {
                         c.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                         c.Response.ContentType = "application/json";
-                        var result = JsonConvert.SerializeObject(Result.Fail("The Token is expired."));
-                        return c.Response.WriteAsync(result);
+                        var result = new Results<bool> { StatusCode = 401, ErrorMessages = new List<string> { "The Token is expired." }, Success = false };
+                        return c.Response.WriteAsJsonAsync(result);
                     }
                     else
                     {
@@ -101,8 +101,10 @@ public static class AuthenticationExtensions
                     {
                         context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                         context.Response.ContentType = "application/json";
-                        var result = JsonConvert.SerializeObject(Result.Fail("You are not Authorized."));
-                        return context.Response.WriteAsync(result);
+                        //var result = JsonConvert.SerializeObject(Result.Fail("You are not Authorized."));
+
+                        var result = new Results<bool> { StatusCode = 401, ErrorMessages = new List<string> { "The Token is expired." }, Success = false };
+                        return context.Response.WriteAsJsonAsync(result);
                     }
 
                     return Task.CompletedTask;
@@ -111,7 +113,9 @@ public static class AuthenticationExtensions
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                     context.Response.ContentType = "application/json";
-                    var result = JsonConvert.SerializeObject(Result.Fail("You are not authorized to access this resource."));
+                    //var result = JsonConvert.SerializeObject(Result.Fail("You are not authorized to access this resource."));
+
+                    var result = new Results<bool> { StatusCode = 403, ErrorMessages = new List<string> { "You are not authorized to access this resource." }, Success = false };
                     return context.Response.WriteAsync(result);
                 },
             };
