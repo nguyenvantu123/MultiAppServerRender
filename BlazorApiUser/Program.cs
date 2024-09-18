@@ -49,13 +49,6 @@ builder.Services.AddMediatR(cfg =>
     //cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
 });
 
-
-//builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-//.AddRoles<ApplicationRole>()
-//.AddEntityFrameworkStores<ApplicationDbContext>()
-//.AddSignInManager()
-//.AddDefaultTokenProviders();
-
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     //Disable account confirmation.
@@ -65,7 +58,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddIdentityServer().AddAspNetIdentity<ApplicationUser>();
+//builder.Services.AddIdentityServer().AddAspNetIdentity<ApplicationUser>();
 //builder.Services.AddAntiforgery();
 
 var withApiVersioning = builder.Services.AddApiVersioning();
@@ -85,7 +78,7 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
-
+app.UsePathBase("/api");
 var users = app.NewVersionedApi("Users");
 
 users.MapUsersApiV1()
@@ -99,12 +92,9 @@ roles.MapRolesApiV1()
 
 app.UseRouting();
 app.UseAntiforgery();
-app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapDefaultEndpoints();
-
-
 
 app.UseDefaultOpenApi();
 app.UseHttpsRedirection();

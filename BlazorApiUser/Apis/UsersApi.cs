@@ -44,7 +44,7 @@ public static class UsersApi
 
             return new ApiResponse<List<UserDataViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
 
-        }).AllowAnonymous();
+        });
 
         api.MapGet("/users/{id:int}", GetUserById);
 
