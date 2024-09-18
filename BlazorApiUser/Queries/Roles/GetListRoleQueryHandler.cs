@@ -43,7 +43,7 @@ public class GetListRoleQueryHandler : IRequestHandler<GetListRoleQuery, Tuple<i
     {
         var roleQuery = _roleManager.Roles.AsQueryable().OrderBy(x => x.Name);
         var count = roleQuery.Count();
-        var listResponse = (command.pageSize > 0 ? roleQuery.Skip(command.pageNumber * command.pageSize).Take(command.pageSize) : roleQuery).ToList();
+        var listResponse = (command.PageSize > 0 ? roleQuery.Skip(command.PageNumber * command.PageSize).Take(command.PageSize) : roleQuery).ToList();
 
         var roleDtoList = new List<RoleDto>();
 

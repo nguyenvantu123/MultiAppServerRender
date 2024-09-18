@@ -5,7 +5,18 @@ using WebApp.Models;
 
 namespace BlazorApiUser.Queries.Roles
 {
-    public record GetListRoleQuery(int pageSize = 10, int pageNumber = 0) : IRequest<Tuple<int, List<RoleDto>>>;
+    public record GetListRoleQuery : IRequest<Tuple<int, List<RoleDto>>>
+    {
+        public int PageSize = 10;
+
+        public int PageNumber = 0;
+
+        public GetListRoleQuery(int pageSize, int pageNumber)
+        {
+            pageSize = PageSize;
+            pageNumber = PageNumber;
+        }
+    }
 
 
 }

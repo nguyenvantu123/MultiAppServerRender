@@ -72,6 +72,7 @@ app.UseAuthentication();
 
 app.UseRouting();
 app.UseAntiforgery();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapDefaultEndpoints();
 

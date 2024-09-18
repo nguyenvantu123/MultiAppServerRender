@@ -17,6 +17,7 @@ using IntegrationEventLogEF.Services;
 using BlazorIdentity.Users.Constants;
 using BlazorIdentity.Users.Data;
 using Finbuckle.MultiTenant;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +68,7 @@ builder.AddDefaultOpenApi(withApiVersioning);
 
 builder.Services.AddSingleton<EntityPermissions>();
 
-builder.Services.AddAntiforgery();
+//builder.Services.AddAntiforgery();
 
 var config = new AutoMapper.MapperConfiguration(cfg =>
 {
@@ -77,8 +78,13 @@ IMapper mapper = config.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+//});
+
 var app = builder.Build();
-app.UsePathBase("/api");
+//app.UsePathBase("/api");
 var users = app.NewVersionedApi("Users");
 
 users.MapUsersApiV1()
@@ -91,7 +97,7 @@ roles.MapRolesApiV1()
 
 
 app.UseRouting();
-app.UseAntiforgery();
+//app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapDefaultEndpoints();

@@ -76,7 +76,9 @@ public static class AuthenticationExtensions
                     {
                         c.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                         c.Response.ContentType = "application/json";
-                        var result = new Results<bool> { StatusCode = 401, ErrorMessages = new List<string> { "The Token is expired." }, Success = false };
+                        //var result = new ApiResponseDto { StatusCode = 401, Message = new List<string> { "The Token is expired." }, Success = false };
+
+                        var result = new ApiResponseDto<bool>(401, "The Token is expired.", false);
                         return c.Response.WriteAsJsonAsync(result);
                     }
                     else
@@ -103,7 +105,7 @@ public static class AuthenticationExtensions
                         context.Response.ContentType = "application/json";
                         //var result = JsonConvert.SerializeObject(Result.Fail("You are not Authorized."));
 
-                        var result = new Results<bool> { StatusCode = 401, ErrorMessages = new List<string> { "The Token is expired." }, Success = false };
+                        var result = new ApiResponseDto<bool>(401, "Unauthorized.", false);
                         return context.Response.WriteAsJsonAsync(result);
                     }
 
@@ -115,8 +117,8 @@ public static class AuthenticationExtensions
                     context.Response.ContentType = "application/json";
                     //var result = JsonConvert.SerializeObject(Result.Fail("You are not authorized to access this resource."));
 
-                    var result = new Results<bool> { StatusCode = 403, ErrorMessages = new List<string> { "You are not authorized to access this resource." }, Success = false };
-                    return context.Response.WriteAsync(result);
+                    var result = new ApiResponseDto<bool>(403, "You are not authorized to access this resource.", false);
+                    return context.Response.WriteAsJsonAsync(result);
                 },
             };
 

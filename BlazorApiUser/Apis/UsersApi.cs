@@ -25,9 +25,9 @@ public static class UsersApi
     {
         var api = app.MapGroup("api/admin").HasApiVersion(1.0);
 
-        api.MapPost("/users/create", Create);
+        api.MapPost("/users/create", [Authorize(AuthenticationSchemes = "Bearer")] () => Create);
 
-        api.MapPost("/users/update-user", AdminUpdateUser);
+        api.MapPost("/users/update-user", [Authorize(AuthenticationSchemes = "Bearer")] () => AdminUpdateUser);
 
         //api.MapDelete("/users/delete-user/{id}", AdminUpdateUser);
 
@@ -35,7 +35,7 @@ public static class UsersApi
 
         //api.MapGet("/users/get-permission-by-user", (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
 
-        api.MapGet("/users", [Authorize(Roles = "Administrator")] async (int pageNumber, int pageSize, [AsParameters] UserServices userServices) =>
+        api.MapGet("/users", [Authorize(AuthenticationSchemes = "Bearer")] () => async (int pageNumber, int pageSize, [AsParameters] UserServices userServices) =>
         {
             GetListUserQuery getListUserQuery = new GetListUserQuery();
             getListUserQuery.PageNumber = 0;
