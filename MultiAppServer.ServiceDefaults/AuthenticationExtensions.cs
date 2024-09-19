@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using MultiAppServer.ServiceDefaults;
-using Newtonsoft.Json;
 using System.Net;
 
 namespace eShop.ServiceDefaults;

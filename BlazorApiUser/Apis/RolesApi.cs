@@ -27,11 +27,11 @@ public static class RolesApi
     {
         var api = app.MapGroup("api/roles").HasApiVersion(1.0);
 
-        api.MapGet("/admin/roles", [Authorize(AuthenticationSchemes = "Bearer")] () => GetRoles);
+        api.MapGet("/admin/roles", GetRoles);
 
-        api.MapGet("/admin/get-role/{name}", [Authorize(AuthenticationSchemes = "Bearer")] () => GetRoleByName);
+        //api.MapGet("/admin/get-role/{name}", GetRoleByName);
 
-        api.MapPost("/admin/create", [Authorize(AuthenticationSchemes = "Bearer")] () => Create);
+        api.MapPost("/admin/create", Create);
 
         //api.MapPost("/admin/update-user", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => AdminUpdateUser);
 
@@ -59,7 +59,7 @@ public static class RolesApi
         return api;
     }
 
-    public static async Task<ApiResponse<List<RoleDto>>> GetRoles([FromRoute] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponse<List<RoleDto>>> GetRoles([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
     {
 
         var userLst = await userServices.Mediator.Send(getListRoleQuery);
