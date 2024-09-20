@@ -304,7 +304,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto> UpdateUserRolesAsync(UpdateUserRolesRequest request)
         {
-            var apiResponse = await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/user-roles", request);
+            var apiResponse = await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/user-roles/{request.UserId}", request.UserRoles);
             return apiResponse;
         }
 

@@ -50,12 +50,11 @@ public class GetListRoleQueryHandler : IRequestHandler<GetListRoleQuery, Tuple<i
         foreach (var role in listResponse)
         {
             var claims = await _roleManager.GetClaimsAsync(role);
-            List<string> permissions = claims.OrderBy(x => x.Value).Where(x => x.Type == ApplicationClaimTypes.Permission).Select(x => _entityPermissions.GetPermissionByValue(x.Value).Name).ToList();
-
             roleDtoList.Add(new RoleDto
             {
                 Id = role.Id,
                 Name = role.Name,
+                Description = role.Description
                 //Permissions = permissions
             });
         }

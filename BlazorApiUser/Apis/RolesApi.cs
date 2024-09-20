@@ -25,40 +25,21 @@ public static class RolesApi
 {
     public static RouteGroupBuilder MapRolesApiV1(this IEndpointRouteBuilder app)
     {
-        var api = app.MapGroup("api/roles").HasApiVersion(1.0);
+        var api = app.MapGroup("api/admin").HasApiVersion(1.0);
 
-        api.MapGet("/admin/roles", GetRoles);
+        api.MapGet("/roles", GetRoles);
 
-        //api.MapGet("/admin/get-role/{name}", GetRoleByName);
+        api.MapGet("/roles/{id}", GetRoleById);
 
-        api.MapPost("/admin/create", Create);
+        api.MapPost("/roles/create", Create);
 
-        //api.MapPost("/admin/update-user", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => AdminUpdateUser);
+        api.MapDelete("/roles/{id}", Delete);
 
-        //api.MapDelete("/admin/delete-user/{id}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Delete)] () => AdminUpdateUser);
-
-        //api.MapPost("/admin/reset-password", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => ResetPasswordUser);
-
-        //api.MapGet("/admin/get-permission-by-user", [Authorize] (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
-
-
-        //api.MapGet("/admin/user/{id}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUserById);
-
-        //api.MapGet("/admin/user-roles/{roleId}", [Authorize(Roles = "Administrator", Policy = Permissions.User.Read)] () => GetUserByRoleId);
-
-        //api.MapPut("/admin/update-user-roles", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => UpdateUserRoles);
-
-        //api.MapPut("/admin/toggle-user-status", [Authorize(Roles = "Administrator", Policy = Permissions.User.Update)] () => ToggleUserStatus);
-
-        //api.MapGet("{orderId:int}", GetOrderAsync);
-        //api.MapGet("/", GetOrdersByUserAsync);
-        //api.MapGet("/cardtypes", GetCardTypesAsync);
-        //api.MapPost("/draft", CreateOrderDraftAsync);
-        //api.MapPost("/", CreateOrderAsync);
-
+        api.MapPost("/roles/{id}", Update);
         return api;
     }
 
+    [Authorize(Roles = Permissions.Role.Read)]
     public static async Task<ApiResponse<List<RoleDto>>> GetRoles([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
     {
 
@@ -67,10 +48,67 @@ public static class RolesApi
         return new ApiResponse<List<RoleDto>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
     }
 
-    public static async Task<ApiResponse<List<RoleDto>>> GetRoleByName(string name, [AsParameters] RoleManager<ApplicationRole> roleManager, [AsParameters] EntityPermissions entityPermissions)
+    [Authorize(Roles = Permissions.Role.Update)]
+    public static async Task<ApiResponse> Update(string id, [FromBody] CreateRoleCommand command, [AsParameters] RoleManager<ApplicationRole> roleManager)
     {
 
-        var identityRole = await roleManager.FindByNameAsync(name);
+        if (await roleManager.FindByNameAsync(command.Name) != null)
+        {
+            return new ApiResponse(400, $"Name is exist!!!!");
+        }
+
+        if (await roleManager.FindByIdAsync(id) == null)
+        {
+            return new ApiResponse(400, $"Role doesn't exist!!!!");
+        }
+
+        var role = await roleManager.FindByIdAsync(id);
+        role.Name = command.Name;
+        role.Description = command.Description;
+
+        var result = await roleManager.UpdateAsync(role);
+
+        if (!result.Succeeded)
+        {
+            return new ApiResponse(400, $"{string.Join(";", result.Errors)}");
+        }
+
+        return new ApiResponse(200, $"Update Success!!!!");
+    }
+
+    [Authorize(Roles = Permissions.Role.Update)]
+    public static async Task<ApiResponse> UpdatePermission(string id, [FromBody] CreateRoleCommand command, [AsParameters] RoleManager<ApplicationRole> roleManager)
+    {
+
+        if (await roleManager.FindByNameAsync(command.Name) != null)
+        {
+            return new ApiResponse(400, $"Name is exist!!!!");
+        }
+
+        if (await roleManager.FindByIdAsync(id) == null)
+        {
+            return new ApiResponse(400, $"Role doesn't exist!!!!");
+        }
+
+        var role = await roleManager.FindByIdAsync(id);
+        role.Name = command.Name;
+        role.Description = command.Description;
+
+        var result = await roleManager.UpdateAsync(role);
+
+        if (!result.Succeeded)
+        {
+            return new ApiResponse(400, $"{string.Join(";", result.Errors)}");
+        }
+
+        return new ApiResponse(200, $"Update Success!!!!");
+    }
+
+    [Authorize(Roles = Permissions.Role.Update)]
+    public static async Task<ApiResponse<RoleDto>> GetRoleById(string id, [AsParameters] RoleManager<ApplicationRole> roleManager, [AsParameters] EntityPermissions entityPermissions)
+    {
+
+        var identityRole = await roleManager.FindByIdAsync(id);
 
         if (identityRole == null)
         {
@@ -82,12 +120,13 @@ public static class RolesApi
 
         var roleDto = new RoleDto
         {
-            Name = name,
+            Name = identityRole.Name,
         };
 
         return new ApiResponse(200, "Role fetched", roleDto);
     }
 
+    [Authorize(Roles = Permissions.Role.Create)]
     public static async Task<ApiResponse> Create([FromBody] CreateRoleCommand command, IMediator mediator)
     {
         var sendCommand = await mediator.Send(command);
@@ -95,75 +134,32 @@ public static class RolesApi
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
     }
 
-
-
-
-    public static async Task<ApiResponse> ToggleUserStatus([FromBody] ToogleUserRequestCommand toggleUserStatusCommand, IMediator mediator)
+    [Authorize(Roles = Permissions.Role.Delete)]
+    public static async Task<ApiResponse> Delete(string id, [AsParameters] UserManager<ApplicationUser> userManager, [AsParameters] RoleManager<ApplicationRole> roleManager)
     {
-        var sendCommand = await mediator.Send(toggleUserStatusCommand);
+        var roleDelete = await roleManager.FindByIdAsync(id);
 
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, sendCommand);
-    }
-
-
-    public static async Task<ApiResponse> AdminUpdateUser([FromBody] AdminUpdateUserCommand command, IMediator mediator)
-    {
-        var sendCommand = await mediator.Send(command);
-
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
-    }
-
-    public static async Task<ApiResponse> AdminUpdateDelete([FromQuery] string id, IMediator mediator)
-    {
-        AdminDeleteUserCommand adminDeleteUserCommand = new AdminDeleteUserCommand();
-        adminDeleteUserCommand.Id = id;
-
-        var sendCommand = await mediator.Send(adminDeleteUserCommand);
-
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, null);
-    }
-
-    public static async Task<ApiResponse> ResetPasswordUser([FromBody] ChangePasswordCommand changePasswordCommand, IMediator mediator)
-    {
-
-        var sendCommand = await mediator.Send(changePasswordCommand);
-
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, null);
-    }
-
-    public static async Task<ApiResponse<List<string>>> GetPermissionByUser(UserManager<ApplicationUser> userManager, ClaimsPrincipal userAuth)
-    {
-
-        var user = await userManager.GetUserAsync(userAuth);
-
-        if (user != null)
+        if (roleDelete == null)
         {
-            var claims = await userManager.GetClaimsAsync(user);
+            return new ApiResponse(400, "Role doesn't exit!!!", null);
 
-            if (claims != null)
-            {
-                return new ApiResponse<List<string>>(statusCode: 200, message: "", result: claims.ToList().Select(x => x.Value).ToList());
-
-            }
-            return new ApiResponse<List<string>>(statusCode: 200, message: "", result: new List<string>());
         }
 
-        return new ApiResponse<List<string>>(statusCode: 200, message: "", result: new List<string>());
-    }
-
-    public static async Task<ApiResponse<UserDataViewModel>> GetUserById([FromQuery] string id, [AsParameters] UserServices userServices, UserManager<ApplicationUser> userManager, IMapper autoMapper)
-    {
-
-        var user = await userManager.FindByIdAsync(id);
-
-        if (user == null)
+        if ((await userManager.GetUsersInRoleAsync(roleDelete.Name)).Any())
         {
-            return new ApiResponse<UserDataViewModel>(404, "User Not Found", null);
+            return new ApiResponse(400, "Role map with user, can't delete!!!", null);
         }
 
-        var result = autoMapper.Map<UserDataViewModel>(user);
+        var sendCommand = await roleManager.DeleteAsync(roleDelete);
 
-        return new ApiResponse<UserDataViewModel>(200, "Success", result);
+        if (!sendCommand.Succeeded)
+        {
+            return new ApiResponse(400, string.Join(";", sendCommand.Errors), null);
+
+        }
+
+        return new ApiResponse(200, "Role fetched", null);
+
     }
 
     public static async Task<ApiResponse<UserRolesResponse>> GetUserByRoleId([FromQuery] string id, [AsParameters] UserServices userServices, [AsParameters] UserManager<ApplicationUser> userManager, [AsParameters] RoleManager<ApplicationRole> roleManager, IMapper autoMapper)
@@ -197,12 +193,5 @@ public static class RolesApi
         }
         var result = new UserRolesResponse { UserRoles = viewModel };
         return new ApiResponse<UserRolesResponse>(200, "Success", result);
-    }
-
-    public static async Task<ApiResponse> UpdateUserRoles([FromBody] UpdateUserRolesCommand updateUserRolesCommand, IMediator mediator)
-    {
-
-        var command = await mediator.Send(updateUserRolesCommand);
-        return new ApiResponse(command.Item1, command.Item2, null);
     }
 }

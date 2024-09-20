@@ -5,15 +5,5 @@ using System.Runtime.Serialization;
 
 namespace BlazorApiUser.Queries.Users
 {
-    [DataContract]
-    public record GetListUserQuery : IRequest<Tuple<int, List<UserDataViewModel>>>
-    {
-        [DataMember]
-        public int PageSize = 10;
-
-        [DataMember]
-        public int PageNumber = 0;
-
-
-    }
+    public record GetListUserQuery(int pageNumber = 0, int pageSize = 10) : IRequest<Tuple<int, List<UserDataViewModel>>>;
 }

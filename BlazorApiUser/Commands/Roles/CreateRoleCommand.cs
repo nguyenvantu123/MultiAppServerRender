@@ -8,6 +8,8 @@ public record CreateRoleCommand : IRequest<Tuple<int, string>>
 
     public string Name { get; set; }
 
+    public string Description { get; set; }
+
     //public List<string> Permissions { get; set; }
 
     //public string FormattedPermissions
@@ -17,6 +19,4 @@ public record CreateRoleCommand : IRequest<Tuple<int, string>>
     //        return String.Join(", ", Permissions.ToArray());
     //    }
     //}
-
-    public Guid Id { get; set; }
 }

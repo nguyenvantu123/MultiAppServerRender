@@ -18,6 +18,10 @@ using BlazorIdentity.Users.Constants;
 using BlazorIdentity.Users.Data;
 using Finbuckle.MultiTenant;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using BlazorApiUser.Filter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +81,18 @@ var config = new AutoMapper.MapperConfiguration(cfg =>
 IMapper mapper = config.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add(new MyExceptionFilterAttribute());
+    options.Filters.Add(new MyActionFilterAttribute());
+})
+               .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 //builder.Services.AddAuthorization(options =>
 //{

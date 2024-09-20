@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using MultiAppServer.ServiceDefaults;
 using System.Net;
+using System.Text;
 
 namespace eShop.ServiceDefaults;
 
@@ -52,6 +54,16 @@ public static class AuthenticationExtensions
             options.Authority = identityUrl;
             options.RequireHttpsMetadata = false;
             options.Audience = audience;
+
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ClockSkew = TimeSpan.Zero,
+                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+            };
 
             options.Events = new JwtBearerEvents
             {
@@ -123,7 +135,14 @@ public static class AuthenticationExtensions
 
         });
 
-        services.AddAuthorization();
+        services
+       .AddAuthorization(opt =>
+       {
+           // Configure the default policy
+           opt.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+               .RequireAuthenticatedUser()
+               .Build();
+       });
         return services;
     }
 }

@@ -20,7 +20,7 @@ public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, Tuple
 {
     private readonly RoleManager<ApplicationRole> _roleManager;
 
-    public CreateRoleCommandHandler( RoleManager<ApplicationRole> roleManager)
+    public CreateRoleCommandHandler(RoleManager<ApplicationRole> roleManager)
     {
         _roleManager = roleManager;
     }
@@ -39,7 +39,7 @@ public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, Tuple
             return new Tuple<int, string>(400, $"Role {command.Name} already exists");
         }
 
-        var result = await _roleManager.CreateAsync(new ApplicationRole(command.Name));
+        var result = await _roleManager.CreateAsync(new ApplicationRole(command.Name, command.Description));
 
         if (!result.Succeeded)
         {
@@ -47,19 +47,7 @@ public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, Tuple
             return new Tuple<int, string>(400, msg);
         }
 
-        // Re-create the permissions
-        var role = await _roleManager.FindByNameAsync(command.Name);
-
-        //foreach (var claim in roleDto.Permissions)
-        //{
-        //    var resultAddClaim = await _roleManager.AddClaimAsync(role, new Claim(ApplicationClaimTypes.Permission, _entityPermissions.GetPermissionByName(claim)));
-
-        //    if (!resultAddClaim.Succeeded)
-        //        await _roleManager.DeleteAsync(role);
-        //}
-
-        return  new Tuple<int, string>(200, $"Role {command.Name} created"); 
-        //new ApiResponse(200, $"Role {roleDto.Name} created", roleDto); //fix a strange System.Text.Json exception shown only in Debug_SSB
+        return new Tuple<int, string>(200, $"Role {command.Name} created");
 
     }
 }

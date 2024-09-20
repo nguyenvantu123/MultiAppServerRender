@@ -18,6 +18,8 @@ using AutoMapper;
 using System.ComponentModel.Design;
 using BlazorApiUser.Commands.Users;
 using BlazorApiUser.Queries.Users;
+using BlazorApiUser.Queries.Roles;
+using WebApp.Models;
 
 public static class UsersApi
 {
@@ -25,38 +27,38 @@ public static class UsersApi
     {
         var api = app.MapGroup("api/admin").HasApiVersion(1.0);
 
+        api.MapGet("/users", GetUsers);
+
         api.MapPost("/users/create", Create);
 
         api.MapPost("/users/update-user", AdminUpdateUser);
 
-        //api.MapDelete("/users/delete-user/{id}", AdminUpdateUser);
+        api.MapDelete("/users/{id}", AdminDelete);
 
-        //api.MapPost("/users/reset-password", ResetPasswordUser);
+        api.MapPost("/users/reset-password", ResetPasswordUser);
 
-        //api.MapGet("/users/get-permission-by-user", (UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ClaimsPrincipal userAuth) => GetPermissionByUser(userManager, userAuth));
+        api.MapGet("/users/get-permission-by-user", GetPermissionByUser);
 
-        api.MapGet("/users", async (int pageNumber, int pageSize, [AsParameters] UserServices userServices) =>
-        {
-            GetListUserQuery getListUserQuery = new GetListUserQuery();
-            getListUserQuery.PageNumber = 0;
-            getListUserQuery.PageSize = 10;
-            var userLst = await userServices.Mediator.Send(getListUserQuery);
+        api.MapGet("/users/{id}", GetUserById);
 
-            return new ApiResponse<List<UserDataViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
+        api.MapGet("/users/user-roles/{userId}", GetUserByRoleId);
 
-        });
+        api.MapPut("/users/update-user-roles", UpdateUserRoles);
 
-        api.MapGet("/users/{id:int}", GetUserById);
-
-        //api.MapGet("/users/user-roles/{roleId}", GetUserByRoleId);
-
-        //api.MapPut("/users/update-user-roles", UpdateUserRoles);
-
-        //api.MapPut("/users/toggle-user-status", ToggleUserStatus);
+        api.MapPut("/users/toggle-user-status", ToggleUserStatus);
 
         return api;
     }
 
+    [Authorize(Roles = Permissions.User.Read)]
+    public static async Task<ApiResponse<List<UserDataViewModel>>> GetUsers([AsParameters] GetListUserQuery getListUserQuery, [AsParameters] UserServices userServices)
+    {
+        var userLst = await userServices.Mediator.Send(getListUserQuery);
+
+        return new ApiResponse<List<UserDataViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
+    }
+
+    [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponse> ToggleUserStatus([FromBody] ToogleUserRequestCommand toggleUserStatusCommand, [AsParameters] UserServices userServices)
     {
         var sendCommand = await userServices.Mediator.Send(toggleUserStatusCommand);
@@ -64,6 +66,7 @@ public static class UsersApi
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, sendCommand);
     }
 
+    [Authorize(Roles = Permissions.User.Create)]
     public static async Task<ApiResponse> Create([FromBody] CreateUserCommand command, [AsParameters] UserServices userServices)
     {
         var sendCommand = await userServices.Mediator.Send(command);
@@ -71,6 +74,7 @@ public static class UsersApi
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
     }
 
+    [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponse> AdminUpdateUser([FromBody] AdminUpdateUserCommand command, [AsParameters] UserServices userServices)
     {
         var sendCommand = await userServices.Mediator.Send(command);
@@ -78,16 +82,33 @@ public static class UsersApi
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
     }
 
-    public static async Task<ApiResponse> AdminUpdateDelete([FromQuery] string id, [AsParameters] UserServices userServices)
+    [Authorize(Roles = Permissions.User.Delete)]
+    public static async Task<ApiResponse> AdminDelete(string id, [AsParameters] UserManager<ApplicationUser> _userManager)
     {
-        AdminDeleteUserCommand adminDeleteUserCommand = new AdminDeleteUserCommand();
-        adminDeleteUserCommand.Id = id;
 
-        var sendCommand = await userServices.Mediator.Send(adminDeleteUserCommand);
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+        {
+            return new ApiResponse(400, "User not found!!!", null);
+        }
 
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, null);
+        if (user.UserName == "Administrator")
+        {
+            return new ApiResponse(400, "Can't delete admin user!!!", null);
+        }
+
+        var result = await _userManager.DeleteAsync(user);
+
+        if (!result.Succeeded)
+        {
+            return new ApiResponse(400, string.Join(";", result.Errors), null);
+
+        }
+
+        return new ApiResponse(200, string.Join(";", result.Errors), null);
     }
 
+    [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponse> ResetPasswordUser([FromBody] ChangePasswordCommand changePasswordCommand, [AsParameters] UserServices userServices)
     {
 
@@ -96,6 +117,7 @@ public static class UsersApi
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, null);
     }
 
+    [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponse<List<string>>> GetPermissionByUser(UserManager<ApplicationUser> userManager, ClaimsPrincipal userAuth)
     {
 
@@ -120,7 +142,7 @@ public static class UsersApi
     //{
 
     //}
-
+    [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponse<UserDataViewModel>> GetUserById(string id, UserManager<ApplicationUser> userManager, IMapper autoMapper)
     {
 
@@ -135,7 +157,7 @@ public static class UsersApi
 
         return new ApiResponse<UserDataViewModel>(200, "Success", result);
     }
-
+    [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponse<UserRolesResponse>> GetUserByRoleId([AsParameters] string id, [AsParameters] UserManager<ApplicationUser> userManager, [AsParameters] RoleManager<ApplicationRole> roleManager, IMapper autoMapper)
     {
 
@@ -168,7 +190,7 @@ public static class UsersApi
         var result = new UserRolesResponse { UserRoles = viewModel };
         return new ApiResponse<UserRolesResponse>(200, "Success", result);
     }
-
+    [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponse> UpdateUserRoles([FromBody] UpdateUserRolesCommand updateUserRolesCommand, [AsParameters] IMediator mediator)
     {
 
