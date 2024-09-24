@@ -294,7 +294,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<UserRolesResponse>> GetRolesByUserId(string userId)
         {
-            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<UserRolesResponse>>($"api/admin/user-roles/{userId}");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<UserRolesResponse>>($"api/admin/users/user-roles/{userId}");
             return apiResponse;
         }
 

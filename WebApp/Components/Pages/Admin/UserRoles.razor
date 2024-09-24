@@ -1,5 +1,4 @@
 ﻿@page "/admin/user-roles/{Id}"
-@attribute [Authorize(Policies.IsAdmin)]
 @using Microsoft.AspNetCore.Components
 @layout AdminMainLayout
 <PageTitle>User Roles</PageTitle>
@@ -32,7 +31,7 @@ else
             <MudTd DataLabel="Description">
                 <MudHighlighter Text="@context.RoleDescription" HighlightedText="@_searchString" />
             </MudTd>
-            <MudTd DataLabel="Role"><MudCheckBox T="bool" @bind-Checked="@context.Selected" Disabled="@(!_canEditUsers)" Color="Color.Secondary"></MudCheckBox></MudTd>
+            <MudTd DataLabel="Role"><MudCheckBox T="bool" Value="@context.Selected" Disabled="@(!_canEditUsers)" Color="Color.Secondary"></MudCheckBox></MudTd>
         </RowTemplate>
         <PagerContent>
             <TablePager />
@@ -63,26 +62,15 @@ else
     protected override async Task OnInitializedAsync()
     {
         var userState = (await authenticationStateTask).User;
-     
+
         // _canEditUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Update)).Succeeded;
 
         _canEditUsers = userState.Claims.Where(x => x.Value == PermissionsWebApp.User.Update).FirstOrDefault() != null;
 
         // _canSearchRoles = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.Role.Search)).Succeeded;
 
-        var userId = Id;
-        var result = await _accountApiClient.GetUserById(userId);
-        if (result != null)
-        {
-            var user = result;
-            if (user != null)
-            {
-                Title = $"{user.FirstName} {user.LastName}";
-                // Description = string.Format(_localizer["Manage {0} {1}'s Roles"], user.FirstName, user.LastName);
-                var response = await _accountApiClient.GetRolesByUserId(user.Id.ToString());
-                UserRolesList = response.Result.UserRoles;
-            }
-        }
+        var response = await _accountApiClient.GetRolesByUserId(Id);
+        UserRolesList = response.Result.UserRoles;
 
         _loaded = true;
     }

@@ -238,7 +238,7 @@ public static class UsersApi
 
         var result = autoMapper.Map<UserDataViewModel>(user);
 
-        result.Roles = user.UserRoles.Select(x => x.Role.Name).ToList();
+        result.Roles = await userServices.UserManager.GetRolesAsync(user);
 
         return new ApiResponse<UserDataViewModel>(200, "Success", result);
     }

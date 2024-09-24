@@ -18,7 +18,7 @@
         public string AuthenticatorUri { get; set; }
         public string[] RecoveryCodes { get; set; }
         public int CountRecoveryCodes { get; set; }
-        public List<string> Roles { get; set; }
+        public IList<string> Roles { get; set; }
         public List<KeyValuePair<string, string>> ExposedClaims { get; set; }
 
         //public List<UserRoleViewModel> UserRoles { get; set; }
