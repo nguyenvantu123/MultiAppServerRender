@@ -51,26 +51,22 @@ namespace WebApp.Interfaces
         {
             var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/login-with-recovery-code", parameters);
 
-            //if (AppState.Runtime == BlazorRuntime.Server)
-            //    if (response.Success)
-            //        await SubmitServerForm("/server/loginwith2fa/", parameters);
-
             return response;
         }
 
-        public async Task<ApiResponseDto> Logout(string returnUrl = null)
-        {
-            var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/logout", null);
+        //public async Task<ApiResponseDto> Logout(string returnUrl = null)
+        //{
+        //    var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/logout", null);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var logoutModel = new AccountFormModel() { ReturnUrl = returnUrl };
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var logoutModel = new AccountFormModel() { ReturnUrl = returnUrl };
 
-                //await SubmitServerForm("/server/logout/", logoutModel);
-            }
+        //        //await SubmitServerForm("/server/logout/", logoutModel);
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
         public async Task<ApiResponseDto> CreateUser(RegisterViewModel parameters)
         {
@@ -253,12 +249,12 @@ namespace WebApp.Interfaces
         }
         public async Task<ApiResponseDto> DeleteRole(string id)
         {
-            return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/role/{id}");
+            return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/roles/{id}");
         }
 
         public async Task<ApiResponseDto<List<RoleDto>>> GetRoles(int pageSize, int currentPage, string search)
         {
-            return await _httpClient.GetJsonAsync<ApiResponseDto<List<RoleDto>>>($"api/admin/get-roles?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<RoleDto>>>($"api/admin/roles?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
 
         //public async Task<ApiResponseDto> UpdateRole(RoleDto request)

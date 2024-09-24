@@ -33,6 +33,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
+using eShop.WebhookClient.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,7 @@ var configuration = builder.Configuration;
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddHttpContextAccessor();
 
 var identityUrl = configuration.GetRequiredValue("IdentityUrl");
 var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
@@ -263,6 +265,8 @@ if (builder.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.MapAuthenticationEndpoints();
 
 app.UseAuthentication();
 app.UseAuthorization();

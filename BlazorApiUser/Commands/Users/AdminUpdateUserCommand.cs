@@ -6,7 +6,6 @@ namespace BlazorApiUser.Commands.Users
     public record AdminUpdateUserCommand : IRequest<Tuple<int, string>>
     {
         public bool IsAuthenticated { get; set; }
-        public Guid Id { get; set; }
         public string UserName { get; set; }
         public string TenantId { get; set; }
         public string Email { get; set; }

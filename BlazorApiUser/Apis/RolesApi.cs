@@ -49,24 +49,24 @@ public static class RolesApi
     }
 
     [Authorize(Roles = Permissions.Role.Update)]
-    public static async Task<ApiResponse> Update(string id, [FromBody] CreateRoleCommand command, [AsParameters] RoleManager<ApplicationRole> roleManager)
+    public static async Task<ApiResponse> Update(string id, CreateRoleCommand command, [AsParameters] UserServices userServices)
     {
 
-        if (await roleManager.FindByNameAsync(command.Name) != null)
+        if (await userServices.RoleManager.FindByNameAsync(command.Name) != null)
         {
             return new ApiResponse(400, $"Name is exist!!!!");
         }
 
-        if (await roleManager.FindByIdAsync(id) == null)
+        if (await userServices.RoleManager.FindByIdAsync(id) == null)
         {
             return new ApiResponse(400, $"Role doesn't exist!!!!");
         }
 
-        var role = await roleManager.FindByIdAsync(id);
+        var role = await userServices.RoleManager.FindByIdAsync(id);
         role.Name = command.Name;
         role.Description = command.Description;
 
-        var result = await roleManager.UpdateAsync(role);
+        var result = await userServices.RoleManager.UpdateAsync(role);
 
         if (!result.Succeeded)
         {
@@ -77,24 +77,24 @@ public static class RolesApi
     }
 
     [Authorize(Roles = Permissions.Role.Update)]
-    public static async Task<ApiResponse> UpdatePermission(string id, [FromBody] CreateRoleCommand command, [AsParameters] RoleManager<ApplicationRole> roleManager)
+    public static async Task<ApiResponse> UpdatePermission(string id, CreateRoleCommand command, [AsParameters] UserServices userServices)
     {
 
-        if (await roleManager.FindByNameAsync(command.Name) != null)
+        if (await userServices.RoleManager.FindByNameAsync(command.Name) != null)
         {
             return new ApiResponse(400, $"Name is exist!!!!");
         }
 
-        if (await roleManager.FindByIdAsync(id) == null)
+        if (await userServices.RoleManager.FindByIdAsync(id) == null)
         {
             return new ApiResponse(400, $"Role doesn't exist!!!!");
         }
 
-        var role = await roleManager.FindByIdAsync(id);
+        var role = await userServices.RoleManager.FindByIdAsync(id);
         role.Name = command.Name;
         role.Description = command.Description;
 
-        var result = await roleManager.UpdateAsync(role);
+        var result = await userServices.RoleManager.UpdateAsync(role);
 
         if (!result.Succeeded)
         {
@@ -105,18 +105,18 @@ public static class RolesApi
     }
 
     [Authorize(Roles = Permissions.Role.Update)]
-    public static async Task<ApiResponse<RoleDto>> GetRoleById(string id, [AsParameters] RoleManager<ApplicationRole> roleManager, [AsParameters] EntityPermissions entityPermissions)
+    public static async Task<ApiResponse<RoleDto>> GetRoleById(string id, [AsParameters] UserServices userServices)
     {
 
-        var identityRole = await roleManager.FindByIdAsync(id);
+        var identityRole = await userServices.RoleManager.FindByIdAsync(id);
 
         if (identityRole == null)
         {
             return new ApiResponse(404, "Role not found!!!", null);
         }
 
-        var claims = await roleManager.GetClaimsAsync(identityRole);
-        var permissions = claims.OrderBy(x => x.Value).Where(x => x.Type == ApplicationClaimTypes.Permission).Select(x => entityPermissions.GetPermissionByValue(x.Value).Name).ToList();
+        var claims = await userServices.RoleManager.GetClaimsAsync(identityRole);
+        var permissions = claims.OrderBy(x => x.Value).Where(x => x.Type == ApplicationClaimTypes.Permission).Select(x => x.Value).ToList();
 
         var roleDto = new RoleDto
         {
@@ -127,17 +127,17 @@ public static class RolesApi
     }
 
     [Authorize(Roles = Permissions.Role.Create)]
-    public static async Task<ApiResponse> Create([FromBody] CreateRoleCommand command, IMediator mediator)
+    public static async Task<ApiResponse> Create(CreateRoleCommand command, [AsParameters] UserServices userServices)
     {
-        var sendCommand = await mediator.Send(command);
+        var sendCommand = await userServices.Mediator.Send(command);
 
         return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
     }
 
     [Authorize(Roles = Permissions.Role.Delete)]
-    public static async Task<ApiResponse> Delete(string id, [AsParameters] UserManager<ApplicationUser> userManager, [AsParameters] RoleManager<ApplicationRole> roleManager)
+    public static async Task<ApiResponse> Delete(string id, [AsParameters] UserServices userServices)
     {
-        var roleDelete = await roleManager.FindByIdAsync(id);
+        var roleDelete = await userServices.RoleManager.FindByIdAsync(id);
 
         if (roleDelete == null)
         {
@@ -145,12 +145,12 @@ public static class RolesApi
 
         }
 
-        if ((await userManager.GetUsersInRoleAsync(roleDelete.Name)).Any())
+        if ((await userServices.UserManager.GetUsersInRoleAsync(roleDelete.Name)).Any())
         {
             return new ApiResponse(400, "Role map with user, can't delete!!!", null);
         }
 
-        var sendCommand = await roleManager.DeleteAsync(roleDelete);
+        var sendCommand = await userServices.RoleManager.DeleteAsync(roleDelete);
 
         if (!sendCommand.Succeeded)
         {
@@ -162,17 +162,17 @@ public static class RolesApi
 
     }
 
-    public static async Task<ApiResponse<UserRolesResponse>> GetUserByRoleId([FromQuery] string id, [AsParameters] UserServices userServices, [AsParameters] UserManager<ApplicationUser> userManager, [AsParameters] RoleManager<ApplicationRole> roleManager, IMapper autoMapper)
+    public static async Task<ApiResponse<UserRolesResponse>> GetUserByRoleId([FromQuery] string id, [AsParameters] UserServices userServices)
     {
 
         var viewModel = new List<UserRoleModel>();
-        var user = await userManager.FindByIdAsync(id);
+        var user = await userServices.UserManager.FindByIdAsync(id);
 
         if (user == null)
         {
             return new ApiResponse<UserRolesResponse>(200, "Success", null);
         }
-        var roles = await roleManager.Roles.ToListAsync();
+        var roles = await userServices.RoleManager.Roles.ToListAsync();
 
         foreach (var role in roles)
         {
@@ -181,7 +181,7 @@ public static class RolesApi
                 RoleName = role.Name,
                 RoleDescription = role.Description
             };
-            if (await userManager.IsInRoleAsync(user, role.Name))
+            if (await userServices.UserManager.IsInRoleAsync(user, role.Name))
             {
                 userRolesViewModel.Selected = true;
             }

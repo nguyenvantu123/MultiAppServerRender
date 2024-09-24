@@ -19,7 +19,7 @@ public class AdminUpdateUserCommandHandler : IRequestHandler<AdminUpdateUserComm
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public AdminUpdateUserCommandHandler( UserManager<ApplicationUser> userManager)
+    public AdminUpdateUserCommandHandler(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
@@ -34,30 +34,30 @@ public class AdminUpdateUserCommandHandler : IRequestHandler<AdminUpdateUserComm
     {
 
 
-        var user = await _userManager.FindByIdAsync(command.Id.ToString());
+        //var user = await _userManager.FindByIdAsync(command.Id.ToString());
 
-        if (user == null)
-        {
-            return new Tuple<int, string>(404, "User not found!!!");
-        }
+        //if (user == null)
+        //{
+        //    return new Tuple<int, string>(404, "User not found!!!");
+        //}
 
-        if (user.UserName.ToLower() != "admin" && command.UserName.ToLower() != "admin")
-            user.UserName = command.UserName;
+        //if (user.UserName.ToLower() != "admin" && command.UserName.ToLower() != "admin")
+        //    user.UserName = command.UserName;
 
-        user.FirstName = command.FirstName;
-        user.LastName = command.LastName;
-        user.Email = command.Email;
+        //user.FirstName = command.FirstName;
+        //user.LastName = command.LastName;
+        //user.Email = command.Email;
 
 
-        var result = await _userManager.UpdateAsync(user);
+        //var result = await _userManager.UpdateAsync(user);
 
-        if (!result.Succeeded)
-        {
-            var msg = result.GetErrors();
+        //if (!result.Succeeded)
+        //{
+        //    var msg = result.GetErrors();
 
-            return new Tuple<int, string>(400, msg);
+        //    return new Tuple<int, string>(400, msg);
 
-        }
+        //}
 
         return new Tuple<int, string>(200, $"User {command.UserName} created");
     }

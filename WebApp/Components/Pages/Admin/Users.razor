@@ -523,8 +523,7 @@ else
 
     private void ManageRoles(string userId, string userName)
     {
-        // if (!userName.Contains("admin")) viewNotifier.Show("Not Allowed.", ViewNotifierType.Error);
-        else _navigationManager.NavigateTo($"/admin/user-roles/{userId}");
+        _navigationManager.NavigateTo($"/admin/user-roles/{userId}");
     }
 
     private async Task ExportToExcel()

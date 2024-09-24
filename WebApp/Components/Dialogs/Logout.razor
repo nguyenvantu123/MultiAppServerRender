@@ -1,7 +1,7 @@
 ﻿@namespace WebApp.Components.Dialogs
-@using WebApp.State
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Authentication.OpenIdConnect
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Logout> localizer
-@inject AppState appState
 
 <MudDialog>
     <TitleContent>
@@ -15,12 +15,16 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
+        <form method="post" action="logout">
+            <AntiforgeryToken />
+            <button class="action" type="submit">Log out</button>
+        </form>
+        @*         <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
+        *@
     </DialogActions>
 </MudDialog>
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
 
     [Parameter] public string ContentText { get; set; }
 
@@ -33,6 +37,9 @@
     async Task Submit()
     {
 
+
+        // await httpContextAccessor.HttpContext!.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        // await httpContextAccessor.HttpContext!.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         // var respone = await ((IdentityAuthenticationStateProvider)authStateProvider).Logout();
 
         // if (respone.IsSuccessStatusCode)

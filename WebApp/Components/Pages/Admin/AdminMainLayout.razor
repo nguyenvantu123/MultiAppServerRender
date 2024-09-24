@@ -1,6 +1,5 @@
 ﻿@using WebApp.State
 @inherits LayoutComponentBase
-@attribute [Authorize(Policies.IsAdmin)]
 
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
@@ -31,14 +30,20 @@
                     <MudContainer MaxWidth="MaxWidth.False" Style="flex: 1">
                         @Body
                     </MudContainer>
-                   @*  <footer class="page-footer">
-                        <TenantInfo />
+                    @*  <footer class="page-footer">
+                    <TenantInfo />
                     </footer> *@
                 </MudMainContent>
             </CascadingValue>
         </MudLayout>
     </Authorized>
+
+    <NotAuthorized>
+        <a aria-label="Sign in" href="@Admin.Login.Url(_navigationManager)"><img role="presentation" src="icons/user.svg" /></a>
+    </NotAuthorized>
 </AuthorizeView>
+
+
 
 @code {
 
