@@ -1,5 +1,4 @@
-﻿@using WebApp.State
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
@@ -37,10 +36,6 @@
             </CascadingValue>
         </MudLayout>
     </Authorized>
-
-    <NotAuthorized>
-        <a aria-label="Sign in" href="@Admin.Login.Url(_navigationManager)"><img role="presentation" src="icons/user.svg" /></a>
-    </NotAuthorized>
 </AuthorizeView>
 
 

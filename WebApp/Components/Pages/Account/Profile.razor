@@ -1,10 +1,9 @@
 ﻿@page "/account/profile"
-@using BlazorIdentityFiles.Application.Queries
 @using WebApp.Components.Pages.Admin
 @attribute [Authorize]
 
-@layout AdminMainLayout
-
+@* @layout AdminMainLayout
+ *@
 @if (!_loaded)
 {
     <LoadingBackground>
@@ -61,11 +60,11 @@ else
 
                         <strong>@L["Roles"]</strong><br />
                         <MudChipSet T="bool">
-                            @foreach (var role in userViewModel.Roles)
-                            {
-                                <MudChip Text="@role"></MudChip>
-                            }
-                        </MudChipSet>
+                    @foreach (var role in userViewModel.Roles)
+                    {
+                    <MudChip Text="@role"></MudChip>
+                    }
+                    </MudChipSet>
 
                         <MudButton Class="gap-4" ButtonType="ButtonType.Submit" form="mainForm" Variant="Variant.Filled" Color="Color.Primary">@L["Save"]</MudButton>
                         <MudButton Class="gap-4" Href="/admin" form="mainForm" Variant="Variant.Filled" Color="Color.Secondary">@L["Cancel"]</MudButton>
@@ -183,11 +182,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var user = (await authenticationStateTask).User;
+        // var user = (await authenticationStateTask).User;
 
         // identityAuthenticationStateProvider = (AuthenticationState)authStateProvider;
 
-        // userViewModel = await _accountApiClient.GetUserViewModel();
+        userViewModel = await _accountApiClient.GetUserViewModel();
 
         // // if (userViewModel.FirstName.Length > 0)
         // // {
@@ -382,7 +381,7 @@ else
     public async Task<string> GetPresisignedUrl(string objectName)
     {
 
-        GetPresignedUserProfileUrl getPresignedUserProfileUrl = new GetPresignedUserProfileUrl();
+        GetPresignedUserProfileModel getPresignedUserProfileUrl = new GetPresignedUserProfileModel();
 
         getPresignedUserProfileUrl.ObjectName = objectName;
         getPresignedUserProfileUrl.RelationType = "UserProfile";

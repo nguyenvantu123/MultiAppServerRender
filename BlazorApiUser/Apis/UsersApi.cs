@@ -20,6 +20,7 @@ using BlazorApiUser.Commands.Users;
 using BlazorApiUser.Queries.Users;
 using BlazorApiUser.Queries.Roles;
 using WebApp.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 public static class UsersApi
 {
@@ -46,6 +47,8 @@ public static class UsersApi
         api.MapPut("/users/update-user-roles", UpdateUserRoles);
 
         api.MapPut("/users/toggle-user-status", ToggleUserStatus);
+
+        api.MapGet("/users/user-view-model", UserViewModel);
 
         return api;
     }
@@ -221,5 +224,22 @@ public static class UsersApi
     {
         var command = await userServices.Mediator.Send(updateUserRolesCommand);
         return new ApiResponse(command.Item1, command.Item2, null);
+    }
+
+    [Authorize]
+    public static async Task<ApiResponse<UserDataViewModel>> UserViewModel([AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper)
+    {
+        var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
+
+        if (user == null)
+        {
+            return new ApiResponse<UserDataViewModel>(404, "User Not Found", null);
+        }
+
+        var result = autoMapper.Map<UserDataViewModel>(user);
+
+        result.Roles = user.UserRoles.Select(x => x.Role.Name).ToList();
+
+        return new ApiResponse<UserDataViewModel>(200, "Success", result);
     }
 }

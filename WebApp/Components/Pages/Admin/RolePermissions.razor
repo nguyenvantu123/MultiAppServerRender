@@ -1,6 +1,4 @@
 ﻿@page "/admin/role-permissions/{Id}"
-@using AutoMapper
-@attribute [Authorize(Policies.IsAdmin)]
 @layout AdminMainLayout
 
 <PageTitle>Manage Permission</PageTitle>
@@ -88,7 +86,6 @@ else
 
     private PermissionModel _model;
     private Dictionary<string, List<RoleClaimModel>> GroupedRoleClaims { get; } = new();
-    private IMapper _mapper;
     private RoleClaimModel _roleClaims = new();
     private RoleClaimModel _selectedItem = new();
     private string _searchString = "";

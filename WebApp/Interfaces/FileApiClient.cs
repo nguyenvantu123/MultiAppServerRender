@@ -1,9 +1,9 @@
 ﻿using Azure.Core;
-using BlazorIdentityFiles.Application.Queries;
 using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
 using System.Net.Http.Headers;
 using WebApp.Extensions;
+using WebApp.Models;
 using static MudBlazor.CategoryTypes;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -40,7 +40,7 @@ namespace WebApp.Interfaces
             return await _httpClient.PostFileAsync<ApiResponseDto<string>>($"api/files/upload-file", content);
         }
 
-        public async Task<ApiResponseDto<string>> GetPresignedUrl(GetPresignedUserProfileUrl presignedUserProfileUrl)
+        public async Task<ApiResponseDto<string>> GetPresignedUrl(GetPresignedUserProfileModel presignedUserProfileUrl)
         {
             return await _httpClient.GetFromJsonAsync<ApiResponseDto<string>>($"/api/files/get-presigned-url?RelationType={presignedUserProfileUrl.RelationType}&ObjectName={presignedUserProfileUrl.ObjectName}&RelationId={(presignedUserProfileUrl.RelationId.HasValue ? presignedUserProfileUrl.RelationId.Value.ToString() : "")}");
         }

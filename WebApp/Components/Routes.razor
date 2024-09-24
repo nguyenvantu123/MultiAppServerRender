@@ -1,22 +1,16 @@
 ﻿@using Microsoft.AspNetCore.Components.WebAssembly.Services
-@using WebApp.Components.Pages.Account
-@using WebApp.Components.Pages.Admin
-@inject NavigationManager NavigationManager
 
 <Error>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(AdminMainLayout)">
-                <NotAuthorized>
-                    <Login />
-                </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
 
         <NotFound>
             <CascadingAuthenticationState>
-                <LayoutView Layout="@typeof(MainLayout)">
+                <LayoutView Layout="@typeof(AdminMainLayout)">
                     <NotFoundLayout />
                 </LayoutView>
             </CascadingAuthenticationState>

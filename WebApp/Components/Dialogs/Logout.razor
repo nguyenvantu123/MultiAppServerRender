@@ -19,8 +19,7 @@
             <AntiforgeryToken />
             <button class="action" type="submit">Log out</button>
         </form>
-        @*         <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
-        *@
+
     </DialogActions>
 </MudDialog>
 @code {
@@ -34,28 +33,5 @@
 
     [Parameter] public string CurrentUserId { get; set; }
 
-    async Task Submit()
-    {
-
-
-        // await httpContextAccessor.HttpContext!.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        // await httpContextAccessor.HttpContext!.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-        // var respone = await ((IdentityAuthenticationStateProvider)authStateProvider).Logout();
-
-        // if (respone.IsSuccessStatusCode)
-        // {
-        //     appState.ClearUserProfile();
-
-        //     MudDialog.Close(DialogResult.Ok(true));
-
-        //     _navigationManager.NavigateTo($"{WebApp.Settings.Settings.LoginPath}", true);
-        // }
-        // else
-        // {
-        //     viewNotifier.Show("LogoutFailed", ViewNotifierType.Error, "LogoutFailed");
-
-        // }
-
-    }
     void Cancel() => MudDialog.Cancel();
 }

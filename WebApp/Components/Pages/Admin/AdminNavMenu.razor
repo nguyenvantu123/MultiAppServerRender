@@ -5,11 +5,11 @@
 @inject IStringLocalizer<Localizer.Global> L
 
 <MudNavMenu Style="flex: 1">
-    <MudNavLink Href="@_navigationManager.ToAbsoluteUri(" ").AbsoluteUri" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-        Frontend
-    </MudNavLink>
+    @*    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("").AbsoluteUri" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+    Frontend
+    </MudNavLink> *@
 
-    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin").AbsoluteUri" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.BarChart">
+    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("").AbsoluteUri" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.BarChart">
         @L["Dashboard"]
     </MudNavLink>
     <MudNavGroup Title="@L["Settings"]">

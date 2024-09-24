@@ -1,14 +1,13 @@
 ﻿@page "/admin/apilog"
 
-@attribute [Authorize(Policies.IsAdmin)]
 @layout AdminMainLayout
 
-<TopSection>
+@* <TopSection>
     <Breadcrumbs>
         <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
         <Breadcrumb Title=@L["BreadCrumbadminapilog"] />
     </Breadcrumbs>
-</TopSection>
+</TopSection> *@
 
 <PageTitle>Blazor / .NET Core Middleware Audit Log</PageTitle>
 <p class="my-4">
@@ -26,7 +25,7 @@
 }
 else
 {
-   @*  <MudTable ServerData="@(new Func<TableState, Task<TableData<ApiLogItem>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
+    @*  <MudTable ServerData="@(new Func<TableState, Task<TableData<ApiLogItem>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
         <HeaderContent>
             <MudTh><div style="width:175px;"><MudFab Icon="@Icons.Material.Filled.Refresh" OnClick="@(() => Reload())" DisableElevation="true" Size="Size.Small" /> Date / Time</div></MudTh>
             <MudTh>Http Code</MudTh>

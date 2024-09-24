@@ -132,9 +132,9 @@ namespace WebApp.Interfaces
 
         public async Task<UserDataViewModel> GetUserViewModel()
         {
-            UserDataViewModel userViewModel = new() { IsAuthenticated = false };
+            UserDataViewModel userViewModel = new UserDataViewModel();
 
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/user-view-model");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserDataViewModel>>("api/admin/users/user-view-model");
 
             if (apiResponse.IsSuccessStatusCode)
                 userViewModel = apiResponse.Result;
@@ -280,7 +280,7 @@ namespace WebApp.Interfaces
 
         public async Task<UserDataViewModel> GetUserById(string id)
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserDataViewModel>>($"api/admin/user-by-id/{id}");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserDataViewModel>>($"api/admin/users/{id}");
             return apiResponse.Result;
         }
 
