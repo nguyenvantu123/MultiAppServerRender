@@ -2,7 +2,6 @@
 @using MultiAppServer.ServiceDefaults
 @using System.Net
 @using WebApp.Permissions
-@attribute [Authorize(Policies.IsAdmin)]
 @layout AdminMainLayout
 
 @* <TopSectionFrame>
@@ -17,6 +16,97 @@
 <PageTitle>Tenants</PageTitle>
 
 @if (!_loaded)
+{
+    <LoadingBackground>
+    </LoadingBackground>
+}
+else
+{
+    <MudTable Hover="true" Striped="true" LoadingProgressColor="Color.Info" Elevation="4" Items="@tenants" Filter="new Func<TenantModel, bool>(Search)" @bind-role="tenant">
+
+        <ToolBarContent>
+            <div class="justify-center mud-text-align-center">
+                @if (_canCreateTenant)
+                {
+                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+
+                        <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => OpenUpsertTenantDialog())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Add New Tenant</MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeTenantsListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                    </MudHidden>
+
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                        <MudTooltip Text="Add new Role">
+                            <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => OpenUpsertTenantDialog())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
+                        </MudTooltip>
+                        <MudTooltip Text="Reload">
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeTenantsListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                        </MudTooltip>
+                    </MudHidden>
+                }
+                else
+                {
+                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeTenantsListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                    </MudHidden>
+
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                        <MudTooltip Text="Reload">
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeTenantsListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                        </MudTooltip>
+                    </MudHidden>
+                }
+            </div>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Immediate="true" FullWidth=false Placeholder="Search for Tenant" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
+        </ToolBarContent>
+
+        <HeaderContent>
+
+            <MudTh>Actions</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TenantModel, object>(x => x.Id)">Id</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TenantModel, object>(x => x.Identifier)">Identifier</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TenantModel, object>(x => x.Name)">Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TenantModel, object>(x => x.ConnectionString)">ConnectionString</MudTableSortLabel></MudTh>
+
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="Actions">
+                @if (_canEditTenant || _canDeleteTenant)
+                {
+                    <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary" AnchorOrigin="Origin.CenterLeft">
+
+                        @if (_canEditTenant)
+                        {
+                            <MudMenuItem @onclick="@(() => OpenUpsertTenantDialog(tenant))">Edit</MudMenuItem>
+                        }
+                        @if (_canDeleteTenant)
+                        {
+                            <MudMenuItem @onclick="@(() => OpenDeleteTenantDialog(tenant))">Delete</MudMenuItem>
+                        }
+                    </MudMenu>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled"
+                               DisableElevation="true"
+                               StartIcon="@Icons.Material.Filled.DoNotTouch"
+                               IconColor="Color.Secondary"
+                               Size="Size.Small"
+                               Color="Color.Surface">
+                        No Allowed Actions
+                    </MudButton>
+                }
+            </MudTd>
+            <MudTd>@context.Id</MudTd>
+            <MudTd>@context.Identifier</MudTd>
+            <MudTd>@context.Name</MudTd>
+            <MudTd>@context.ConnectionString</MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@* @if (!_loaded)
 {
     <LoadingBackground>
     </LoadingBackground>
@@ -52,7 +142,7 @@ else
             <MudTd><div style="min-width:130px;">@TenantRow.ConnectionString</div></MudTd>
         </RowTemplate>
     </MudTable>
-}
+} *@
 
 <MudDialog @bind-IsVisible="@isUpsertTenantDialogOpen">
     <TitleContent>
@@ -99,9 +189,6 @@ else
 
 @code {
 
-    // [Inject] NavigationManager Navigation { get; set; }
-    // [Inject] IViewNotifier viewNotifier { get; set; }
-    // [Inject] HttpClient Http { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
     int pageSize { get; set; } = 15;
     int currentPage { get; set; } = 0;
@@ -112,14 +199,34 @@ else
     [Inject] protected AccountApiClient accountApiClient { get; set; }
 
     protected List<TenantModel> tenants;
+
+    protected TenantModel tenant;
     protected TenantModel currentTenant { get; set; } = new();
 
     private List<BreadcrumbItem> _items { get; set; }
+
+    private string _searchString = "";
+
+    [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private bool _canCreateTenant;
+    private bool _canEditTenant;
+    private bool _canDeleteTenant;
+    private bool _canViewTenant;
 
     #region OnInitializedAsync
 
     protected override async Task OnInitializedAsync()
     {
+        var user = (await authenticationStateTask).User;
+
+
+        _canCreateTenant = user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Create).FirstOrDefault() != null;
+        // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
+        _canEditTenant = user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Update).FirstOrDefault() != null;
+        _canDeleteTenant = user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Delete).FirstOrDefault() != null;
+        // _canSearchRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.View).FirstOrDefault() != null;
+        _canViewTenant = user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Read).FirstOrDefault() != null;
 
         _items = new List<BreadcrumbItem>
     {
@@ -127,6 +234,17 @@ else
         new BreadcrumbItem("BreadCrumbAdminMultitenancy", href: "/admin/multitenancy")
     };
         await InitializeTenantsListAsync();
+    }
+
+    private bool Search(TenantModel role)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString)) return true;
+        if (role.Name?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     protected string GetTenantUri(TenantModel tenant)

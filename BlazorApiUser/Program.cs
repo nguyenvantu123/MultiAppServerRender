@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using BlazorApiUser.Filter;
+using BlazorApiUser.Apis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +112,10 @@ var roles = app.NewVersionedApi("Roles");
 roles.MapRolesApiV1()
       .RequireAuthorization();
 
+var tenants = app.NewVersionedApi("Tenants");
+
+tenants.MapTenantsApiV1()
+      .RequireAuthorization();
 
 app.UseRouting();
 //app.UseAntiforgery();

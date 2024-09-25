@@ -1,4 +1,5 @@
 using AutoMapper;
+using BlazorIdentity.Models;
 using BlazorIdentity.Users.Models;
 
 
@@ -11,6 +12,7 @@ namespace BlazorApiUser.MapperProfile
         {
             // Add as many of these lines as you need to map your objects
             CreateMap<ApplicationUser, UserDataViewModel>();
+            CreateMap<AppTenantInfo, TenantDto>();
             //CreateMap<UserDto, User>();
         }
 

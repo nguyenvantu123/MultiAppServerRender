@@ -12,9 +12,9 @@ using WebApp.Models;
 
 namespace BlazorApiUser.Apis
 {
-    public static class UsersApi
+    public static class TenantApi
     {
-        public static RouteGroupBuilder MapUsersApiV1(this IEndpointRouteBuilder app)
+        public static RouteGroupBuilder MapTenantsApiV1(this IEndpointRouteBuilder app)
         {
             var api = app.MapGroup("api/admin").HasApiVersion(1.0);
 

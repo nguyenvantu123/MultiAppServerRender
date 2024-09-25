@@ -24,46 +24,7 @@ else
 {
     <MudTable Hover="true" Striped="true" LoadingProgressColor="Color.Info" Elevation="4" Items="rolesList" Filter="new Func<RoleDto, bool>(Search)" @bind-role="role">
 
-        @* <ToolBarContent>
-    @if (_canCreateRoles)
-    {
-
-    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-    <MudTooltip Text="Add new Role">
-    <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Add New Role</MudButton>
-    </MudTooltip>
-    <MudTooltip Text="Reload">
-    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-    </MudTooltip>
-    </MudHidden>
-
-    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-    <MudTooltip Text="Add new Role">
-    <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
-    </MudTooltip>
-    <MudTooltip Text="Reload">
-    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
-    </MudTooltip>
-    </MudHidden>
-    }
-    else
-    {
-    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-    <MudTooltip Text="Reload">
-    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-    </MudTooltip>
-    </MudHidden>
-
-    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-    <MudTooltip Text="Reload">
-    <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
-    </MudTooltip>
-    </MudHidden>
-    }
-    <MudSpacer />
-    <MudTextField @bind-Value="_searchString" Immediate="true" Placeholder="Search for Roles..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
-    </ToolBarContent> *@
-
+      
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
                 @if (_canCreateRoles)
@@ -148,59 +109,9 @@ else
             <MudTd DataLabel="Role">
                 <MudHighlighter Text="@context.Description" HighlightedText="@_searchString" />
             </MudTd>
-            @*     <MudTd DataLabel="@_localizer["Description"]">
-        <MudHighlighter Text="@context.Description" HighlightedText="@_searchString" />
-        </MudTd> *@
-
         </RowTemplate>
-
-        @*  <RowTemplate Context="RoleRow">
-    <MudTd>
-    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => OpenUpsertRoleDialog(@RoleRow.Name))" Disabled="@(RoleRow.Name == DefaultUserNames.Administrator)" />
-    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OpenDeleteDialog(@RoleRow.Name))" Disabled="@(RoleRow.Name == DefaultUserNames.Administrator)" />
-    </MudTd>
-    <MudTd><div style="width:130px;">@RoleRow.Name</div></MudTd>
-    <MudTd>
-    <MudChipSet>
-    @foreach (var permission in @RoleRow.Permissions)
-    {
-    <MudChip Text="@permission"></MudChip>
-    }
-    </MudChipSet>
-    </MudTd>
-    </RowTemplate> *@
     </MudTable>
 }
-
-@* <MudDialog @bind-IsVisible="@isUpsertRoleDialogOpen">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3 mb-n1" />
-            @labelUpsertDialogTitle
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <MudTextField @bind-Value="@currentRoleName" Disabled="@isCurrentRoleReadOnly" Label="Role Name" AdornmentIcon="@Icons.Material.Filled.Add" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
-
-        <MudTable Items="@permissionsSelections" Class="mt-4">
-            <HeaderContent>
-                <MudTh>@L["Permissions"]</MudTh>
-                <MudTh>@L["Allow"]</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd>@context.DisplayValue</MudTd>
-                <MudTd><MudCheckBox @bind-Checked="@context.Selected"></MudCheckBox></MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager RowsPerPageString=@L["Rows per page"] />
-            </PagerContent>
-        </MudTable>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="@(e => { isUpsertRoleDialogOpen = false; })">@L["Cancel"]</MudButton>
-        <MudButton OnClick="@UpsertRole" Variant="Variant.Filled" Color="Color.Primary">@labelUpsertDialogOkButton</MudButton>
-    </DialogActions>
-</MudDialog> *@
 
 <MudDialog @bind-IsVisible="@isDeleteRoleDialogOpen" Style="z-index:100">
     <TitleContent>
