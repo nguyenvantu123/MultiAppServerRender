@@ -35,7 +35,7 @@ public static class RolesApi
 
         api.MapDelete("/roles/{id}", Delete);
 
-        api.MapPost("/roles/{id}", Update);
+        api.MapPut("/roles/{id}", Update);
         return api;
     }
 

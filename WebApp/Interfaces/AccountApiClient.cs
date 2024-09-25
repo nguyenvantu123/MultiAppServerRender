@@ -221,14 +221,13 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<TenantModel>> GetTenant()
         {
-            return await _httpClient.GetJsonAsync<ApiResponseDto<TenantModel>>("api/admin/tenant");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<TenantModel>>("api/admin/tenant-by-user");
 
         }
 
         public async Task<ApiResponseDto<List<TenantModel>>> GetListTenant(int pageSize, int pageNumber, string searchText)
         {
-            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantModel>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
-
+            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantModel>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&name={searchText}");
         }
 
 
@@ -257,14 +256,14 @@ namespace WebApp.Interfaces
             return await _httpClient.GetJsonAsync<ApiResponseDto<List<RoleDto>>>($"api/admin/roles?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
 
-        //public async Task<ApiResponseDto> UpdateRole(RoleDto request)
-        //{
-        //    return await _httpClient.PutJsonAsync<ApiResponseDto>("api/account/update-user", request);
-        //}
-
-        public async Task<ApiResponseDto> SaveRoleAsync(RoleDto request)
+        public async Task<ApiResponseDto> CreateRole(RoleDto request)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/update-role", request);
+            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/admin/roles", request);
+        }
+
+        public async Task<ApiResponseDto> UpdateRole(RoleDto request)
+        {
+            return await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/roles/{request.Id}", request);
         }
 
         public async Task<ApiResponseDto<List<string>>> GetAllPermissions()

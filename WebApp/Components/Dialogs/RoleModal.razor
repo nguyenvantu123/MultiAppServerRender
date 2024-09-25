@@ -23,7 +23,7 @@
         <DialogContent>
             <MudTextField For="@(() => RoleModel.Id)" @bind-Value="RoleModel.Id" Label="Role ID" Disabled />
             <MudTextField For="@(() => RoleModel.Name)" @bind-Value="RoleModel.Name" Label="Role Name" />
-            @* <MudTextField For="@(() => RoleModel.Description)" @bind-Value="RoleModel.Description" Label="@_localizer["Description"]" /> *@
+            <MudTextField For="@(() => RoleModel.Description)" @bind-Value="RoleModel.Description" Label="Description" />
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="Cancel">Cancel</MudButton>
@@ -65,7 +65,7 @@
 
     private async Task SaveAsync()
     {
-        var response = await _accountApiClient.SaveRoleAsync(RoleModel);
+        var response = RoleModel.Id == Guid.Empty ? await _accountApiClient.CreateRole(RoleModel) : await _accountApiClient.UpdateRole(RoleModel);
         if (response.IsSuccessStatusCode)
         {
             viewNotifier.Show(response.Message, ViewNotifierType.Success);

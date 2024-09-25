@@ -20,14 +20,6 @@
             @L["Email"]
         </MudNavLink>
     </MudNavGroup>
-    @*  <MudNavGroup Title="@L["Localization"]" Icon="@Icons.Material.Filled.Public">
-    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/translations").AbsoluteUri" Icon="@Icons.Material.Filled.Translate">
-    @L["Translations"]
-    </MudNavLink>
-    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/pluralizationrules").AbsoluteUri" Icon="@Icons.Material.Filled.Group">
-    @L["Pluralization rules"]
-    </MudNavLink>
-    </MudNavGroup> *@
     @if (_canViewUsers)
     {
         <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/users").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
@@ -41,7 +33,7 @@
             @L["Roles"]
         </MudNavLink>
     }
-    @if (tenant.Id == DefaultTenant.DefaultTenantId)
+    @if (_canViewTenant)
     {
         <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/multitenancy").AbsoluteUri" Icon="@Icons.Material.Filled.AccountBalance">
             @L["MultiTenancy"]
@@ -68,6 +60,8 @@
     private bool _canViewUsers = true;
     private bool _canViewRoles = true;
 
+    private bool _canViewTenant = true;
+
     protected override async Task OnParametersSetAsync()
     {
         var user = (await authenticationStateTask).User;
@@ -78,6 +72,8 @@
             _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
 
             _canViewUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null;
+
+            _canViewTenant = user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Read).FirstOrDefault() != null;
 
             // var apiResponse = await accountApiClient.GetTenant();
             // if (apiResponse.StatusCode == 200)
