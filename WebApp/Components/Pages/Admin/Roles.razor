@@ -22,9 +22,8 @@
 }
 else
 {
-    <MudTable Hover="true" Striped="true" LoadingProgressColor="Color.Info" Elevation="4" Items="rolesList" Filter="new Func<RoleDto, bool>(Search)" @bind-role="role">
+    <MudTable Hover="true" Striped="true" FixedHeader="true" LoadingProgressColor="Color.Info" Elevation="4" Items="rolesList" Filter="new Func<RoleDto, bool>(Search)" @bind-role="role">
 
-      
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
                 @if (_canCreateRoles)
@@ -110,6 +109,15 @@ else
                 <MudHighlighter Text="@context.Description" HighlightedText="@_searchString" />
             </MudTd>
         </RowTemplate>
+
+        @*       <FooterContent>
+    <MudTh><MudTableSortLabel SortBy="new Func<RoleDto, object>(x => x.Name)">Role Name</MudTableSortLabel></MudTh>
+    <MudTh><MudTableSortLabel SortBy="new Func<RoleDto, object>(x => x.Description)">Description</MudTableSortLabel></MudTh>
+    </FooterContent> *@
+
+        <PagerContent>
+            <MudTablePager RowsPerPageString="Rows per page" />
+        </PagerContent>
     </MudTable>
 }
 

@@ -7,6 +7,13 @@
     .mud-table-container {
         overflow: auto;
     }
+
+    .mud-simple-table.mud-table-sticky-header * table thead * th {
+        background-color: var(--mud-palette-surface);
+        position: sticky;
+        z-index: 1;
+        top: 0;
+    }
 </style>
 
 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
@@ -20,9 +27,7 @@
 }
 else
 {
-    @*  <MudTable ServerData="@(new Func<TableState, Task<TableData<UserViewModel>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table"> *@
-
-    <MudTable Hover="true" Elevation="25" Items="users" Dense="true" Filter="new Func<UserDataViewModel, bool>(Search)" @bind-user="users">
+    <MudTable @ref="table" Hover="true" Elevation="25" HorizontalScrollbar="true" Items="users" FixedHeader="true" Dense="true" Filter="new Func<UserDataViewModel, bool>(Search)" @bind-user="users">
 
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
@@ -100,6 +105,10 @@ else
                     {
                         <MudMenuItem OnClick="(()=>ManageRoles(context.Id.ToString(), context.UserName))">Manage Roles</MudMenuItem>
                     }
+                    @if (_canDeleteRoles)
+                    {
+                        <MudMenuItem @onclick="@(() => Delete(@context.Id.ToString()))">Delete</MudMenuItem>
+                    }
                 </MudMenu>
             </MudTd>
             <MudTd DataLabel="FirstName">
@@ -120,128 +129,14 @@ else
             <MudTd DataLabel="EmailConfirmed"><MudCheckBox T="bool" @bind-Checked="@context.EmailConfirmed" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
             <MudTd DataLabel="Active"><MudCheckBox T="bool" @bind-Checked="@context.IsActive" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
         </RowTemplate>
-        @* <RowTemplate Context="UserRow">
-    <MudTd>
-    <div style="width:155px;">
-    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => OpenEditDialog(UserRow))"></MudIconButton>
-    <MudIconButton Icon="@Icons.Material.Filled.RotateRight" OnClick="@(() => OpenResetPasswordDialog(UserRow))" Disabled="@(UserRow.UserName == DefaultUserNames.Administrator)"></MudIconButton>
-    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OpenDeleteDialog(UserRow))" Disabled="@(UserRow.UserName == DefaultUserNames.Administrator)"></MudIconButton>
-    </div>
-    </MudTd>
-    <MudTd><div style="width:130px;">@UserRow.UserName</div></MudTd>
-    <MudTd style="white-space: nowrap">
-    @UserRow.Email @if (UserRow.EmailConfirmed)
-    {
-    <MudIcon Style="vertical-align: text-bottom" Icon="@Icons.Material.Filled.CheckCircle"></MudIcon>
-    }
-    </MudTd>
-    <MudTd>
-    @if (@UserRow.Roles != null)
-    {
-    <MudChipSet>
-    @foreach (var ur in @UserRow.Roles)
-    {
-    <MudChip Text="@ur"></MudChip>
-    }
-    </MudChipSet>
-    }
-    </MudTd>
-    </RowTemplate> *@
         <PagerContent>
-            <MudTablePager RowsPerPageString="Rows per page" />
+            <MudTablePager PageSizeOptions="[1, 10, 20]" RowsPerPageString="Rows per page" HidePageNumber="true"
+                           HidePagination="true" />
+            <MudPagination SelectedChanged="PageChanged" Count="@(totalItemsCount / table.RowsPerPage)" Class="pa-4" />
+
         </PagerContent>
     </MudTable>
 }
-
-@* <MudDialog @bind-IsVisible="@createUserDialogOpen">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-3 mb-n1" />
-            @L["New User"]
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <EditForm id="createUserForm" Model="@newUserViewModel" OnValidSubmit="@CreateUserAsync">
-            <FluentValidationValidator />
-            <MudValidationSummary />
-            <MudTextField @bind-Value="@newUserViewModel.UserName" Label=@L["UserName"] AdornmentIcon="@Icons.Material.Filled.Person" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
-
-            <MudTextField @bind-Value="@newUserViewModel.Email" Label=@L["Email"] AdornmentIcon="@Icons.Material.Outlined.Email" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] Type="mail"></MudTextField>
-
-            <MudTextField @bind-Value="@newUserViewModel.Password" Label=@L["Password"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
-
-            <MudTextField @bind-Value="@newUserViewModel.ConfirmPassword" Label=@L["Password Confirmation"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
-        </EditForm>
-    </DialogContent>
-</MudDialog> *@
-
-@* <MudDialog @bind-IsVisible="@editDialogOpen">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3 mb-n1" />
-            @L["Edit {0}", currentUser.UserName]
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <EditForm id="updateUserForm" Model="@currentUser" OnValidSubmit="@UpdateUserAsync">
-            <FluentValidationValidator />
-            <MudValidationSummary />
-            <MudTextField @bind-Value="@currentUser.UserName" Label=@L["UserName"] AdornmentIcon="@Icons.Material.Filled.Person" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
-
-            <MudTextField @bind-Value="@currentUser.Email" Label=@L["Email"] AdornmentIcon="@Icons.Material.Outlined.Email" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] Type="mail"></MudTextField>
-
-            <MudChipSet>
-                @foreach (var role in roleSelections.OrderBy(x => x.DisplayValue))
-                {
-                    <MudChip Text="@role.DisplayValue" Icon="@((role.Selected) ? Icons.Material.Filled.Done : "")" @onclick="@(()=>UpdateUserRole(role))" />
-                }
-            </MudChipSet>
-        </EditForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="@CancelChanges">@L["Cancel"]</MudButton>
-        <MudButton ButtonType="ButtonType.Submit" form="updateUserForm" Disabled="@disableUpdateUserButton" Variant="Variant.Filled" Color="Color.Primary">@L["Update"]</MudButton>
-    </DialogActions>
-</MudDialog> *@
-
-<MudDialog @bind-IsVisible="@deleteUserDialogOpen" Style="z-index:100">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
-            @L["Confirm Delete"]
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        @L["Are you sure you want to delete {0}?", currentUser.UserName]
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="@(e => { deleteUserDialogOpen = false; })">@L["Cancel"]</MudButton>
-        <MudButton OnClick="@DeleteUserAsync" Variant="Variant.Filled" Color="Color.Error">@L["Delete"]</MudButton>
-    </DialogActions>
-</MudDialog>
-
-@* <MudDialog @bind-IsVisible="@changePasswordDialogOpen">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3 mb-n1" />
-            @L["Change password for {0}", currentUser.UserName]
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <EditForm id="changePasswordForm" Model="@changePasswordViewModel" OnValidSubmit="@ResetUserPasswordAsync">
-            <FluentValidationValidator />
-            <MudValidationSummary />
-            <MudTextField @bind-Value="@changePasswordViewModel.Password" Label=@L["Password"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
-
-            <MudTextField @bind-Value="@changePasswordViewModel.PasswordConfirm" Label=@L["Password Confirmation"] AdornmentIcon="@Icons.Material.Outlined.Lock" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password"></MudTextField>
-        </EditForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="@(e => { changePasswordDialogOpen = false; })">@L["Cancel"]</MudButton>
-        <MudButton ButtonType="ButtonType.Submit" form="changePasswordForm" Disabled="@disableChangePasswordButton" Variant="Variant.Filled" Color="Color.Primary">@L["Reset Password"]</MudButton>
-    </DialogActions>
-</MudDialog> *@
-
 @code {
     private MudTable<UserDataViewModel> table;
 
@@ -256,20 +151,9 @@ else
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    protected int pageSize { get; set; } = 10;
+    protected int pageSize { get; set; } = 1;
     private int pageIndex { get; set; } = 0;
     protected int totalItemsCount { get; set; } = 0;
-
-    protected bool createUserDialogOpen = false;
-    protected bool disableCreateUserButton = false;
-
-    protected bool editDialogOpen = false;
-    protected bool disableUpdateUserButton = false;
-
-    protected bool deleteUserDialogOpen = false;
-
-    protected bool changePasswordDialogOpen = false;
-    protected bool disableChangePasswordButton = false;
 
     private List<BreadcrumbItem> _items { get; set; }
 
@@ -279,11 +163,11 @@ else
     protected RegisterViewModel newUserViewModel { get; set; } = new RegisterViewModel();
     protected ChangePasswordViewModel changePasswordViewModel { get; set; } = new ChangePasswordViewModel();
 
-    // private ClaimP _currentUser;
     private bool _canCreateUsers;
     private bool _canSearchUsers;
     private bool _canExportUsers;
     private bool _canViewRoles;
+    private bool _canDeleteRoles;
 
     public string _searchString;
 
@@ -299,6 +183,8 @@ else
             // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
             _canExportUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
             _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
+
+            _canDeleteRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Delete).FirstOrDefault() != null;
             _items = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
@@ -340,12 +226,37 @@ else
         return false;
     }
 
-    protected async Task OnPage(int index, int size)
+    private async Task Delete(string id)
     {
-        pageSize = size;
-        pageIndex = index;
+        string deleteContent = "Delete Content";
+        var parameters = new DialogParameters
+            {
+                {nameof(DeleteConfirmation.ContentText), string.Format(deleteContent, id)}
+            };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
+        var dialog = _dialogService.Show<DeleteConfirmation>("Delete", parameters, options);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var response = await _accountApiClient.DeleteUser(id);
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadUsers();
+                // await HubConnection.SendAsync(ApplicationConstants.SignalR.SendUpdateDashboard);
+                viewNotifier.Show(response.Message, ViewNotifierType.Success);
+            }
+            else
+            {
+                await LoadUsers();
 
-        await LoadUsers();
+                viewNotifier.Show(response.Message, ViewNotifierType.Error);
+
+                // foreach (var message in response.Messages)
+                // {
+                //     viewNotifier.Add(message, Severity.Error);
+                // }
+            }
+        }
     }
 
     protected virtual async Task ReloadUser()
@@ -357,6 +268,9 @@ else
         try
         {
             // apiClient.ClearEntitiesCache();
+            // table.set = pageIndex;
+            table.SetRowsPerPage(pageSize);
+
             var result = await apiClient.GetUsers(pageSize, pageIndex, "");
             users = result.Result;
             totalItemsCount = (int)result.Result.Count;
@@ -368,172 +282,9 @@ else
             viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
-
-    // protected async Task LoadRoles()
-    // {
-    //     try
-    //     {
-    //         var result = await apiClient.GetRoles(0, 0, "");
-
-    //         foreach (var role in result.Result)
-    //         {
-    //             roleSelections.Add(new SelectItem<Guid>
-    //                 {
-    //                     Id = role.Id,
-    //                     DisplayValue = role.Name,
-    //                     Selected = false
-    //                 });
-    //         }
-
-    //         // roleSelections = result.Select(i => new SelectItem<Guid>
-    //         //     {
-    //         //         Id = i.Id,
-    //         //         DisplayValue = i.Name,
-    //         //         Selected = false
-    //         //     }).ToList();
-
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
-    //     }
-    // }
-
-    // protected void OpenEditDialog(UserViewModel user)
-    // {
-    //     currentUser = user;
-
-    //     foreach (var role in roleSelections)
-    //         role.Selected = user.UserRoles.Any(i => i.RoleId == role.Id);
-
-    //     editDialogOpen = true;
-    // }
-
-    protected void OpenResetPasswordDialog(UserDataViewModel user)
+    private void PageChanged(int i)
     {
-        currentUser = user;
-
-        changePasswordViewModel = new ChangePasswordViewModel() { UserId = user.Id.ToString() };
-
-        changePasswordDialogOpen = true;
-    }
-
-    protected void OpenDeleteDialog(UserDataViewModel user)
-    {
-        currentUser = user;
-        deleteUserDialogOpen = true;
-    }
-
-    protected void UpdateUserRole(SelectItem<Guid> roleSelectionItem)
-    {
-        if (currentUser.UserName.ToLower() != DefaultUserNames.Administrator || roleSelectionItem.DisplayValue != DefaultRoleNames.Administrator)
-            roleSelectionItem.Selected = !roleSelectionItem.Selected;
-    }
-
-    protected void CancelChanges()
-    {
-        editDialogOpen = false;
-    }
-
-    // protected async Task UpdateUserAsync()
-    // {
-    //     try
-    //     {
-    //         disableUpdateUserButton = true;
-
-    //         var apiResponse = await identityAuthenticationStateProvider.AdminUpdateUser(currentUser);
-
-    //         if (apiResponse.IsSuccessStatusCode)
-    //         {
-    //             viewNotifier.Show(apiResponse.Message, ViewNotifierType.Success);
-    //             await ReloadUser();
-    //             editDialogOpen = false;
-    //         }
-    //         else
-    //             viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
-    //     }
-    //     finally
-    //     {
-    //         disableUpdateUserButton = false;
-    //     }
-    // }
-    // protected async Task CreateUserAsync()
-    // {
-    //     try
-    //     {
-    //         disableCreateUserButton = true;
-
-    //         var apiResponse = await identityAuthenticationStateProvider.CreateUser(newUserViewModel);
-
-    //         if (apiResponse.IsSuccessStatusCode)
-    //         {
-    //             viewNotifier.Show(apiResponse.Message, ViewNotifierType.Success);
-    //             await ReloadUser();
-    //             newUserViewModel = new RegisterViewModel();
-    //             createUserDialogOpen = false;
-    //         }
-    //         else
-    //             viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["UserCreationFailed"]);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["UserCreationFailed"]);
-    //     }
-    //     finally
-    //     {
-    //         disableCreateUserButton = false;
-    //     }
-    // }
-
-    protected async Task ResetUserPasswordAsync()
-    {
-        try
-        {
-            disableChangePasswordButton = true;
-
-            var apiResponse = await _accountApiClient.AdminChangePassword(changePasswordViewModel);
-
-            if (apiResponse.IsSuccessStatusCode)
-                viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success, apiResponse.Message);
-            else
-                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error);
-
-            changePasswordDialogOpen = false;
-        }
-        catch (Exception ex)
-        {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["ResetPasswordFailed"]);
-        }
-        finally
-        {
-            disableChangePasswordButton = false;
-        }
-    }
-
-    protected async Task DeleteUserAsync()
-    {
-        try
-        {
-            // apiClient.RemoveEntity(currentUser);
-            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
-            deleteUserDialogOpen = false;
-            await ReloadUser();
-        }
-        catch (Exception ex)
-        {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
-        }
-    }
-
-    private async Task<TableData<UserDataViewModel>> ServerReload(TableState state)
-    {
-        await OnPage(state.Page, state.PageSize);
-
-        return new TableData<UserDataViewModel>() { TotalItems = totalItemsCount, Items = users };
+        pageIndex = i - 1;
     }
 
     private async Task InvokeModal()
