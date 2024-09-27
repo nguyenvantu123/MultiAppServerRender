@@ -276,6 +276,10 @@ else
         {
             viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
+        finally
+        {
+            _loaded = true;
+        }
     }
 
     private async Task<TableData<UserDataViewModel>> ServerReload(TableState state, CancellationToken cancellationToken)
@@ -312,7 +316,7 @@ else
 
     protected async Task Reload()
     {
-        await table.ReloadServerData();
+        await LoadUsers();
     }
 
     private void ManageRoles(string userId, string userName)

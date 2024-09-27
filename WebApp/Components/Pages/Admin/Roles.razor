@@ -1,6 +1,7 @@
 @page "/admin/roles"
 @using MultiAppServer.ServiceDefaults
 @using WebApp.Components.Dialogs
+@using WebApp.Constant
 @attribute [Authorize]
 @layout AdminMainLayout
 
@@ -22,7 +23,10 @@
 }
 else
 {
-    <MudTable Hover="true" Striped="true" FixedHeader="true" LoadingProgressColor="Color.Info" Elevation="4" Items="rolesList" Filter="new Func<RoleDto, bool>(Search)" @bind-role="role">
+    @*  @ref
+= "table" ServerData = "ServerReload" Hover = "true" Elevation = "25" HorizontalScrollbar = "true" RowsPerPage = "@pageSize" Items = "users" FixedHeader = "true" Dense = "true" @bind - user = "users" *@
+
+    <MudTable Hover="true" Striped="true" Elevation="25" FixedHeader="true" LoadingProgressColor="Color.Info" HorizontalScrollbar="true" RowsPerPage="@pageSize" Items="rolesList" @bind-role="rolesList">
 
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
@@ -31,7 +35,7 @@ else
                     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
 
                         <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Add New Role</MudButton>
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reset" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
                     </MudHidden>
 
                     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
@@ -39,19 +43,19 @@ else
                             <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
                         </MudTooltip>
                         <MudTooltip Text="Reload">
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reset" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
                         </MudTooltip>
                     </MudHidden>
                 }
                 else
                 {
                     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reset" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
                     </MudHidden>
 
                     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
                         <MudTooltip Text="Reload">
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reset" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
                         </MudTooltip>
                     </MudHidden>
                 }
@@ -116,7 +120,7 @@ else
     </FooterContent> *@
 
         <PagerContent>
-            <MudTablePager RowsPerPageString="Rows per page" />
+            <MudTablePager HorizontalAlignment="HorizontalAlignment.Left" PageSizeOptions="@TablePageConstant.RowPerPage" RowsPerPageString="Rows per page" />
         </PagerContent>
     </MudTable>
 }
@@ -141,7 +145,7 @@ else
     [Inject] AccountApiClient accountApiClient { get; set; }
     // [Inject] IViewNotifier viewNotifier { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
-    protected int pageSize { get; set; } = 15;
+    protected int pageSize { get; set; } = 1;
     protected int currentPage { get; set; } = 0;
 
     protected string currentRoleName = string.Empty;
