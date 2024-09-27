@@ -1,18 +1,13 @@
 ﻿@page "/admin/users"
+@using Microsoft.AspNetCore.WebUtilities
 @using WebApp.Components.Dialogs
+@using WebApp.Constant
 @attribute [Authorize]
 @layout AdminMainLayout
 
 <style>
     .mud-table-container {
         overflow: auto;
-    }
-
-    .mud-simple-table.mud-table-sticky-header * table thead * th {
-        background-color: var(--mud-palette-surface);
-        position: sticky;
-        z-index: 1;
-        top: 0;
     }
 </style>
 
@@ -27,7 +22,7 @@
 }
 else
 {
-    <MudTable @ref="table" Hover="true" Elevation="25" HorizontalScrollbar="true" Items="users" FixedHeader="true" Dense="true" Filter="new Func<UserDataViewModel, bool>(Search)" @bind-user="users">
+    <MudTable @ref="table" ServerData="ServerReload" Hover="true" Elevation="25" HorizontalScrollbar="true" RowsPerPage="@pageSize" Items="users" FixedHeader="true" Dense="true" @bind-user="users">
 
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
@@ -36,7 +31,7 @@ else
                     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
 
                         <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Register New User</MudButton>
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="LoadUsers" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reload" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
                         @if (_canExportUsers)
                         {
                             <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;">Export</MudButton>
@@ -48,7 +43,7 @@ else
                             <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
                         </MudTooltip>
                         <MudTooltip Text="Reload">
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="LoadUsers" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reload" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
                         </MudTooltip>
                         @if (_canExportUsers)
                         {
@@ -61,7 +56,7 @@ else
                 else
                 {
                     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="LoadUsers" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reload" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
                         @if (_canExportUsers)
                         {
                             <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;">Export</MudButton>
@@ -70,7 +65,7 @@ else
 
                     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
                         <MudTooltip Text="Reload">
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="LoadUsers" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reload" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
                         </MudTooltip>
                         @if (_canExportUsers)
                         {
@@ -82,7 +77,7 @@ else
                 }
             </div>
             <MudSpacer />
-            <MudTextField @bind-Value="_searchString" Immediate="true" FullWidth=false Placeholder="Search For Users" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
+            @*  <MudTextField @bind-Value="_searchString" Immediate="true" FullWidth=false Placeholder="Search For Users" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField> *@
         </ToolBarContent>
 
         <HeaderContent>
@@ -130,29 +125,25 @@ else
             <MudTd DataLabel="Active"><MudCheckBox T="bool" @bind-Checked="@context.IsActive" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
         </RowTemplate>
         <PagerContent>
-            <MudTablePager PageSizeOptions="[1, 10, 20]" RowsPerPageString="Rows per page" HidePageNumber="true"
-                           HidePagination="true" />
-            <MudPagination SelectedChanged="PageChanged" Count="@(totalItemsCount / table.RowsPerPage)" Class="pa-4" />
-
+            <MudTablePager HorizontalAlignment="HorizontalAlignment.Left" PageSizeOptions="@TablePageConstant.RowPerPage" RowsPerPageString="Rows per page" />
         </PagerContent>
     </MudTable>
 }
 @code {
     private MudTable<UserDataViewModel> table;
 
-    // [Inject] IViewNotifier viewNotifier { get; set; }
-    // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
     [Inject] AccountApiClient apiClient { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
     private bool _loaded = false;
-    // protected IdentityAuthenticationStateProvider identityAuthenticationStateProvider;
 
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    protected int pageSize { get; set; } = 1;
-    private int pageIndex { get; set; } = 0;
+    public int pageSize { get; set; } = 1;
+
+    public int pageIndex { get; set; } = 0;
+
     protected int totalItemsCount { get; set; } = 0;
 
     private List<BreadcrumbItem> _items { get; set; }
@@ -177,7 +168,17 @@ else
         {
             var user = (await authenticationStateTask).User;
 
-            // user!.Identity!.IsAuthenticated
+            var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri); //you can use IURIHelper for older versions
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageSize", out var pageSizeData))
+            {
+                pageSize = Convert.ToInt16(pageSizeData.First());
+            }
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageIndex", out var pageIndexData))
+            {
+                pageIndex = Convert.ToInt16(pageIndexData.First());
+            }
 
             _canCreateUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Create).FirstOrDefault() != null;
             // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
@@ -200,31 +201,31 @@ else
         };
     }
 
-    private bool Search(UserDataViewModel user)
-    {
-        if (string.IsNullOrWhiteSpace(_searchString)) return true;
-        if (user.FirstName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return true;
-        }
-        if (user.LastName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return true;
-        }
-        if (user.Email?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return true;
-        }
-        if (user.PhoneNumber?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return true;
-        }
-        if (user.UserName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return true;
-        }
-        return false;
-    }
+    // private bool Search(UserDataViewModel user)
+    // {
+    //     if (string.IsNullOrWhiteSpace(_searchString)) return true;
+    //     if (user.FirstName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+    //     {
+    //         return true;
+    //     }
+    //     if (user.LastName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+    //     {
+    //         return true;
+    //     }
+    //     if (user.Email?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+    //     {
+    //         return true;
+    //     }
+    //     if (user.PhoneNumber?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+    //     {
+    //         return true;
+    //     }
+    //     if (user.UserName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+    //     {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     private async Task Delete(string id)
     {
@@ -259,32 +260,37 @@ else
         }
     }
 
-    protected virtual async Task ReloadUser()
-    {
-        await LoadUsers();
-    }
     protected async Task LoadUsers()
     {
         try
         {
-            // apiClient.ClearEntitiesCache();
-            // table.set = pageIndex;
-            table.SetRowsPerPage(pageSize);
+            _loaded = false;
 
             var result = await apiClient.GetUsers(pageSize, pageIndex, "");
             users = result.Result;
-            totalItemsCount = (int)result.Result.Count;
+            totalItemsCount = (int)result.Count;
 
-            viewNotifier.Show($"{totalItemsCount} items found", ViewNotifierType.Success, L["Operation Successful"]);
+            viewNotifier.Show($"{result.Result.Count} items found", ViewNotifierType.Success, L["Operation Successful"]);
         }
         catch (Exception ex)
         {
             viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
-    private void PageChanged(int i)
+
+    private async Task<TableData<UserDataViewModel>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
-        pageIndex = i - 1;
+        await OnPage(state.Page, state.PageSize);
+
+        return new TableData<UserDataViewModel>() { TotalItems = totalItemsCount, Items = users };
+    }
+
+    protected async Task OnPage(int index, int size)
+    {
+        pageSize = size;
+        pageIndex = index;
+
+        await LoadUsers();
     }
 
     private async Task InvokeModal()
@@ -302,6 +308,11 @@ else
     private void ViewProfile(string userId)
     {
         _navigationManager.NavigateTo($"/admin/user-profile/{userId}");
+    }
+
+    protected async Task Reload()
+    {
+        await table.ReloadServerData();
     }
 
     private void ManageRoles(string userId, string userName)
