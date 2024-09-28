@@ -23,7 +23,7 @@
     </MudNavGroup>
     @if (_canViewUsers)
     {
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/users").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/users?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
             @L["Users"]
         </MudNavLink>
     }

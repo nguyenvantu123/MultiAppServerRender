@@ -34,6 +34,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using eShop.WebhookClient.Endpoints;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -207,6 +208,7 @@ builder.Services.AddMvc().AddNewtonsoftJson(opt =>
            });
 
 builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddScoped<LogoutServices>();
 
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
@@ -261,6 +263,17 @@ if (builder.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+//app.Use(async (context, next) =>
+//{
+//    if (context.Request.Path
+//            .Equals("/logout", System.StringComparison.OrdinalIgnoreCase))
+//    {
+//        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+//        await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+//    }
+//    await next();
+//});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

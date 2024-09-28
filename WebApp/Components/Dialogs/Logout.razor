@@ -15,10 +15,12 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <form method="post" action="logout">
-            <AntiforgeryToken />
-            <button class="action" type="submit">Log out</button>
-        </form>
+
+        <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
+        @*   <form method="post" action="logout">
+        <AntiforgeryToken />
+        <button class="action" type="submit">Log out</button>
+        </form> *@
 
     </DialogActions>
 </MudDialog>
@@ -32,6 +34,28 @@
     [Parameter] public Color Color { get; set; }
 
     [Parameter] public string CurrentUserId { get; set; }
+
+    // public HttpContext httpContext { get; set; }
+
+    Task Submit()
+    {
+
+        // await _httpContextAccessor!.HttpContext!.Si(
+        //               CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // await _httpContextAccessor!.HttpContext!.Sign(
+        // OpenIdConnectDefaults.AuthenticationScheme);
+
+        _navigationManager.NavigateTo("/logout");
+
+        return Task.CompletedTask;
+
+        // await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        // await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+
+        // await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        // await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+    }
 
     void Cancel() => MudDialog.Cancel();
 }

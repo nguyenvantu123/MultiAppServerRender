@@ -78,8 +78,8 @@ namespace BlazorIdentity.Users.Configuration
                         "users",
                         "identity"
                     },
-                    AccessTokenLifetime = 60*60*2, // 2 hours
-                    IdentityTokenLifetime= 60*60*2 // 2 hours
+                    AccessTokenLifetime = 3600 / 12, // 2 hours
+                    IdentityTokenLifetime= 3600 / 12 // 2 hours
                 },
                 new Client
                 {

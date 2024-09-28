@@ -1,9 +1,11 @@
 ﻿@page "/admin/users"
 @using Microsoft.AspNetCore.WebUtilities
+@using System.Net
 @using WebApp.Components.Dialogs
 @using WebApp.Constant
 @attribute [Authorize]
 @layout AdminMainLayout
+@inject LogoutServices LogOutService
 
 <style>
     .mud-table-container {
@@ -132,10 +134,15 @@ else
 @code {
     private MudTable<UserDataViewModel> table;
 
+    private TableState stateTable;
+
     [Inject] AccountApiClient apiClient { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
     private bool _loaded = false;
+
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
 
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -272,6 +279,10 @@ else
 
             viewNotifier.Show($"{result.Result.Count} items found", ViewNotifierType.Success, L["Operation Successful"]);
         }
+        // catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        // {
+        //     await LogOutService.LogOutAsync(HttpContext!);
+        // }
         catch (Exception ex)
         {
             viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
@@ -284,9 +295,15 @@ else
 
     private async Task<TableData<UserDataViewModel>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
-        await OnPage(state.Page, state.PageSize);
+        TableData<UserDataViewModel> data = new TableData<UserDataViewModel>();
 
-        return new TableData<UserDataViewModel>() { TotalItems = totalItemsCount, Items = users };
+        pageIndex = state.Page;
+        pageSize = state.PageSize;
+        await OnPage(pageIndex, pageSize);
+
+        data.TotalItems = totalItemsCount;
+        data.Items = users;
+        return data;
     }
 
     protected async Task OnPage(int index, int size)
@@ -316,7 +333,7 @@ else
 
     protected async Task Reload()
     {
-        await LoadUsers();
+        await OnPage(pageIndex, pageSize);
     }
 
     private void ManageRoles(string userId, string userName)
