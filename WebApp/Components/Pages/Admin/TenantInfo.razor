@@ -1,17 +1,23 @@
 ﻿@using MultiAppServer.ServiceDefaults
 @inject AccountApiClient accountClientApi
 <AuthorizeView>
-    <span>Current Tenant: @tenant.Name</span>
+    <span>Current Tenant: @TenantName</span>
 </AuthorizeView>
 @code {
-    TenantModel tenant = new TenantModel();
+    public string TenantName { get; set; } = "";
+
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
-        var apiResponse = await accountClientApi.GetTenant();
-        if (apiResponse.StatusCode == 200)
-        {
-            tenant = apiResponse.Result;
-        }
+        var user = (await authenticationStateTask).User;
+
+        TenantName = user.Claims.Where(x => x.Value == PermissionsWebApp.TenantName.Name).FirstOrDefault() != null ? user.Claims.Where(x => x.Value == PermissionsWebApp.TenantName.Name).FirstOrDefault()!.ToString() : "";
+        // var apiResponse = await accountClientApi.GetTenant();
+        // if (apiResponse.StatusCode == 200)
+        // {
+        //     tenant = apiResponse.Result;
+        // }
     }
 }

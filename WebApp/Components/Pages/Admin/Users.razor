@@ -271,7 +271,7 @@ else
     {
         try
         {
-            _loaded = false;
+            // _loaded = false;
 
             var result = await apiClient.GetUsers(pageSize, pageIndex, "");
             users = result.Result;
@@ -295,15 +295,10 @@ else
 
     private async Task<TableData<UserDataViewModel>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
-        TableData<UserDataViewModel> data = new TableData<UserDataViewModel>();
+        await OnPage(state.Page, state.PageSize);
 
-        pageIndex = state.Page;
-        pageSize = state.PageSize;
-        await OnPage(pageIndex, pageSize);
+        return new TableData<UserDataViewModel>() { TotalItems = totalItemsCount, Items = users };
 
-        data.TotalItems = totalItemsCount;
-        data.Items = users;
-        return data;
     }
 
     protected async Task OnPage(int index, int size)

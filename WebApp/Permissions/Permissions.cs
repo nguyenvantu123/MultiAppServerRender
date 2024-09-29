@@ -83,6 +83,14 @@ namespace WebApp.Permissions
             public const string Search = "Permissions.RoleClaims.Search";
         }
 
+
+        [DisplayName("Tenant Name")]
+        [Description("Tenant Name")]
+        public static class TenantName
+        {
+            public const string Name = "TenantName";
+        }
+
         #endregion
     }
 }
