@@ -145,7 +145,7 @@ else
     [Inject] AccountApiClient accountApiClient { get; set; }
     // [Inject] IViewNotifier viewNotifier { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
-    protected int pageSize { get; set; } = 1;
+    protected int pageSize { get; set; } = 10;
     protected int pageIndex { get; set; } = 0;
 
     protected string currentRoleName = string.Empty;

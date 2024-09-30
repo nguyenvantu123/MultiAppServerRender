@@ -97,7 +97,10 @@ else
         <RowTemplate>
             <MudTd DataLabel="Actions">
                 <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary">
-                    <MudMenuItem OnClick="(()=>ViewProfile(context.Id.ToString()))">View Profile</MudMenuItem>
+                    @if (_canUpdateRoles)
+                    {
+                        <MudMenuItem OnClick="(()=>ViewProfile(context.Id.ToString()))">Change Profile</MudMenuItem>
+                    }
                     @if (_canViewRoles)
                     {
                         <MudMenuItem OnClick="(()=>ManageRoles(context.Id.ToString(), context.UserName))">Manage Roles</MudMenuItem>
@@ -147,7 +150,7 @@ else
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    public int pageSize { get; set; } = 1;
+    public int pageSize { get; set; } = 10;
 
     public int pageIndex { get; set; } = 0;
 
@@ -166,6 +169,7 @@ else
     private bool _canExportUsers;
     private bool _canViewRoles;
     private bool _canDeleteRoles;
+    private bool _canUpdateRoles;
 
     public string _searchString;
 
@@ -191,7 +195,7 @@ else
             // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
             _canExportUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
             _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
-
+            _canUpdateRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
             _canDeleteRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Delete).FirstOrDefault() != null;
             _items = new List<BreadcrumbItem>
         {

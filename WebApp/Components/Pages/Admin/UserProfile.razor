@@ -47,8 +47,8 @@ else
                             <MudAvatar Color="Color.Secondary" Style="height:115px; width:115px;">@_firstLetterOfName</MudAvatar>
                         }
                     </div>
-                  @*   <MudText Typo="Typo.h6" Align="Align.Center">@_firstName @_lastName</MudText>
-                    <MudText Align="Align.Center">@_email</MudText> *@
+                    @*   <MudText Typo="Typo.h6" Align="Align.Center">@_firstName @_lastName</MudText>
+                <MudText Align="Align.Center">@_email</MudText> *@
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -131,7 +131,7 @@ else
         }
         Title = $"{_firstName} {_lastName}' Profile";
         // Description = _email;
-        if (_firstName.Length > 0)
+        if (_firstName != null && _firstName.Length > 0)
         {
             _firstLetterOfName = _firstName[0];
         }

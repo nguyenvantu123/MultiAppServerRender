@@ -70,7 +70,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto> CreateUser(RegisterViewModel parameters)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/create", parameters);
+            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/admin/users", parameters);
         }
 
         public async Task<ApiResponseDto<LoginResponseModel>> Register(RegisterViewModel parameters)

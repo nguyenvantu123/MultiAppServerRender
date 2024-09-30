@@ -30,9 +30,9 @@ public static class UsersApi
 
         api.MapGet("/users", GetUsers);
 
-        api.MapPost("/users/create", Create);
+        api.MapPost("/users", Create);
 
-        api.MapPut("/users/update/{id}", AdminUpdateUser);
+        api.MapPut("/users/{id}", AdminUpdateUser);
 
         api.MapDelete("/users/{id}", AdminDelete);
 
