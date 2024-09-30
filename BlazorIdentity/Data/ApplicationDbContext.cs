@@ -6,6 +6,8 @@ using BlazorIdentity.Users.Constants;
 using Microsoft.EntityFrameworkCore.Storage;
 using BlazorIdentity.Interfaces;
 using Duende.IdentityServer.EntityFramework.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace BlazorIdentity.Data
 {
@@ -40,33 +42,33 @@ namespace BlazorIdentity.Data
 
         public bool HasActiveTransaction => _currentTransaction != null;
 
-        public DbSet<PersistedGrant> PersistedGrants { get ; set ; }
-        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get ; set ; }
-        public DbSet<Key> Keys { get ; set ; }
-        public DbSet<ServerSideSession> ServerSideSessions { get ; set ; }
-        public DbSet<PushedAuthorizationRequest> PushedAuthorizationRequests { get ; set ; }
-        public DbSet<Log> Logs { get ; set ; }
-        public DbSet<ApiResourceSecret> ApiSecrets { get ; set ; }
-        public DbSet<ApiScopeClaim> ApiScopeClaims { get ; set ; }
-        public DbSet<IdentityResourceClaim> IdentityClaims { get ; set ; }
-        public DbSet<ApiResourceClaim> ApiResourceClaims { get ; set ; }
-        public DbSet<ClientGrantType> ClientGrantTypes { get ; set ; }
-        public DbSet<ClientScope> ClientScopes { get ; set ; }
-        public DbSet<ClientSecret> ClientSecrets { get ; set ; }
-        public DbSet<ClientPostLogoutRedirectUri> ClientPostLogoutRedirectUris { get ; set ; }
-        public DbSet<ClientIdPRestriction> ClientIdPRestrictions { get ; set ; }
-        public DbSet<ClientRedirectUri> ClientRedirectUris { get ; set ; }
-        public DbSet<ClientClaim> ClientClaims { get ; set ; }
-        public DbSet<ClientProperty> ClientProperties { get ; set ; }
-        public DbSet<IdentityResourceProperty> IdentityResourceProperties { get ; set ; }
-        public DbSet<ApiResourceProperty> ApiResourceProperties { get ; set ; }
-        public DbSet<ApiScopeProperty> ApiScopeProperties { get ; set ; }
-        public DbSet<ApiResourceScope> ApiResourceScopes { get ; set ; }
-        public DbSet<Client> Clients { get ; set ; }
-        public DbSet<ClientCorsOrigin> ClientCorsOrigins { get ; set ; }
-        public DbSet<IdentityResource> IdentityResources { get ; set ; }
-        public DbSet<ApiResource> ApiResources { get ; set ; }
-        public DbSet<ApiScope> ApiScopes { get ; set ; }
+        public DbSet<PersistedGrant> PersistedGrants { get; set; }
+        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
+        public DbSet<Key> Keys { get; set; }
+        public DbSet<ServerSideSession> ServerSideSessions { get; set; }
+        public DbSet<PushedAuthorizationRequest> PushedAuthorizationRequests { get; set; }
+        public DbSet<Log> Logs { get; set; }
+        public DbSet<ApiResourceSecret> ApiSecrets { get; set; }
+        public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
+        public DbSet<IdentityResourceClaim> IdentityClaims { get; set; }
+        public DbSet<ApiResourceClaim> ApiResourceClaims { get; set; }
+        public DbSet<ClientGrantType> ClientGrantTypes { get; set; }
+        public DbSet<ClientScope> ClientScopes { get; set; }
+        public DbSet<ClientSecret> ClientSecrets { get; set; }
+        public DbSet<ClientPostLogoutRedirectUri> ClientPostLogoutRedirectUris { get; set; }
+        public DbSet<ClientIdPRestriction> ClientIdPRestrictions { get; set; }
+        public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
+        public DbSet<ClientClaim> ClientClaims { get; set; }
+        public DbSet<ClientProperty> ClientProperties { get; set; }
+        public DbSet<IdentityResourceProperty> IdentityResourceProperties { get; set; }
+        public DbSet<ApiResourceProperty> ApiResourceProperties { get; set; }
+        public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; }
+        public DbSet<ApiResourceScope> ApiResourceScopes { get; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<ClientCorsOrigin> ClientCorsOrigins { get; set; }
+        public DbSet<IdentityResource> IdentityResources { get; set; }
+        public DbSet<ApiResource> ApiResources { get; set; }
+        public DbSet<ApiScope> ApiScopes { get; set; }
         public DbSet<IdentityProvider> IdentityProviders { get; set; }
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
@@ -151,19 +153,32 @@ namespace BlazorIdentity.Data
             builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key });
 
             builder.Entity<DeviceFlowCodes>().ToTable("DeviceFlowCodes").HasKey(x => x.DeviceCode);
-            //builder.Ignore<IdentityRole<Guid>>();
-            //builder.Ignore<IdentityRoleClaim<Guid>>();
-            //builder.Ignore<IdentityUser<Guid>>();
-            //builder.Ignore<IdentityUserClaim<Guid>>();
-            //builder.Ignore<IdentityUserRole<Guid>>();
-            //builder.Ignore<IdentityUserLogin<Guid>>();
-            //builder.Ignore<IdentityUserLogin<Guid>>();
 
+            SetGlobalQueryFilters(builder);
 
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+        }
 
+        private void SetGlobalQueryFilters(ModelBuilder modelBuilder)
+        {
+            foreach (Microsoft.EntityFrameworkCore.Metadata.IMutableEntityType tp in modelBuilder.Model.GetEntityTypes())
+            {
+                Type t = tp.ClrType;
+
+                // set Soft Delete Property
+                if (typeof(ISoftDelete).IsAssignableFrom(t))
+                {
+                    MethodInfo method = SetGlobalQueryForSoftDeleteMethodInfo.MakeGenericMethod(t);
+                    method.Invoke(this, new object[] { modelBuilder });
+                }
+            }
+        }
+
+        private static readonly MethodInfo SetGlobalQueryForSoftDeleteMethodInfo = typeof(ApplicationDbContext).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+    .Single(t => t.IsGenericMethod && t.Name == "SetGlobalQueryForSoftDelete");
+
+        public void SetGlobalQueryForSoftDelete<T>(ModelBuilder builder) where T : class, ISoftDelete
+        {
+            builder.Entity<T>().HasQueryFilter(item => !EF.Property<bool>(item, "IsDeleted"));
         }
 
         public async Task CommitTransactionAsync(IDbContextTransaction transaction)
@@ -205,6 +220,18 @@ namespace BlazorIdentity.Data
                     _currentTransaction = null;
                 }
             }
+        }
+
+        public override int SaveChanges()
+        {
+            ChangeTracker.SetShadowProperties(UserSession);
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ChangeTracker.SetShadowProperties(UserSession);
+            return await base.SaveChangesAsync(true, cancellationToken);
         }
     }
 }

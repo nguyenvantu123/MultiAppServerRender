@@ -21,7 +21,7 @@
             }
         </TitleContent>
         <DialogContent>
-            <MudTextField For="@(() => RoleModel.Id)" @bind-Value="RoleModel.Id" Label="Role ID" Disabled />
+            <MudTextField hidden @bind-Value="RoleModel.Id" Label="Role ID" Disabled />
             <MudTextField For="@(() => RoleModel.Name)" @bind-Value="RoleModel.Name" Label="Role Name" />
             <MudTextField For="@(() => RoleModel.Description)" @bind-Value="RoleModel.Description" Label="Description" />
         </DialogContent>

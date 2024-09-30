@@ -251,6 +251,7 @@ else
             {
                 await LoadUsers();
                 // await HubConnection.SendAsync(ApplicationConstants.SignalR.SendUpdateDashboard);
+                await table.ReloadServerData();
                 viewNotifier.Show(response.Message, ViewNotifierType.Success);
             }
             else
@@ -318,6 +319,7 @@ else
         if (!result.Canceled)
         {
             await LoadUsers();
+            await table.ReloadServerData();
         }
     }
 

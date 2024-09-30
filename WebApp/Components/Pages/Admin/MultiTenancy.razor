@@ -383,8 +383,8 @@ else
 
             viewNotifier.Show("Tenant Deleted", ViewNotifierType.Success);
             await OnInitializedAsync();
-            isDeleteTenantDialogOpen = false;
-            StateHasChanged();
+
+            await table.ReloadServerData();
         }
         catch (Exception ex)
         {

@@ -31,7 +31,7 @@ public static class RolesApi
 
         api.MapGet("/roles/{id}", GetRoleById);
 
-        api.MapPost("/roles/create", Create);
+        api.MapPost("/roles", Create);
 
         api.MapDelete("/roles/{id}", Delete);
 
@@ -52,17 +52,21 @@ public static class RolesApi
     public static async Task<ApiResponse> Update(string id, CreateRoleCommand command, [AsParameters] UserServices userServices)
     {
 
-        if (await userServices.RoleManager.FindByNameAsync(command.Name) != null)
-        {
-            return new ApiResponse(400, $"Name is exist!!!!");
-        }
-
         if (await userServices.RoleManager.FindByIdAsync(id) == null)
         {
             return new ApiResponse(400, $"Role doesn't exist!!!!");
         }
 
         var role = await userServices.RoleManager.FindByIdAsync(id);
+
+        if (role!.Name != command.Name)
+        {
+            if (await userServices.RoleManager.FindByNameAsync(command.Name) != null)
+            {
+                return new ApiResponse(400, $"Name is exist!!!!");
+            }
+        }
+
         role.Name = command.Name;
         role.Description = command.Description;
 
@@ -120,7 +124,7 @@ public static class RolesApi
 
         var roleDto = new RoleDto
         {
-            Name = identityRole.Name,
+            Name = identityRole.Name
         };
 
         return new ApiResponse(200, "Role fetched", roleDto);

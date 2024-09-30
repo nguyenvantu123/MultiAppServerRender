@@ -26,7 +26,7 @@ else
     @*  @ref
 = "table" ServerData = "ServerReload" Hover = "true" Elevation = "25" HorizontalScrollbar = "true" RowsPerPage = "@pageSize" Items = "users" FixedHeader = "true" Dense = "true" @bind - user = "users" *@
 
-    <MudTable Hover="true" Striped="true" Elevation="25" FixedHeader="true" LoadingProgressColor="Color.Info" HorizontalScrollbar="true" RowsPerPage="@pageSize" Items="rolesList" @bind-role="rolesList">
+    <MudTable @ref="table" Hover="true" Striped="true" Elevation="25" FixedHeader="true" LoadingProgressColor="Color.Info" HorizontalScrollbar="true" RowsPerPage="@pageSize" Items="rolesList" ServerData="ServerReload">
 
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
@@ -35,7 +35,7 @@ else
                     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
 
                         <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Add New Role</MudButton>
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reset" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
                     </MudHidden>
 
                     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
@@ -43,25 +43,25 @@ else
                             <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
                         </MudTooltip>
                         <MudTooltip Text="Reload">
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reset" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
                         </MudTooltip>
                     </MudHidden>
                 }
                 else
                 {
                     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reset" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
+                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
                     </MudHidden>
 
                     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
                         <MudTooltip Text="Reload">
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reset" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
+                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="InitializeRolesListAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
                         </MudTooltip>
                     </MudHidden>
                 }
             </div>
             <MudSpacer />
-            <MudTextField @bind-Value="_searchString" Immediate="true" FullWidth=false Placeholder="Search for Roles" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
+            <MudTextField @bind-Value="_searchString" Immediate="true" FullWidth=false Placeholder="Search For Role Name" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField>
         </ToolBarContent>
 
         <HeaderContent>
@@ -146,7 +146,7 @@ else
     // [Inject] IViewNotifier viewNotifier { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
     protected int pageSize { get; set; } = 1;
-    protected int currentPage { get; set; } = 0;
+    protected int pageIndex { get; set; } = 0;
 
     protected string currentRoleName = string.Empty;
     protected bool isCurrentRoleReadOnly = false;
@@ -164,6 +164,9 @@ else
     private List<BreadcrumbItem>
         _items = new List<BreadcrumbItem> { new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"), new BreadcrumbItem("BreadCrumbAdminRoles", href: "/admin/roles") };
     protected List<RoleDto> rolesList;
+
+    private MudTable<RoleDto> table;
+    private int totalItemsCount { get; set; } = 0;
 
     protected RoleDto role;
     private bool _loaded = false;
@@ -198,12 +201,14 @@ else
     {
         try
         {
-            var apiResponse = await accountApiClient.GetRoles(pageSize, currentPage, "");
+            var apiResponse = await accountApiClient.GetRoles(pageSize, pageIndex, "");
 
             if (apiResponse.IsSuccessStatusCode)
             {
-                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Success, L["Operation Successful"]);
                 rolesList = apiResponse.Result;
+                totalItemsCount = apiResponse.Count;
+                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Success, L["Operation Successful"]);
+
             }
             else
                 viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
@@ -215,110 +220,6 @@ else
     }
 
     #endregion
-
-    #region OpenUpsertRoleDialog
-
-    // protected bool isUpsertRoleDialogOpen = false;
-    // protected bool isInsertOperation;
-    // protected List<SelectItem<string>> permissionsSelections = new();
-
-    // protected string labelUpsertDialogTitle;
-    // protected string labelUpsertDialogOkButton;
-
-    // protected async Task OpenUpsertRoleDialog(string roleName = "")
-    // {
-    //     try
-    //     {
-    //         currentRoleName = roleName;
-
-    //         isInsertOperation = string.IsNullOrWhiteSpace(roleName);
-
-    //         if (isInsertOperation)
-    //         {
-    //             labelUpsertDialogTitle = L["New Role"];
-    //             labelUpsertDialogOkButton = L["Create"];
-    //         }
-    //         else
-    //         {
-    //             labelUpsertDialogTitle = L["Edit {0}", roleName];
-    //             labelUpsertDialogOkButton = L["Update"];
-    //         }
-
-    //         RoleDto role = null;
-    //         isCurrentRoleReadOnly = !isInsertOperation;
-
-    //         if (isCurrentRoleReadOnly)
-    //         {
-    //             var roleResponse = await accountApiClient.GetRoleByName(roleName);
-    //             role = roleResponse.Result;
-    //         }
-
-    //         var response = await accountApiClient.GetAllPermissions();
-    //         permissionsSelections.Clear();
-
-
-    //         foreach (var name in response.Result)
-    //             permissionsSelections.Add(new SelectItem<string>
-    //                 {
-    //                     Id = name,
-    //                     DisplayValue = name,
-    //                     Selected = role != null
-    //                 });
-
-    //         isUpsertRoleDialogOpen = true;
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
-    //     }
-    // }
-
-    // protected async Task UpsertRole()
-    // {
-    //     try
-    //     {
-    //         if (string.IsNullOrWhiteSpace(currentRoleName))
-    //         {
-    //             viewNotifier.Show("Role Creation Error", ViewNotifierType.Error, "Enter in a Role Name");
-    //             return;
-    //         }
-
-    //         RoleDto request = new()
-    //             {
-    //                 Name = currentRoleName,
-    //                 Permissions = permissionsSelections.Where(i => i.Selected).Select(i => i.Id).ToList()
-    //             };
-
-    //         ApiResponseDto apiResponse;
-
-    //         if (isInsertOperation)
-    //             apiResponse = await accountApiClient.UpdateRole(request);
-    //         else
-    //             apiResponse = await accountApiClient.CreateRole(request);
-
-    //         if (apiResponse.IsSuccessStatusCode)
-    //         {
-    //             viewNotifier.Show(apiResponse.Message, ViewNotifierType.Success);
-
-    //             StateHasChanged();
-    //         }
-    //         else
-    //             viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error);
-
-
-    //         // this.StateHasChanged();
-    //         await OnInitializedAsync();
-
-    //         isUpsertRoleDialogOpen = false;
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
-    //     }
-    // }
-
-    #endregion
-
     #region OpenDeleteDialog
 
     protected bool isDeleteRoleDialogOpen = false;
@@ -338,9 +239,9 @@ else
             if (response.IsSuccessStatusCode)
             {
                 viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
-                await OnInitializedAsync();
-                isDeleteRoleDialogOpen = false;
-                StateHasChanged();
+                await InitializeRolesListAsync();
+                await table.ReloadServerData();
+
             }
             else
                 viewNotifier.Show(L["Operation Failed"], ViewNotifierType.Error);
@@ -354,12 +255,28 @@ else
     private bool Search(RoleDto role)
     {
         if (string.IsNullOrWhiteSpace(_searchString)) return true;
-        if (role.Name?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return true;
-        }
+        // if (role.Name?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+        // {
+        //     return true;
+        // }
 
         return false;
+    }
+
+    private async Task<TableData<RoleDto>> ServerReload(TableState state, CancellationToken cancellationToken)
+    {
+        await OnPage(state.Page, state.PageSize);
+
+        return new TableData<RoleDto>() { TotalItems = totalItemsCount, Items = rolesList };
+
+    }
+
+    protected async Task OnPage(int index, int size)
+    {
+        pageSize = size;
+        pageIndex = index;
+
+        await InitializeRolesListAsync();
     }
 
     private async Task InvokeModal(string id = null)
@@ -383,14 +300,10 @@ else
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            await Reset();
-        }
-    }
+            await InitializeRolesListAsync();
 
-    private async Task Reset()
-    {
-        role = new RoleDto();
-        await InitializeRolesListAsync();
+            await table.ReloadServerData();
+        }
     }
 
     private void ManagePermissions(string roleId)
@@ -413,13 +326,15 @@ else
             var response = await _accountApiClient.DeleteRole(id);
             if (response.IsSuccessStatusCode)
             {
-                await Reset();
+                await InitializeRolesListAsync();
                 // await HubConnection.SendAsync(ApplicationConstants.SignalR.SendUpdateDashboard);
+
+                await table.ReloadServerData();
                 viewNotifier.Show(response.Message, ViewNotifierType.Success);
             }
             else
             {
-                await Reset();
+                await InitializeRolesListAsync();
 
                 viewNotifier.Show(response.Message, ViewNotifierType.Error);
 
