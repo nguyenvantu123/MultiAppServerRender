@@ -30,5 +30,7 @@ namespace WebApp.Models
 
         public bool ActivateUser { get; set; } = false;
         public bool AutoConfirmEmail { get; set; } = false;
+
+        public Guid Id { get; set; }
     }
 }

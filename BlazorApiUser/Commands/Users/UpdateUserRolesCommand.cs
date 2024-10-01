@@ -3,9 +3,8 @@ using MediatR;
 
 namespace BlazorApiUser.Commands.Users
 {
-    public record UpdateUserRolesCommand : IRequest<Tuple<int, string>>
+    public record UpdateUserRolesCommand
     {
-        public string UserId { get; set; }
-        public IList<UserRoleModel> UserRoles { get; set; }
+        public List<UserRoleModel> UserRoles { get; set; }
     }
 }

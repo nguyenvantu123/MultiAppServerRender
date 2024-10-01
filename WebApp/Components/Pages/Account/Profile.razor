@@ -237,7 +237,13 @@ else
     {
         try
         {
-            var apiResponse = await _accountApiClient.UpdateUser(userViewModel);
+            RegisterViewModel registerViewModel = new RegisterViewModel();
+
+
+            registerViewModel.FirstName = userViewModel.FirstName;
+            registerViewModel.LastName = userViewModel.LastName;
+
+            var apiResponse = await _accountApiClient.UpdateUser(registerViewModel);
 
             if (apiResponse.IsSuccessStatusCode)
                 viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);

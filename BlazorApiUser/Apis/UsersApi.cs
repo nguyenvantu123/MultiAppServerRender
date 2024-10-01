@@ -21,6 +21,7 @@ using BlazorApiUser.Queries.Users;
 using BlazorApiUser.Queries.Roles;
 using WebApp.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using BlazorIdentity.Users.Constants;
 
 public static class UsersApi
 {
@@ -44,7 +45,7 @@ public static class UsersApi
 
         api.MapGet("/users/user-roles/{id}", GetRoleByUserId);
 
-        api.MapPut("/users/update-user-roles", UpdateUserRoles);
+        api.MapPut("/users/update-user-roles/{id}", UpdateUserRoles);
 
         api.MapPut("/users/toggle-user-status", ToggleUserStatus);
 
@@ -220,10 +221,50 @@ public static class UsersApi
         return new ApiResponse<UserRolesResponse>(200, "Success", result);
     }
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponse> UpdateUserRoles(UpdateUserRolesCommand updateUserRolesCommand, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponse> UpdateUserRoles(string id, UpdateUserRolesCommand updateUserRolesCommand, [AsParameters] UserServices userServices)
     {
-        var command = await userServices.Mediator.Send(updateUserRolesCommand);
-        return new ApiResponse(command.Item1, command.Item2, null);
+        var user = await userServices.UserManager.FindByIdAsync(id);
+
+        if (user == null)
+        {
+            return new ApiResponse(400, "Not found user!!!");
+        }
+
+        if (user.UserName == DefaultUserNames.Administrator)
+        {
+            return new ApiResponse(400, "Not Allowed");
+        }
+
+        var userAccessor = userServices.HttpContextAccessor!.HttpContext!.User;
+        var userId = new Guid(userAccessor.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+        var roles = await userServices.UserManager.GetRolesAsync(user);
+        var selectedRoles = updateUserRolesCommand.UserRoles.Where(x => x.Selected).ToList();
+
+        var currentUser = await userServices.UserManager.FindByIdAsync(userId.ToString());
+
+        if (currentUser == null)
+        {
+            return new ApiResponse(401, "Unauthorized!!!");
+        }
+
+        if (!await userServices.UserManager.IsInRoleAsync(currentUser, DefaultRoleNames.Administrator))
+        {
+            var tryToAddAdministratorRole = selectedRoles
+                .Any(x => x.RoleName == DefaultRoleNames.Administrator);
+            var userHasAdministratorRole = roles.Any(x => x == DefaultRoleNames.Administrator);
+            if (tryToAddAdministratorRole && !userHasAdministratorRole || !tryToAddAdministratorRole && userHasAdministratorRole)
+            {
+
+                return new ApiResponse(400, "Not Allowed to add or delete Administrator Role if you have not this role.");
+
+            }
+        }
+
+        var result = await userServices.UserManager.RemoveFromRolesAsync(user, roles);
+        result = await userServices.UserManager.AddToRolesAsync(user, selectedRoles.Select(y => y.RoleName));
+
+        return new ApiResponse(200, "Roles Updated");
     }
 
     [Authorize]

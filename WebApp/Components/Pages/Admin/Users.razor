@@ -11,6 +11,27 @@
     .mud-table-container {
         overflow: auto;
     }
+
+    .fixed-column {
+        position: sticky;
+        background-color: var(--mud-palette-background);
+    }
+
+    .position {
+        left: 0;
+    }
+
+    .position2 {
+        left: 130px;
+    }
+
+    th.fixed-column {
+        z-index: 30;
+    }
+
+    td.fixed-column {
+        z-index: 20;
+    }
 </style>
 
 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
@@ -84,8 +105,8 @@ else
 
         <HeaderContent>
             <MudTh>Actions</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.FirstName)">First Name</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.LastName)">Last Name</MudTableSortLabel></MudTh>
+            <MudTh Class="fixed-column position"><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.FirstName)">First Name</MudTableSortLabel></MudTh>
+            <MudTh Class="fixed-column position2"><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.LastName)">Last Name</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.UserName)">UserName</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.Email)">Email</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.PhoneNumber)">PhoneNumber</MudTableSortLabel></MudTh>
@@ -99,7 +120,7 @@ else
                 <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary">
                     @if (_canUpdateRoles)
                     {
-                        <MudMenuItem OnClick="(()=>ViewProfile(context.Id.ToString()))">Change Profile</MudMenuItem>
+                        <MudMenuItem OnClick="(()=>ViewProfile(context.Id.ToString()))">Edit User</MudMenuItem>
                     }
                     @if (_canViewRoles)
                     {
@@ -111,10 +132,10 @@ else
                     }
                 </MudMenu>
             </MudTd>
-            <MudTd DataLabel="FirstName">
+            <MudTd Class="fixed-column position" DataLabel="FirstName">
                 <MudHighlighter Text="@context.FirstName" HighlightedText="@_searchString" />
             </MudTd>
-            <MudTd DataLabel="LastName">
+            <MudTd Class="fixed-column position2" DataLabel="LastName">
                 <MudHighlighter Text="@context.LastName" HighlightedText="@_searchString" />
             </MudTd>
             <MudTd DataLabel="UserName">
@@ -159,6 +180,9 @@ else
     private List<BreadcrumbItem> _items { get; set; }
 
     protected List<UserDataViewModel> users { get; set; }
+
+    protected UserDataViewModel user { get; set; }
+
     protected List<SelectItem<Guid>> roleSelections { get; set; } = new();
     protected UserDataViewModel currentUser { get; set; } = new UserDataViewModel();
     protected RegisterViewModel newUserViewModel { get; set; } = new RegisterViewModel();
@@ -212,32 +236,6 @@ else
         };
     }
 
-    // private bool Search(UserDataViewModel user)
-    // {
-    //     if (string.IsNullOrWhiteSpace(_searchString)) return true;
-    //     if (user.FirstName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-    //     {
-    //         return true;
-    //     }
-    //     if (user.LastName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-    //     {
-    //         return true;
-    //     }
-    //     if (user.Email?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-    //     {
-    //         return true;
-    //     }
-    //     if (user.PhoneNumber?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-    //     {
-    //         return true;
-    //     }
-    //     if (user.UserName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
-    //     {
-    //         return true;
-    //     }
-    //     return false;
-    // }
-
     private async Task Delete(string id)
     {
         string deleteContent = "Delete Content";
@@ -263,11 +261,6 @@ else
                 await LoadUsers();
 
                 viewNotifier.Show(response.Message, ViewNotifierType.Error);
-
-                // foreach (var message in response.Messages)
-                // {
-                //     viewNotifier.Add(message, Severity.Error);
-                // }
             }
         }
     }
@@ -284,10 +277,6 @@ else
 
             viewNotifier.Show($"{result.Result.Count} items found", ViewNotifierType.Success, L["Operation Successful"]);
         }
-        // catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        // {
-        //     await LogOutService.LogOutAsync(HttpContext!);
-        // }
         catch (Exception ex)
         {
             viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
@@ -314,11 +303,31 @@ else
         await LoadUsers();
     }
 
-    private async Task InvokeModal()
+    private async Task InvokeModal(string id = null)
     {
         var parameters = new DialogParameters();
+
+        if (id != null)
+        {
+            user = users!.Where(c => c.Id.ToString() == id).FirstOrDefault()!;
+            if (user != null)
+            {
+                parameters.Add(nameof(RegisterUser.RegisterUserModel), new RegisterViewModel
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        ActivateUser = user.IsActive,
+                        AutoConfirmEmail = user.EmailConfirmed
+                    });
+            }
+        }
+
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
-        var dialog = _dialogService.Show<RegisterUser>("Create New User", parameters, options);
+        var dialog = _dialogService.Show<RegisterUser>(id == null ? "Create New User" : "Update User", parameters, options);
         var result = await dialog.Result;
         if (!result.Canceled)
         {

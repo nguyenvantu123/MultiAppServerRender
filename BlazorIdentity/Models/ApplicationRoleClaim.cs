@@ -6,7 +6,7 @@ namespace BlazorIdentity.Users.Models
 {
     [MultiTenant]
     [Permissions(Actions.CRUD)]
-    public class ApplicationRoleClaim : IdentityRoleClaim<Guid>
+    public class ApplicationRoleClaim : IdentityRoleClaim<Guid>, ISoftDelete
     {
         public string Description { get; set; }
         public string Group { get; set; }
@@ -14,6 +14,8 @@ namespace BlazorIdentity.Users.Models
         public DateTime CreatedOn { get; set; }
         public string LastModifiedBy { get; set; }
         public DateTime? LastModifiedOn { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
 
         [ForeignKey("RoleId")]
         public virtual ApplicationRole Role { get; set; }

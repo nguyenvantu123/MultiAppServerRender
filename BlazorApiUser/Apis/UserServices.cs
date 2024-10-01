@@ -14,7 +14,8 @@ public class UserServices(
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager,
     TenantStoreDbContext tenantStoreDbContext,
-    IMapper mapper)
+    IMapper mapper,
+    IHttpContextAccessor httpContextAccessor)
 {
     public IMediator Mediator { get; set; } = mediator;
     public ILogger<UserServices> Logger { get; } = logger;
@@ -25,5 +26,6 @@ public class UserServices(
     public TenantStoreDbContext TenantStoreDbContext { get; } = tenantStoreDbContext;
 
     public IMapper Mapper { get; set; } = mapper;
+    public IHttpContextAccessor HttpContextAccessor { get; set; } = httpContextAccessor;
 
 }

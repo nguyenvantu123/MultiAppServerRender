@@ -73,6 +73,12 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/admin/users", parameters);
         }
 
+
+        public async Task<ApiResponseDto> UpdateUser(RegisterViewModel userViewModel)
+        {
+            return await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/users/{userViewModel.Id}", userViewModel);
+        }
+
         public async Task<ApiResponseDto<LoginResponseModel>> Register(RegisterViewModel parameters)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto<LoginResponseModel>>("api/account/register", parameters);
@@ -152,11 +158,6 @@ namespace WebApp.Interfaces
         //    var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>("api/account/get-user");
         //    return apiResponse.Result;
         //}
-
-        public async Task<ApiResponseDto> UpdateUser(UserDataViewModel userViewModel)
-        {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/update-user", userViewModel);
-        }
 
         public async Task<ApiResponseDto> UpsertUser(UserDataViewModel userViewModel)
         {
@@ -299,7 +300,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto> UpdateUserRolesAsync(UpdateUserRolesRequest request)
         {
-            var apiResponse = await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/user-roles/{request.UserId}", request.UserRoles);
+            var apiResponse = await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/users/update-user-roles/{request.UserId}", request.UserRoles);
             return apiResponse;
         }
 

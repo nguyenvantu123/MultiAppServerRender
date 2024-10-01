@@ -21,8 +21,8 @@
             }
         </TitleContent>
         <DialogContent>
-            <MudTextField hidden @bind-Value="RoleModel.Id" Label="Role ID" Disabled />
-            <MudTextField For="@(() => RoleModel.Name)" @bind-Value="RoleModel.Name" Label="Role Name" />
+@*             <MudTextField hidden @bind-Value="RoleModel.Id" Label="Role ID" Disabled />
+ *@            <MudTextField For="@(() => RoleModel.Name)" @bind-Value="RoleModel.Name" Label="Role Name" />
             <MudTextField For="@(() => RoleModel.Description)" @bind-Value="RoleModel.Description" Label="Description" />
         </DialogContent>
         <DialogActions>
@@ -69,16 +69,11 @@
         if (response.IsSuccessStatusCode)
         {
             viewNotifier.Show(response.Message, ViewNotifierType.Success);
-            // await HubConnection.SendAsync(ApplicationConstants.SignalR.SendUpdateDashboard);
             MudDialog.Close();
         }
         else
         {
             viewNotifier.Show(response.Message, ViewNotifierType.Error);
-            // foreach (var message in response.Messages)
-            // {
-            //     _snackBar.Add(message, Severity.Error);
-            // }
         }
     }
 }

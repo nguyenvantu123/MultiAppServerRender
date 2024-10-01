@@ -86,7 +86,7 @@ else
         if (result.IsSuccessStatusCode)
         {
             viewNotifier.Show(result.Message, ViewNotifierType.Success);
-            _navigationManager.NavigateTo("/admin/users");
+            _navigationManager.Refresh(true);
         }
         else
         {

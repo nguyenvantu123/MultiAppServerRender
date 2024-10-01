@@ -7,7 +7,7 @@ namespace BlazorIdentity.Users.Models
     //[Table("ApplicationUser")]
     [MultiTenant]
     [Permissions(Actions.CRUD)]
-    public class ApplicationUser : IdentityUser<Guid>
+    public class ApplicationUser : IdentityUser<Guid>, ISoftDelete
     {
         public override Guid Id { get => base.Id; set => base.Id = value; }
         public override string UserName { get => base.UserName; set => base.UserName = value; }
@@ -29,7 +29,7 @@ namespace BlazorIdentity.Users.Models
         public string LastModifiedBy { get; set; }
         public DateTime? LastModifiedOn { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
         public DateTime? DeletedOn { get; set; }
         public bool IsActive { get; set; }
