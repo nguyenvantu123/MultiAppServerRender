@@ -23,10 +23,18 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using BlazorApiUser.Filter;
 using BlazorApiUser.Apis;
+using Aspire.StackExchange.Redis;
+using BlazorIdentity.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddRedis("Redis");
+
+builder.AddRabbitMQ("ConnectionStrings:Eventbus");
+
 builder.AddServiceDefaults();
+
+builder.Services.AddSingleton<RedisUserRepository>();
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 

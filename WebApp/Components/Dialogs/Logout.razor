@@ -16,11 +16,13 @@
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
 
-        <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
-        @*   <form method="post" action="logout">
-        <AntiforgeryToken />
-        <button class="action" type="submit">Log out</button>
-        </form> *@
+        @*             <AntiforgeryToken />*@
+
+        @* < button class="action" type="submit">Log out</button> *@
+
+        <form method="post" action="logout">
+            <MudButton Color="@Color" Variant="Variant.Filled" ButtonType="ButtonType.Submit">@ButtonText</MudButton>
+        </form>
 
     </DialogActions>
 </MudDialog>
@@ -37,25 +39,25 @@
 
     // public HttpContext httpContext { get; set; }
 
-    Task Submit()
-    {
+    // Task Submit()
+    // {
 
-        // await _httpContextAccessor!.HttpContext!.Si(
-        //               CookieAuthenticationDefaults.AuthenticationScheme);
+    //     // await _httpContextAccessor!.HttpContext!.Si(
+    //     //               CookieAuthenticationDefaults.AuthenticationScheme);
 
-        // await _httpContextAccessor!.HttpContext!.Sign(
-        // OpenIdConnectDefaults.AuthenticationScheme);
+    //     // await _httpContextAccessor!.HttpContext!.Sign(
+    //     // OpenIdConnectDefaults.AuthenticationScheme);
 
-        _navigationManager.NavigateTo("/logout");
+    //     _navigationManager.NavigateTo("/logout");
 
-        return Task.CompletedTask;
+    //     return Task.CompletedTask;
 
-        // await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        // await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+    //     // await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    //     // await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
 
-        // await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        // await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-    }
+    //     // await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    //     // await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+    // }
 
     void Cancel() => MudDialog.Cancel();
 }

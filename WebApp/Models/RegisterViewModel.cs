@@ -2,7 +2,7 @@
 
 namespace WebApp.Models
 {
-    public class RegisterViewModel : LoginInputModel
+    public class RegisterViewModel
     {
         [Required]
         public string FirstName { get; set; }

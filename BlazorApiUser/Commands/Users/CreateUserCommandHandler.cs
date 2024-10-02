@@ -36,7 +36,12 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Tuple
         var user = new ApplicationUser
         {
             UserName = command.UserName,
-            Email = command.Email
+            Email = command.Email,
+            FirstName = command.FirstName,
+            LastName = command.LastName,
+            PhoneNumber = command.PhoneNumber,
+            IsActive = command.ActivateUser,
+            EmailConfirmed = command.AutoConfirmEmail
         };
 
         var checkUserIsExist = await _userManager.FindByNameAsync(command.UserName);

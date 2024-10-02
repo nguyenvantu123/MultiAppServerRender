@@ -105,13 +105,13 @@ else
 
         <HeaderContent>
             <MudTh>Actions</MudTh>
-            <MudTh Class="fixed-column position"><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.FirstName)">First Name</MudTableSortLabel></MudTh>
-            <MudTh Class="fixed-column position2"><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.LastName)">Last Name</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.UserName)">UserName</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.Email)">Email</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.PhoneNumber)">PhoneNumber</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.EmailConfirmed)">Email Confirmation</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UserDataViewModel, object>(x => x.IsActive)">Active</MudTableSortLabel></MudTh>
+            <MudTh Class="fixed-column position">First Name</MudTh>
+            <MudTh Class="fixed-column position2">Last Name</MudTh>
+            <MudTh>UserName</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>PhoneNumber</MudTh>
+            <MudTh>Email Confirmation</MudTh>
+            <MudTh>Active</MudTh>
 
         </HeaderContent>
 
@@ -120,7 +120,7 @@ else
                 <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary">
                     @if (_canUpdateRoles)
                     {
-                        <MudMenuItem OnClick="(()=>ViewProfile(context.Id.ToString()))">Edit User</MudMenuItem>
+                        <MudMenuItem OnClick="(()=>InvokeModal(context.Id.ToString()))">Edit User</MudMenuItem>
                     }
                     @if (_canViewRoles)
                     {
@@ -147,8 +147,8 @@ else
             <MudTd DataLabel="PhoneNumber">
                 <MudHighlighter Text="@context.PhoneNumber" HighlightedText="@_searchString" />
             </MudTd>
-            <MudTd DataLabel="EmailConfirmed"><MudCheckBox T="bool" @bind-Checked="@context.EmailConfirmed" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
-            <MudTd DataLabel="Active"><MudCheckBox T="bool" @bind-Checked="@context.IsActive" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
+            <MudTd DataLabel="EmailConfirmed"><MudCheckBox T="bool" Value="@context.EmailConfirmed" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
+            <MudTd DataLabel="Active"><MudCheckBox T="bool" Value="@context.IsActive" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
         </RowTemplate>
         <PagerContent>
             <MudTablePager HorizontalAlignment="HorizontalAlignment.Left" PageSizeOptions="@TablePageConstant.RowPerPage" RowsPerPageString="Rows per page" />
@@ -327,7 +327,7 @@ else
         }
 
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
-        var dialog = _dialogService.Show<RegisterUser>(id == null ? "Create New User" : "Update User", parameters, options);
+        var dialog = _dialogService.Show<RegisterUser>(id == Guid.Empty.ToString() ? "Create" : "Edit", parameters, options);
         var result = await dialog.Result;
         if (!result.Canceled)
         {

@@ -14,10 +14,10 @@
         @L["Dashboard"]
     </MudNavLink>
     <MudNavGroup Title="@L["Settings"]">
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/settings").AbsoluteUri" Icon="@Icons.Material.Filled.SettingsApplications">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/settings?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.SettingsApplications">
             @L["MainSettings"]
         </MudNavLink>
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/settings/email").AbsoluteUri" Icon="@Icons.Material.Filled.Email">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/settings/email?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.Email">
             @L["Email"]
         </MudNavLink>
     </MudNavGroup>
@@ -30,21 +30,21 @@
 
     @if (_canViewRoles)
     {
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/roles").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/roles?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
             @L["Roles"]
         </MudNavLink>
     }
     @if (_canViewTenant)
     {
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/multitenancy").AbsoluteUri" Icon="@Icons.Material.Filled.AccountBalance">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/multitenancy?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.AccountBalance">
             @L["MultiTenancy"]
         </MudNavLink>
     }
     <MudNavGroup Title="@L["AppAdminNavMonitoring"]">
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/apilog").AbsoluteUri" Icon="@Icons.Material.Filled.ChangeHistory">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/apilog?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.ChangeHistory">
             @L["AppAdminNavApiAuditLog"]
         </MudNavLink>
-        <MudNavLink Href="@_navigationManager.ToAbsoluteUri("admin/dblog").AbsoluteUri" Icon="@Icons.Material.Filled.Notes">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/dblog?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.Notes">
             @L["AppAdminNavDBLoggingView"]
         </MudNavLink>
     </MudNavGroup>

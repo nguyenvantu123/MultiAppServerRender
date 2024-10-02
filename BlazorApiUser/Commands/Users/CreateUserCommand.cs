@@ -20,26 +20,33 @@ public record CreateUserCommand : IRequest<Tuple<int, string>>
     [Display(Name = "Password")]
     public string Password { get; init; }
 
+    [Required]
     [DataMember]
     public string PasswordConfirm { get; set; }
 
+    [Required]
     [DataMember]
     public string UserName { get; set; }
 
+    [Required]
     [DataMember]
     public string FirstName { get; set; }
 
+    [Required]
     [DataMember]
     public string LastName { get; set; }
-
 
     [Required]
     [Compare(nameof(Password))]
     public string ConfirmPassword { get; set; }
 
+    [Required]
     public string PhoneNumber { get; set; }
 
+    [Required]
     public bool ActivateUser { get; set; } = false;
+
+    [Required]
     public bool AutoConfirmEmail { get; set; } = false;
 
     //public CreateUserCommand(string email, string password, string passwordConfirm, string userName, bool rememberMe)

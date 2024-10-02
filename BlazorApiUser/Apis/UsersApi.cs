@@ -98,18 +98,16 @@ public static class UsersApi
 
         user.FirstName = command.FirstName;
         user.LastName = command.LastName;
+        user.PhoneNumber = command.PhoneNumber;
 
         var result = await userServices.UserManager.UpdateAsync(user);
 
         if (!result.Succeeded)
         {
             return new ApiResponse(400, string.Join(";", result.Errors), null);
-
         }
 
         return new ApiResponse(200, $"{command.UserName} update successfully!!!", null);
-
-        //return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
     }
 
     [Authorize(Roles = Permissions.User.Delete)]

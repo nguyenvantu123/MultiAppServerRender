@@ -45,7 +45,7 @@ public class RedisUserRepository(ILogger<RedisUserRepository> logger, IConnectio
         }
 
 
-        logger.LogInformation("Basket item persisted successfully.");
+        logger.LogInformation("User item persisted successfully.");
         return await GetUserProfileAsync(userProfile.UserId);
     }
 }
