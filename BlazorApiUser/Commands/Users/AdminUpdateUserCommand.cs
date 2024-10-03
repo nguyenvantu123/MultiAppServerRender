@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlazorApiUser.Commands.Users
 {
-    public record AdminUpdateUserCommand : IRequest<Tuple<int, string>>
+    public record AdminUpdateUserCommand
     {
         public bool IsAuthenticated { get; set; }
         public string UserName { get; set; }

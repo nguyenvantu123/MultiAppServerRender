@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace BlazorApiUser.Commands.Users
 {
     [DataContract]
-    public record ToogleUserRequestCommand : IRequest<Tuple<int, string>>
+    public record ToogleUserRequestCommand
     {
         [DataMember]
         public bool ActivateUser { get; set; }

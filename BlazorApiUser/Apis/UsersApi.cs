@@ -22,6 +22,9 @@ using BlazorApiUser.Queries.Roles;
 using WebApp.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using BlazorIdentity.Users.Constants;
+using BlazorIdentity.Users.Extensions;
+using BlazorIdentity.Users;
+using BlazorIdentity.Repositories;
 
 public static class UsersApi
 {
@@ -65,17 +68,92 @@ public static class UsersApi
     [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponse> ToggleUserStatus(ToogleUserRequestCommand toggleUserStatusCommand, [AsParameters] UserServices userServices)
     {
-        var sendCommand = await userServices.Mediator.Send(toggleUserStatusCommand);
 
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, sendCommand);
+        var userById = await userServices.UserManager.FindByIdAsync(toggleUserStatusCommand.UserId);
+
+        if (userById == null)
+        {
+            return new ApiResponse(404, "User not found!!!");
+        }
+
+        userById.IsActive = toggleUserStatusCommand.ActivateUser;
+
+        await userServices.UserManager.UpdateAsync(userById);
+
+        return new ApiResponse(200, "Success!!!");
     }
 
     [Authorize(Roles = Permissions.User.Create)]
-    public static async Task<ApiResponse> Create(CreateUserCommand command, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponse> Create(CreateUserCommand command, [AsParameters] UserServices userServices, [AsParameters] RedisUserRepository redisUserRepository)
     {
-        var sendCommand = await userServices.Mediator.Send(command);
+        var user = new ApplicationUser
+        {
+            UserName = command.UserName,
+            Email = command.Email,
+            FirstName = command.FirstName,
+            LastName = command.LastName,
+            PhoneNumber = command.PhoneNumber,
+            IsActive = command.ActivateUser,
+            EmailConfirmed = command.AutoConfirmEmail
+        };
 
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
+        var checkUserIsExist = await userServices.UserManager.FindByNameAsync(command.UserName);
+        if (checkUserIsExist != null)
+        {
+            return new ApiResponse(400, "User Name is exist");
+        }
+
+        checkUserIsExist = await userServices.UserManager.FindByEmailAsync(command.Email);
+
+        if (checkUserIsExist != null)
+        {
+            return new ApiResponse(400, "Email is exist");
+        }
+
+        var result = await userServices.UserManager.CreateAsync(user, command.Password);
+
+        if (!result.Succeeded)
+        {
+            var msg = result.GetErrors();
+
+            return new ApiResponse(400, msg);
+        }
+
+        var claimsResult = userServices.UserManager.AddClaimsAsync(user, new Claim[]{
+                        new Claim(Policies.IsAdmin, string.Empty),
+                        new Claim(ClaimTypes.Name, command.UserName),
+                        new Claim(ClaimTypes.Email, command.Email),
+                        new Claim(ApplicationClaimTypes.EmailVerified, ClaimValues.falseString, ClaimValueTypes.Boolean)
+                    }).Result;
+
+        //if (_userManager.Options.SignIn.RequireConfirmedEmail)
+        //{
+        //    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+        //    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        //    string callbackUrl = string.Format("{0}/Account/ConfirmEmail/{1}?token={2}", baseUrl, user.Id, token);
+
+        //    var email = _emailFactory.BuildNewUserConfirmationEmail($"{user.FirstName} {user.LastName}", user.UserName, callbackUrl);
+        //    email.ToAddresses.Add(new EmailAddressDto(user.Email, user.Email));
+
+        //    var response = await _emailFactory.QueueEmail(email, EmailType.Confirmation);
+
+        //    if (!response.IsSuccessStatusCode)
+        //        _logger.LogError($"New user email failed: {response.Message}");
+
+        //}
+        //else
+        //{
+        //    var email = _emailFactory.BuildNewUserEmail($"{user.FirstName} {user.LastName}", user.UserName, user.Email, parameters.Password);
+        //    email.ToAddresses.Add(new EmailAddressDto(user.Email, user.Email));
+
+        //    var response = await _emailFactory.SendEmail(email);
+
+        //    if (!response.IsSuccessStatusCode)
+        //        _logger.LogError($"New user email failed: {response.Message}");
+
+        //}
+
+        return new ApiResponse(200, $"User {command.UserName} created");
     }
 
     [Authorize(Roles = Permissions.User.Update)]
@@ -140,9 +218,24 @@ public static class UsersApi
     public static async Task<ApiResponse> ResetPasswordUser(ChangePasswordCommand changePasswordCommand, [AsParameters] UserServices userServices)
     {
 
-        var sendCommand = await userServices.Mediator.Send(changePasswordCommand);
+        var user = await userServices.UserManager.FindByIdAsync(changePasswordCommand.UserId);
+        if (user == null)
+        {
+            return new ApiResponse(200, $"User not found!!!");
 
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, null);
+        }
+        var passToken = await userServices.UserManager.GeneratePasswordResetTokenAsync(user);
+        //var result = await userServices.UserManager.ResetPasswordAsync(user, passToken);
+        //else
+        //{
+        //    _logger.LogWarning(user.UserName + "'s password reset failed; Requested from Admin interface by:" + User.Identity.Name);
+
+        //    var msg = result.GetErrors();
+        //    _logger.LogWarning($"Error while resetting password of {user.UserName}: {msg}");
+        //    return new ApiResponse((int)HttpStatusCode.BadRequest, msg);
+        //}
+
+        return new ApiResponse(200, $"User {user.UserName}  password reset");
     }
 
     [Authorize(Roles = Permissions.User.Update)]

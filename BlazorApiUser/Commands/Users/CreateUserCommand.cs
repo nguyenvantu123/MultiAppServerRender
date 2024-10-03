@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace BlazorApiUser.Commands.Users;
 
 [DataContract]
-public record CreateUserCommand : IRequest<Tuple<int, string>>
+public record CreateUserCommand 
 {
 
     [DataMember]
