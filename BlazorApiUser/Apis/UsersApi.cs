@@ -84,7 +84,7 @@ public static class UsersApi
     }
 
     [Authorize(Roles = Permissions.User.Create)]
-    public static async Task<ApiResponse> Create(CreateUserCommand command, [AsParameters] UserServices userServices, [AsParameters] RedisUserRepository redisUserRepository)
+    public static async Task<ApiResponse> Create(CreateUserCommand command, [AsParameters] UserServices userServices)
     {
         var user = new ApplicationUser
         {
@@ -203,12 +203,15 @@ public static class UsersApi
             return new ApiResponse(400, "Can't delete admin user!!!", null);
         }
 
-        var result = await userServices.UserManager.DeleteAsync(user);
+        user.IsDeleted = true;
+
+        var result = await userServices.UserManager.UpdateAsync(user);
+
+        await userServices.ApplicationDbContext.SaveChangesAsync();
 
         if (!result.Succeeded)
         {
             return new ApiResponse(400, string.Join(";", result.Errors), null);
-
         }
 
         return new ApiResponse(200, $"{user.UserName} delete successfully!!!", null);

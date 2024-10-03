@@ -21,8 +21,8 @@ namespace BlazorIdentity.Data
         {
             TenantInfo = (AppTenantInfo)multiTenantContextAccessor.MultiTenantContext.TenantInfo ?? new AppTenantInfo { Id = DefaultTenant.DefaultTenantId, Identifier = DefaultTenant.DefaultTenantId, Name = DefaultTenant.DefaultTenantId };
             TenantNotSetMode = TenantNotSetMode.Overwrite;
-            TenantMismatchMode = TenantMismatchMode.Overwrite;
-        }
+            TenantMismatchMode = TenantMismatchMode.Overwrite;        }
+
 
 
         private IDbContextTransaction _currentTransaction;
@@ -37,8 +37,6 @@ namespace BlazorIdentity.Data
         public DbSet<Message> Messages { get; set; }
 
         public DbSet<TenantSetting> TenantSettings { get; set; }
-
-        private IUserSession UserSession { get; set; }
 
         public bool HasActiveTransaction => _currentTransaction != null;
 
@@ -224,13 +222,13 @@ namespace BlazorIdentity.Data
 
         public override int SaveChanges()
         {
-            ChangeTracker.SetShadowProperties(UserSession);
+            ChangeTracker.SetShadowProperties();
             return base.SaveChanges();
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            ChangeTracker.SetShadowProperties(UserSession);
+            ChangeTracker.SetShadowProperties();
             return await base.SaveChangesAsync(true, cancellationToken);
         }
     }

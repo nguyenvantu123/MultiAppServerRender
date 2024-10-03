@@ -2,6 +2,8 @@
 
 using AutoMapper;
 using BlazorApiUser.Repository;
+using BlazorIdentity.Data;
+using BlazorIdentity.Repositories;
 using BlazorIdentity.Users.Data;
 using BlazorIdentity.Users.Models;
 using MediatR;
@@ -15,7 +17,9 @@ public class UserServices(
     RoleManager<ApplicationRole> roleManager,
     TenantStoreDbContext tenantStoreDbContext,
     IMapper mapper,
-    IHttpContextAccessor httpContextAccessor)
+    IHttpContextAccessor httpContextAccessor,
+    RedisUserRepository redisUserRepository,
+    ApplicationDbContext applicationDbContext)
 {
     public IMediator Mediator { get; set; } = mediator;
     public ILogger<UserServices> Logger { get; } = logger;
@@ -27,5 +31,9 @@ public class UserServices(
 
     public IMapper Mapper { get; set; } = mapper;
     public IHttpContextAccessor HttpContextAccessor { get; set; } = httpContextAccessor;
+
+    public RedisUserRepository RedisUserRepository { get; set; } = redisUserRepository;
+
+    public ApplicationDbContext ApplicationDbContext { get; set; } = applicationDbContext;
 
 }

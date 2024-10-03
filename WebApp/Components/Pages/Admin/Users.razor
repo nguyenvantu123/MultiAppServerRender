@@ -344,6 +344,7 @@ else
     protected async Task Reload()
     {
         await OnPage(pageIndex, pageSize);
+        await table.ReloadServerData();
     }
 
     private void ManageRoles(string userId, string userName)

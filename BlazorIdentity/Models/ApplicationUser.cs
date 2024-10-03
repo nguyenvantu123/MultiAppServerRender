@@ -32,6 +32,8 @@ namespace BlazorIdentity.Users.Models
         public bool IsDeleted { get; set; } = false;
 
         public DateTime? DeletedOn { get; set; }
+
+        public string DeletedBy { get; set; }
         public bool IsActive { get; set; }
 
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }

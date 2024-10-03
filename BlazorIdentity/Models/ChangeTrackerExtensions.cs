@@ -4,47 +4,55 @@ namespace BlazorIdentity.Users.Models
 {
     public static class ChangeTrackerExtensions
     {
-        public static void SetShadowProperties(this ChangeTracker changeTracker, IUserSession userSession)
+        public static void SetShadowProperties(this ChangeTracker changeTracker)
         {
             changeTracker.DetectChanges();
             Guid? userId = null;
             string userName = null;
             DateTime timestamp = DateTime.UtcNow;
 
-            if (userSession != null && userSession.UserId != Guid.Empty)
+            if (SignInManager == null || SignInManager.Context == null)
             {
-                userId = userSession.UserId;
-                userName = userSession.UserName;
+                return;
             }
 
+            userId = Guid.Parse(SignInManager.Context.User.FindFirst("sub").Value);
+            userName = SignInManager.Context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             foreach (EntityEntry entry in changeTracker.Entries().Where(e => e.State != EntityState.Unchanged))
             {
-                if (entry.Entity is IAuditable)
+
+                if (entry.State == EntityState.Added)
                 {
-                    if (entry.State == EntityState.Added)
-                    {
-                        entry.Property("CreatedOn").CurrentValue = timestamp;
+                    entry.Property("CreatedOn").CurrentValue = timestamp;
 
-                        if (userId != null)
-                            entry.Property("CreatedBy").CurrentValue = userName;
-                    }
-
-                    if (entry.State == EntityState.Deleted || entry.State == EntityState.Modified)
-                    {
-                        entry.Property("LastModifiedOn").CurrentValue = timestamp;
-
-                        if (userId != null)
-                            entry.Property("LastModifiedBy").CurrentValue = userName;
-                    }
+                    if (userId != null)
+                        entry.Property("CreatedBy").CurrentValue = userName;
                 }
 
-                if (entry.State == EntityState.Deleted && entry.Entity is ISoftDelete)
+                if (entry.State == EntityState.Modified)
                 {
-                    entry.State = EntityState.Modified;
-                    entry.Property("IsDeleted").CurrentValue = true;
+                    if (Convert.ToBoolean(entry.Property("IsDeleted").CurrentValue) == true)
+                    {
+                        entry.Property("DeletedOn").CurrentValue = timestamp;
+                        entry.Property("DeletedBy").CurrentValue = userName;
+                    }
+
+                    else
+                    {
+
+                        entry.Property("LastModifiedOn").CurrentValue = timestamp;
+                        entry.Property("LastModifiedBy").CurrentValue = userName;
+                    }
+
+
                 }
             }
+            //if (entry.State == EntityState.Deleted && entry.Entity is ISoftDelete)
+            //{
+            //    entry.State = EntityState.Modified;
+            //    entry.Property("IsDeleted").CurrentValue = true;
+            //}
         }
     }
 }

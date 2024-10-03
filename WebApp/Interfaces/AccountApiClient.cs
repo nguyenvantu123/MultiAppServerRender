@@ -79,6 +79,10 @@ namespace WebApp.Interfaces
             return await _httpClient.PutJsonAsync<ApiResponseDto>($"api/admin/users/{userViewModel.Id}", userViewModel);
         }
 
+        public async Task<ApiResponseDto> DeleteUser(string id)
+        {
+            return await _httpClient.DeleteAsync<ApiResponseDto>($"api/admin/users/{id}");
+        }
         public async Task<ApiResponseDto<LoginResponseModel>> Register(RegisterViewModel parameters)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto<LoginResponseModel>>("api/account/register", parameters);
@@ -162,10 +166,6 @@ namespace WebApp.Interfaces
         public async Task<ApiResponseDto> UpsertUser(UserDataViewModel userViewModel)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/UpsertUser", userViewModel);
-        }
-        public async Task<ApiResponseDto> DeleteUser(string id)
-        {
-            return await _httpClient.DeleteAsync<ApiResponseDto>($"api/account/{id}");
         }
 
         public async Task<ApiResponseDto> DeleteMe()

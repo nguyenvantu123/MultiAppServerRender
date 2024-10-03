@@ -57,8 +57,6 @@ builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithEFCoreStore<TenantStoreDbContext, AppTenantInfo>()
     .WithStaticStrategy(DefaultTenant.DefaultTenantId);
 
-builder.Services.AddScoped<BlazorIdentity.Users.Models.IUserSession, UserSessionApp>();
-
 builder.Services.AddRazorPages();
 
 //builder.Services.AddSingleton<DatabaseInitializer>();
@@ -123,7 +121,7 @@ app.MapDefaultControllerRoute();
 
 app.UseDeveloperExceptionPage();
 app.UseMultiTenant();
-app.UseMiddleware<UserSessionMiddleware>();
+//app.UseMiddleware<UserSessionMiddleware>();
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {

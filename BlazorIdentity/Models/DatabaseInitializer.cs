@@ -63,53 +63,53 @@ namespace BlazorIdentity.Users.Models
                 _tenantStoreDbContext.SaveChanges();
             }
 
-            ApplicationUser user = await _userManager.FindByNameAsync(DefaultUserNames.User);
+            //ApplicationUser user = await _userManager.FindByNameAsync(DefaultUserNames.User);
 
-            if (!_context.UserProfiles.Any())
-                _context.UserProfiles.Add(new UserProfile
-                {
-                    UserId = user.Id,
-                    ApplicationUser = user,
-                    Count = 2,
-                    IsNavOpen = true,
-                    LastPageVisited = "/dashboard",
-                    IsNavMinified = false,
-                    LastUpdatedDate = DateTime.Now
-                });
+            //if (!_context.UserProfiles.Any())
+            //    _context.UserProfiles.Add(new UserProfile
+            //    {
+            //        UserId = user.Id,
+            //        ApplicationUser = user,
+            //        Count = 2,
+            //        IsNavOpen = true,
+            //        LastPageVisited = "/dashboard",
+            //        IsNavMinified = false,
+            //        LastUpdatedDate = DateTime.Now
+            //    });
 
-            if (!_context.ApiLogs.Any())
-            {
-                _context.ApiLogs.AddRange(
-                new ApiLogItem
-                {
-                    RequestTime = DateTime.Now,
-                    ResponseMillis = 30,
-                    StatusCode = 200,
-                    Method = "Get",
-                    Path = "/api/seed",
-                    QueryString = "",
-                    RequestBody = "",
-                    ResponseBody = "",
-                    IPAddress = "::1",
-                    ApplicationUserId = user.Id
-                },
-                new ApiLogItem
-                {
-                    RequestTime = DateTime.Now,
-                    ResponseMillis = 30,
-                    StatusCode = 200,
-                    Method = "Get",
-                    Path = "/api/seed",
-                    QueryString = "",
-                    RequestBody = "",
-                    ResponseBody = "",
-                    IPAddress = "::1",
-                    ApplicationUserId = user.Id
-                }
-            );
-            }
+            //if (!_context.ApiLogs.Any())
+            //{
+            //    _context.ApiLogs.AddRange(
+            //    new ApiLogItem
+            //    {
+            //        RequestTime = DateTime.Now,
+            //        ResponseMillis = 30,
+            //        StatusCode = 200,
+            //        Method = "Get",
+            //        Path = "/api/seed",
+            //        QueryString = "",
+            //        RequestBody = "",
+            //        ResponseBody = "",
+            //        IPAddress = "::1",
+            //        ApplicationUserId = user.Id
+            //    },
+            //    new ApiLogItem
+            //    {
+            //        RequestTime = DateTime.Now,
+            //        ResponseMillis = 30,
+            //        StatusCode = 200,
+            //        Method = "Get",
+            //        Path = "/api/seed",
+            //        QueryString = "",
+            //        RequestBody = "",
+            //        ResponseBody = "",
+            //        IPAddress = "::1",
+            //        ApplicationUserId = user.Id
+            //    }
+            //);
+            //}
 
-            _context.SaveChanges();
+            //_context.SaveChanges();
         }
 
         public async Task EnsureAdminIdentitiesAsync()
