@@ -124,7 +124,40 @@ namespace BlazorIdentity.Users.Configuration
                     {
                         "users"
                     }
-                }
+                },
+                new Client
+                {
+                    ClientId = "webhooksclient",
+                    ClientName = "Webhook Client",
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    ClientUri = $"{configuration["WebhooksWebClient"]}",                             // public uri of the client
+                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowAccessTokensViaBrowser = false,
+                    RequireConsent = false,
+                    AllowOfflineAccess = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    RequirePkce = false,
+                    RedirectUris = new List<string>
+                    {
+                        $"{configuration["WebhooksWebClient"]}/signin-oidc"
+                    },
+                    PostLogoutRedirectUris = new List<string>
+                    {
+                        $"{configuration["WebhooksWebClient"]}/signout-callback-oidc"
+                    },
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        "webhooks"
+                    },
+                    AccessTokenLifetime = 60 * 60 * 2, // 2 hours
+                    IdentityTokenLifetime= 60 * 60 * 2 // 2 hours
+                },
             };
         }
     }
