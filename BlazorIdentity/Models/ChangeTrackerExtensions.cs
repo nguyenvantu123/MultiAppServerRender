@@ -1,15 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using BlazorIdentity.Users.Extensions;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace BlazorIdentity.Users.Models
 {
     public static class ChangeTrackerExtensions
     {
-        public static void SetShadowProperties(this ChangeTracker changeTracker)
+        public static void SetShadowProperties(this ChangeTracker changeTracker, ClaimsPrincipal user)
         {
             changeTracker.DetectChanges();
             Guid? userId = null;
             string userName = null;
             DateTime timestamp = DateTime.UtcNow;
+
+
+            userId = user.GetUserId();
+
+            userName = user.GetDisplayByName();
 
             //if (SignInManager == null || SignInManager.Context == null)
             //{

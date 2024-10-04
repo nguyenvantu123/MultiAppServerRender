@@ -30,6 +30,8 @@ namespace BlazorIdentity.Data
 
         public new ITenantInfo TenantInfo { get; }
 
+        public ClaimsPrincipal claimsPrincipal { get; set; }
+
         public DbSet<ApiLogItem> ApiLogs { get; set; }
 
         public DbSet<UserProfile> UserProfiles { get; set; }
@@ -222,13 +224,13 @@ namespace BlazorIdentity.Data
 
         public override int SaveChanges()
         {
-            ChangeTracker.SetShadowProperties();
+            ChangeTracker.SetShadowProperties(claimsPrincipal);
             return base.SaveChanges();
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            ChangeTracker.SetShadowProperties();
+            ChangeTracker.SetShadowProperties(claimsPrincipal);
             return await base.SaveChangesAsync(true, cancellationToken);
         }
     }
