@@ -31,7 +31,7 @@ builder.AddServiceDefaults();
 
 builder.AddRedis("Redis");
 
-builder.AddRabbitMQ("ConnectionStrings:Eventbus");
+builder.AddRabbitMqEventBus("ConnectionStrings:Eventbus");
 
 builder.Services.AddSingleton<RedisUserRepository>();
 

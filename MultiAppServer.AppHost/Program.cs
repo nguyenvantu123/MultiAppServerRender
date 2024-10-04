@@ -39,6 +39,10 @@ webApp.WithReference(identity).WithReference(file).WithEnvironment("CallBackUrl"
 
 identity.WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
 
+builder.AddProject<Projects.WebhookClient>("webhookclient");
+
+builder.AddProject<Projects.Webhooks_API>("webhooks-api");
+
 builder.Build().Run();
 
 static bool ShouldUseHttpForEndpoints()

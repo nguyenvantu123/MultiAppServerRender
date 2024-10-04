@@ -35,6 +35,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApiUser", "BlazorApiU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{7D7A951D-5471-4C94-AA71-DD4A70611B30}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebhookClient", "WebhookClient\WebhookClient.csproj", "{F518084C-DBD0-45CF-B901-5A24098DF2F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webhooks.API", "Webhooks.API\Webhooks.API.csproj", "{4BD6D173-3752-4C93-A082-5866DBDF67A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +105,14 @@ Global
 		{7D7A951D-5471-4C94-AA71-DD4A70611B30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D7A951D-5471-4C94-AA71-DD4A70611B30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D7A951D-5471-4C94-AA71-DD4A70611B30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F518084C-DBD0-45CF-B901-5A24098DF2F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F518084C-DBD0-45CF-B901-5A24098DF2F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F518084C-DBD0-45CF-B901-5A24098DF2F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F518084C-DBD0-45CF-B901-5A24098DF2F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BD6D173-3752-4C93-A082-5866DBDF67A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BD6D173-3752-4C93-A082-5866DBDF67A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BD6D173-3752-4C93-A082-5866DBDF67A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BD6D173-3752-4C93-A082-5866DBDF67A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

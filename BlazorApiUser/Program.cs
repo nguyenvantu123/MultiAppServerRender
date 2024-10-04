@@ -30,7 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddRedis("Redis");
 
-builder.AddRabbitMQ("ConnectionStrings:Eventbus");
+builder.AddRabbitMqEventBus("ConnectionStrings:Eventbus");
 
 builder.AddServiceDefaults();
 
@@ -50,8 +50,6 @@ builder.AddDefaultAuthentication();
 //builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<ApplicationDbContext>>();
 
 //builder.Services.AddScoped<IUserIntegrationEventService, UserIntegrationEventService>();
-
-builder.AddRabbitMQ("ConnectionStrings:Eventbus");
 
 // Configure mediatR
 builder.Services.AddMediatR(cfg =>
