@@ -17,14 +17,6 @@ namespace BlazorIdentity.Users.Models
 
             userName = user.GetDisplayByName();
 
-            //if (SignInManager == null || SignInManager.Context == null)
-            //{
-            //    return;
-            //}
-
-            //userId = Guid.Parse(SignInManager.Context.User.FindFirst("sub").Value);
-            //userName = SignInManager.Context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             foreach (EntityEntry entry in changeTracker.Entries().Where(e => e.State != EntityState.Unchanged))
             {
 

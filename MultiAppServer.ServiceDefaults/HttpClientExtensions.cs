@@ -1,8 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace WebApp.Extensions;
+namespace MultiAppServer.ServiceDefaults;
 
 public static class HttpClientExtensions
 {
