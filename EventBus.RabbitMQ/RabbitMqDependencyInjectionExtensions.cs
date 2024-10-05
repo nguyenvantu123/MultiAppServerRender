@@ -1,5 +1,4 @@
-﻿using eShop.EventBusRabbitMQ;
-using EventBus.EventBusRabbitMQ;
+﻿using EventBusRabbitMQ;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.Hosting;
@@ -13,13 +12,13 @@ public static class RabbitMqDependencyInjectionExtensions
     //   }
     // }
 
-    private const string SectionName = "ConnectionStrings:EventBus";
+    //private const string SectionName = "ConnectionStrings:EventBus";
 
     public static IEventBusBuilder AddRabbitMqEventBus(this IHostApplicationBuilder builder, string connectionName)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.AddRabbitMQClient(SectionName, configureConnectionFactory: factory =>
+        builder.AddRabbitMQ(connectionName: connectionName, configureConnectionFactory: factory =>
         {
             ((ConnectionFactory)factory).DispatchConsumersAsync = true;
         });
@@ -32,7 +31,7 @@ public static class RabbitMqDependencyInjectionExtensions
            });
 
         // Options support
-        builder.Services.Configure<EventBusOptions>(builder.Configuration.GetSection(SectionName));
+        builder.Services.Configure<EventBusOptions>(builder.Configuration.GetSection(connectionName));
 
         // Abstractions on top of the core client API
         builder.Services.AddSingleton<RabbitMQTelemetry>();

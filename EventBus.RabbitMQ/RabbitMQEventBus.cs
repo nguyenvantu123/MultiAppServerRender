@@ -1,9 +1,8 @@
-﻿    namespace eShop.EventBusRabbitMQ;
+﻿    namespace EventBusRabbitMQ;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using EventBus.EventBusRabbitMQ;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;

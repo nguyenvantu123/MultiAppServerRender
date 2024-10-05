@@ -1,4 +1,4 @@
-﻿namespace EventBus.EventBusRabbitMQ;
+﻿namespace EventBusRabbitMQ;
 
 public class EventBusOptions
 {

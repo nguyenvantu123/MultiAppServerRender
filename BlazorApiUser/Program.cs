@@ -30,7 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddRedis("Redis");
 
-builder.AddRabbitMqEventBus("ConnectionStrings:Eventbus");
+builder.AddRabbitMqEventBus("EventBus");
 
 builder.AddServiceDefaults();
 
