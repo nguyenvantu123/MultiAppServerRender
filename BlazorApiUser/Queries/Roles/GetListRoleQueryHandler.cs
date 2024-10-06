@@ -7,7 +7,6 @@ using BlazorBoilerplate.Constants;
 using BlazorIdentity.Users;
 using BlazorIdentity.Users.Extensions;
 using BlazorIdentity.Users.Models;
-using BlazorIdentity.Users.Models.Email;
 using IdentityModel;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

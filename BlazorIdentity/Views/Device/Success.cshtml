@@ -1,7 +1,10 @@
-
-<div class="page-device-success">
-    <div class="lead">
-        <h1>Success</h1>
-        <p>You have successfully authorized the device</p>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+<div class="page-header">
+    <div class="alert alert-success" role="alert">
+        <h3>
+            @Localizer["Success"]
+            <small>@Localizer["SuccessMessage"]</small>
+        </h3>
     </div>
 </div>

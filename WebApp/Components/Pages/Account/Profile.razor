@@ -98,7 +98,7 @@ else
                         <h3>@L["TwoFactorAuthentication"]</h3>
                         @L["EnableAuthenticatorInstructions", userViewModel.SharedKey, $"https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl={userViewModel.AuthenticatorUri}"].ToMarkup()
                         <MudTextField @bind-Value="@authenticatorVerificationCodeViewModel.Code" Label=@L["Code"] FullWidth="true"></MudTextField>
-                        <MudButton OnClick="@EnableAuthenticator">@L["VerifyCode"]</MudButton>
+                     @*    <MudButton OnClick="@EnableAuthenticator">@L["VerifyCode"]</MudButton> *@
                     }
                 </MudTabPanel>
             </MudTabs>
@@ -256,20 +256,20 @@ else
         }
     }
 
-    protected async Task EnableAuthenticator()
-    {
-        var apiResponse = await _accountApiClient.EnableAuthenticator(authenticatorVerificationCodeViewModel);
+    // protected async Task EnableAuthenticator()
+    // {
+    //     var apiResponse = await _accountApiClient.EnableAuthenticator(authenticatorVerificationCodeViewModel);
 
-        if (apiResponse.IsSuccessStatusCode)
-        {
-            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
-            userViewModel = apiResponse.Result;
-            StateHasChanged();
-        }
-        else
-            viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+    //     if (apiResponse.IsSuccessStatusCode)
+    //     {
+    //         viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+    //         userViewModel = apiResponse.Result;
+    //         StateHasChanged();
+    //     }
+    //     else
+    //         viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
 
-    }
+    // }
 
     protected async Task DisableAuthenticator()
     {

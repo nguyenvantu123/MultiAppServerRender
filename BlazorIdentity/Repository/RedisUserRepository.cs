@@ -22,37 +22,37 @@ public class RedisUserRepository(ILogger<RedisUserRepository> logger, IConnectio
         return await _database.KeyDeleteAsync(GetUserKey(id));
     }
 
-    public async Task<UserProfile> GetUserProfileAsync(Guid userId)
-    {
-        using var data = await _database.StringGetLeaseAsync(GetUserKey(userId));
+    //public async Task<UserProfile> GetUserProfileAsync(Guid userId)
+    //{
+    //    using var data = await _database.StringGetLeaseAsync(GetUserKey(userId));
 
-        if (data is null || data.Length == 0)
-        {
-            return null;
-        }
-        return JsonSerializer.Deserialize(data.Span, UserSerializationContext.Default.UserProfile);
-    }
+    //    if (data is null || data.Length == 0)
+    //    {
+    //        return null;
+    //    }
+    //    return JsonSerializer.Deserialize(data.Span, UserSerializationContext.Default.UserProfile);
+    //}
 
-    public async Task<UserProfile> UpdateUserProfileAsync(UserProfile userProfile)
-    {
-        var json = JsonSerializer.SerializeToUtf8Bytes(userProfile, UserSerializationContext.Default.UserProfile);
-        var created = await _database.StringSetAsync(GetUserKey(userProfile.UserId), json);
+    //public async Task<UserProfile> UpdateUserProfileAsync(UserProfile userProfile)
+    //{
+    //    var json = JsonSerializer.SerializeToUtf8Bytes(userProfile, UserSerializationContext.Default.UserProfile);
+    //    var created = await _database.StringSetAsync(GetUserKey(userProfile.UserId), json);
 
-        if (!created)
-        {
-            logger.LogInformation("Problem occurred persisting the item.");
-            return null;
-        }
+    //    if (!created)
+    //    {
+    //        logger.LogInformation("Problem occurred persisting the item.");
+    //        return null;
+    //    }
 
 
-        logger.LogInformation("User item persisted successfully.");
-        return await GetUserProfileAsync(userProfile.UserId);
-    }
+    //    logger.LogInformation("User item persisted successfully.");
+    //    return await GetUserProfileAsync(userProfile.UserId);
+    //}
 }
 
-[JsonSerializable(typeof(UserProfile))]
-[JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
-public partial class UserSerializationContext : JsonSerializerContext
-{
+//[JsonSerializable(typeof(UserProfile))]
+//[JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
+//public partial class UserSerializationContext : JsonSerializerContext
+//{
 
-}
+//}

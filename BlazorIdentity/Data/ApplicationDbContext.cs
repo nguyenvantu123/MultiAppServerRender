@@ -34,11 +34,11 @@ namespace BlazorIdentity.Data
 
         public DbSet<ApiLogItem> ApiLogs { get; set; }
 
-        public DbSet<UserProfile> UserProfiles { get; set; }
+        //public DbSet<UserProfile> UserProfiles { get; set; }
 
-        public DbSet<Message> Messages { get; set; }
+        //public DbSet<Message> Messages { get; set; }
 
-        public DbSet<TenantSetting> TenantSettings { get; set; }
+        //public DbSet<TenantSetting> TenantSettings { get; set; }
 
         public bool HasActiveTransaction => _currentTransaction != null;
 
@@ -108,10 +108,7 @@ namespace BlazorIdentity.Data
                 // Each User can have many entries in the UserRole join table
                 builder.Entity<ApplicationUser>(b =>
                 {
-                    b.HasOne(a => a.Profile)
-                    .WithOne(b => b.ApplicationUser)
-                    .HasForeignKey<UserProfile>(b => b.UserId);
-
+                
                     b.HasMany(e => e.UserRoles)
                     .WithOne(e => e.User)
                     .HasForeignKey(ur => ur.UserId)
@@ -148,7 +145,7 @@ namespace BlazorIdentity.Data
                       .OnDelete(DeleteBehavior.Cascade);
               });
 
-            builder.Entity<Message>().ToTable("Messages");
+            //builder.Entity<Message>().ToTable("Messages");
 
             builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key });
 
@@ -222,17 +219,17 @@ namespace BlazorIdentity.Data
             }
         }
 
-        public override int SaveChanges()
-        {
-            ChangeTracker.SetShadowProperties(claimsPrincipal);
-            return base.SaveChanges();
-        }
+        //public override int SaveChanges()
+        //{
+        //    ChangeTracker.SetShadowProperties(claimsPrincipal);
+        //    return base.SaveChanges();
+        //}
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            ChangeTracker.SetShadowProperties(claimsPrincipal);
-            return await base.SaveChangesAsync(true, cancellationToken);
-        }
+        //public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        //{
+        //    ChangeTracker.SetShadowProperties(claimsPrincipal);
+        //    return await base.SaveChangesAsync(true, cancellationToken);
+        //}
     }
 }
 

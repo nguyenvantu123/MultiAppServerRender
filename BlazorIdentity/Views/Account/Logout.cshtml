@@ -1,16 +1,23 @@
-@using BlazorIdentity.Users.Models.AccountViewModels
-@model LogoutViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model BlazorIdentityViewModels.Account.LogoutViewModel
 
-<div class="logout-page">
-    <div class="lead">
-        <h1>Logout</h1>
-        <p>Would you like to logut of IdentityServer?</p>
-    </div>
+<div class="logout-container">
+	<div class="page-header">
+		<h1>@Localizer["Title"]</h1>
+	</div>
 
-    <form asp-action="Logout">
-        <input type="hidden" name="logoutId" value="@Model.LogoutId"  />
-        <div class="form-group">
-            <button class="btn btn-primary">Yes</button>
-        </div>
-    </form>
+	<div class="row">
+		<div class="col-sm-6">
+			<p>@Localizer["Message"]</p>
+			<form asp-action="Logout">
+				<input type="hidden" name="logoutId" value="@Model.LogoutId" />
+				<fieldset>
+					<div class="form-group">
+						<button class="btn btn-primary">@Localizer["Yes"]</button>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
 </div>

@@ -37,22 +37,22 @@ namespace WebApp.Interfaces
             return response;
         }
 
-        public async Task<ApiResponseDto> LoginWith2fa(LoginWith2faInputModel parameters)
-        {
-            var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/login-with2fa", parameters);
+        //public async Task<ApiResponseDto> LoginWith2fa(LoginWith2faInputModel parameters)
+        //{
+        //    var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/login-with2fa", parameters);
 
-            //if (AppState.Runtime == BlazorRuntime.Server)
-            //    if (response.Success)
-            //        await SubmitServerForm("/server/loginwith2fa/", parameters);
+        //    //if (AppState.Runtime == BlazorRuntime.Server)
+        //    //    if (response.Success)
+        //    //        await SubmitServerForm("/server/loginwith2fa/", parameters);
 
-            return response;
-        }
-        public async Task<ApiResponseDto> LoginWithRecoveryCode(LoginWithRecoveryCodeInputModel parameters)
-        {
-            var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/login-with-recovery-code", parameters);
+        //    return response;
+        //}
+        //public async Task<ApiResponseDto> LoginWithRecoveryCode(LoginWithRecoveryCodeInputModel parameters)
+        //{
+        //    var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/login-with-recovery-code", parameters);
 
-            return response;
-        }
+        //    return response;
+        //}
 
         //public async Task<ApiResponseDto> Logout(string returnUrl = null)
         //{
@@ -88,10 +88,10 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto<LoginResponseModel>>("api/account/register", parameters);
         }
 
-        public async Task<ApiResponseDto> ConfirmEmail(ConfirmEmailViewModel parameters)
-        {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/confirm-email", parameters);
-        }
+        //public async Task<ApiResponseDto> ConfirmEmail(ConfirmEmailViewModel parameters)
+        //{
+        //    return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/confirm-email", parameters);
+        //}
 
         public async Task<ApiResponseDto> ResetPassword(ResetPasswordViewModel parameters)
         {
@@ -112,10 +112,10 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/forgot-password", parameters);
         }
 
-        public async Task<ApiResponseDto<UserDataViewModel>> EnableAuthenticator(AuthenticatorVerificationCodeViewModel parameters)
-        {
-            return await _httpClient.PostJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/enable-authenticator", parameters);
-        }
+        //public async Task<ApiResponseDto<UserDataViewModel>> EnableAuthenticator(AuthenticatorVerificationCodeViewModel parameters)
+        //{
+        //    return await _httpClient.PostJsonAsync<ApiResponseDto<UserDataViewModel>>("api/account/enable-authenticator", parameters);
+        //}
         public async Task<ApiResponseDto<UserDataViewModel>> DisableAuthenticator()
         {
 

@@ -10,18 +10,19 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System;
 using Finbuckle.MultiTenant.Abstractions;
 using BlazorIdentity.Users.Configuration;
-using BlazorIdentity.Users.Services;
 using BlazorIdentity.Users.Constants;
-using BlazorIdentity.Authorization;
-using BlazorIdentity.Users.Middleware;
-using BlazorBoilerplate.Server.Aop;
+
 using Serilog.Extensions.Logging;
 using Aspire.StackExchange.Redis;
 using BlazorIdentity.Repositories;
 using Microsoft.IdentityModel.JsonWebTokens;
 using AutoMapper;
 using BlazorIdentity.Data;
-
+using BlazorIdentityConfiguration.Constants;
+using BlazorIdentityConfiguration.Interfaces;
+using BlazorIdentityConfiguration;
+using Microsoft.AspNetCore.Mvc.Localization;
+using BlazorIdentity.Helpers.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,11 +46,6 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
-builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
-builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
-builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
-
 builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
@@ -66,7 +62,6 @@ builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
-builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
@@ -82,26 +77,18 @@ builder.Services.AddIdentityServer()
 .AddInMemoryApiResources(Config.GetApis())
 .AddInMemoryClients(Config.GetClients(builder.Configuration))
 .AddAspNetIdentity<ApplicationUser>()
-.AddProfileService<ProfileService>()
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
 
-builder.Services.AddScoped<EntityPermissions>();
-//builder.Services.AddTransient<IProfileService, ProfileService>();
-builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
-builder.Services.AddTransient<IRedirectService, RedirectService>();
-builder.Services.AddTransient<IEmailFactory, EmailFactory>();
-//builder.Services.AddSingleton<CustomAuthService>();
+var configuration = builder.Configuration;
+var rootConfiguration = new RootConfiguration();
+configuration.GetSection(ConfigurationConsts.RegisterConfigurationKey).Bind(rootConfiguration.RegisterConfiguration);
+configuration.GetSection(ConfigurationConsts.AdminConfigurationKey).Bind(rootConfiguration.AdminConfiguration);
 
-builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
-builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
-builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
-builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
-
-builder.Services.AddTransient<ApiResponseExceptionAspect>()
-                .AddTransient<LogExceptionAspect>()
-                .AddSingleton<ILoggerFactory>(services => new SerilogLoggerFactory());
-
+builder.Services.AddSingleton(rootConfiguration);
+builder.Services.AddSingleton<ILoggerFactory>(services => new SerilogLoggerFactory());
+builder.Services.AddSingleton<IRootConfiguration, RootConfiguration>();
+builder.Services.AddTransient<IViewLocalizer, ResourceViewLocalizer>();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var app = builder.Build();
@@ -117,17 +104,23 @@ app.UseIdentityServer();
 app.UseAuthorization();
 app.UseAuthentication();
 
+
+
+
+
 app.MapDefaultControllerRoute();
 
 app.UseDeveloperExceptionPage();
 app.UseMultiTenant();
+
+
 //app.UseMiddleware<UserSessionMiddleware>();
 
-using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-{
+//using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+//{
 
-    var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
-    databaseInitializer.SeedAsync().Wait();
-}
+//    var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
+//    databaseInitializer.SeedAsync().Wait();
+//}
 
 app.Run();

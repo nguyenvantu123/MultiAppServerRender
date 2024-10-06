@@ -2,8 +2,8 @@
 using FluentValidation;
 using BlazorIdentity.Repositories;
 using Aspire.StackExchange.Redis;
-using BlazorIdentity.Users.Models.AccountViewModels;
 using Duende.IdentityServer.Models;
+using BlazorIdentityViewModels.Account;
 
 namespace BlazorIdentity.Users.Extensions
 {

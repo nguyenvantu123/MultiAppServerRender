@@ -22,6 +22,8 @@
     <PackageReference Include="AspectInjector" Version="2.8.2" />
     <PackageReference Include="AspNet.Security.OpenIdConnect.Primitives" Version="2.0.0" />
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.6.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.6.0" />
     <PackageReference Include="Breeze.AspNetCore.NetCore" Version="7.3.0" />
     <PackageReference Include="Breeze.Persistence" Version="7.3.0" />
     <PackageReference Include="Breeze.Persistence.EFCore" Version="7.3.0" />
@@ -75,14 +77,49 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\Account\AccessDenied.cshtml" />
+    <None Include="Views\Account\ConfirmEmail.cshtml" />
+    <None Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <None Include="Views\Account\ExternalLoginFailure.cshtml" />
+    <None Include="Views\Account\ForgotPassword.cshtml" />
+    <None Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <None Include="Views\Account\Lockout.cshtml" />
     <None Include="Views\Account\LoggedOut.cshtml" />
     <None Include="Views\Account\Login.cshtml" />
+    <None Include="Views\Account\LoginWith2fa.cshtml" />
+    <None Include="Views\Account\LoginWithRecoveryCode.cshtml" />
     <None Include="Views\Account\Logout.cshtml" />
+    <None Include="Views\Account\Register.cshtml" />
+    <None Include="Views\Account\RegisterConfirmation.cshtml" />
+    <None Include="Views\Account\RegisterFailure.cshtml" />
+    <None Include="Views\Account\RegisterWithoutUsername.cshtml" />
+    <None Include="Views\Account\ResetPassword.cshtml" />
+    <None Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <None Include="Views\Consent\Index.cshtml" />
     <None Include="Views\Device\Success.cshtml" />
     <None Include="Views\Device\UserCodeCapture.cshtml" />
+    <None Include="Views\Device\UserCodeConfirmation.cshtml" />
+    <None Include="Views\Diagnostics\Index.cshtml" />
+    <None Include="Views\Grants\Index.cshtml" />
     <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Manage\ChangePassword.cshtml" />
+    <None Include="Views\Manage\DeletePersonalData.cshtml" />
+    <None Include="Views\Manage\Disable2fa.cshtml" />
+    <None Include="Views\Manage\DownloadPersonalData.cshtml" />
+    <None Include="Views\Manage\EnableAuthenticator.cshtml" />
+    <None Include="Views\Manage\ExternalLogins.cshtml" />
+    <None Include="Views\Manage\GenerateRecoveryCodes.cshtml" />
+    <None Include="Views\Manage\Index.cshtml" />
+    <None Include="Views\Manage\LinkLoginFailure.cshtml" />
+    <None Include="Views\Manage\PersonalData.cshtml" />
+    <None Include="Views\Manage\ResetAuthenticator.cshtml" />
+    <None Include="Views\Manage\SetPassword.cshtml" />
+    <None Include="Views\Manage\ShowRecoveryCodes.cshtml" />
+    <None Include="Views\Manage\TwoFactorAuthentication.cshtml" />
+    <None Include="Views\Manage\_StatusMessage.cshtml" />
+    <None Include="Views\Shared\Common\SelectLanguage.cshtml" />
+    <None Include="Views\Shared\Common\SelectTheme.cshtml" />
+    <None Include="Views\Shared\Common\ThemeResources.cshtml" />
+    <None Include="Views\Shared\Components\IdentityServerAdminLink\Default.cshtml" />
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\Redirect.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />

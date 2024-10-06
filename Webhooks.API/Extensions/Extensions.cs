@@ -12,7 +12,7 @@ internal static class Extensions
     {
         builder.AddDefaultAuthentication();
 
-        builder.AddRabbitMqEventBus("EventBus").AddEventBusSubscriptions();
+        //builder.AddRabbitMqEventBus("EventBus").AddEventBusSubscriptions();
 
         builder.AddSqlServerDbContext<WebhooksContext>("webhooksdb");
 

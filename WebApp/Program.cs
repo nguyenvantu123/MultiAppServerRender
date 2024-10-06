@@ -25,7 +25,6 @@ using WebApp.Extensions;
 using WebApp.Permissions;
 using Microsoft.AspNetCore.Components;
 using WebApp.State;
-using BlazorIdentity.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using BlazorIdentity.Users.Models;
 using Microsoft.AspNetCore.Mvc.Authorization;
