@@ -11,10 +11,10 @@
     }
 }
 
-@inject SignInManager<ApplicationUser> SignInManager
+@* @inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
-}
+} *@
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,7 +22,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <environment include="Development">
+   @*  <environment include="Development">
         <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
         @await Html.PartialAsync("Common/ThemeResources")
         <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" />
@@ -33,7 +33,7 @@
         <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
     </environment>
 
-    @await RenderSectionAsync("styles", required: false)
+    @await RenderSectionAsync("styles", required: false) *@
 </head>
 <body>
 
@@ -53,10 +53,10 @@
                 <div class="dropdown-menu">
                     <a class="dropdown-item" asp-controller="Manage" asp-action="Index">@Localizer["ManageProfile"]</a>
                     <a class="dropdown-item" asp-controller="Manage" asp-action="PersonalData">@Localizer["ManagePersonalData"]</a>
-                    @if (hasExternalLogins)
+                  @*   @if (hasExternalLogins)
                     {
                         <a class="dropdown-item" asp-controller="Manage" asp-action="ExternalLogins">@Localizer["ExternalLogins"]</a>
-                    }
+                    } *@
                     <a class="dropdown-item" asp-controller="Manage" asp-action="TwoFactorAuthentication">@Localizer["2FA"]</a>
                     <a class="dropdown-item" asp-controller="Manage" asp-action="ChangePassword">@Localizer["ChangePassword"]</a>
                     <a class="dropdown-item" asp-controller="Grants" asp-action="Index">@Localizer["Grants"]</a>
@@ -75,7 +75,7 @@
     <div class="container">
         @RenderBody()
 
-        <footer class="pt-4 my-md-5 pt-md-5 border-top">
+        @* <footer class="pt-4 my-md-5 pt-md-5 border-top">
             <div class="row">
                 <div class="col-md-3 text-right">
                     @await Html.PartialAsync("Common/SelectTheme")
@@ -84,7 +84,7 @@
                     @await Html.PartialAsync("Common/SelectLanguage")
                 </div>
             </div>
-        </footer>
+        </footer> *@
     </div>
 
     <environment include="Development">
