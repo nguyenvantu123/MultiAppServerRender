@@ -1,9 +1,15 @@
-﻿namespace BlazorIdentity.Users.Models.AccountViewModels
+﻿using BlazorIdentity.Localization;
+
+namespace BlazorIdentity.Users.Models.AccountViewModels
 {
-    public record ForgotPasswordViewModel
+    public class ForgotPasswordViewModel
     {
         [Required]
+        public LoginResolutionPolicy? Policy { get; set; }
+
         [EmailAddress]
-        public string Email { get; init; }
+        public string Email { get; set; }
+
+        public string Username { get; set; }
     }
 }

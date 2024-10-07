@@ -48,12 +48,8 @@ else
 
     private UserRoleModel _userRole = new();
     private string _searchString = "";
-    private bool _dense = false;
-    private bool _striped = true;
-    private bool _bordered = false;
 
     private bool _canEditUsers;
-    private bool _canSearchRoles;
     private bool _loaded = false;
 
     [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }

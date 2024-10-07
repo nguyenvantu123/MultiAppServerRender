@@ -43,7 +43,7 @@ var webhookApi = builder.AddProject<Projects.Webhooks_API>("webhooks-api", launc
 
 var webhookclient = builder.AddProject<Projects.WebhookClient>("webhookclient", launchProfileName);
 
-webhookclient.WithReference(webhookApi).WithEnvironment("IdentityUrl", identityEndpoint);
+webhookclient.WithReference(webhookApi).WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", file.GetEndpoint(launchProfileName));
 
 builder.Build().Run();
 

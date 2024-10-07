@@ -158,8 +158,6 @@ else
 @code {
     private MudTable<UserDataViewModel> table;
 
-    private TableState stateTable;
-
     [Inject] AccountApiClient apiClient { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
@@ -329,7 +327,7 @@ else
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
         var dialog = _dialogService.Show<RegisterUser>(id == Guid.Empty.ToString() ? "Create" : "Edit", parameters, options);
         var result = await dialog.Result;
-        if (!result.Canceled)
+        if (!result!.Canceled)
         {
             await LoadUsers();
             await table.ReloadServerData();

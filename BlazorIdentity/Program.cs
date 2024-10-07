@@ -21,13 +21,19 @@ using BlazorIdentity.Repositories;
 using Microsoft.IdentityModel.JsonWebTokens;
 using AutoMapper;
 using BlazorIdentity.Data;
-
+using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using BlazorIdentity.Localization;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
 //builder.AddApplicationServices();
+
+var configuration = builder.Configuration;
 
 builder.AddRedis("Redis");
 
@@ -98,11 +104,55 @@ builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>()
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
 
+//builder.Services.AddSingleton<IViewLocalizer>();
+
 builder.Services.AddTransient<ApiResponseExceptionAspect>()
                 .AddTransient<LogExceptionAspect>()
                 .AddSingleton<ILoggerFactory>(services => new SerilogLoggerFactory());
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix);
+
+builder.Services.AddControllersWithViews(o =>
+{
+    o.Conventions.Add(new GenericControllerRouteConvention());
+})
+                .AddViewLocalization(
+                    LanguageViewLocationExpanderFormat.Suffix,
+                    opts => { opts.ResourcesPath = "Resources"; })
+                .AddDataAnnotationsLocalization()
+                .ConfigureApplicationPartManager(m =>
+                {
+                    m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider<ApplicationUser, Guid>());
+                });
+
+var cultureConfiguration = configuration.GetSection(nameof(CultureConfiguration)).Get<CultureConfiguration>();
+
+builder.Services.Configure<RequestLocalizationOptions>(
+                opts =>
+                {
+                    // If cultures are specified in the configuration, use them (making sure they are among the available cultures),
+                    // otherwise use all the available cultures
+                    var supportedCultureCodes = (cultureConfiguration?.Cultures?.Count > 0 ?
+                        cultureConfiguration.Cultures.Intersect(CultureConfiguration.AvailableCultures) :
+                        CultureConfiguration.AvailableCultures).ToArray();
+
+                    if (!supportedCultureCodes.Any()) supportedCultureCodes = CultureConfiguration.AvailableCultures;
+                    var supportedCultures = supportedCultureCodes.Select(c => new CultureInfo(c)).ToList();
+
+                    // If the default culture is specified use it, otherwise use CultureConfiguration.DefaultRequestCulture ("en")
+                    var defaultCultureCode = string.IsNullOrEmpty(cultureConfiguration?.DefaultCulture) ?
+                        CultureConfiguration.DefaultRequestCulture : cultureConfiguration?.DefaultCulture;
+
+                    // If the default culture is not among the supported cultures, use the first supported culture as default
+                    if (!supportedCultureCodes.Contains(defaultCultureCode)) defaultCultureCode = supportedCultureCodes.FirstOrDefault();
+
+                    opts.DefaultRequestCulture = new RequestCulture(defaultCultureCode);
+                    opts.SupportedCultures = supportedCultures;
+                    opts.SupportedUICultures = supportedCultures;
+                });
 
 var app = builder.Build();
 
@@ -130,4 +180,6 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     databaseInitializer.SeedAsync().Wait();
 }
 
+var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(options.Value);
 app.Run();

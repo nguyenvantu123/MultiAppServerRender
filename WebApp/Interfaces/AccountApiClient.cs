@@ -200,16 +200,6 @@ namespace WebApp.Interfaces
             return await _httpClient.GetJsonAsync<ApiResponseDto<List<UserDataViewModel>>>($"api/admin/users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
 
-        public Task<QueryResult<DbLog>> GetLogs(Expression<Func<DbLog, bool>> predicate = null, int? take = null, int? skip = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<QueryResult<ApiLogItem>> GetApiLogs(Expression<Func<ApiLogItem, bool>> predicate = null, int? take = null, int? skip = null)
-        {
-            throw new NotImplementedException();
-        }
-
         //public Task<QueryResult<ApplicationUser>> GetTodoCreators(ToDoFilter filter)
         //{
         //    throw new NotImplementedException();

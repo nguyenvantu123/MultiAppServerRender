@@ -1,13 +1,19 @@
 ﻿namespace BlazorIdentity.Users.Models.AccountViewModels
 {
-    public record ResetPasswordViewModel
+    public class ResetPasswordViewModel
     {
-        public string UserId { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
 
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-        public string PasswordConfirm { get; set; }
 
-        public string Token { get; set; }
+        [DataType(DataType.Password)]
+        [Compare("Password")]
+        public string ConfirmPassword { get; set; }
+
+        public string Code { get; set; }
     }
 }

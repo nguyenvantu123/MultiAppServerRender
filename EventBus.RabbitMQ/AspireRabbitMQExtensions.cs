@@ -166,9 +166,6 @@ public static class AspireRabbitMQExtensions
 
             try
             {
-                factory.UserName = "admin";
-                factory.Password = "admin123";
-                factory.VirtualHost = "/";
                 return factory.CreateConnection();
             }
             catch (Exception ex)
