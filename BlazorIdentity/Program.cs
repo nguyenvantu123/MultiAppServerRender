@@ -180,6 +180,6 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     databaseInitializer.SeedAsync().Wait();
 }
 
-var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+var options = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
 app.UseRequestLocalization(options.Value);
 app.Run();
