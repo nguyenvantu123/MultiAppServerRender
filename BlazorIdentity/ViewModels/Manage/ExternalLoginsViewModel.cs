@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
-namespace BlazorIdentity.Manage
+namespace BlazorIdentity.ViewModels
 {
     public class ExternalLoginsViewModel
     {

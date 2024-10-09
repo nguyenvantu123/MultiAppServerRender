@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace BlazorIdentity.Grants
+namespace BlazorIdentity.ViewModels
 {
     public class GrantsViewModel
     {

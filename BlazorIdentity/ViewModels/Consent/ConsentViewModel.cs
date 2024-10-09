@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace BlazorIdentity.Consent
+namespace BlazorIdentity.ViewModels
 {
     public class ConsentViewModel : ConsentInputModel
     {

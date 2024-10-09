@@ -10,7 +10,7 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Newtonsoft.Json;
 
-namespace BlazorIdentity.Diagnostics
+namespace BlazorIdentity.ViewModels
 {
     public class DiagnosticsViewModel
     {

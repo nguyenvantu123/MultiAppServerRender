@@ -6,7 +6,7 @@
 
 using Duende.IdentityServer.Models;
 
-namespace BlazorIdentity.Home
+namespace BlazorIdentity.ViewModels
 {
     public class ErrorViewModel
     {

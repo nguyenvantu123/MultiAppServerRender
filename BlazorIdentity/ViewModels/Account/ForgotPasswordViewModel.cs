@@ -1,7 +1,7 @@
 ﻿using BlazorIdentity.Localization;
 using System.ComponentModel.DataAnnotations;
 
-namespace BlazorIdentity.Account
+namespace BlazorIdentity.ViewModels
 {
     public class ForgotPasswordViewModel
     {

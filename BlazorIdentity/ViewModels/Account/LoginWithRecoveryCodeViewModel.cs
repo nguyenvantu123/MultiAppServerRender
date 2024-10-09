@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlazorIdentity.Account
+namespace BlazorIdentity.ViewModels
 {
     public class LoginWithRecoveryCodeViewModel
     {

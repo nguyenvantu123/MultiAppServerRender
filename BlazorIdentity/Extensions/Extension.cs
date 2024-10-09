@@ -4,6 +4,7 @@ using BlazorIdentity.Repositories;
 using Aspire.StackExchange.Redis;
 using BlazorIdentity.Users.Models.AccountViewModels;
 using Duende.IdentityServer.Models;
+using BlazorIdentity.ViewModels;
 
 namespace BlazorIdentity.Users.Extensions
 {

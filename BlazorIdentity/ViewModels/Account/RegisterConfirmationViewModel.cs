@@ -1,4 +1,4 @@
-﻿namespace BlazorIdentity.Account
+﻿namespace BlazorIdentity.ViewModels
 {
     public class RegisterConfirmationViewModel
     {

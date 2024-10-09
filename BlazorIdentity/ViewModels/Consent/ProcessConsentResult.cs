@@ -6,7 +6,7 @@
 
 using Duende.IdentityServer.Models;
 
-namespace BlazorIdentity.Consent
+namespace BlazorIdentity.ViewModels
 {
     public class ProcessConsentResult
     {

@@ -1,4 +1,4 @@
-﻿namespace BlazorIdentity.Manage
+﻿namespace BlazorIdentity.ViewModels
 {
     public class TwoFactorAuthenticationViewModel
     {

@@ -22,6 +22,8 @@
     <PackageReference Include="AspectInjector" Version="2.8.2" />
     <PackageReference Include="AspNet.Security.OpenIdConnect.Primitives" Version="2.0.0" />
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.6.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.6.0" />
     <PackageReference Include="Breeze.AspNetCore.NetCore" Version="7.3.0" />
     <PackageReference Include="Breeze.Persistence" Version="7.3.0" />
     <PackageReference Include="Breeze.Persistence.EFCore" Version="7.3.0" />
@@ -100,6 +102,9 @@
     <None Include="Views\Manage\ShowRecoveryCodes.cshtml" />
     <None Include="Views\Manage\TwoFactorAuthentication.cshtml" />
     <None Include="Views\Manage\_StatusMessage.cshtml" />
+    <None Include="Views\Shared\Common\SelectLanguage.cshtml" />
+    <None Include="Views\Shared\Common\SelectTheme.cshtml" />
+    <None Include="Views\Shared\Common\ThemeResources.cshtml" />
     <None Include="Views\Shared\Components\IdentityServerAdminLink\Default.cshtml" />
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\Redirect.cshtml" />
@@ -108,6 +113,10 @@
     <None Include="Views\Shared\_ValidationSummary.cshtml" />
     <None Include="Views\_ViewImports.cshtml" />
     <None Include="Views\_ViewStart.cshtml" />
+    <None Include="wwwroot\dist\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\dist\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\dist\fonts\open-iconic.svg" />
+    <None Include="wwwroot\dist\js\bundle.min.js" />
     <None Include="wwwroot\fonts\Montserrat-Bold.svg" />
     <None Include="wwwroot\fonts\Montserrat-Bold.woff2" />
     <None Include="wwwroot\fonts\Montserrat-Regular.svg" />
@@ -150,6 +159,9 @@
     <None Include="wwwroot\images\logo_color.svg" />
     <None Include="wwwroot\images\main_banner_text.svg" />
     <None Include="wwwroot\images\refresh.svg" />
+    <None Include="wwwroot\js\forgot-password.js" />
+    <None Include="wwwroot\js\qrcode.js" />
+    <None Include="wwwroot\js\qrcode.min.js" />
     <None Include="wwwroot\js\signin-redirect.js" />
     <None Include="wwwroot\js\signout-redirect.js" />
     <None Include="wwwroot\js\site.js" />

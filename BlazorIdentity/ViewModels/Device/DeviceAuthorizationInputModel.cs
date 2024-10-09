@@ -4,9 +4,8 @@
 // Original file: https://github.com/DuendeSoftware/IdentityServer.Quickstart.UI
 // Modified by Jan Škoruba
 
-using BlazorIdentity.Consent;
 
-namespace BlazorIdentity.Device
+namespace BlazorIdentity.ViewModels
 {
     public class DeviceAuthorizationInputModel : ConsentInputModel
     {

@@ -4,7 +4,7 @@
 // Original file: https://github.com/DuendeSoftware/IdentityServer.Quickstart.UI
 // Modified by Jan Škoruba
 
-namespace BlazorIdentity.Consent
+namespace BlazorIdentity.ViewModels
 {
     public class ScopeViewModel
     {
