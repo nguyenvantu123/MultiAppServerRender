@@ -27,6 +27,7 @@ namespace BlazorIdentity.Users.Configuration
                 new ApiScope("identity", "Identity Service" ),
                 new ApiScope("files", "File Service"),
                 new ApiScope("users", "User Service"),
+                new ApiScope("webhooks", "Webhooks Service"),
             };
         }
 
@@ -125,15 +126,29 @@ namespace BlazorIdentity.Users.Configuration
                         "users"
                     }
                 },
-                new Client
+                 new Client
                 {
-                    ClientId = "webhooksclient",
-                    ClientName = "Webhook Client",
+                    ClientId = "webhooksswaggerui",
+                    ClientName = "Webhook Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris = { $"{configuration["WebhookApiClient"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{configuration["WebhookApiClient"]}/swagger/" },
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AllowedScopes =
+                    {
+                        "webhooks"
+                    }
+                },
+                 new Client
+                {
+                    ClientId = "webhooks",
+                    ClientName = "Webhooks Client",
                     ClientSecrets = new List<Secret>
                     {
                         new Secret("secret".Sha256())
                     },
-                    ClientUri = $"{configuration["WebhooksWebClient"]}",                             // public uri of the client
+                    ClientUri = $"{configuration["WebhooksClient"]}",                             // public uri of the client
                     AllowedGrantTypes = GrantTypes.Code,
                     AllowAccessTokensViaBrowser = false,
                     RequireConsent = false,
@@ -142,11 +157,11 @@ namespace BlazorIdentity.Users.Configuration
                     RequirePkce = false,
                     RedirectUris = new List<string>
                     {
-                        $"{configuration["WebhooksWebClient"]}/signin-oidc"
+                        $"{configuration["WebhooksClient"]}/signin-oidc"
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
-                        $"{configuration["WebhooksWebClient"]}/signout-callback-oidc"
+                        $"{configuration["WebhooksClient"]}/signout-callback-oidc"
                     },
                     AllowedScopes = new List<string>
                     {

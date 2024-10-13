@@ -51,7 +51,7 @@ public static class Extensions
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             options.Authority = identityUrl.ToString();
             options.SignedOutRedirectUri = callBackUrl.ToString();
-            options.ClientId = "webhooksclient";
+            options.ClientId = "webhooks";
             options.ClientSecret = "secret";
             options.ResponseType = "code";
             options.SaveTokens = true;
