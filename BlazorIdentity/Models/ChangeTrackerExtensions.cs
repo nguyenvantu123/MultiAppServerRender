@@ -13,9 +13,9 @@ namespace BlazorIdentity.Users.Models
             DateTime timestamp = DateTime.UtcNow;
 
 
-            userId = user.GetUserId();
+            //userId = user.GetUserId();
 
-            userName = user.GetDisplayByName();
+            //userName = user.GetDisplayByName();
 
             foreach (EntityEntry entry in changeTracker.Entries().Where(e => e.State != EntityState.Unchanged))
             {

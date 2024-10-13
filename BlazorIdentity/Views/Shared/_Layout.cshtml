@@ -1,4 +1,5 @@
-﻿@using Duende.IdentityServer.Extensions
+﻿@using BlazorIdentity.Localization
+@using Duende.IdentityServer.Extensions
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
@@ -21,7 +22,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IdentityServer</title>
+    <title>Duende IdentityServer</title>
     <link rel="icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
     <link rel="shortcut icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
 
@@ -36,15 +37,14 @@
         <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
     </environment>
 
-@*     <link href="@UrlHelper.Content(RootConfiguration.AdminConfiguration.CustomThemeCss)" asp-append-version="true" rel="stylesheet" />
- *@
-
     @await RenderSectionAsync("styles", required: false)
+
 </head>
 <body>
 
     <div class="menu d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom box-shadow">
         <!--Site name -->
+        <h3 class="menu-logo my-0 mr-md-auto font-weight-normal"><a class="logo" asp-area="" asp-controller="Home" asp-action="Index">Duende IdentityServer</a></h3>
         <!--Menu item -->
         @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(name))
         {
@@ -87,11 +87,12 @@
                     IdentityServer
                     <small class="d-block mb-3 text-muted">@Localizer["FooterCopyright"] @DateTime.Now.Year - v1</small>
                 </div>
+
                 <div class="col-md-3 text-right">
                     @await Html.PartialAsync("Common/SelectTheme")
                 </div>
-           @*      <div class="col-md-3 text-right">
-                    @await Html.PartialAsync("Common/SelectLanguage")
+                @*   <div class="col-md-3 text-right">
+                @await Html.PartialAsync("Common/SelectLanguage")
                 </div> *@
             </div>
         </footer>

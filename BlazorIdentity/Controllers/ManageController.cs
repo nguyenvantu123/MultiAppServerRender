@@ -17,17 +17,15 @@ using BlazorIdentity.Helpers.Localization;
 using BlazorIdentity.ViewModels;
 
 namespace BlazorIdentity.Controllers
-{    
+{
     [Authorize]
-    public class ManageController<TUser, TKey> : Controller
-        where TUser : IdentityUser<TKey>, new()
-        where TKey : IEquatable<TKey>
+    public class ManageController : Controller
     {
-        private readonly UserManager<TUser> _userManager;
-        private readonly SignInManager<TUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
-        private readonly ILogger<ManageController<TUser, TKey>> _logger;
-        private readonly IGenericControllerLocalizer<ManageController<TUser, TKey>> _localizer;
+        private readonly ILogger<ManageController> _logger;
+        private readonly IGenericControllerLocalizer<ManageController> _localizer;
         private readonly UrlEncoder _urlEncoder;
 
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
@@ -36,7 +34,7 @@ namespace BlazorIdentity.Controllers
         [TempData]
         public string StatusMessage { get; set; }
 
-        public ManageController(UserManager<TUser> userManager, SignInManager<TUser> signInManager, IEmailSender emailSender, ILogger<ManageController<TUser, TKey>> logger, IGenericControllerLocalizer<ManageController<TUser, TKey>> localizer, UrlEncoder urlEncoder)
+        public ManageController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, ILogger<ManageController> logger, IGenericControllerLocalizer<ManageController> localizer, UrlEncoder urlEncoder)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -60,7 +58,7 @@ namespace BlazorIdentity.Controllers
 
             return View(model);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(IndexViewModel model)
@@ -95,14 +93,14 @@ namespace BlazorIdentity.Controllers
                     throw new ApplicationException(_localizer["ErrorSettingPhone", user.Id]);
                 }
             }
-            
+
             await UpdateUserClaimsAsync(model, user);
 
             StatusMessage = _localizer["ProfileUpdated"];
 
             return RedirectToAction(nameof(Index));
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendVerificationEmail(IndexViewModel model)
@@ -252,7 +250,7 @@ namespace BlazorIdentity.Controllers
 
             _logger.LogInformation(_localizer["AskForPersonalDataLog"], _userManager.GetUserId(User));
 
-            var personalDataProps = typeof(TUser).GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
+            var personalDataProps = typeof(ApplicationUser).GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
             var personalData = personalDataProps.ToDictionary(p => p.Name, p => p.GetValue(user)?.ToString() ?? "null");
 
             Response.Headers.Append("Content-Disposition", "attachment; filename=PersonalData.json");
@@ -613,7 +611,7 @@ namespace BlazorIdentity.Controllers
             return View(nameof(GenerateRecoveryCodes));
         }
 
-        private async Task LoadSharedKeyAndQrCodeUriAsync(TUser user, EnableAuthenticatorViewModel model)
+        private async Task LoadSharedKeyAndQrCodeUriAsync(ApplicationUser user, EnableAuthenticatorViewModel model)
         {
             var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
             if (string.IsNullOrEmpty(unformattedKey))
@@ -626,7 +624,7 @@ namespace BlazorIdentity.Controllers
             model.AuthenticatorUri = GenerateQrCodeUri(user.Email, unformattedKey);
         }
 
-        private async Task<IndexViewModel> BuildManageIndexViewModelAsync(TUser user)
+        private async Task<IndexViewModel> BuildManageIndexViewModelAsync(ApplicationUser user)
         {
             var claims = await _userManager.GetClaimsAsync(user);
             var profile = OpenIdClaimHelpers.ExtractProfileInfo(claims);
@@ -650,7 +648,7 @@ namespace BlazorIdentity.Controllers
             return model;
         }
 
-        private async Task UpdateUserClaimsAsync(IndexViewModel model, TUser user)
+        private async Task UpdateUserClaimsAsync(IndexViewModel model, ApplicationUser user)
         {
             var claims = await _userManager.GetClaimsAsync(user);
             var oldProfile = OpenIdClaimHelpers.ExtractProfileInfo(claims);

@@ -26,6 +26,12 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using BlazorIdentity.Localization;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using BlazorIdentity.Helpers;
+using BlazorIdentity.Configuration.Email;
+using SendGrid;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using BlazorIdentity.Helpers.Localization;
+using BlazorIdentity.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +87,66 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
+var smtpConfiguration = configuration.GetSection(nameof(SmtpConfiguration)).Get<SmtpConfiguration>();
+var sendGridConfiguration = configuration.GetSection(nameof(SendGridConfiguration)).Get<SendGridConfiguration>();
+
+if (sendGridConfiguration != null && !string.IsNullOrWhiteSpace(sendGridConfiguration.ApiKey))
+{
+    builder.Services.AddSingleton<ISendGridClient>(_ => new SendGridClient(sendGridConfiguration.ApiKey));
+    builder.Services.AddSingleton(sendGridConfiguration);
+    builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+}
+else if (smtpConfiguration != null && !string.IsNullOrWhiteSpace(smtpConfiguration.Host))
+{
+    builder.Services.AddSingleton(smtpConfiguration);
+    builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
+}
+else
+{
+    builder.Services.AddSingleton<IEmailSender, LogEmailSender>();
+}
+
+builder.Services.AddLocalization(opts => { opts.ResourcesPath = ConfigurationConsts.ResourcesPath; });
+
+builder.Services.TryAddTransient(typeof(IGenericControllerLocalizer<>), typeof(GenericControllerLocalizer<>));
+
+builder.Services.AddControllersWithViews(o =>
+{
+    o.Conventions.Add(new GenericControllerRouteConvention());
+})
+    .AddViewLocalization(
+        LanguageViewLocationExpanderFormat.Suffix,
+        opts => { opts.ResourcesPath = ConfigurationConsts.ResourcesPath; })
+    .AddDataAnnotationsLocalization()
+    .ConfigureApplicationPartManager(m =>
+    {
+        m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider<ApplicationUser, Guid>());
+    });
+
+var cultureConfiguration = configuration.GetSection(nameof(CultureConfiguration)).Get<CultureConfiguration>();
+builder.Services.Configure<RequestLocalizationOptions>(
+    opts =>
+    {
+        // If cultures are specified in the configuration, use them (making sure they are among the available cultures),
+        // otherwise use all the available cultures
+        var supportedCultureCodes = (cultureConfiguration?.Cultures?.Count > 0 ?
+            cultureConfiguration.Cultures.Intersect(CultureConfiguration.AvailableCultures) :
+            CultureConfiguration.AvailableCultures).ToArray();
+
+        if (!supportedCultureCodes.Any()) supportedCultureCodes = CultureConfiguration.AvailableCultures;
+        var supportedCultures = supportedCultureCodes.Select(c => new CultureInfo(c)).ToList();
+
+        // If the default culture is specified use it, otherwise use CultureConfiguration.DefaultRequestCulture ("en")
+        var defaultCultureCode = string.IsNullOrEmpty(cultureConfiguration?.DefaultCulture) ?
+            CultureConfiguration.DefaultRequestCulture : cultureConfiguration?.DefaultCulture;
+
+        // If the default culture is not among the supported cultures, use the first supported culture as default
+        if (!supportedCultureCodes.Contains(defaultCultureCode)) defaultCultureCode = supportedCultureCodes.FirstOrDefault();
+
+        opts.DefaultRequestCulture = new RequestCulture(defaultCultureCode);
+        opts.SupportedCultures = supportedCultures;
+        opts.SupportedUICultures = supportedCultures;
+    });
 
 builder.Services.AddIdentityServer()
 .AddInMemoryIdentityResources(Config.GetResources())
@@ -126,32 +192,6 @@ builder.Services.AddControllersWithViews(o =>
                 .ConfigureApplicationPartManager(m =>
                 {
                     m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider<ApplicationUser, Guid>());
-                });
-
-var cultureConfiguration = configuration.GetSection(nameof(CultureConfiguration)).Get<CultureConfiguration>();
-
-builder.Services.Configure<RequestLocalizationOptions>(
-                opts =>
-                {
-                    // If cultures are specified in the configuration, use them (making sure they are among the available cultures),
-                    // otherwise use all the available cultures
-                    var supportedCultureCodes = (cultureConfiguration?.Cultures?.Count > 0 ?
-                        cultureConfiguration.Cultures.Intersect(CultureConfiguration.AvailableCultures) :
-                        CultureConfiguration.AvailableCultures).ToArray();
-
-                    if (!supportedCultureCodes.Any()) supportedCultureCodes = CultureConfiguration.AvailableCultures;
-                    var supportedCultures = supportedCultureCodes.Select(c => new CultureInfo(c)).ToList();
-
-                    // If the default culture is specified use it, otherwise use CultureConfiguration.DefaultRequestCulture ("en")
-                    var defaultCultureCode = string.IsNullOrEmpty(cultureConfiguration?.DefaultCulture) ?
-                        CultureConfiguration.DefaultRequestCulture : cultureConfiguration?.DefaultCulture;
-
-                    // If the default culture is not among the supported cultures, use the first supported culture as default
-                    if (!supportedCultureCodes.Contains(defaultCultureCode)) defaultCultureCode = supportedCultureCodes.FirstOrDefault();
-
-                    opts.DefaultRequestCulture = new RequestCulture(defaultCultureCode);
-                    opts.SupportedCultures = supportedCultures;
-                    opts.SupportedUICultures = supportedCultures;
                 });
 
 var app = builder.Build();

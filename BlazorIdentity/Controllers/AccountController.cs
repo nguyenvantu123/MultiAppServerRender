@@ -37,52 +37,33 @@ namespace BlazorIdentity.Users.Constants
 {
     [SecurityHeaders]
     [Authorize]
-    public class AccountController<TUser, TKey> : Controller
-        where TUser : IdentityUser<TKey>, new()
-        where TKey : IEquatable<TKey>
+    public class AccountController : Controller
     {
-        private readonly UserResolver<TUser> _userResolver;
-        private readonly UserManager<TUser> _userManager;
-        private readonly ApplicationSignInManager<TUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
+        private readonly IAuthenticationHandlerProvider _handlerProvider;
         private readonly IEventService _events;
-        private readonly IEmailSender _emailSender;
-        private readonly IGenericControllerLocalizer<AccountController<TUser, TKey>> _localizer;
-        private readonly LoginConfiguration _loginConfiguration;
-        private readonly IdentityOptions _identityOptions;
-        private readonly ILogger<AccountController<TUser, TKey>> _logger;
-        private readonly IIdentityProviderStore _identityProviderStore;
 
         public AccountController(
-            UserResolver<TUser> userResolver,
-            UserManager<TUser> userManager,
-            ApplicationSignInManager<TUser> signInManager,
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IAuthenticationSchemeProvider schemeProvider,
-            IEventService events,
-            IEmailSender emailSender,
-            IGenericControllerLocalizer<AccountController<TUser, TKey>> localizer,
-            LoginConfiguration loginConfiguration,
-            IdentityOptions identityOptions,
-            ILogger<AccountController<TUser, TKey>> logger,
-            IIdentityProviderStore identityProviderStore)
+             UserManager<ApplicationUser> userManager,
+             SignInManager<ApplicationUser> signInManager,
+             IIdentityServerInteractionService interaction,
+             IClientStore clientStore,
+             IAuthenticationSchemeProvider schemeProvider,
+             IAuthenticationHandlerProvider handlerProvider,
+             IEventService events)
         {
-            _userResolver = userResolver;
             _userManager = userManager;
             _signInManager = signInManager;
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
+            _handlerProvider = handlerProvider;
             _events = events;
-            _emailSender = emailSender;
-            _localizer = localizer;
-            _loginConfiguration = loginConfiguration;
-            _identityOptions = identityOptions;
-            _logger = logger;
-            _identityProviderStore = identityProviderStore;
         }
 
         /// <summary>
@@ -142,58 +123,50 @@ namespace BlazorIdentity.Users.Constants
 
             if (ModelState.IsValid)
             {
-                var user = await _userResolver.GetUserAsync(model.Username);
-                if (user != default(TUser))
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, lockoutOnFailure: true);
+                if (result.Succeeded)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberLogin, lockoutOnFailure: true);
-                    if (result.Succeeded)
+                    var user = await _userManager.FindByNameAsync(model.Username);
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString(), user.UserName, clientId: context?.Client.ClientId));
+
+                    if (context != null)
                     {
-                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString(), user.UserName));
-
-                        if (context != null)
+                        if (context.IsNativeClient())
                         {
-                            if (context.IsNativeClient())
-                            {
-                                // The client is native, so this change in how to
-                                // return the response is for better UX for the end user.
-                                return this.LoadingPage("Redirect", model.ReturnUrl);
-                            }
-
-                            // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                            return Redirect(model.ReturnUrl);
+                            // The client is native, so this change in how to
+                            // return the response is for better UX for the end user.
+                            return this.LoadingPage("Redirect", model.ReturnUrl);
                         }
 
-                        // request for a local page
-                        if (Url.IsLocalUrl(model.ReturnUrl))
-                        {
-                            return Redirect(model.ReturnUrl);
-                        }
+                        // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                        return Redirect(model.ReturnUrl);
+                    }
 
-                        if (string.IsNullOrEmpty(model.ReturnUrl))
-                        {
-                            return Redirect("~/");
-                        }
-
+                    // request for a local page
+                    if (Url.IsLocalUrl(model.ReturnUrl))
+                    {
+                        return Redirect(model.ReturnUrl);
+                    }
+                    else if (string.IsNullOrEmpty(model.ReturnUrl))
+                    {
+                        return Redirect("~/");
+                    }
+                    else
+                    {
                         // user might have clicked on a malicious link - should be logged
                         throw new Exception("invalid return URL");
                     }
-
-                    if (result.RequiresTwoFactor)
-                    {
-                        return RedirectToAction(nameof(LoginWith2fa), new { model.ReturnUrl, RememberMe = model.RememberLogin });
-                    }
-
-                    if (result.IsLockedOut)
-                    {
-                        return View("Lockout");
-                    }
                 }
+
                 await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId: context?.Client.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
             // something went wrong, show form with error
             var vm = await BuildLoginViewModelAsync(model);
+
+            ViewData["ReturnUrl"] = model.ReturnUrl;
+
             return View(vm);
         }
 
@@ -286,7 +259,7 @@ namespace BlazorIdentity.Users.Constants
         {
             if (ModelState.IsValid)
             {
-                TUser user = null;
+                ApplicationUser user = null;
                 switch (model.Policy)
                 {
                     case LoginResolutionPolicy.Email:
@@ -297,7 +270,7 @@ namespace BlazorIdentity.Users.Constants
                         catch (Exception ex)
                         {
                             // in case of multiple users with the same email this method would throw and reveal that the email is registered
-                            _logger.LogError("Error retrieving user by email ({0}) for forgot password functionality: {1}", model.Email, ex.Message);
+                            //_logger.LogError("Error retrieving user by email ({0}) for forgot password functionality: {1}", model.Email, ex.Message);
                             user = null;
                         }
                         break;
@@ -308,7 +281,7 @@ namespace BlazorIdentity.Users.Constants
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError("Error retrieving user by userName ({0}) for forgot password functionality: {1}", model.Username, ex.Message);
+                            //_logger.LogError("Error retrieving user by userName ({0}) for forgot password functionality: {1}", model.Username, ex.Message);
                             user = null;
                         }
                         break;
@@ -324,7 +297,7 @@ namespace BlazorIdentity.Users.Constants
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, HttpContext.Request.Scheme);
 
-                await _emailSender.SendEmailAsync(user.Email, _localizer["ResetPasswordTitle"], _localizer["ResetPasswordBody", HtmlEncoder.Default.Encode(callbackUrl)]);
+                //await _emailSender.SendEmailAsync(user.Email, _localizer["ResetPasswordTitle"], _localizer["ResetPasswordBody", HtmlEncoder.Default.Encode(callbackUrl)]);
 
                 return View("ForgotPasswordConfirmation");
             }
@@ -388,7 +361,7 @@ namespace BlazorIdentity.Users.Constants
         {
             if (remoteError != null)
             {
-                ModelState.AddModelError(string.Empty, _localizer["ErrorExternalProvider", remoteError]);
+                //ModelState.AddModelError(string.Empty, _localizer["ErrorExternalProvider", remoteError]);
 
                 return View(nameof(Login));
             }
@@ -450,7 +423,7 @@ namespace BlazorIdentity.Users.Constants
 
             if (ModelState.IsValid)
             {
-                var user = new TUser
+                var user = new ApplicationUser
                 {
                     UserName = model.UserName,
                     Email = model.Email
@@ -485,7 +458,7 @@ namespace BlazorIdentity.Users.Constants
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException(_localizer["Unable2FA"]);
+                throw new InvalidOperationException("Unable2FA");
             }
 
             var model = new LoginWithRecoveryCodeViewModel()
@@ -508,7 +481,7 @@ namespace BlazorIdentity.Users.Constants
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException(_localizer["Unable2FA"]);
+                throw new InvalidOperationException("Unable2FA");
             }
 
             var recoveryCode = model.RecoveryCode.Replace(" ", string.Empty);
@@ -526,7 +499,7 @@ namespace BlazorIdentity.Users.Constants
                 return View("Lockout");
             }
 
-            ModelState.AddModelError(string.Empty, _localizer["InvalidRecoveryCode"]);
+            ModelState.AddModelError(string.Empty, "InvalidRecoveryCode");
 
             return View(model);
         }
@@ -540,7 +513,7 @@ namespace BlazorIdentity.Users.Constants
 
             if (user == null)
             {
-                throw new InvalidOperationException(_localizer["Unable2FA"]);
+                throw new InvalidOperationException("Unable2FA");
             }
 
             var model = new LoginWith2faViewModel()
@@ -565,7 +538,7 @@ namespace BlazorIdentity.Users.Constants
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException(_localizer["Unable2FA"]);
+                throw new InvalidOperationException("Unable2FA");
             }
 
             var authenticatorCode = model.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
@@ -583,99 +556,99 @@ namespace BlazorIdentity.Users.Constants
                 return View("Lockout");
             }
 
-            ModelState.AddModelError(string.Empty, _localizer["InvalidAuthenticatorCode"]);
+            ModelState.AddModelError(string.Empty, "InvalidAuthenticatorCode");
 
             return View(model);
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Register(string returnUrl = null)
-        {
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult Register(string returnUrl = null)
+        //{
 
-            ViewData["ReturnUrl"] = returnUrl;
+        //    ViewData["ReturnUrl"] = returnUrl;
 
-            return _loginConfiguration.ResolutionPolicy switch
-            {
-                LoginResolutionPolicy.Username => View(),
-                LoginResolutionPolicy.Email => View("RegisterWithoutUsername"),
-                _ => View("RegisterFailure")
-            };
-        }
+        //    return _loginConfiguration.ResolutionPolicy switch
+        //    {
+        //        LoginResolutionPolicy.Username => View(),
+        //        LoginResolutionPolicy.Email => View("RegisterWithoutUsername"),
+        //        _ => View("RegisterFailure")
+        //    };
+        //}
 
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null, bool IsCalledFromRegisterWithoutUsername = false)
-        {
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null, bool IsCalledFromRegisterWithoutUsername = false)
+        //{
 
-            returnUrl ??= Url.Content("~/");
+        //    returnUrl ??= Url.Content("~/");
 
-            ViewData["ReturnUrl"] = returnUrl;
+        //    ViewData["ReturnUrl"] = returnUrl;
 
-            if (!ModelState.IsValid) return View(model);
+        //    if (!ModelState.IsValid) return View(model);
 
-            var user = new TUser
-            {
-                UserName = model.UserName,
-                Email = model.Email
-            };
+        //    var user = new ApplicationUser
+        //    {
+        //        UserName = model.UserName,
+        //        Email = model.Email
+        //    };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, HttpContext.Request.Scheme);
+        //    var result = await _userManager.CreateAsync(user, model.Password);
+        //    if (result.Succeeded)
+        //    {
+        //        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        //        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        //        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, HttpContext.Request.Scheme);
 
-                await _emailSender.SendEmailAsync(model.Email, _localizer["ConfirmEmailTitle"], _localizer["ConfirmEmailBody", HtmlEncoder.Default.Encode(callbackUrl)]);
+        //        await _emailSender.SendEmailAsync(model.Email, _localizer["ConfirmEmailTitle"], _localizer["ConfirmEmailBody", HtmlEncoder.Default.Encode(callbackUrl)]);
 
-                if (_identityOptions.SignIn.RequireConfirmedAccount)
-                {
-                    return View("RegisterConfirmation");
-                }
-                else
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
-                }
-            }
+        //        if (_identityOptions.SignIn.RequireConfirmedAccount)
+        //        {
+        //            return View("RegisterConfirmation");
+        //        }
+        //        else
+        //        {
+        //            await _signInManager.SignInAsync(user, isPersistent: false);
+        //            return LocalRedirect(returnUrl);
+        //        }
+        //    }
 
-            AddErrors(result);
+        //    AddErrors(result);
 
-            // If we got this far, something failed, redisplay form
-            if (IsCalledFromRegisterWithoutUsername)
-            {
-                var registerWithoutUsernameModel = new RegisterWithoutUsernameViewModel
-                {
-                    Email = model.Email,
-                    Password = model.Password,
-                    ConfirmPassword = model.ConfirmPassword
-                };
+        //    // If we got this far, something failed, redisplay form
+        //    if (IsCalledFromRegisterWithoutUsername)
+        //    {
+        //        var registerWithoutUsernameModel = new RegisterWithoutUsernameViewModel
+        //        {
+        //            Email = model.Email,
+        //            Password = model.Password,
+        //            ConfirmPassword = model.ConfirmPassword
+        //        };
 
-                return View("RegisterWithoutUsername", registerWithoutUsernameModel);
-            }
-            else
-            {
-                return View(model);
-            }
-        }
+        //        return View("RegisterWithoutUsername", registerWithoutUsernameModel);
+        //    }
+        //    else
+        //    {
+        //        return View(model);
+        //    }
+        //}
 
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterWithoutUsername(RegisterWithoutUsernameViewModel model, string returnUrl = null)
-        {
-            var registerModel = new RegisterViewModel
-            {
-                UserName = model.Email,
-                Email = model.Email,
-                Password = model.Password,
-                ConfirmPassword = model.ConfirmPassword
-            };
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> RegisterWithoutUsername(RegisterWithoutUsernameViewModel model, string returnUrl = null)
+        //{
+        //    var registerModel = new RegisterViewModel
+        //    {
+        //        UserName = model.Email,
+        //        Email = model.Email,
+        //        Password = model.Password,
+        //        ConfirmPassword = model.ConfirmPassword
+        //    };
 
-            return await Register(registerModel, returnUrl, true);
-        }
+        //    return await Register(registerModel, returnUrl, true);
+        //}
 
         /*****************************************/
         /* helper APIs for the AccountController */
@@ -730,16 +703,6 @@ namespace BlazorIdentity.Users.Constants
                     DisplayName = x.DisplayName ?? x.Name,
                     AuthenticationScheme = x.Name
                 }).ToList();
-
-            var dynamicSchemes = (await _identityProviderStore.GetAllSchemeNamesAsync())
-                .Where(x => x.Enabled)
-                .Select(x => new ExternalProvider
-                {
-                    AuthenticationScheme = x.Scheme,
-                    DisplayName = x.DisplayName
-                });
-
-            providers.AddRange(dynamicSchemes);
 
             var allowLocal = true;
             if (context?.Client.ClientId != null)

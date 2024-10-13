@@ -224,13 +224,13 @@ namespace BlazorIdentity.Data
 
         public override int SaveChanges()
         {
-            ChangeTracker.SetShadowProperties(claimsPrincipal);
+            //ChangeTracker.SetShadowProperties(claimsPrincipal);
             return base.SaveChanges();
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            ChangeTracker.SetShadowProperties(claimsPrincipal);
+            //ChangeTracker.SetShadowProperties(claimsPrincipal);
             return await base.SaveChangesAsync(true, cancellationToken);
         }
     }
