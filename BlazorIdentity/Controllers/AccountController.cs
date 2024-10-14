@@ -14,6 +14,7 @@ using BlazorIdentity.Controllers;
 using BlazorIdentity.Helpers;
 using BlazorIdentity.Helpers.Localization;
 using BlazorIdentity.Localization;
+using BlazorIdentity.Users.Models;
 using BlazorIdentity.ViewModels;
 using Configuration;
 using Duende.IdentityServer;
