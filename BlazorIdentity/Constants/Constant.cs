@@ -28,12 +28,5 @@
         public const string Administrator = "Administrator";
     }
 
-    public static class AuthenPath
-    {
-        public const string LoginPath = "/account/login";
-        public const string LoginWith2faPath = "/acount/loginwith2fa";
-        public const string LoginWithRecoveryCodePath = "/account/loginwithrecoverycode";
-        public const string ProfilePath = "/account/profile";
-        public const string DefaultTenantId = "Master";
-    }
+  
 }

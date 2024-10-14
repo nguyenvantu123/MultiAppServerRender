@@ -51,13 +51,15 @@ public static class Extensions
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             options.Authority = identityUrl.ToString();
             options.SignedOutRedirectUri = callBackUrl.ToString();
-            options.ClientId = "webhooks";
+            options.ClientId = "webhooksclient";
             options.ClientSecret = "secret";
             options.ResponseType = "code";
             options.SaveTokens = true;
             options.GetClaimsFromUserInfoEndpoint = true;
             options.RequireHttpsMetadata = false;
             options.Scope.Add("openid");
+            options.Scope.Add("profile");
+            options.Scope.Add("offline_access");
             options.Scope.Add("webhooks");
         });
 

@@ -142,7 +142,7 @@ namespace BlazorIdentity.Users.Configuration
                 },
                  new Client
                 {
-                    ClientId = "webhooks",
+                    ClientId = "webhooksclient",
                     ClientName = "Webhooks Client",
                     ClientSecrets = new List<Secret>
                     {

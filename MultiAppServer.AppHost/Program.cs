@@ -31,7 +31,7 @@ var webhookApi = builder.AddProject<Projects.Webhooks_API>("webhooks-api", launc
 var webhookClient = builder.AddProject<Projects.WebhookClient>("webhookclient", launchProfileName);
 
 
-identity.WithEnvironment("IdentityApiClient", identityEndpoint).WithEnvironment("FileApiClient", file.GetEndpoint(launchProfileName)).WithEnvironment("UsersApiClient", user.GetEndpoint(launchProfileName)).WithEnvironment("WebhooksClient", webhookClient.GetEndpoint(launchProfileName)); ;
+identity.WithEnvironment("IdentityApiClient", identityEndpoint).WithEnvironment("FileApiClient", file.GetEndpoint(launchProfileName)).WithEnvironment("UsersApiClient", user.GetEndpoint(launchProfileName)).WithEnvironment("WebhooksClient", webhookClient.GetEndpoint(launchProfileName)).WithEnvironment("WebhookApiClient", webhookApi.GetEndpoint(launchProfileName));
 
 file.WithEnvironment("Identity__Url", identityEndpoint).WithEnvironment("CallBackUrl", file.GetEndpoint(launchProfileName));
 
@@ -43,7 +43,7 @@ webApp.WithReference(identity).WithReference(file).WithEnvironment("CallBackUrl"
 identity.WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
 
 
-webhookClient.WithReference(identity).WithReference(webhookApi).WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", file.GetEndpoint(launchProfileName));
+webhookClient.WithReference(identity).WithReference(webhookApi).WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", webhookClient.GetEndpoint(launchProfileName));
 
 builder.Build().Run();
 

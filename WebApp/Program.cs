@@ -188,23 +188,23 @@ builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
 
 //builder.Services.AddHttpClient("MyHttpClient").SetHandlerLifetime(TimeSpan.FromHours(12));
 
-builder.Services.AddMvc().AddNewtonsoftJson(opt =>
-{
-    // Set Breeze defaults for entity serialization
-    var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
-    if (ss.ContractResolver is DefaultContractResolver resolver)
-    {
-        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
-    }
-})   // Add Breeze exception filter to send errors back to the client
-           .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
-           .AddViewLocalization().AddDataAnnotationsLocalization(options =>
-           {
-               options.DataAnnotationLocalizerProvider = (type, factory) =>
-               {
-                   return factory.Create(typeof(WebApp.Localizer.Global));
-               };
-           });
+//builder.Services.AddMvc().AddNewtonsoftJson(opt =>
+//{
+//    // Set Breeze defaults for entity serialization
+//    var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
+//    if (ss.ContractResolver is DefaultContractResolver resolver)
+//    {
+//        resolver.NamingStrategy = null;  // remove json camelCasing; names are converted on the client.
+//    }
+//})   // Add Breeze exception filter to send errors back to the client
+//           .AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); })
+//           .AddViewLocalization().AddDataAnnotationsLocalization(options =>
+//           {
+//               options.DataAnnotationLocalizerProvider = (type, factory) =>
+//               {
+//                   return factory.Create(typeof(WebApp.Localizer.Global));
+//               };
+//           });
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped<LogoutServices>();
