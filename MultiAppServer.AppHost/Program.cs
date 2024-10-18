@@ -45,6 +45,8 @@ identity.WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
 
 webhookClient.WithReference(identity).WithReference(webhookApi).WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", webhookClient.GetEndpoint(launchProfileName));
 
+builder.AddProject<Projects.BlazorIdentityApi>("blazoridentityapi");
+
 builder.Build().Run();
 
 static bool ShouldUseHttpForEndpoints()
