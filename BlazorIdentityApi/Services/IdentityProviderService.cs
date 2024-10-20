@@ -7,16 +7,14 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
-using Skoruba.AuditLogging.Services;
 using BlazorIdentityApi.Dtos.IdentityProvider;
-using BlazorIdentityApi.Events.IdentityProvider;
 using BlazorIdentityApi.Helpers;
 using BlazorIdentityApi.Mappers;
 using BlazorIdentityApi.Resources;
 using BlazorIdentityApi.Services.Interfaces;
-using BlazorIdentityApi.Shared.ExceptionHandling;
 using BlazorIdentityApi.Common;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentityApi.ExceptionHandling;
 
 namespace BlazorIdentityApi.Services
 {
@@ -24,15 +22,16 @@ namespace BlazorIdentityApi.Services
     {
         protected readonly IIdentityProviderRepository IdentityProviderRepository;
         protected readonly IIdentityProviderServiceResources IdentityProviderServiceResources;
-        protected readonly IAuditEventLogger AuditEventLogger;
+        //protected readonly IAuditEventLogger AuditEventLogger;
 
         public IdentityProviderService(IIdentityProviderRepository identityProviderRepository,
-            IIdentityProviderServiceResources identityProviderServiceResources,
-            IAuditEventLogger auditEventLogger)
+            IIdentityProviderServiceResources identityProviderServiceResources
+            //,IAuditEventLogger auditEventLogger
+            )
         {
             IdentityProviderRepository = identityProviderRepository;
             IdentityProviderServiceResources = identityProviderServiceResources;
-            AuditEventLogger = auditEventLogger;
+            //AuditEventLogger = auditEventLogger;
         }
 
         public virtual async Task<IdentityProvidersDto> GetIdentityProvidersAsync(string search, int page = 1, int pageSize = 10)
@@ -40,7 +39,7 @@ namespace BlazorIdentityApi.Services
             var pagedList = await IdentityProviderRepository.GetIdentityProvidersAsync(search, page, pageSize);
             var identityProviderDto = pagedList.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new IdentityProvidersRequestedEvent(identityProviderDto));
+            //await AuditEventLogger.LogEventAsync(new IdentityProvidersRequestedEvent(identityProviderDto));
 
             return identityProviderDto;
         }
@@ -52,7 +51,7 @@ namespace BlazorIdentityApi.Services
 
             var identityProviderDto = identityProvider.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new IdentityProviderRequestedEvent(identityProviderDto));
+            //await AuditEventLogger.LogEventAsync(new IdentityProviderRequestedEvent(identityProviderDto));
 
             return identityProviderDto;
         }
@@ -76,7 +75,7 @@ namespace BlazorIdentityApi.Services
 
             var saved = await IdentityProviderRepository.AddIdentityProviderAsync(entity);
 
-            await AuditEventLogger.LogEventAsync(new IdentityProviderAddedEvent(identityProvider));
+            //await AuditEventLogger.LogEventAsync(new IdentityProviderAddedEvent(identityProvider));
 
             return saved;
         }
@@ -100,7 +99,7 @@ namespace BlazorIdentityApi.Services
 
             var updated = await IdentityProviderRepository.UpdateIdentityProviderAsync(entity);
             
-            await AuditEventLogger.LogEventAsync(new IdentityProviderUpdatedEvent(originalIdentityProvider, identityProvider));
+            //await AuditEventLogger.LogEventAsync(new IdentityProviderUpdatedEvent(originalIdentityProvider, identityProvider));
 
             return updated;
         }
@@ -111,7 +110,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await IdentityProviderRepository.DeleteIdentityProviderAsync(entity);
 
-            await AuditEventLogger.LogEventAsync(new IdentityProviderDeletedEvent(identityProvider));
+            //await AuditEventLogger.LogEventAsync(new IdentityProviderDeletedEvent(identityProvider));
 
             return deleted;
         }

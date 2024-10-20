@@ -3,8 +3,8 @@
 
 using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Entities;
+using BlazorIdentityApi.Common;
 using BlazorIdentityApi.Entities;
-using BlazorIdentityApi.Extensions.Common;
 
 namespace BlazorIdentityApi.Repositories.Interfaces
 {

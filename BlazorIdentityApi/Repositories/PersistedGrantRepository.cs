@@ -8,23 +8,21 @@ using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using BlazorIdentityApi.Entities;
-using BlazorIdentityApi.Extensions.Common;
-using BlazorIdentityApi.Extensions.Enums;
-using BlazorIdentityApi.Extensions.Extensions;
-using BlazorIdentityApi.Interfaces;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentityApi.Common;
+using BlazorIdentityApi.Dtos.Enums;
+using BlazorIdentity.Data;
+using BlazorIdentityApi.Extensions;
 
 namespace BlazorIdentityApi.Repositories
 {
-    public class PersistedGrantRepository<TDbContext> : IPersistedGrantRepository
-        where TDbContext : DbContext, IAdminPersistedGrantDbContext
-        
+    public class PersistedGrantRepository : IPersistedGrantRepository        
     {
-        protected readonly TDbContext DbContext;
+        protected readonly ApplicationDbContext DbContext;
 
         public bool AutoSaveChanges { get; set; } = true;
 
-        public PersistedGrantRepository(TDbContext dbContext)
+        public PersistedGrantRepository(ApplicationDbContext dbContext)
         {
             DbContext = dbContext;
         }

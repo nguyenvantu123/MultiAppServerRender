@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using AutoMapper;
 using Duende.IdentityServer.EntityFramework.Entities;
 using BlazorIdentityApi.Dtos.Configuration;
-using BlazorIdentityApi.Shared.Dtos.Common;
 using BlazorIdentityApi.Common;
 
 namespace BlazorIdentityApi.Mappers

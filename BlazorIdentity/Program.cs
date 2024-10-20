@@ -81,7 +81,7 @@ builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 var withApiVersioning = builder.Services.AddApiVersioning();
 
-builder.AddDefaultOpenApi(withApiVersioning);
+//builder.AddDefaultOpenApi(withApiVersioning);
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()

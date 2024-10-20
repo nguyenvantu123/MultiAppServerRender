@@ -4,16 +4,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Entities;
-using Skoruba.AuditLogging.Services;
 using BlazorIdentityApi.Dtos.Configuration;
-using BlazorIdentityApi.Events.ApiScope;
 using BlazorIdentityApi.Helpers;
 using BlazorIdentityApi.Mappers;
 using BlazorIdentityApi.Resources;
 using BlazorIdentityApi.Services.Interfaces;
-using BlazorIdentityApi.Shared.ExceptionHandling;
 using BlazorIdentityApi.Common;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentityApi.ExceptionHandling;
 
 namespace BlazorIdentityApi.Services
 {
@@ -21,12 +19,14 @@ namespace BlazorIdentityApi.Services
     {
         protected readonly IApiScopeRepository ApiScopeRepository;
         protected readonly IApiScopeServiceResources ApiScopeServiceResources;
-        protected readonly IAuditEventLogger AuditEventLogger;
+        //protected readonly IAuditEventLogger AuditEventLogger;
 
-        public ApiScopeService(IApiScopeServiceResources apiScopeServiceResources, IApiScopeRepository apiScopeRepository, IAuditEventLogger auditEventLogger)
+        public ApiScopeService(IApiScopeServiceResources apiScopeServiceResources, IApiScopeRepository apiScopeRepository
+            //, IAuditEventLogger auditEventLogger
+            )
         {
             ApiScopeRepository = apiScopeRepository;
-            AuditEventLogger = auditEventLogger;
+            //AuditEventLogger = auditEventLogger;
             ApiScopeServiceResources = apiScopeServiceResources;
 
         }
@@ -37,7 +37,7 @@ namespace BlazorIdentityApi.Services
 
             var apiScopesDto = pagedList.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new ApiScopesRequestedEvent(apiScopesDto));
+            //await AuditEventLogger.LogEventAsync(new ApiScopesRequestedEvent(apiScopesDto));
 
             return apiScopesDto;
         }
@@ -60,7 +60,7 @@ namespace BlazorIdentityApi.Services
             apiScopePropertiesDto.ApiScopeId = apiScopeId;
             apiScopePropertiesDto.ApiScopeName = await ApiScopeRepository.GetApiScopeNameAsync(apiScopeId);
 
-            await AuditEventLogger.LogEventAsync(new ApiScopePropertiesRequestedEvent(apiScopeId, apiScopePropertiesDto));
+            //await AuditEventLogger.LogEventAsync(new ApiScopePropertiesRequestedEvent(apiScopeId, apiScopePropertiesDto));
 
             return apiScopePropertiesDto;
         }
@@ -72,7 +72,7 @@ namespace BlazorIdentityApi.Services
 
             var apiScopeDto = apiScope.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new ApiScopeRequestedEvent(apiScopeDto));
+            //await AuditEventLogger.LogEventAsync(new ApiScopeRequestedEvent(apiScopeDto));
 
             return apiScopeDto;
         }
@@ -89,7 +89,7 @@ namespace BlazorIdentityApi.Services
 
             var added = await ApiScopeRepository.AddApiScopeAsync(scope);
 
-            await AuditEventLogger.LogEventAsync(new ApiScopeAddedEvent(apiScope));
+            //await AuditEventLogger.LogEventAsync(new ApiScopeAddedEvent(apiScope));
 
             return added;
         }
@@ -115,7 +115,7 @@ namespace BlazorIdentityApi.Services
 
             var updated = await ApiScopeRepository.UpdateApiScopeAsync(scope);
 
-            await AuditEventLogger.LogEventAsync(new ApiScopeUpdatedEvent(originalApiScope, apiScope));
+            //await AuditEventLogger.LogEventAsync(new ApiScopeUpdatedEvent(originalApiScope, apiScope));
 
             return updated;
         }
@@ -126,7 +126,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await ApiScopeRepository.DeleteApiScopeAsync(scope);
 
-            await AuditEventLogger.LogEventAsync(new ApiScopeDeletedEvent(apiScope));
+            //await AuditEventLogger.LogEventAsync(new ApiScopeDeletedEvent(apiScope));
 
             return deleted;
         }
@@ -147,7 +147,7 @@ namespace BlazorIdentityApi.Services
             apiScopePropertiesDto.ApiScopeId = apiScopeProperty.ScopeId;
             apiScopePropertiesDto.ApiScopeName = await ApiScopeRepository.GetApiScopeNameAsync(apiScopeProperty.ScopeId);
 
-            await AuditEventLogger.LogEventAsync(new ApiScopePropertyRequestedEvent(apiScopePropertyId, apiScopePropertiesDto));
+            //await AuditEventLogger.LogEventAsync(new ApiScopePropertyRequestedEvent(apiScopePropertyId, apiScopePropertiesDto));
 
             return apiScopePropertiesDto;
         }
@@ -172,7 +172,7 @@ namespace BlazorIdentityApi.Services
 
             var saved = await ApiScopeRepository.AddApiScopePropertyAsync(apiScopeProperties.ApiScopeId, apiScopeProperty);
 
-            await AuditEventLogger.LogEventAsync(new ApiScopePropertyAddedEvent(apiScopeProperties));
+            //await AuditEventLogger.LogEventAsync(new ApiScopePropertyAddedEvent(apiScopeProperties));
 
             return saved;
         }
@@ -183,7 +183,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await ApiScopeRepository.DeleteApiScopePropertyAsync(propertyEntity);
 
-            await AuditEventLogger.LogEventAsync(new ApiScopePropertyDeletedEvent(apiScopeProperty));
+            //await AuditEventLogger.LogEventAsync(new ApiScopePropertyDeletedEvent(apiScopeProperty));
 
             return deleted;
         }

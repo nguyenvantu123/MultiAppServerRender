@@ -3,28 +3,28 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Skoruba.AuditLogging.Services;
 using BlazorIdentityApi.Dtos.Grant;
 using BlazorIdentityApi.Dtos.Key;
-using BlazorIdentityApi.Events.Key;
 using BlazorIdentityApi.Mappers;
 using BlazorIdentityApi.Resources;
 using BlazorIdentityApi.Services.Interfaces;
-using BlazorIdentityApi.Shared.ExceptionHandling;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentityApi.ExceptionHandling;
 
 namespace BlazorIdentityApi.Services
 {
     public class KeyService : IKeyService
     {
         protected readonly IKeyRepository KeyRepository;
-        protected readonly IAuditEventLogger AuditEventLogger;
+        //protected readonly IAuditEventLogger AuditEventLogger;
         protected readonly IKeyServiceResources KeyServiceResources;
 
-        public KeyService(IKeyRepository keyRepository, IAuditEventLogger auditEventLogger, IKeyServiceResources keyServiceResources)
+        public KeyService(IKeyRepository keyRepository, 
+            //IAuditEventLogger auditEventLogger, 
+            IKeyServiceResources keyServiceResources)
         {
             KeyRepository = keyRepository;
-            AuditEventLogger = auditEventLogger;
+            //AuditEventLogger = auditEventLogger;
             KeyServiceResources = keyServiceResources;
         }
 
@@ -34,7 +34,7 @@ namespace BlazorIdentityApi.Services
 
             var keysDto = keys.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new KeysRequestedEvent(keysDto));
+            //await AuditEventLogger.LogEventAsync(new KeysRequestedEvent(keysDto));
 
             return keysDto;
         }
@@ -50,7 +50,7 @@ namespace BlazorIdentityApi.Services
 
             var keyDto = key.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new KeyRequestedEvent(keyDto));
+            //await AuditEventLogger.LogEventAsync(new KeyRequestedEvent(keyDto));
 
             return keyDto;
         }
@@ -64,7 +64,7 @@ namespace BlazorIdentityApi.Services
         {
             var key = await GetKeyAsync(id, cancellationToken);
 
-            await AuditEventLogger.LogEventAsync(new KeyDeletedEvent(key));
+            //await AuditEventLogger.LogEventAsync(new KeyDeletedEvent(key));
 
             await KeyRepository.DeleteKeyAsync(id, cancellationToken);
         }

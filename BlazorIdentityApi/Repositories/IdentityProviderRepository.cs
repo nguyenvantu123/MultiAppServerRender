@@ -7,22 +7,21 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
-using BlazorIdentityApi.Extensions.Common;
-using BlazorIdentityApi.Extensions.Enums;
-using BlazorIdentityApi.Extensions.Extensions;
-using BlazorIdentityApi.Interfaces;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentity.Data;
+using BlazorIdentityApi.Common;
+using BlazorIdentityApi.Extensions;
+using BlazorIdentityApi.Dtos.Enums;
 
 namespace BlazorIdentityApi.Repositories
 {
-    public class IdentityProviderRepository<TDbContext> : IIdentityProviderRepository
-        where TDbContext : DbContext, IAdminConfigurationDbContext
+    public class IdentityProviderRepository : IIdentityProviderRepository
     {
-        protected readonly TDbContext DbContext;
+        protected readonly ApplicationDbContext DbContext;
 
         public bool AutoSaveChanges { get; set; } = true;
 
-        public IdentityProviderRepository(TDbContext dbContext)
+        public IdentityProviderRepository(ApplicationDbContext dbContext)
         {
             DbContext = dbContext;
         }

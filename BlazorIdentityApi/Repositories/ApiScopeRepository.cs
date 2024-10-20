@@ -8,22 +8,23 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
-using BlazorIdentityApi.Extensions.Common;
-using BlazorIdentityApi.Extensions.Enums;
-using BlazorIdentityApi.Extensions.Extensions;
-using BlazorIdentityApi.Interfaces;
+
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentity.Data;
+using BlazorIdentityApi.Common;
+using BlazorIdentityApi.Extensions;
+using BlazorIdentityApi.Dtos.Enums;
 
 namespace BlazorIdentityApi.Repositories
 {
-    public class ApiScopeRepository<TDbContext> : IApiScopeRepository
-        where TDbContext : DbContext, IAdminConfigurationDbContext
+    public class ApiScopeRepository : IApiScopeRepository
+  
     {
-        protected readonly TDbContext DbContext;
+        protected readonly ApplicationDbContext DbContext;
 
         public bool AutoSaveChanges { get; set; } = true;
 
-        public ApiScopeRepository(TDbContext dbContext)
+        public ApiScopeRepository(ApplicationDbContext dbContext)
         {
             DbContext = dbContext;
         }

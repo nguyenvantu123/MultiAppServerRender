@@ -12,7 +12,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityProviderDoesNotExist),
-                Description = IdentityProviderServiceResource.IdentityProviderDoesNotExist
+                Description = "IdentityProviderDoesNotExist"
             };
         }
 
@@ -21,7 +21,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityProviderExistsKey),
-                Description = IdentityProviderServiceResource.IdentityProviderExistsKey
+                Description = "IdentityProviderExistsKey"
             };
         }
 
@@ -30,7 +30,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityProviderExistsValue),
-                Description = IdentityProviderServiceResource.IdentityProviderExistsValue
+                Description = "IdentityProviderExistsValue"
             };
         }
         

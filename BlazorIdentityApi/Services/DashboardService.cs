@@ -10,19 +10,21 @@ namespace BlazorIdentityApi.Services;
 public class DashboardService : IDashboardService
 {
     protected readonly IDashboardRepository DashboardRepository;
-    protected readonly IAuditLogService AuditLogService;
+    //protected readonly IAuditLogService AuditLogService;
 
-    public DashboardService(IDashboardRepository dashboardRepository, IAuditLogService auditLogService)
+    public DashboardService(IDashboardRepository dashboardRepository
+        //, IAuditLogService auditLogService
+        )
     {
         DashboardRepository = dashboardRepository;
-        AuditLogService = auditLogService;
+        //AuditLogService = auditLogService;
     }
 
     public async Task<DashboardDto> GetDashboardIdentityServerAsync(int auditLogsLastNumberOfDays, CancellationToken cancellationToken = default)
     {
        var dashBoardData = await DashboardRepository.GetDashboardIdentityServerAsync(auditLogsLastNumberOfDays, cancellationToken);
-       var auditLogs = await AuditLogService.GetDashboardAuditLogsAsync(auditLogsLastNumberOfDays, cancellationToken);
-       var auditLogsAverage = await AuditLogService.GetDashboardAuditLogsAverageAsync(auditLogsLastNumberOfDays, cancellationToken);
+       //var auditLogs = await AuditLogService.GetDashboardAuditLogsAsync(auditLogsLastNumberOfDays, cancellationToken);
+       //var auditLogsAverage = await AuditLogService.GetDashboardAuditLogsAverageAsync(auditLogsLastNumberOfDays, cancellationToken);
        
        return new DashboardDto
        {
@@ -30,8 +32,8 @@ public class DashboardService : IDashboardService
             ApiResourcesTotal = dashBoardData.ApiResourcesTotal,
             ApiScopesTotal = dashBoardData.ApiScopesTotal,
             IdentityResourcesTotal = dashBoardData.IdentityResourcesTotal,
-            AuditLogsAvg = auditLogsAverage,
-            AuditLogsPerDaysTotal = auditLogs,
+            //AuditLogsAvg = auditLogsAverage,
+            //AuditLogsPerDaysTotal = auditLogs,
             IdentityProvidersTotal = dashBoardData.IdentityProvidersTotal
        };
     }

@@ -2,15 +2,13 @@
 // Licensed under the Apache License, Version 2.0.
 
 using System.Threading.Tasks;
-using Skoruba.AuditLogging.Services;
 using BlazorIdentityApi.Dtos.Configuration;
-using BlazorIdentityApi.Events.IdentityResource;
 using BlazorIdentityApi.Helpers;
 using BlazorIdentityApi.Mappers;
 using BlazorIdentityApi.Resources;
 using BlazorIdentityApi.Services.Interfaces;
-using BlazorIdentityApi.Shared.ExceptionHandling;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentityApi.ExceptionHandling;
 
 namespace BlazorIdentityApi.Services
 {
@@ -18,15 +16,16 @@ namespace BlazorIdentityApi.Services
     {
         protected readonly IIdentityResourceRepository IdentityResourceRepository;
         protected readonly IIdentityResourceServiceResources IdentityResourceServiceResources;
-        protected readonly IAuditEventLogger AuditEventLogger;
+        //protected readonly IAuditEventLogger AuditEventLogger;
 
         public IdentityResourceService(IIdentityResourceRepository identityResourceRepository,
-            IIdentityResourceServiceResources identityResourceServiceResources,
-            IAuditEventLogger auditEventLogger)
+            IIdentityResourceServiceResources identityResourceServiceResources
+            //IAuditEventLogger auditEventLogger
+            )
         {
             IdentityResourceRepository = identityResourceRepository;
             IdentityResourceServiceResources = identityResourceServiceResources;
-            AuditEventLogger = auditEventLogger;
+            //AuditEventLogger = auditEventLogger;
         }
 
         public virtual async Task<IdentityResourcesDto> GetIdentityResourcesAsync(string search, int page = 1, int pageSize = 10)
@@ -34,7 +33,7 @@ namespace BlazorIdentityApi.Services
             var pagedList = await IdentityResourceRepository.GetIdentityResourcesAsync(search, page, pageSize);
             var identityResourcesDto = pagedList.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new IdentityResourcesRequestedEvent(identityResourcesDto));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourcesRequestedEvent(identityResourcesDto));
 
             return identityResourcesDto;
         }
@@ -46,7 +45,7 @@ namespace BlazorIdentityApi.Services
 
             var identityResourceDto = identityResource.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new IdentityResourceRequestedEvent(identityResourceDto));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourceRequestedEvent(identityResourceDto));
 
             return identityResourceDto;
         }
@@ -61,7 +60,7 @@ namespace BlazorIdentityApi.Services
             identityResourcePropertiesAsync.IdentityResourceId = identityResourceId;
             identityResourcePropertiesAsync.IdentityResourceName = identityResource.Name;
 
-            await AuditEventLogger.LogEventAsync(new IdentityResourcePropertiesRequestedEvent(identityResourcePropertiesAsync));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourcePropertiesRequestedEvent(identityResourcePropertiesAsync));
 
             return identityResourcePropertiesAsync;
         }
@@ -77,7 +76,7 @@ namespace BlazorIdentityApi.Services
             identityResourcePropertiesDto.IdentityResourceId = identityResourceProperty.IdentityResourceId;
             identityResourcePropertiesDto.IdentityResourceName = identityResource.Name;
 
-            await AuditEventLogger.LogEventAsync(new IdentityResourcePropertyRequestedEvent(identityResourcePropertiesDto));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourcePropertyRequestedEvent(identityResourcePropertiesDto));
 
             return identityResourcePropertiesDto;
         }
@@ -95,7 +94,7 @@ namespace BlazorIdentityApi.Services
 
             var added = await IdentityResourceRepository.AddIdentityResourcePropertyAsync(identityResourceProperties.IdentityResourceId, identityResourceProperty);
 
-            await AuditEventLogger.LogEventAsync(new IdentityResourcePropertyAddedEvent(identityResourceProperties));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourcePropertyAddedEvent(identityResourceProperties));
 
             return added;
         }
@@ -120,7 +119,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await IdentityResourceRepository.DeleteIdentityResourcePropertyAsync(propertyEntity);
 
-            await AuditEventLogger.LogEventAsync(new IdentityResourcePropertyDeletedEvent(identityResourceProperty));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourcePropertyDeletedEvent(identityResourceProperty));
 
             return deleted;
         }
@@ -144,7 +143,7 @@ namespace BlazorIdentityApi.Services
 
             var saved = await IdentityResourceRepository.AddIdentityResourceAsync(resource);
 
-            await AuditEventLogger.LogEventAsync(new IdentityResourceAddedEvent(identityResource));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourceAddedEvent(identityResource));
 
             return saved;
         }
@@ -163,7 +162,7 @@ namespace BlazorIdentityApi.Services
 
             var updated = await IdentityResourceRepository.UpdateIdentityResourceAsync(resource);
             
-            await AuditEventLogger.LogEventAsync(new IdentityResourceUpdatedEvent(originalIdentityResource, identityResource));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourceUpdatedEvent(originalIdentityResource, identityResource));
 
             return updated;
         }
@@ -174,7 +173,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await IdentityResourceRepository.DeleteIdentityResourceAsync(resource);
 
-            await AuditEventLogger.LogEventAsync(new IdentityResourceDeletedEvent(identityResource));
+            //await AuditEventLogger.LogEventAsync(new IdentityResourceDeletedEvent(identityResource));
 
             return deleted;
         }

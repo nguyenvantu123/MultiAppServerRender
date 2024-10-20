@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Entities;
-using BlazorIdentityApi.Extensions.Common;
+using BlazorIdentityApi.Common;
 
 namespace BlazorIdentityApi.Repositories.Interfaces
 {

@@ -2,14 +2,12 @@
 // Licensed under the Apache License, Version 2.0.
 
 using System.Threading.Tasks;
-using Skoruba.AuditLogging.Services;
 using BlazorIdentityApi.Dtos.Grant;
-using BlazorIdentityApi.Events.PersistedGrant;
 using BlazorIdentityApi.Mappers;
 using BlazorIdentityApi.Resources;
 using BlazorIdentityApi.Services.Interfaces;
-using BlazorIdentityApi.Shared.ExceptionHandling;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentityApi.ExceptionHandling;
 
 namespace BlazorIdentityApi.Services
 {
@@ -17,15 +15,12 @@ namespace BlazorIdentityApi.Services
     {
         protected readonly IPersistedGrantRepository PersistedGrantRepository;
         protected readonly IPersistedGrantServiceResources PersistedGrantServiceResources;
-        protected readonly IAuditEventLogger AuditEventLogger;
 
         public PersistedGrantService(IPersistedGrantRepository persistedGrantRepository,
-            IPersistedGrantServiceResources persistedGrantServiceResources,
-            IAuditEventLogger auditEventLogger)
+            IPersistedGrantServiceResources persistedGrantServiceResources)
         {
             PersistedGrantRepository = persistedGrantRepository;
             PersistedGrantServiceResources = persistedGrantServiceResources;
-            AuditEventLogger = auditEventLogger;
         }
 
         public virtual async Task<PersistedGrantsDto> GetPersistedGrantsByUsersAsync(string search, int page = 1, int pageSize = 10)
@@ -33,7 +28,7 @@ namespace BlazorIdentityApi.Services
             var pagedList = await PersistedGrantRepository.GetPersistedGrantsByUsersAsync(search, page, pageSize);
             var persistedGrantsDto = pagedList.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new PersistedGrantsByUsersRequestedEvent(persistedGrantsDto));
+            //await AuditEventLogger.LogEventAsync(new PersistedGrantsByUsersRequestedEvent(persistedGrantsDto));
 
             return persistedGrantsDto;
         }
@@ -46,7 +41,7 @@ namespace BlazorIdentityApi.Services
             var pagedList = await PersistedGrantRepository.GetPersistedGrantsByUserAsync(subjectId, page, pageSize);
             var persistedGrantsDto = pagedList.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new PersistedGrantsByUserRequestedEvent(persistedGrantsDto));
+            //await AuditEventLogger.LogEventAsync(new PersistedGrantsByUserRequestedEvent(persistedGrantsDto));
 
             return persistedGrantsDto;
         }
@@ -57,7 +52,7 @@ namespace BlazorIdentityApi.Services
             if (persistedGrant == null) throw new UserFriendlyErrorPageException(string.Format(PersistedGrantServiceResources.PersistedGrantDoesNotExist().Description, key), PersistedGrantServiceResources.PersistedGrantDoesNotExist().Description);
             var persistedGrantDto = persistedGrant.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new PersistedGrantRequestedEvent(persistedGrantDto));
+            //await AuditEventLogger.LogEventAsync(new PersistedGrantRequestedEvent(persistedGrantDto));
             
             return persistedGrantDto;
         }
@@ -66,7 +61,7 @@ namespace BlazorIdentityApi.Services
         {
             var deleted = await PersistedGrantRepository.DeletePersistedGrantAsync(key);
 
-            await AuditEventLogger.LogEventAsync(new PersistedGrantDeletedEvent(key));
+            //await AuditEventLogger.LogEventAsync(new PersistedGrantDeletedEvent(key));
 
             return deleted;
         }
@@ -75,7 +70,7 @@ namespace BlazorIdentityApi.Services
         {
             var deleted = await PersistedGrantRepository.DeletePersistedGrantsAsync(userId);
 
-            await AuditEventLogger.LogEventAsync(new PersistedGrantsDeletedEvent(userId));
+            //await AuditEventLogger.LogEventAsync(new PersistedGrantsDeletedEvent(userId));
 
             return deleted;
         }

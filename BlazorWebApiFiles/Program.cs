@@ -81,6 +81,6 @@ var files = app.NewVersionedApi("Files");
 files.MapFilesApiV1()
       .RequireAuthorization();
 
-app.UseDefaultOpenApi();
+//app.UseDefaultOpenApi();
 
 app.Run();

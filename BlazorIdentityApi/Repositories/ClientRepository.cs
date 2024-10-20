@@ -9,25 +9,24 @@ using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Entities;
 using Duende.IdentityServer.Models;
 using Microsoft.EntityFrameworkCore;
-using BlazorIdentityApi.Constants;
-using BlazorIdentityApi.Extensions.Common;
-using BlazorIdentityApi.Extensions.Enums;
-using BlazorIdentityApi.Extensions.Extensions;
 using BlazorIdentityApi.Helpers;
-using BlazorIdentityApi.Interfaces;
 using BlazorIdentityApi.Repositories.Interfaces;
 using Client = Duende.IdentityServer.EntityFramework.Entities.Client;
 using ClientClaim = Duende.IdentityServer.EntityFramework.Entities.ClientClaim;
+using BlazorIdentity.Data;
+using BlazorIdentityApi.Common;
+using BlazorIdentityApi.Dtos.Enums;
+using BlazorIdentityApi.Constants;
 
 namespace BlazorIdentityApi.Repositories
 {
-    public class ClientRepository<TDbContext> : IClientRepository
-    where TDbContext : DbContext, IAdminConfigurationDbContext
+    public class ClientRepository : IClientRepository
+   
     {
-        protected readonly TDbContext DbContext;
+        protected readonly ApplicationDbContext DbContext;
         public bool AutoSaveChanges { get; set; } = true;
 
-        public ClientRepository(TDbContext dbContext)
+        public ClientRepository(ApplicationDbContext dbContext)
         {
             DbContext = dbContext;
         }

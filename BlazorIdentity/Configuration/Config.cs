@@ -98,18 +98,29 @@ namespace BlazorIdentity.Users.Configuration
                 },
                 new Client
                 {
-                    ClientId = "identityswaggerui",
+                     ClientId = "identityswaggerui",
                     ClientName = "Identity Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
-
                     RedirectUris = { $"{configuration["IdentityApiClient"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{configuration["IdentityApiClient"]}/Account/Logout" },
-
+                    PostLogoutRedirectUris = { $"{configuration["IdentityApiClient"]}/swagger/" },
+                    AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedScopes =
                     {
-                        "identity",
+                        "identity"
                     }
+                    //ClientId = "identityswaggerui",
+                    //ClientName = "Identity Swagger UI",
+                    //AllowedGrantTypes = GrantTypes.Implicit,
+                    //AllowAccessTokensViaBrowser = true,
+
+                    //RedirectUris = { $"{configuration["IdentityApiClient"]}/swagger/oauth2-redirect.html" },
+                    //PostLogoutRedirectUris = { $"{configuration["IdentityApiClient"]}/Account/Logout" },
+
+                    //AllowedScopes =
+                    //{
+                    //    "identity",
+                    //}
                 },
                 new Client
                 {

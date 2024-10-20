@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BlazorIdentityApi.Shared.Dtos.Common;
+using BlazorIdentityApi.Common;
 using BlazorIdentityApi.Helpers;
 
 namespace BlazorIdentityApi.Dtos.Configuration
@@ -34,7 +34,7 @@ namespace BlazorIdentityApi.Dtos.Configuration
 
 		public string HashType { get; set; }
 
-        public HashType HashTypeEnum => Enum.TryParse(HashType, true, out HashType result) ? result : EntityFramework.Helpers.HashType.Sha256;
+        public HashType HashTypeEnum => Enum.TryParse(HashType, true, out HashType result) ? result : Helpers.HashType.Sha256;
 
         public List<SelectItemDto> HashTypes { get; set; }
 

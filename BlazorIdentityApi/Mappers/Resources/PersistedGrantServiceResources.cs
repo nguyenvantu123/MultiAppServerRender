@@ -12,7 +12,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(PersistedGrantDoesNotExist),
-                Description = PersistedGrantServiceResource.PersistedGrantDoesNotExist
+                Description = "PersistedGrantDoesNotExist"
             };
         }
 
@@ -21,7 +21,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(PersistedGrantWithSubjectIdDoesNotExist),
-                Description = PersistedGrantServiceResource.PersistedGrantWithSubjectIdDoesNotExist
+                Description = "PersistedGrantWithSubjectIdDoesNotExist"
             };
         }
     }

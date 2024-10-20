@@ -12,7 +12,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(KeyDoesNotExist),
-                Description = KeyServiceResource.KeyDoesNotExist
+                Description = "KeyDoesNotExist"
             };
         }
     }

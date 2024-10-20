@@ -12,7 +12,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ApiScopeDoesNotExist),
-                Description = ApiScopeServiceResource.ApiScopeDoesNotExist
+                Description = "ApiScopeDoesNotExist"
             };
         }
 
@@ -21,7 +21,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ApiScopeExistsValue),
-                Description = ApiScopeServiceResource.ApiScopeExistsValue
+                Description = "ApiScopeExistsValue"
             };
         }
 
@@ -30,7 +30,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ApiScopeExistsKey),
-                Description = ApiScopeServiceResource.ApiScopeExistsKey
+                Description = "ApiScopeExistsKey"
             };
         }
 
@@ -39,7 +39,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ApiScopePropertyExistsValue),
-                Description = ApiScopeServiceResource.ApiScopePropertyExistsValue
+                Description = "ApiScopePropertyExistsValue"
             };
         }
 
@@ -48,7 +48,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ApiScopePropertyDoesNotExist),
-                Description = ApiScopeServiceResource.ApiScopePropertyDoesNotExist
+                Description = "ApiScopePropertyDoesNotExist"
             };
         }
 
@@ -57,7 +57,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ApiScopePropertyExistsKey),
-                Description = ApiScopeServiceResource.ApiScopePropertyExistsKey
+                Description = "ApiScopePropertyExistsKey"
             };
         }
     }

@@ -3,8 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BlazorIdentityApi.Common;
 using BlazorIdentityApi.Dtos.Configuration;
-using BlazorIdentityApi.Shared.Dtos.Common;
 
 namespace BlazorIdentityApi.Services.Interfaces
 {

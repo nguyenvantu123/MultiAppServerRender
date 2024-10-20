@@ -12,7 +12,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityResourceDoesNotExist),
-                Description = IdentityResourceServiceResource.IdentityResourceDoesNotExist
+                Description = "IdentityResourceDoesNotExist"
             };
         }
 
@@ -21,7 +21,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityResourceExistsKey),
-                Description = IdentityResourceServiceResource.IdentityResourceExistsKey
+                Description = "IdentityResourceExistsKey"
             };
         }
 
@@ -30,7 +30,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityResourceExistsValue),
-                Description = IdentityResourceServiceResource.IdentityResourceExistsValue
+                Description = "IdentityResourceExistsValue"
             };
         }
 
@@ -39,7 +39,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityResourcePropertyDoesNotExist),
-                Description = IdentityResourceServiceResource.IdentityResourcePropertyDoesNotExist
+                Description = "IdentityResourcePropertyDoesNotExist"
             };
         }
 
@@ -48,7 +48,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityResourcePropertyExistsValue),
-                Description = IdentityResourceServiceResource.IdentityResourcePropertyExistsValue
+                Description = "IdentityResourcePropertyExistsValue"
             };
         }
 
@@ -57,7 +57,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(IdentityResourcePropertyExistsKey),
-                Description = IdentityResourceServiceResource.IdentityResourcePropertyExistsKey
+                Description = "IdentityResourcePropertyExistsKey"
             };
         }
     }

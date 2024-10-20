@@ -12,7 +12,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ClientClaimDoesNotExist),
-                Description = ClientServiceResource.ClientClaimDoesNotExist
+                Description = "ClientClaimDoesNotExist"
             };
         }
 
@@ -21,7 +21,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ClientDoesNotExist),
-                Description = ClientServiceResource.ClientDoesNotExist
+                Description = "ClientDoesNotExist"
             };
         }
 
@@ -30,7 +30,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ClientExistsKey),
-                Description = ClientServiceResource.ClientExistsKey
+                Description = "ClientExistsKey"
             };
         }
 
@@ -39,7 +39,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ClientExistsValue),
-                Description = ClientServiceResource.ClientExistsValue
+                Description = "ClientExistsValue"
             };
         }
 
@@ -48,7 +48,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ClientPropertyDoesNotExist),
-                Description = ClientServiceResource.ClientPropertyDoesNotExist
+                Description = "ClientPropertyDoesNotExist"
             };
         }
 
@@ -57,7 +57,7 @@ namespace BlazorIdentityApi.Resources
             return new ResourceMessage()
             {
                 Code = nameof(ClientSecretDoesNotExist),
-                Description = ClientServiceResource.ClientSecretDoesNotExist
+                Description = "ClientSecretDoesNotExist"
             };
         }
     }

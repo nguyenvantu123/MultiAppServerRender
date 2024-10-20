@@ -129,7 +129,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapDefaultEndpoints();
 
-app.UseDefaultOpenApi();
+//app.UseDefaultOpenApi();
 app.UseHttpsRedirection();
 
 app.Run();

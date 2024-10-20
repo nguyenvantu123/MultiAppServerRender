@@ -6,18 +6,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Duende.IdentityServer.Models;
-using Skoruba.AuditLogging.Services;
 using BlazorIdentityApi.Dtos.Configuration;
 using BlazorIdentityApi.Dtos.Enums;
-using BlazorIdentityApi.Events.Client;
 using BlazorIdentityApi.Helpers;
 using BlazorIdentityApi.Mappers;
 using BlazorIdentityApi.Resources;
 using BlazorIdentityApi.Services.Interfaces;
-using BlazorIdentityApi.Shared.Dtos.Common;
-using BlazorIdentityApi.Shared.ExceptionHandling;
-using BlazorIdentityApi.Helpers;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentityApi.Common;
+using BlazorIdentityApi.ExceptionHandling;
 
 namespace BlazorIdentityApi.Services
 {
@@ -25,14 +22,16 @@ namespace BlazorIdentityApi.Services
     {
         protected readonly IClientRepository ClientRepository;
         protected readonly IClientServiceResources ClientServiceResources;
-        protected readonly IAuditEventLogger AuditEventLogger;
+        //protected readonly IAuditEventLogger AuditEventLogger;
         private const string SharedSecret = "SharedSecret";
 
-        public ClientService(IClientRepository clientRepository, IClientServiceResources clientServiceResources, IAuditEventLogger auditEventLogger)
+        public ClientService(IClientRepository clientRepository, IClientServiceResources clientServiceResources
+            //, IAuditEventLogger auditEventLogger
+            )
         {
             ClientRepository = clientRepository;
             ClientServiceResources = clientServiceResources;
-            AuditEventLogger = auditEventLogger;
+            //AuditEventLogger = auditEventLogger;
         }
 
         private void HashClientSharedSecret(ClientSecretsDto clientSecret)
@@ -168,7 +167,7 @@ namespace BlazorIdentityApi.Services
 
             var added = await ClientRepository.AddClientAsync(clientEntity);
 
-            await AuditEventLogger.LogEventAsync(new ClientAddedEvent(client));
+            //await AuditEventLogger.LogEventAsync(new ClientAddedEvent(client));
 
             return added;
         }
@@ -187,7 +186,7 @@ namespace BlazorIdentityApi.Services
 
             var updated = await ClientRepository.UpdateClientAsync(clientEntity);
 
-            await AuditEventLogger.LogEventAsync(new ClientUpdatedEvent(originalClient, client));
+            //await AuditEventLogger.LogEventAsync(new ClientUpdatedEvent(originalClient, client));
 
             return updated;
         }
@@ -198,7 +197,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await ClientRepository.RemoveClientAsync(clientEntity);
 
-            await AuditEventLogger.LogEventAsync(new ClientDeletedEvent(client));
+            //await AuditEventLogger.LogEventAsync(new ClientDeletedEvent(client));
 
             return deleted;
         }
@@ -223,7 +222,7 @@ namespace BlazorIdentityApi.Services
                 client.CloneClientPostLogoutRedirectUris,
                 client.CloneClientScopes, client.CloneClientRedirectUris, client.CloneClientClaims, client.CloneClientProperties);
 
-            await AuditEventLogger.LogEventAsync(new ClientClonedEvent(client));
+            //await AuditEventLogger.LogEventAsync(new ClientClonedEvent(client));
 
             return clonedClientId;
         }
@@ -243,7 +242,7 @@ namespace BlazorIdentityApi.Services
 
             var clientDto = client.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new ClientRequestedEvent(clientDto));
+            //await AuditEventLogger.LogEventAsync(new ClientRequestedEvent(clientDto));
 
             return clientDto;
         }
@@ -253,7 +252,7 @@ namespace BlazorIdentityApi.Services
             var pagedList = await ClientRepository.GetClientsAsync(search, page, pageSize);
             var clientsDto = pagedList.ToModel();
 
-            await AuditEventLogger.LogEventAsync(new ClientsRequestedEvent(clientsDto));
+            //await AuditEventLogger.LogEventAsync(new ClientsRequestedEvent(clientsDto));
 
             return clientsDto;
         }
@@ -342,7 +341,7 @@ namespace BlazorIdentityApi.Services
             var clientSecretEntity = clientSecret.ToEntity();
             var added = await ClientRepository.AddClientSecretAsync(clientSecret.ClientId, clientSecretEntity);
 
-            await AuditEventLogger.LogEventAsync(new ClientSecretAddedEvent(clientSecret.ClientId, clientSecret.Type, clientSecret.Expiration));
+            //await AuditEventLogger.LogEventAsync(new ClientSecretAddedEvent(clientSecret.ClientId, clientSecret.Type, clientSecret.Expiration));
 
             return added;
         }
@@ -353,7 +352,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await ClientRepository.DeleteClientSecretAsync(clientSecretEntity);
 
-            await AuditEventLogger.LogEventAsync(new ClientSecretDeletedEvent(clientSecret.ClientId, clientSecret.ClientSecretId));
+            //await AuditEventLogger.LogEventAsync(new ClientSecretDeletedEvent(clientSecret.ClientId, clientSecret.ClientSecretId));
 
             return deleted;
         }
@@ -371,7 +370,7 @@ namespace BlazorIdentityApi.Services
             // remove secret value from dto
             clientSecretsDto.ClientSecrets.ForEach(x=> x.Value = null);
 
-            await AuditEventLogger.LogEventAsync(new ClientSecretsRequestedEvent(clientSecretsDto.ClientId, clientSecretsDto.ClientSecrets.Select(x => (x.Id, x.Type, x.Expiration)).ToList()));
+            //await AuditEventLogger.LogEventAsync(new ClientSecretsRequestedEvent(clientSecretsDto.ClientId, clientSecretsDto.ClientSecrets.Select(x => (x.Id, x.Type, x.Expiration)).ToList()));
 
             return clientSecretsDto;
         }
@@ -391,7 +390,7 @@ namespace BlazorIdentityApi.Services
             // remove secret value for dto
             clientSecretsDto.Value = null;
 
-            await AuditEventLogger.LogEventAsync(new ClientSecretRequestedEvent(clientSecretsDto.ClientId, clientSecretsDto.ClientSecretId, clientSecretsDto.Type, clientSecretsDto.Expiration));
+            //await AuditEventLogger.LogEventAsync(new ClientSecretRequestedEvent(clientSecretsDto.ClientId, clientSecretsDto.ClientSecretId, clientSecretsDto.Type, clientSecretsDto.Expiration));
 
             return clientSecretsDto;
         }
@@ -406,7 +405,7 @@ namespace BlazorIdentityApi.Services
             clientClaimsDto.ClientId = clientId;
             clientClaimsDto.ClientName = ViewHelpers.GetClientName(clientInfo.ClientId, clientInfo.ClientName);
 
-            await AuditEventLogger.LogEventAsync(new ClientClaimsRequestedEvent(clientClaimsDto));
+            //await AuditEventLogger.LogEventAsync(new ClientClaimsRequestedEvent(clientClaimsDto));
 
             return clientClaimsDto;
         }
@@ -421,7 +420,7 @@ namespace BlazorIdentityApi.Services
             clientPropertiesDto.ClientId = clientId;
             clientPropertiesDto.ClientName = ViewHelpers.GetClientName(clientInfo.ClientId, clientInfo.ClientName);
 
-            await AuditEventLogger.LogEventAsync(new ClientPropertiesRequestedEvent(clientPropertiesDto));
+            //await AuditEventLogger.LogEventAsync(new ClientPropertiesRequestedEvent(clientPropertiesDto));
 
             return clientPropertiesDto;
         }
@@ -438,7 +437,7 @@ namespace BlazorIdentityApi.Services
             clientClaimsDto.ClientId = clientClaim.Client.Id;
             clientClaimsDto.ClientName = ViewHelpers.GetClientName(clientInfo.ClientId, clientInfo.ClientName);
 
-            await AuditEventLogger.LogEventAsync(new ClientClaimRequestedEvent(clientClaimsDto));
+            //await AuditEventLogger.LogEventAsync(new ClientClaimRequestedEvent(clientClaimsDto));
 
             return clientClaimsDto;
         }
@@ -455,7 +454,7 @@ namespace BlazorIdentityApi.Services
             clientPropertiesDto.ClientId = clientProperty.Client.Id;
             clientPropertiesDto.ClientName = ViewHelpers.GetClientName(clientInfo.ClientId, clientInfo.ClientName);
 
-            await AuditEventLogger.LogEventAsync(new ClientPropertyRequestedEvent(clientPropertiesDto));
+            //await AuditEventLogger.LogEventAsync(new ClientPropertyRequestedEvent(clientPropertiesDto));
 
             return clientPropertiesDto;
         }
@@ -466,7 +465,7 @@ namespace BlazorIdentityApi.Services
 
             var saved = await ClientRepository.AddClientClaimAsync(clientClaim.ClientId, clientClaimEntity);
 
-            await AuditEventLogger.LogEventAsync(new ClientClaimAddedEvent(clientClaim));
+            //await AuditEventLogger.LogEventAsync(new ClientClaimAddedEvent(clientClaim));
 
             return saved;
         }
@@ -477,7 +476,7 @@ namespace BlazorIdentityApi.Services
 
             var saved = await ClientRepository.AddClientPropertyAsync(clientProperties.ClientId, clientProperty);
 
-            await AuditEventLogger.LogEventAsync(new ClientPropertyAddedEvent(clientProperties));
+            //await AuditEventLogger.LogEventAsync(new ClientPropertyAddedEvent(clientProperties));
 
             return saved;
         }
@@ -488,7 +487,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await ClientRepository.DeleteClientClaimAsync(clientClaimEntity);
 
-            await AuditEventLogger.LogEventAsync(new ClientClaimDeletedEvent(clientClaim));
+            //await AuditEventLogger.LogEventAsync(new ClientClaimDeletedEvent(clientClaim));
 
             return deleted;
         }
@@ -499,7 +498,7 @@ namespace BlazorIdentityApi.Services
 
             var deleted = await ClientRepository.DeleteClientPropertyAsync(clientPropertyEntity);
 
-            await AuditEventLogger.LogEventAsync(new ClientPropertyDeletedEvent(clientProperty));
+            //await AuditEventLogger.LogEventAsync(new ClientPropertyDeletedEvent(clientProperty));
 
             return deleted;
         }

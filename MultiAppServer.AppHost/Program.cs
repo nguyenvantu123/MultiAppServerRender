@@ -29,23 +29,25 @@ var user = builder.AddProject<Projects.BlazorApiUser>("blazorapiuser");
 var webhookApi = builder.AddProject<Projects.Webhooks_API>("webhooks-api", launchProfileName).WithEnvironment("Identity__Url", identityEndpoint);
 
 var webhookClient = builder.AddProject<Projects.WebhookClient>("webhookclient", launchProfileName);
+var identityApi = builder.AddProject<Projects.BlazorIdentityApi>("blazoridentityapi");
 
-
-identity.WithEnvironment("IdentityApiClient", identityEndpoint).WithEnvironment("FileApiClient", file.GetEndpoint(launchProfileName)).WithEnvironment("UsersApiClient", user.GetEndpoint(launchProfileName)).WithEnvironment("WebhooksClient", webhookClient.GetEndpoint(launchProfileName)).WithEnvironment("WebhookApiClient", webhookApi.GetEndpoint(launchProfileName));
+identity.WithEnvironment("FileApiClient", file.GetEndpoint(launchProfileName)).WithEnvironment("UsersApiClient", user.GetEndpoint(launchProfileName)).WithEnvironment("WebhooksClient", webhookClient.GetEndpoint(launchProfileName)).WithEnvironment("WebhookApiClient", webhookApi.GetEndpoint(launchProfileName)).WithEnvironment("IdentityApiClient", identityApi.GetEndpoint(launchProfileName));
 
 file.WithEnvironment("Identity__Url", identityEndpoint).WithEnvironment("CallBackUrl", file.GetEndpoint(launchProfileName));
 
 user.WithEnvironment("Identity__Url", identityEndpoint).WithEnvironment("CallBackUrl", user.GetEndpoint(launchProfileName));
 
 
-webApp.WithReference(identity).WithReference(file).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName)).WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("IdentityApiClient", identityEndpoint).WithReference(user);
+webApp.WithReference(identity).WithReference(file).WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName)).WithEnvironment("IdentityUrl", identityEndpoint).WithReference(user);
 
 identity.WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
 
 
 webhookClient.WithReference(identity).WithReference(webhookApi).WithEnvironment("IdentityUrl", identityEndpoint).WithEnvironment("CallBackUrl", webhookClient.GetEndpoint(launchProfileName));
 
-builder.AddProject<Projects.BlazorIdentityApi>("blazoridentityapi");
+
+identityApi.WithReference(identity).WithEnvironment("Identity__Url", identityEndpoint).WithEnvironment("CallBackUrl", identityApi.GetEndpoint(launchProfileName));
+
 
 builder.Build().Run();
 

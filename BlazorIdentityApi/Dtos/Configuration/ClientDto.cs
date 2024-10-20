@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using BlazorIdentityApi.Common;
 using BlazorIdentityApi.Dtos.Enums;
-using BlazorIdentityApi.Shared.Dtos.Common;
 
 namespace BlazorIdentityApi.Dtos.Configuration
 {

@@ -4,20 +4,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Skoruba.AuditLogging.EntityFramework.DbContexts;
-using Skoruba.AuditLogging.EntityFramework.Entities;
 using BlazorIdentityApi.Entities;
-using BlazorIdentityApi.Interfaces;
 using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentity.Data;
 
 namespace BlazorIdentityApi.Repositories;
 
-public class DashboardRepository<TDbContext> : IDashboardRepository
-    where TDbContext : DbContext, IAdminConfigurationDbContext
+public class DashboardRepository : IDashboardRepository
 {
-    protected readonly TDbContext DbContext;
+    protected readonly ApplicationDbContext DbContext;
 
-    public DashboardRepository(TDbContext dbContext)
+    public DashboardRepository(ApplicationDbContext dbContext)
     {
         DbContext = dbContext;
     }
