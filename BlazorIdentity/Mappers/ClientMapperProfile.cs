@@ -5,9 +5,9 @@
 
 using AutoMapper;
 using Duende.IdentityServer.EntityFramework.Entities;
-using BlazorIdentityApi.Dtos.Configuration;
 using BlazorIdentityApi.Mappers.Converters;
 using BlazorIdentityApi.Common;
+using BlazorIdentityApi.Dtos.Configuration;
 
 namespace BlazorIdentityApi.Mappers
 {

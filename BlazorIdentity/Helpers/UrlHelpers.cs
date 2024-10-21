@@ -16,5 +16,12 @@ namespace BlazorIdentityApi.Helpers
             hash = hash.Replace('-', '+');
             return hash.Replace('_', '/');
         }
+
+        public static bool IsNotPresentedValidNumber(this string id)
+        {
+            int.TryParse(id, out var parsedId);
+
+            return !string.IsNullOrEmpty(id) && parsedId == default;
+        }
     }
 }

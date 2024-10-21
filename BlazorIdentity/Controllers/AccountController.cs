@@ -10,7 +10,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using BlazorIdentity.Controllers;
 using BlazorIdentity.Helpers;
 using BlazorIdentity.Helpers.Localization;
 using BlazorIdentity.Localization;
@@ -34,7 +33,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 
-namespace BlazorIdentity.Users.Constants
+namespace BlazorIdentity.Controllers
 {
     [SecurityHeaders]
     [Authorize]

@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using AutoMapper;
 using BlazorIdentity.Users.Models;
 using BlazorIdentityApi.Common;
-using BlazorIdentityApi.Dtos.Identity;
 using BlazorIdentityApi.ExceptionHandling;
 using Microsoft.AspNetCore.Identity;
+using BlazorIdentityApi.Dtos.Identity;
 
 
 namespace BlazorIdentityApi.Mappers

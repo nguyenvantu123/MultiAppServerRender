@@ -3,9 +3,10 @@
 
 using AutoMapper;
 using Duende.IdentityServer.EntityFramework.Entities;
-using BlazorIdentityApi.Dtos.Grant;
-using BlazorIdentityApi.Entities;
+
 using BlazorIdentityApi.Common;
+using BlazorIdentityApi.Entities;
+using BlazorIdentityApi.Dtos.Grant;
 
 namespace BlazorIdentityApi.Mappers
 {

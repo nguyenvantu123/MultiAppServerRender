@@ -8,7 +8,7 @@ using AutoMapper;
 using BlazorIdentityApi.Common;
 using BlazorIdentityApi.Dtos.Configuration;
 using BlazorIdentityApi.Mappers.Converters;
-using IdentityServer4.EntityFramework.Entities;
+using Duende.IdentityServer.EntityFramework.Entities;
 
 namespace BlazorIdentityApi.Mappers
 {

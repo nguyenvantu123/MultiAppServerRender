@@ -4,7 +4,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using BlazorIdentityApi.Dtos.Configuration;
 using BlazorIdentityApi.Services.Interfaces;
 using BlazorIdentityApi.ExceptionHandling;
 using BlazorIdentityApi.Mappers;
@@ -12,6 +11,7 @@ using BlazorIdentityApi.Helpers;
 using IdentityModel;
 using BlazorIdentityApi.Repositories.Interfaces;
 using BlazorIdentityApi.Resources;
+using BlazorIdentityApi.Dtos.Configuration;
 
 namespace BlazorIdentityApi.Services
 {
