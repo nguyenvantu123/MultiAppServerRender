@@ -1,6 +1,8 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
-@using Skoruba.Duende.IdentityServer.Admin.UI.Helpers
-@model Skoruba.Duende.IdentityServer.Admin.BusinessLogic.Shared.Dtos.Common.Pager
+﻿@using BlazorIdentity.Helpers
+@using BlazorIdentityApi.Common
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@model Pager
 @inject IViewLocalizer Localizer
 @{
     var currentPage = PagerHelpers.GetCurrentPage(Context.Request.Query["page"]);

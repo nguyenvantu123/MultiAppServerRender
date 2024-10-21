@@ -1,6 +1,6 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
-@using Skoruba.Duende.IdentityServer.Admin.UI.Configuration.Constants
-@model Skoruba.Duende.IdentityServer.Admin.BusinessLogic.Identity.Dtos.Identity.Interfaces.IUserProvidersDto
+﻿@using BlazorIdentityApi.Dtos.Identity
+@using Microsoft.AspNetCore.Mvc.Localization
+@model UserProvidersDto<UserProviderDto<Guid>, Guid>
 @inject IViewLocalizer Localizer
 
 @{

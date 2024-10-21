@@ -1,6 +1,7 @@
-﻿@model Skoruba.Duende.IdentityServer.Admin.BusinessLogic.Shared.Dtos.Common.Search
+﻿@using BlazorIdentityApi.Common
 @using Microsoft.AspNetCore.Mvc.Localization
-@using Skoruba.Duende.IdentityServer.Admin.UI.Configuration.Constants
+@model Search
+
 @inject IViewLocalizer Localizer
 
 <form  asp-controller="@Model.Controller" asp-action="@Model.Action" method="get">

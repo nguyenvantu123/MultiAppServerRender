@@ -169,8 +169,6 @@
     <None Include="Views\Identity\User\Section\Label.cshtml" />
     <None Include="Views\Key\KeyDelete.cshtml" />
     <None Include="Views\Key\Keys.cshtml" />
-    <None Include="Views\Log\AuditLog.cshtml" />
-    <None Include="Views\Log\ErrorsLog.cshtml" />
     <None Include="Views\Manage\ChangePassword.cshtml" />
     <None Include="Views\Manage\DeletePersonalData.cshtml" />
     <None Include="Views\Manage\Disable2fa.cshtml" />
@@ -186,7 +184,6 @@
     <None Include="Views\Manage\ShowRecoveryCodes.cshtml" />
     <None Include="Views\Manage\TwoFactorAuthentication.cshtml" />
     <None Include="Views\Manage\_StatusMessage.cshtml" />
-    <None Include="Views\Shared\Common\ApplicationVersion.cshtml" />
     <None Include="Views\Shared\Common\ErrorPage.cshtml" />
     <None Include="Views\Shared\Common\Notification.cshtml" />
     <None Include="Views\Shared\Common\Pager.cshtml" />
@@ -195,8 +192,6 @@
     <None Include="Views\Shared\Common\SelectLanguage.cshtml" />
     <None Include="Views\Shared\Common\SelectTheme.cshtml" />
     <None Include="Views\Shared\Common\ThemeResources.cshtml" />
-    <None Include="Views\Shared\Components\IdentityServerAdminLink\Default.cshtml" />
-    <None Include="Views\Shared\Components\IdentityServerLink\Default.cshtml" />
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\Redirect.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />
