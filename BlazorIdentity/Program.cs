@@ -32,6 +32,11 @@ using SendGrid;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BlazorIdentity.Helpers.Localization;
 using BlazorIdentity.Constants;
+using BlazorIdentityApi.Repositories.Interfaces;
+using BlazorIdentityApi.Resources;
+using BlazorIdentityApi.Services.Interfaces;
+using BlazorIdentityApi.Services;
+using BlazorIdentityApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,8 +92,46 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
+builder.Services.AddTransient<IClientRepository, ClientRepository>();
+builder.Services.AddTransient<IIdentityResourceRepository, IdentityResourceRepository>();
+builder.Services.AddTransient<IApiResourceRepository, ApiResourceRepository>();
+builder.Services.AddTransient<IApiScopeRepository, ApiScopeRepository>();
+builder.Services.AddTransient<IPersistedGrantRepository, PersistedGrantRepository>();
+builder.Services.AddTransient<IIdentityProviderRepository, IdentityProviderRepository>();
+builder.Services.AddTransient<IKeyRepository, KeyRepository>();
+//builder.Services.AddTransient<ILogRepository, LogRepository<TLogDbContext>>();
+builder.Services.AddTransient<IDashboardRepository, DashboardRepository>();
+
+//Services
+builder.Services.AddTransient<IClientService, ClientService>();
+builder.Services.AddTransient<IApiResourceService, ApiResourceService>();
+builder.Services.AddTransient<IApiScopeService, ApiScopeService>();
+builder.Services.AddTransient<IIdentityResourceService, IdentityResourceService>();
+builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
+builder.Services.AddTransient<IPersistedGrantService, PersistedGrantService>();
+builder.Services.AddTransient<IKeyService, KeyService>();
+builder.Services.AddTransient<IDashboardService, DashboardService>();
+
+//Resources
+builder.Services.AddScoped<IApiResourceServiceResources, ApiResourceServiceResources>();
+builder.Services.AddScoped<IApiScopeServiceResources, ApiScopeServiceResources>();
+builder.Services.AddScoped<IClientServiceResources, ClientServiceResources>();
+builder.Services.AddScoped<IIdentityResourceServiceResources, IdentityResourceServiceResources>();
+builder.Services.AddScoped<IIdentityProviderServiceResources, IdentityProviderServiceResources>();
+builder.Services.AddScoped<IPersistedGrantServiceResources, PersistedGrantServiceResources>();
+builder.Services.AddScoped<IKeyServiceResources, KeyServiceResources>();
+
 var smtpConfiguration = configuration.GetSection(nameof(SmtpConfiguration)).Get<SmtpConfiguration>();
 var sendGridConfiguration = configuration.GetSection(nameof(SendGridConfiguration)).Get<SendGridConfiguration>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
+        policy =>
+            policy.RequireAssertion(context => context.User.HasClaim(c => c.Value == "Administrator")
+    ));
+});
+
 
 if (sendGridConfiguration != null && !string.IsNullOrWhiteSpace(sendGridConfiguration.ApiKey))
 {

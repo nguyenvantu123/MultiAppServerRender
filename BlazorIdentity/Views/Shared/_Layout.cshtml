@@ -44,6 +44,9 @@
 
     <div class="menu d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom box-shadow">
         <!--Site name -->
+
+        <h3 class="menu-logo my-0 mr-md-auto font-weight-normal"><a class="logo" asp-area="" asp-controller="Home" asp-action="Index">Duende IdentityServer</a></h3>
+
         <!--Menu item -->
         @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(name))
         {
@@ -116,9 +119,9 @@
                 <div class="col-md-3 text-right">
                     @await Html.PartialAsync("Common/SelectTheme")
                 </div>
-                @*   <div class="col-md-3 text-right">
-                @await Html.PartialAsync("Common/SelectLanguage")
-                </div> *@
+                <div class="col-md-3 text-right">
+                    @await Html.PartialAsync("Common/SelectLanguage")
+                </div>
             </div>
         </footer>
     </div>

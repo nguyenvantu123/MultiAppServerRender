@@ -117,28 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="2FA" xml:space="preserve">
-    <value>Totrinsbekræftelse</value>
+  <data name="ButtonApiResources" xml:space="preserve">
+    <value>API Ressourcer</value>
   </data>
-  <data name="ChangePassword" xml:space="preserve">
-    <value>Skift adgangskode</value>
+  <data name="ButtonApiScopes" xml:space="preserve">
+    <value>Api Scopes</value>
   </data>
-  <data name="Discovery" xml:space="preserve">
-    <value>Discovery Document</value>
+  <data name="ButtonAuditLogs" xml:space="preserve">
+    <value>Audit Logs</value>
   </data>
-  <data name="Grants" xml:space="preserve">
-    <value>Gemte tilladelser</value>
+  <data name="ButtonClients" xml:space="preserve">
+    <value>Clients</value>
   </data>
-  <data name="Login" xml:space="preserve">
-    <value>Log ind</value>
+  <data name="ButtonIdentityClients" xml:space="preserve">
+    <value>Identity Ressourcer</value>
   </data>
-  <data name="ManagePersonalData" xml:space="preserve">
-    <value>Mine personlige data</value>
+  <data name="ButtonIdentityProviders" xml:space="preserve">
+    <value>Identity Providers</value>
   </data>
-  <data name="ManageProfile" xml:space="preserve">
-    <value>Min profil</value>
+  <data name="ButtonManage" xml:space="preserve">
+    <value>Konfigurer</value>
   </data>
-  <data name="SubTitle" xml:space="preserve">
-    <value>Velkommen til {0}</value>
+  <data name="ButtonPersistedGrants" xml:space="preserve">
+    <value>Gemte Grants</value>
+  </data>
+  <data name="ButtonRoles" xml:space="preserve">
+    <value>Roller</value>
+  </data>
+  <data name="ButtonUsers" xml:space="preserve">
+    <value>Brugere</value>
+  </data>
+  <data name="Keys" xml:space="preserve">
+    <value>Keys</value>
+  </data>
+  <data name="PageSubTitle" xml:space="preserve">
+    <value>Administration af ​​Duende IdentityServer og ASP.NET Core Identity</value>
   </data>
 </root>
