@@ -168,4 +168,34 @@
   <data name="TitleUsermanagement" xml:space="preserve">
     <value>Usuarios/Roles</value>
   </data>
+  <data name="2FA" xml:space="preserve">
+    <value>Autentificación en dos pasos</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Cambiar contraseña</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Mis inicios de sesión externos</value>
+  </data>
+  <data name="FooterCopyright1" xml:space="preserve">
+    <value>©</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Concesiones</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Mis datos personales</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Mi perfil</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menú</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="Signout" xml:space="preserve">
+    <value>Cerrar sesión</value>
+  </data>
 </root>

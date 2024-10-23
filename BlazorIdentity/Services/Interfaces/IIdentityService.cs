@@ -51,7 +51,7 @@ namespace BlazorIdentityApi.Services.Interfaces
         Task<UserClaimsDto<UserClaimDto<Guid>, Guid>> GetUserClaimsAsync(string userId, int page = 1,
             int pageSize = 10);
 
-        Task<UserClaimDto<Guid>> GetUserClaimAsync(string userId, int claimId);
+        Task<UserClaimsDto<UserClaimDto<Guid>,Guid>> GetUserClaimAsync(string userId, int claimId);
 
         Task<IdentityResult> CreateUserClaimsAsync(UserClaimDto<Guid> claimsDto);
 

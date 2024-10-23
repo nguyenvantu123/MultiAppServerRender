@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="2FA" xml:space="preserve">
+    <value>Authentification à deux facteurs</value>
+  </data>
   <data name="ButtonApiResources" xml:space="preserve">
     <value>Ressources Api</value>
   </data>
@@ -147,10 +150,32 @@
   <data name="ButtonUsers" xml:space="preserve">
     <value>Utilisateurs</value>
   </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Modifier le mot de passe</value>
+  </data>
+  <data name="Discovery" xml:space="preserve">
+    <value>Discovery Document</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Consentements</value>
+    <comment>Octrois persistants. Explicit mistake for clarity</comment>
+  </data>
   <data name="Keys" xml:space="preserve">
     <value>Keys</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>Connexion</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Mes données personnelles</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Mon profil</value>
+  </data>
   <data name="PageSubTitle" xml:space="preserve">
     <value>L'administration pour Duende IdentityServer et Asp.Net Core Identity</value>
+  </data>
+  <data name="SubTitle" xml:space="preserve">
+    <value>Bienvenue sur {0}</value>
   </data>
 </root>

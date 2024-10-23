@@ -144,7 +144,6 @@
   <data name="LinkIdentityProviders" xml:space="preserve">
     <value>Identity Providers</value>
   </data>
-
   <data name="LinkLogout" xml:space="preserve">
     <value>Logout</value>
   </data>
@@ -168,5 +167,35 @@
   </data>
   <data name="TitleUsermanagement" xml:space="preserve">
     <value>Benutzer/Rollen</value>
+  </data>
+  <data name="2FA" xml:space="preserve">
+    <value>Zwei-Faktor-Authentifizierung</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Passwort ändern</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Meine externen Logins</value>
+  </data>
+  <data name="FooterCopyright1" xml:space="preserve">
+    <value>©</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Grants</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Meine persönlichen Daten</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Mein Profil</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menü</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Einstelllungen</value>
+  </data>
+  <data name="Signout" xml:space="preserve">
+    <value>Abmelden</value>
   </data>
 </root>

@@ -64,15 +64,15 @@ namespace BlazorIdentity.Repositories.Interfaces
 
         Task<IdentityResult> UserChangePasswordAsync(string userId, string password);
 
-        Task<IdentityResult> CreateRoleClaimsAsync(IdentityRoleClaim<Guid> claims);
+        Task<IdentityResult> CreateRoleClaimsAsync(ApplicationRoleClaim claims);
 
-        Task<IdentityResult> UpdateRoleClaimsAsync(IdentityRoleClaim<Guid> claims);
+        Task<IdentityResult> UpdateRoleClaimsAsync(ApplicationRoleClaim claims);
 
-        Task<PagedList<IdentityRoleClaim<Guid>>> GetRoleClaimsAsync(string roleId, int page = 1, int pageSize = 10);
+        Task<PagedList<ApplicationRoleClaim>> GetRoleClaimsAsync(string roleId, int page = 1, int pageSize = 10);
 
-        Task<PagedList<IdentityRoleClaim<Guid>>> GetUserRoleClaimsAsync(string userId, string claimSearchText, int page = 1, int pageSize = 10);
+        Task<PagedList<ApplicationRoleClaim>> GetUserRoleClaimsAsync(string userId, string claimSearchText, int page = 1, int pageSize = 10);
 
-        Task<IdentityRoleClaim<Guid>> GetRoleClaimAsync(string roleId, int claimId);
+        Task<ApplicationRoleClaim> GetRoleClaimAsync(string roleId, int claimId);
 
         Task<IdentityResult> DeleteRoleClaimAsync(string roleId, int claimId);
 

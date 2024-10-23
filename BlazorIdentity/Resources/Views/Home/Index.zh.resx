@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="2FA" xml:space="preserve">
+    <value>双因素身份验证</value>
+  </data>
   <data name="ButtonApiResources" xml:space="preserve">
     <value>Api 资源</value>
   </data>
@@ -147,10 +150,31 @@
   <data name="ButtonUsers" xml:space="preserve">
     <value>用户</value>
   </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>更改密码</value>
+  </data>
+  <data name="Discovery" xml:space="preserve">
+    <value>发现文档</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>持久授权</value>
+  </data>
   <data name="Keys" xml:space="preserve">
     <value>Keys</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>登录</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>我的个人数据</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>我的个人资料</value>
+  </data>
   <data name="PageSubTitle" xml:space="preserve">
     <value>Duende IdentityServer 和 Asp.Net Core Identity 管理</value>
+  </data>
+  <data name="SubTitle" xml:space="preserve">
+    <value>欢迎来到 {0}</value>
   </data>
 </root>

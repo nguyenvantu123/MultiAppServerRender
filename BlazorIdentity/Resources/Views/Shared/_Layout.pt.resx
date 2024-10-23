@@ -183,4 +183,34 @@
   <data name="Keys" xml:space="preserve">
     <value>Keys</value>
   </data>
+  <data name="2FA" xml:space="preserve">
+    <value>Autenticação de dois fatores</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Trocar a senha</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Meus logins externos</value>
+  </data>
+  <data name="FooterCopyright1" xml:space="preserve">
+    <value>©</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Acessos permitidos</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Meus dados pessoais</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Meu perfil</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Cardápio</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="Signout1" xml:space="preserve">
+    <value>Sair</value>
+  </data>
 </root>

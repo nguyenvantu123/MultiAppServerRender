@@ -162,4 +162,34 @@
   <data name="Keys" xml:space="preserve">
     <value>Keys</value>
   </data>
+  <data name="2FA" xml:space="preserve">
+    <value>Two-factor authenticatie</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Wijzig wachtwoord</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Mijn externe logins</value>
+  </data>
+  <data name="FooterCopyright1" xml:space="preserve">
+    <value>©</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Grants</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Mijn persoonlijke gegevens</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Mijn profiel</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
+  <data name="Signout1" xml:space="preserve">
+    <value>logout</value>
+  </data>
 </root>

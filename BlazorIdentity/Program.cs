@@ -37,6 +37,8 @@ using BlazorIdentityApi.Resources;
 using BlazorIdentityApi.Services.Interfaces;
 using BlazorIdentityApi.Services;
 using BlazorIdentityApi.Repositories;
+using BlazorIdentity.Repositories.Interfaces;
+using BlazorIdentityApi.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +61,15 @@ builder.Services.AddControllers(options =>
     options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
     options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
 });
+
+var profileTypes = new HashSet<Type>
+            {
+                typeof(IdentityMapperProfile)
+            };
+
+builder.Services.AddAdminAspNetIdentityMapping()
+            .UseIdentityMappingProfile()
+            .AddProfilesType(profileTypes);
 
 builder.Services.AddAuthorization();
 
@@ -92,35 +103,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
-builder.Services.AddTransient<IClientRepository, ClientRepository>();
-builder.Services.AddTransient<IIdentityResourceRepository, IdentityResourceRepository>();
-builder.Services.AddTransient<IApiResourceRepository, ApiResourceRepository>();
-builder.Services.AddTransient<IApiScopeRepository, ApiScopeRepository>();
-builder.Services.AddTransient<IPersistedGrantRepository, PersistedGrantRepository>();
-builder.Services.AddTransient<IIdentityProviderRepository, IdentityProviderRepository>();
-builder.Services.AddTransient<IKeyRepository, KeyRepository>();
-//builder.Services.AddTransient<ILogRepository, LogRepository<TLogDbContext>>();
-builder.Services.AddTransient<IDashboardRepository, DashboardRepository>();
-
-//Services
-builder.Services.AddTransient<IClientService, ClientService>();
-builder.Services.AddTransient<IApiResourceService, ApiResourceService>();
-builder.Services.AddTransient<IApiScopeService, ApiScopeService>();
-builder.Services.AddTransient<IIdentityResourceService, IdentityResourceService>();
-builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
-builder.Services.AddTransient<IPersistedGrantService, PersistedGrantService>();
-builder.Services.AddTransient<IKeyService, KeyService>();
-builder.Services.AddTransient<IDashboardService, DashboardService>();
-
-//Resources
-builder.Services.AddScoped<IApiResourceServiceResources, ApiResourceServiceResources>();
-builder.Services.AddScoped<IApiScopeServiceResources, ApiScopeServiceResources>();
-builder.Services.AddScoped<IClientServiceResources, ClientServiceResources>();
-builder.Services.AddScoped<IIdentityResourceServiceResources, IdentityResourceServiceResources>();
-builder.Services.AddScoped<IIdentityProviderServiceResources, IdentityProviderServiceResources>();
-builder.Services.AddScoped<IPersistedGrantServiceResources, PersistedGrantServiceResources>();
-builder.Services.AddScoped<IKeyServiceResources, KeyServiceResources>();
-
 var smtpConfiguration = configuration.GetSection(nameof(SmtpConfiguration)).Get<SmtpConfiguration>();
 var sendGridConfiguration = configuration.GetSection(nameof(SendGridConfiguration)).Get<SendGridConfiguration>();
 
@@ -148,6 +130,56 @@ else
 {
     builder.Services.AddSingleton<IEmailSender, LogEmailSender>();
 }
+
+builder.Services.AddTransient<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IIdentityServiceResources, IdentityServiceResources>();
+builder.Services.AddTransient<IIdentityRepository, IdentityRepository>();
+
+//Repositories
+
+//Services
+//services.AddTransient<IPersistedGrantAspNetIdentityService, PersistedGrantAspNetIdentityService>();
+//services.AddTransient<IDashboardIdentityService, DashboardIdentityService>();
+
+//Resources
+//services.AddScoped<IPersistedGrantAspNetIdentityServiceResources, PersistedGrantAspNetIdentityServiceResources>();
+
+builder.Services.AddTransient<IIdentityRepository, IdentityRepository>();
+
+builder.Services.AddTransient<IClientRepository, ClientRepository>();
+builder.Services.AddTransient<IIdentityResourceRepository, IdentityResourceRepository>();
+builder.Services.AddTransient<IApiResourceRepository, ApiResourceRepository>();
+builder.Services.AddTransient<IApiScopeRepository, ApiScopeRepository>();
+builder.Services.AddTransient<IPersistedGrantRepository, PersistedGrantRepository>();
+builder.Services.AddTransient<IIdentityProviderRepository, IdentityProviderRepository>();
+builder.Services.AddTransient<IKeyRepository, KeyRepository>();
+//builder.Services.AddTransient<ILogRepository, LogRepository<TLogDbContext>>();
+builder.Services.AddTransient<IDashboardRepository, DashboardRepository>();
+
+
+//Services
+builder.Services.AddTransient<IClientService, ClientService>();
+builder.Services.AddTransient<IApiResourceService, ApiResourceService>();
+builder.Services.AddTransient<IApiScopeService, ApiScopeService>();
+builder.Services.AddTransient<IIdentityResourceService, IdentityResourceService>();
+builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
+builder.Services.AddTransient<IPersistedGrantService, PersistedGrantService>();
+builder.Services.AddTransient<IKeyService, KeyService>();
+builder.Services.AddTransient<IDashboardService, DashboardService>();
+//builder.Services.AddTransient<IIdentityService, IdentityService>();
+
+
+
+//Resources
+builder.Services.AddScoped<IApiResourceServiceResources, ApiResourceServiceResources>();
+builder.Services.AddScoped<IApiScopeServiceResources, ApiScopeServiceResources>();
+builder.Services.AddScoped<IClientServiceResources, ClientServiceResources>();
+builder.Services.AddScoped<IIdentityResourceServiceResources, IdentityResourceServiceResources>();
+builder.Services.AddScoped<IIdentityProviderServiceResources, IdentityProviderServiceResources>();
+builder.Services.AddScoped<IPersistedGrantServiceResources, PersistedGrantServiceResources>();
+builder.Services.AddScoped<IKeyServiceResources, KeyServiceResources>();
+
+builder.Services.AddTransient<IIdentityService, IdentityService>();
 
 builder.Services.AddLocalization(opts => { opts.ResourcesPath = ConfigurationConsts.ResourcesPath; });
 

@@ -276,7 +276,7 @@ namespace BlazorIdentityApi.Services
             return claimDtos;
         }
 
-        public virtual async Task<UserClaimDto<Guid>> GetUserClaimAsync(string userId, int claimId)
+        public virtual async Task<UserClaimsDto<UserClaimDto<Guid>, Guid>> GetUserClaimAsync(string userId, int claimId)
         {
             var userExists = await IdentityRepository.ExistsUserAsync(userId);
             if (!userExists) throw new UserFriendlyErrorPageException(string.Format(IdentityServiceResources.UserDoesNotExist().Description, userId), IdentityServiceResources.UserDoesNotExist().Description);
@@ -284,7 +284,7 @@ namespace BlazorIdentityApi.Services
             var identityUserClaim = await IdentityRepository.GetUserClaimAsync(userId, claimId);
             if (identityUserClaim == null) throw new UserFriendlyErrorPageException(string.Format(IdentityServiceResources.UserClaimDoesNotExist().Description, userId), IdentityServiceResources.UserClaimDoesNotExist().Description);
 
-            var userClaimsDto = Mapper.Map<UserClaimDto<Guid>>(identityUserClaim);
+            var userClaimsDto = Mapper.Map<UserClaimsDto<UserClaimDto<Guid>, Guid>>(identityUserClaim);
 
             //await AuditEventLogger.LogEventAsync(new UserClaimRequestedEvent<TUserClaimsDto>(userClaimsDto));
 

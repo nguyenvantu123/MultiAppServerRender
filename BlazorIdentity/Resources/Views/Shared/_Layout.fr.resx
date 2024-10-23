@@ -168,4 +168,35 @@
   <data name="TitleUsermanagement" xml:space="preserve">
     <value>Utilisateurs/Rôles</value>
   </data>
+  <data name="2FA" xml:space="preserve">
+    <value>Authentification à deux facteurs</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Modifier le mot de passe</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Mes identifiants externes</value>
+  </data>
+  <data name="FooterCopyright1" xml:space="preserve">
+    <value>©</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Consentements</value>
+    <comment>Octrois. Explicit mistake for clarity</comment>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Mes données personnelles</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Mon profil</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Réglages</value>
+  </data>
+  <data name="Signout" xml:space="preserve">
+    <value>Déconnexion</value>
+  </data>
 </root>

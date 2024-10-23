@@ -168,4 +168,34 @@
   <data name="TitleUsermanagement" xml:space="preserve">
     <value>Brugere og Roller</value>
   </data>
+  <data name="2FA" xml:space="preserve">
+    <value>Totrinsbekræftelse</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Skift adgangskode</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Mine eksterne logins</value>
+  </data>
+  <data name="FooterCopyright1" xml:space="preserve">
+    <value>©</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Tilladelser</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Mine personlige data</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Min profil</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Indstillinger</value>
+  </data>
+  <data name="Signout" xml:space="preserve">
+    <value>log ud</value>
+  </data>
 </root>

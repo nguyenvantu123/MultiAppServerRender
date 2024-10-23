@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="2FA" xml:space="preserve">
+    <value>احراز هویت دو-عاملی</value>
+  </data>
   <data name="ButtonApiResources" xml:space="preserve">
     <value>Api منابع</value>
   </data>
@@ -147,10 +150,31 @@
   <data name="ButtonUsers" xml:space="preserve">
     <value>کاربران</value>
   </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>تغییر کلمه عبور</value>
+  </data>
+  <data name="Discovery" xml:space="preserve">
+    <value>سند کشف</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>واگذاری های اصرارشده</value>
+  </data>
   <data name="Keys" xml:space="preserve">
     <value>Keys</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>ورود</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>اطلاعات شخصی من</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>پروفایل من</value>
+  </data>
   <data name="PageSubTitle" xml:space="preserve">
     <value>ادمین برای Duende IdentityServer و Asp.Net Core Identity</value>
+  </data>
+  <data name="SubTitle" xml:space="preserve">
+    <value>خوش آمدید به {0}</value>
   </data>
 </root>

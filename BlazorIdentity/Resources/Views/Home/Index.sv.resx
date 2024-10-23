@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="2FA" xml:space="preserve">
+    <value>Tvåfaktorsautentisering</value>
+  </data>
   <data name="ButtonApiResources" xml:space="preserve">
     <value>Api resurser</value>
   </data>
@@ -147,10 +150,31 @@
   <data name="ButtonUsers" xml:space="preserve">
     <value>Användare</value>
   </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Byt lösenord</value>
+  </data>
+  <data name="Discovery" xml:space="preserve">
+    <value>Discovery-dokument</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Medgivanden</value>
+  </data>
   <data name="Keys" xml:space="preserve">
     <value>Keys</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>Inloggning</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Personlig information</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Min profil</value>
+  </data>
   <data name="PageSubTitle" xml:space="preserve">
     <value>Administration för Duende IdentityServer och Asp.Net Core Identity</value>
+  </data>
+  <data name="SubTitle" xml:space="preserve">
+    <value>Välkommen till {0}</value>
   </data>
 </root>

@@ -168,4 +168,34 @@
   <data name="TitleUsermanagement" xml:space="preserve">
     <value>Käyttäjät / roolit</value>
   </data>
+  <data name="2FA" xml:space="preserve">
+    <value>Kaksivaiheinen todennus</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Vaihda salasana</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Omat ulkoiset kirjautumiset</value>
+  </data>
+  <data name="FooterCopyright1" xml:space="preserve">
+    <value>©</value>
+  </data>
+  <data name="Grants" xml:space="preserve">
+    <value>Käyttöoikeudet</value>
+  </data>
+  <data name="ManagePersonalData" xml:space="preserve">
+    <value>Henkilökohtaiset tietoni</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Profiilini</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>valikko</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>asetukset</value>
+  </data>
+  <data name="Signout" xml:space="preserve">
+    <value>Kirjaudu ulos</value>
+  </data>
 </root>
