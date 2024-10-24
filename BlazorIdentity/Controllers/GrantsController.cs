@@ -15,87 +15,84 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BlazorIdentity.Helpers;
 using BlazorIdentity.ViewModels;
+using BlazorIdentity.Users.Constants;
+using BlazorIdentityApi.Dtos.Grant;
+using BlazorIdentityApi.ExceptionHandling;
+using BlazorIdentityApi.Helpers;
+using Microsoft.Extensions.Localization;
+using BlazorIdentityApi.Services.Interfaces;
 
 namespace BlazorIdentity.Controllers
 {
     /// <summary>
     /// This sample controller allows a user to revoke grants given to clients
     /// </summary>
-    [SecurityHeaders]
-    [Authorize]
-    public class GrantsController : Controller
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
+    public class GrantController : BaseController
     {
-        private readonly IIdentityServerInteractionService _interaction;
-        private readonly IClientStore _clients;
-        private readonly IResourceStore _resources;
-        private readonly IEventService _events;
+        private readonly IPersistedGrantAspNetIdentityService _persistedGrantService;
+        private readonly IStringLocalizer<GrantController> _localizer;
 
-        public GrantsController(IIdentityServerInteractionService interaction,
-            IClientStore clients,
-            IResourceStore resources,
-            IEventService events)
+        public GrantController(IPersistedGrantAspNetIdentityService persistedGrantService,
+            ILogger<GrantController> logger,
+            IStringLocalizer<GrantController> localizer) : base(logger)
         {
-            _interaction = interaction;
-            _clients = clients;
-            _resources = resources;
-            _events = events;
+            _persistedGrantService = persistedGrantService;
+            _localizer = localizer;
         }
 
-        /// <summary>
-        /// Show list of grants
-        /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> PersistedGrants(int? page, string search)
         {
-            return View("Index", await BuildViewModelAsync());
+            ViewBag.Search = search;
+            var persistedGrants = await _persistedGrantService.GetPersistedGrantsByUsersAsync(search, page ?? 1);
+
+            return View(persistedGrants);
         }
 
-        /// <summary>
-        /// Handle postback to revoke a client
-        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> PersistedGrantDelete(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return NotFound();
+
+            var grant = await _persistedGrantService.GetPersistedGrantAsync(UrlHelpers.QueryStringUnSafeHash(id));
+            if (grant == null) return NotFound();
+
+            return View(grant);
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Revoke(string clientId)
+        public async Task<IActionResult> PersistedGrantDelete(PersistedGrantDto grant)
         {
-            await _interaction.RevokeUserConsentAsync(clientId);
-            await _events.RaiseAsync(new GrantsRevokedEvent(User.GetSubjectId(), clientId));
+            await _persistedGrantService.DeletePersistedGrantAsync(grant.Key);
 
-            return RedirectToAction("Index");
+            SuccessNotification(_localizer["SuccessPersistedGrantDelete"], _localizer["SuccessTitle"]);
+
+            return RedirectToAction(nameof(PersistedGrants));
         }
 
-        private async Task<GrantsViewModel> BuildViewModelAsync()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PersistedGrantsDelete(PersistedGrantsDto grants)
         {
-            var grants = await _interaction.GetAllUserGrantsAsync();
+            await _persistedGrantService.DeletePersistedGrantsAsync(grants.SubjectId);
 
-            var list = new List<GrantViewModel>();
-            foreach (var grant in grants)
-            {
-                var client = await _clients.FindClientByIdAsync(grant.ClientId);
-                if (client != null)
-                {
-                    var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes);
+            SuccessNotification(_localizer["SuccessPersistedGrantsDelete"], _localizer["SuccessTitle"]);
 
-                    var item = new GrantViewModel()
-                    {
-                        ClientId = client.ClientId,
-                        ClientName = client.ClientName ?? client.ClientId,
-                        ClientLogoUrl = client.LogoUri,
-                        ClientUrl = client.ClientUri,
-                        Description = grant.Description,
-                        Created = grant.CreationTime,
-                        Expires = grant.Expiration,
-                        IdentityGrantNames = resources.IdentityResources.Select(x => x.DisplayName ?? x.Name).ToArray(),
-                        ApiGrantNames = resources.ApiScopes.Select(x => x.DisplayName ?? x.Name).ToArray()
-                    };
+            return RedirectToAction(nameof(PersistedGrants));
+        }
 
-                    list.Add(item);
-                }
-            }
 
-            return new GrantsViewModel
-            {
-                Grants = list
-            };
+        [HttpGet]
+        public async Task<IActionResult> PersistedGrant(string id, int? page)
+        {
+            var persistedGrants = await _persistedGrantService.GetPersistedGrantsByUserAsync(id, page ?? 1);
+            persistedGrants.SubjectId = id;
+
+            return View(persistedGrants);
         }
     }
 }

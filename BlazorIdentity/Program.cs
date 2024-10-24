@@ -39,6 +39,7 @@ using BlazorIdentityApi.Services;
 using BlazorIdentityApi.Repositories;
 using BlazorIdentity.Repositories.Interfaces;
 using BlazorIdentityApi.Mappers;
+using BlazorIdentity.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -142,7 +143,12 @@ builder.Services.AddTransient<IIdentityRepository, IdentityRepository>();
 //services.AddTransient<IDashboardIdentityService, DashboardIdentityService>();
 
 //Resources
-//services.AddScoped<IPersistedGrantAspNetIdentityServiceResources, PersistedGrantAspNetIdentityServiceResources>();
+
+builder.Services.AddScoped<IPersistedGrantAspNetIdentityRepository, PersistedGrantAspNetIdentityRepository>();
+builder.Services.AddScoped<IPersistedGrantAspNetIdentityServiceResources, PersistedGrantAspNetIdentityServiceResources>();
+
+builder.Services.AddTransient<IPersistedGrantAspNetIdentityService, PersistedGrantAspNetIdentityService>();
+
 
 builder.Services.AddTransient<IIdentityRepository, IdentityRepository>();
 
@@ -167,8 +173,6 @@ builder.Services.AddTransient<IPersistedGrantService, PersistedGrantService>();
 builder.Services.AddTransient<IKeyService, KeyService>();
 builder.Services.AddTransient<IDashboardService, DashboardService>();
 //builder.Services.AddTransient<IIdentityService, IdentityService>();
-
-
 
 //Resources
 builder.Services.AddScoped<IApiResourceServiceResources, ApiResourceServiceResources>();
