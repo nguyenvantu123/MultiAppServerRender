@@ -51,10 +51,10 @@ namespace BlazorIdentityApi.Services
             return true;
         }
 
-        public virtual async Task<UserDto<Guid>> GetUsersAsync(string search, int page = 1, int pageSize = 10)
+        public virtual async Task<UsersDto<UserDto<Guid>, Guid>> GetUsersAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await IdentityRepository.GetUsersAsync(search, page, pageSize);
-            var usersDto = Mapper.Map<UserDto<Guid>>(pagedList);
+            var usersDto = Mapper.Map<UsersDto<UserDto<Guid>, Guid>>(pagedList);
 
             //await AuditEventLogger.LogEventAsync(new UsersRequestedEvent<UserDto<Guid>>(usersDto));
 
@@ -85,10 +85,11 @@ namespace BlazorIdentityApi.Services
 
             return usersDto;
         }
-        public virtual async Task<RoleDto<Guid>> GetRolesAsync(string search, int page = 1, int pageSize = 10)
+
+        public virtual async Task<RolesDto<RoleDto<Guid>, Guid>> GetRolesAsync(string search, int page = 1, int pageSize = 10)
         {
             PagedList<ApplicationRole> pagedList = await IdentityRepository.GetRolesAsync(search, page, pageSize);
-            var rolesDto = Mapper.Map<RoleDto<Guid>>(pagedList);
+            var rolesDto = Mapper.Map<RolesDto<RoleDto<Guid>, Guid>>(pagedList);
 
             //await AuditEventLogger.LogEventAsync(new RolesRequestedEvent<RoleDto<Guid>>(rolesDto));
 
@@ -462,5 +463,10 @@ namespace BlazorIdentityApi.Services
 
             return HandleIdentityError(identityResult, IdentityServiceResources.RoleDeleteFailed().Description, IdentityServiceResources.IdentityErrorKey().Description, role);
         }
+
+        //Task<UserClaimDto<Guid>> IIdentityService.GetUserClaimAsync(string userId, int claimId)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

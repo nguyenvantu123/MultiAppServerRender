@@ -397,5 +397,29 @@ namespace BlazorIdentity.Repositories
             return await DbContext.SaveChangesAsync();
         }
 
+        //public Task<IdentityResult> CreateRoleClaimsAsync(IdentityRoleClaim<Guid> claims)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task<IdentityResult> UpdateRoleClaimsAsync(IdentityRoleClaim<Guid> claims)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //Task<PagedList<IdentityRoleClaim<Guid>>> IIdentityRepository.GetRoleClaimsAsync(string roleId, int page, int pageSize)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //Task<PagedList<IdentityRoleClaim<Guid>>> IIdentityRepository.GetUserRoleClaimsAsync(string userId, string claimSearchText, int page, int pageSize)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //Task<IdentityRoleClaim<Guid>> IIdentityRepository.GetRoleClaimAsync(string roleId, int claimId)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

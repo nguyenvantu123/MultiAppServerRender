@@ -17,11 +17,11 @@ namespace BlazorIdentityApi.Services.Interfaces
 
         Task<bool> ExistsRoleAsync(string roleId);
 
-        Task<UserDto<Guid>> GetUsersAsync(string search, int page = 1, int pageSize = 10);
+        Task<UsersDto<UserDto<Guid>, Guid>> GetUsersAsync(string search, int page = 1, int pageSize = 10);
         Task<UserDto<Guid>> GetRoleUsersAsync(string roleId, string search, int page = 1, int pageSize = 10);
         Task<UserDto<Guid>> GetClaimUsersAsync(string claimType, string claimValue, int page = 1, int pageSize = 10);
 
-        Task<RoleDto<Guid>> GetRolesAsync(string search, int page = 1, int pageSize = 10);
+        Task<RolesDto<RoleDto<Guid>, Guid>> GetRolesAsync(string search, int page = 1, int pageSize = 10);
 
         Task<(IdentityResult identityResult, Guid roleId)> CreateRoleAsync(RoleDto<Guid> role);
 
@@ -51,7 +51,7 @@ namespace BlazorIdentityApi.Services.Interfaces
         Task<UserClaimsDto<UserClaimDto<Guid>, Guid>> GetUserClaimsAsync(string userId, int page = 1,
             int pageSize = 10);
 
-        Task<UserClaimsDto<UserClaimDto<Guid>,Guid>> GetUserClaimAsync(string userId, int claimId);
+        Task<UserClaimsDto<UserClaimDto<Guid>, Guid>> GetUserClaimAsync(string userId, int claimId);
 
         Task<IdentityResult> CreateUserClaimsAsync(UserClaimDto<Guid> claimsDto);
 
