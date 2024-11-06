@@ -40,6 +40,7 @@ using BlazorIdentityApi.Repositories;
 using BlazorIdentity.Repositories.Interfaces;
 using BlazorIdentityApi.Mappers;
 using BlazorIdentity.Resources;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -228,14 +229,19 @@ builder.Services.Configure<RequestLocalizationOptions>(
     });
 
 builder.Services.AddIdentityServer()
-.AddInMemoryIdentityResources(Config.GetResources())
-.AddInMemoryApiScopes(Config.GetApiScopes())
-.AddInMemoryApiResources(Config.GetApis())
-.AddInMemoryClients(Config.GetClients(builder.Configuration))
-.AddAspNetIdentity<ApplicationUser>()
-.AddProfileService<ProfileService>()
-// TODO: Not recommended for production - you need to store your key material somewhere secure
-.AddDeveloperSigningCredential();
+                .AddConfigurationStore<ApplicationDbContext>()
+                .AddOperationalStore<ApplicationDbContext>()
+                .AddAspNetIdentity<ApplicationUser>();
+
+//builder.Services.AddIdentityServer()
+//.AddInMemoryIdentityResources(Config.GetResources())
+//.AddInMemoryApiScopes(Config.GetApiScopes())
+//.AddInMemoryApiResources(Config.GetApis())
+//.AddInMemoryClients(Config.GetClients(builder.Configuration))
+//.AddAspNetIdentity<ApplicationUser>()
+//.AddProfileService<ProfileService>()
+//// TODO: Not recommended for production - you need to store your key material somewhere secure
+//.AddDeveloperSigningCredential();
 
 builder.Services.AddScoped<EntityPermissions>();
 //builder.Services.AddTransient<IProfileService, ProfileService>();

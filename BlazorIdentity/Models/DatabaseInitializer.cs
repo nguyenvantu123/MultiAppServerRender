@@ -44,8 +44,8 @@ namespace BlazorIdentity.Users.Models
 
         private async Task MigrateAsync()
         {
-            await _tenantStoreDbContext.Database.MigrateAsync();
-            await _context.Database.MigrateAsync();
+            //await _tenantStoreDbContext.Database.MigrateAsync();
+            //await _context.Database.MigrateAsync();
         }
 
         private async Task SeedDemoDataAsync()
@@ -55,61 +55,29 @@ namespace BlazorIdentity.Users.Models
                 await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Multiapp", "nguyenvantu0207943@gmail.com", "0334336232");
             }
 
-            if (_tenantStoreDbContext.AppTenantInfo.Count() < 2)
-            {
-                _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo() { Id = "tenant1", Identifier = "tenant1.local", Name = "Microsoft Inc." });
-                _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo() { Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp." });
-
-                _tenantStoreDbContext.SaveChanges();
-            }
-
-            //ApplicationUser user = await _userManager.FindByNameAsync(DefaultUserNames.User);
-
-            //if (!_context.UserProfiles.Any())
-            //    _context.UserProfiles.Add(new UserProfile
-            //    {
-            //        UserId = user.Id,
-            //        ApplicationUser = user,
-            //        Count = 2,
-            //        IsNavOpen = true,
-            //        LastPageVisited = "/dashboard",
-            //        IsNavMinified = false,
-            //        LastUpdatedDate = DateTime.Now
+            //if (_tenantStoreDbContext.AppTenantInfo.Count() < 2)
+            //{
+            //    _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo() { 
+            //        Id = "tenant1", 
+            //        Identifier = "tenant1.local", 
+            //        Name = "Microsoft Inc." ,
+            //        CreatedBy = "super admin",
+            //        CreatedOn = DateTime.Now,
+            //        LastModifiedBy = "super admin",
+            //        LastModifiedOn = DateTime.Now,
+            //        IsDeleted = false
+            //    });
+            //    _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo() { 
+            //        Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp.",
+            //        CreatedBy = "super admin",
+            //        CreatedOn = DateTime.Now,
+            //        LastModifiedBy = "super admin",
+            //        LastModifiedOn = DateTime.Now,
+            //        IsDeleted = false
             //    });
 
-            //if (!_context.ApiLogs.Any())
-            //{
-            //    _context.ApiLogs.AddRange(
-            //    new ApiLogItem
-            //    {
-            //        RequestTime = DateTime.Now,
-            //        ResponseMillis = 30,
-            //        StatusCode = 200,
-            //        Method = "Get",
-            //        Path = "/api/seed",
-            //        QueryString = "",
-            //        RequestBody = "",
-            //        ResponseBody = "",
-            //        IPAddress = "::1",
-            //        ApplicationUserId = user.Id
-            //    },
-            //    new ApiLogItem
-            //    {
-            //        RequestTime = DateTime.Now,
-            //        ResponseMillis = 30,
-            //        StatusCode = 200,
-            //        Method = "Get",
-            //        Path = "/api/seed",
-            //        QueryString = "",
-            //        RequestBody = "",
-            //        ResponseBody = "",
-            //        IPAddress = "::1",
-            //        ApplicationUserId = user.Id
-            //    }
-            //);
+            //    _tenantStoreDbContext.SaveChanges();
             //}
-
-            //_context.SaveChanges();
         }
 
         public async Task EnsureAdminIdentitiesAsync()
@@ -178,7 +146,12 @@ namespace BlazorIdentity.Users.Models
                     PhoneNumber = phoneNumber,
                     FirstName = firstName,
                     LastName = lastName,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    CreatedBy = "super admin",
+                    CreatedOn = DateTime.Now,
+                    LastModifiedBy = "super admin",
+                    LastModifiedOn = DateTime.Now,
+                    IsDeleted = false
                 };
 
                 var result = _userManager.CreateAsync(applicationUser, password).Result;
