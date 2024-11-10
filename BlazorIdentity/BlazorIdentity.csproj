@@ -199,20 +199,18 @@
     <None Include="Views\Shared\_ValidationSummary.cshtml" />
     <None Include="Views\_ViewImports.cshtml" />
     <None Include="Views\_ViewStart.cshtml" />
-    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.css.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.js" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
-    <None Include="wwwroot\lib\jquery-validate\jquery.validate.js" />
-    <None Include="wwwroot\lib\jquery-validate\jquery.validate.min.js" />
-    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
-    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
-    <None Include="wwwroot\lib\jquery\jquery.js" />
-    <None Include="wwwroot\lib\jquery\jquery.min.js" />
-    <None Include="wwwroot\lib\jquery\jquery.min.map" />
-    <None Include="wwwroot\lib\jquery\jquery.slim.js" />
-    <None Include="wwwroot\lib\jquery\jquery.slim.min.js" />
-    <None Include="wwwroot\lib\jquery\jquery.slim.min.map" />
+    <None Include="wwwroot\dist\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\dist\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\dist\fonts\open-iconic.svg" />
+    <None Include="wwwroot\dist\js\bundle.min.js" />
+    <None Include="wwwroot\dist\js\CryptoUtils.js" />
+    <None Include="wwwroot\js\bundle.min.js" />
+    <None Include="wwwroot\js\CryptoUtils.js" />
+    <None Include="wwwroot\js\forgot-password.js" />
+    <None Include="wwwroot\js\qrcode.js" />
+    <None Include="wwwroot\js\qrcode.min.js" />
+    <None Include="wwwroot\js\signin-redirect.js" />
+    <None Include="wwwroot\js\signout-redirect.js" />
   </ItemGroup>
 
 </Project>
