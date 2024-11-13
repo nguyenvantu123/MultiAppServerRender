@@ -29,14 +29,15 @@
     <script src="~/js/components/Picker.js" asp-append-version="true"></script>
 
     <environment include="Development">
-        <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
-        @await Html.PartialAsync("Common/ThemeResources")
-        <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" /> 
+    <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+    @await Html.PartialAsync("Common/ThemeResources")
+    <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" />
     </environment>
     <environment exclude="Development">
-        <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
-        @await Html.PartialAsync("Common/ThemeResources")
-        <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
+    <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+    @await Html.PartialAsync("Common/ThemeResources")
+    <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
+    </environment>
     </environment>
 
     @await RenderSectionAsync("styles", required: false) *@
@@ -47,17 +48,17 @@
     <title>Duende IdentityServer</title>
     <link rel="icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
     <link rel="shortcut icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
-    <script src="@Url.Content("~/Scripts/jquery.min.js")"></script>
-    <environment include="Development">
-        <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
-        @await Html.PartialAsync("Common/ThemeResources")
-        <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" />
+    <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+    @await Html.PartialAsync("Common/ThemeResources")
+    <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" />
+    @*  <environment include="Development">
+
     </environment>
     <environment exclude="Development">
-        <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
-        @await Html.PartialAsync("Common/ThemeResources")
-        <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
-    </environment>
+    <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+    @await Html.PartialAsync("Common/ThemeResources")
+    <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
+    </environment> *@
 
 </head>
 <body>
@@ -146,14 +147,17 @@
         </footer>
     </div>
 
-    <environment include="Development">
-        <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
-        <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
+    <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
+    <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
+    @*     <script type="text/javascript" src="knockout-3.3.0.js"></script>
+    *@
+    @* <environment include="Development">
+
     </environment>
     <environment exclude="Development">
-        <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
-        <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
-    </environment>
+    <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
+    <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
+    </environment> *@
 
     @await RenderSectionAsync("scripts", required: false)
 </body>

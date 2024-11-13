@@ -51,7 +51,7 @@ namespace BlazorIdentityApi.Mappers
                 .ForMember(x => x.Roles,
                     opt => opt.MapFrom(src => src.Data));
 
-            CreateMap<PagedList<ApplicationRole>, RolesDto<RoleDto<Guid>, Guid>>(MemberList.Destination)
+            CreateMap<PagedList<ApplicationRole>, UserRolesDto<RoleDto<Guid>, Guid>>(MemberList.Destination)
                 .ForMember(x => x.Roles,
                     opt => opt.MapFrom(src => src.Data));
 

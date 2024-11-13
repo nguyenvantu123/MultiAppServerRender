@@ -9,12 +9,21 @@
   <ItemGroup>
     <Compile Remove="Commands\**" />
     <Compile Remove="UserConst\**" />
+    <Compile Remove="wwwroot\lib\**" />
     <Content Remove="Commands\**" />
     <Content Remove="UserConst\**" />
+    <Content Remove="wwwroot\lib\**" />
     <EmbeddedResource Remove="Commands\**" />
     <EmbeddedResource Remove="UserConst\**" />
+    <EmbeddedResource Remove="wwwroot\lib\**" />
     <None Remove="Commands\**" />
     <None Remove="UserConst\**" />
+    <None Remove="wwwroot\lib\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\dist\js\bundle.min.js" />
+    <Content Remove="wwwroot\dist\js\CryptoUtils.js" />
   </ItemGroup>
 
   <ItemGroup>

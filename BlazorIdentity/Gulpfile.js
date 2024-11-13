@@ -27,7 +27,30 @@ function processScripts() {
             './Scripts/App/pages/AuditLog.js',
             './Scripts/App/pages/CryptoUtils.js',
             './Scripts/App/pages/IdentityProviders.js',
-            './Scripts/App/components/DatePicker.js'
+            './Scripts/App/components/DatePicker.js',
+            './node_modules/jquery/dist/jquery.js',
+            './node_modules/jquery-validation/dist/jquery.validate.js',
+            './node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js',
+            './node_modules/popper.js/dist/umd/popper.js',
+            './node_modules/bootstrap/dist/js/bootstrap.js',
+            './node_modules/holderjs/holder.js',
+            './node_modules/knockout/build/output/knockout-latest.js',
+            './node_modules/toastr/toastr.js',
+            './node_modules/moment/min/moment.min.js',
+            './node_modules/tempusdominus-bootstrap-4/build/js/tempusdominus-bootstrap-4.js',
+            './node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.fa.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.sv.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.zh-CN.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.de.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.da.min.js',
+            './node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt.min.js',
+            './node_modules/cookieconsent/src/cookieconsent.js',
+            './Scripts/App/components/Language.js',
+            './Scripts/App/components/CookieConsent.js'
         ])
         .pipe(concat('bundle.min.js'))
         .pipe(uglify())
@@ -62,12 +85,9 @@ function processStyles() {
     return gulp
         .src([
             './node_modules/bootstrap/dist/css/bootstrap.css',
-            './node_modules/toastr/build/toastr.css',
             './node_modules/open-iconic/font/css/open-iconic-bootstrap.css',
             './node_modules/font-awesome/css/font-awesome.css',
-            './node_modules/tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.css',
-            './node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
-            './Styles/controls/jsontree.css'
+            './node_modules/cookieconsent/build/cookieconsent.min.css'
         ])
         .pipe(minifyCSS())
         .pipe(concat('bundle.min.css'))

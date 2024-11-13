@@ -1,6 +1,7 @@
 ﻿@using BlazorIdentity.Helpers
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Newtonsoft.Json
+@model ErrorViewModel
 
 @inject IViewLocalizer Localizer
 @{
@@ -8,6 +9,9 @@
 }
 
 <h1 class="text-danger">@Localizer["PageTitle"]</h1>
+
+<h1 class="text-danger">@Model.Error.ErrorDescription</h1>
+<h1 class="text-danger">@Model.Error.RedirectUri</h1>
 
 @if (ViewBag.Notifications != null)
 {

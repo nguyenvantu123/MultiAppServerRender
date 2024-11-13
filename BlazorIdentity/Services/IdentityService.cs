@@ -61,7 +61,7 @@ namespace BlazorIdentityApi.Services
             return usersDto;
         }
 
-        public virtual async Task<UserDto<Guid>> GetRoleUsersAsync(string roleId, string search, int page = 1, int pageSize = 10)
+        public virtual async Task<UsersDto<UserDto<Guid>, Guid>> GetRoleUsersAsync(string roleId, string search, int page = 1, int pageSize = 10)
         {
             var roleKey = ConvertToKeyFromString(roleId);
 
@@ -69,7 +69,7 @@ namespace BlazorIdentityApi.Services
             if (userIdentityRole == null) throw new UserFriendlyErrorPageException(string.Format(IdentityServiceResources.RoleDoesNotExist().Description, roleId), IdentityServiceResources.RoleDoesNotExist().Description);
 
             var pagedList = await IdentityRepository.GetRoleUsersAsync(roleId, search, page, pageSize);
-            var usersDto = Mapper.Map<UserDto<Guid>>(pagedList);
+            var usersDto = Mapper.Map<UsersDto<UserDto<Guid>, Guid>>(pagedList);
 
             //
 
@@ -330,13 +330,13 @@ namespace BlazorIdentityApi.Services
             return (Guid)TypeDescriptor.GetConverter(typeof(Guid))!.ConvertFromInvariantString(id);
         }
 
-        public virtual async Task<UserProviderDto<Guid>> GetUserProvidersAsync(string userId)
+        public virtual async Task<UserProvidersDto<UserProviderDto<Guid>, Guid>> GetUserProvidersAsync(string userId)
         {
             var userExists = await IdentityRepository.ExistsUserAsync(userId);
             if (!userExists) throw new UserFriendlyErrorPageException(string.Format(IdentityServiceResources.UserDoesNotExist().Description, userId), IdentityServiceResources.UserDoesNotExist().Description);
 
             var userLoginInfos = await IdentityRepository.GetUserProvidersAsync(userId);
-            var providersDto = Mapper.Map<UserProviderDto<Guid>>(userLoginInfos);
+            var providersDto = Mapper.Map<UserProvidersDto<UserProviderDto<Guid>, Guid>>(userLoginInfos);
             providersDto.UserId = ConvertToKeyFromString(userId);
 
             var user = await IdentityRepository.GetUserAsync(userId);

@@ -124,12 +124,12 @@ tenants.MapTenantsApiV1()
       .RequireAuthorization();
 
 app.UseRouting();
-//app.UseAntiforgery();
+app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapDefaultEndpoints();
 
-//app.UseDefaultOpenApi();
+app.UseDefaultOpenApi();
 app.UseHttpsRedirection();
 
 app.Run();

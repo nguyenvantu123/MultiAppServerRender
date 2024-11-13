@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BlazorIdentity.Users.Models;
 using BlazorIdentityApi.Common;
+using BlazorIdentityApi.Dtos.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace BlazorIdentity.Repositories.Interfaces

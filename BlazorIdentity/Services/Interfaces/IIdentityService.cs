@@ -18,7 +18,7 @@ namespace BlazorIdentityApi.Services.Interfaces
         Task<bool> ExistsRoleAsync(string roleId);
 
         Task<UsersDto<UserDto<Guid>, Guid>> GetUsersAsync(string search, int page = 1, int pageSize = 10);
-        Task<UserDto<Guid>> GetRoleUsersAsync(string roleId, string search, int page = 1, int pageSize = 10);
+        Task<UsersDto<UserDto<Guid>, Guid>> GetRoleUsersAsync(string roleId, string search, int page = 1, int pageSize = 10);
         Task<UserDto<Guid>> GetClaimUsersAsync(string claimType, string claimValue, int page = 1, int pageSize = 10);
 
         Task<RolesDto<RoleDto<Guid>, Guid>> GetRolesAsync(string search, int page = 1, int pageSize = 10);
@@ -59,7 +59,7 @@ namespace BlazorIdentityApi.Services.Interfaces
 
         Task<IdentityResult> DeleteUserClaimAsync(UserClaimDto<Guid> claim);
 
-        Task<UserProviderDto<Guid>> GetUserProvidersAsync(string userId);
+        Task<UserProvidersDto<UserProviderDto<Guid>, Guid>> GetUserProvidersAsync(string userId);
 
         Guid ConvertToKeyFromString(string id);
 
