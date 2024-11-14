@@ -59,19 +59,19 @@ builder.Services.AddSingleton<RedisUserRepository>();
 
 builder.Services.AddControllers(options =>
 {
-    var parameterTransformer = new SlugifyParameterTransformer();
-    options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
-    options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
+	var parameterTransformer = new SlugifyParameterTransformer();
+	options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
+	options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
 });
 
 var profileTypes = new HashSet<Type>
-            {
-                typeof(IdentityMapperProfile)
-            };
+			{
+				typeof(IdentityMapperProfile)
+			};
 
 builder.Services.AddAdminAspNetIdentityMapping()
-            .UseIdentityMappingProfile()
-            .AddProfilesType(profileTypes);
+			.UseIdentityMappingProfile()
+			.AddProfilesType(profileTypes);
 
 builder.Services.AddAuthorization();
 
@@ -83,9 +83,9 @@ builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandle
 builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
-    .WithHostStrategy("__tenant__")
-    .WithEFCoreStore<TenantStoreDbContext, AppTenantInfo>()
-    .WithStaticStrategy(DefaultTenant.DefaultTenantId);
+	.WithHostStrategy("__tenant__")
+	.WithEFCoreStore<TenantStoreDbContext, AppTenantInfo>()
+	.WithStaticStrategy(DefaultTenant.DefaultTenantId);
 
 builder.Services.AddRazorPages();
 
@@ -102,35 +102,35 @@ var withApiVersioning = builder.Services.AddApiVersioning();
 //builder.AddDefaultOpenApi(withApiVersioning);
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
+		.AddEntityFrameworkStores<ApplicationDbContext>()
+		.AddDefaultTokenProviders();
 
 var smtpConfiguration = configuration.GetSection(nameof(SmtpConfiguration)).Get<SmtpConfiguration>();
 var sendGridConfiguration = configuration.GetSection(nameof(SendGridConfiguration)).Get<SendGridConfiguration>();
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
-        policy =>
-            policy.RequireAssertion(context => context.User.HasClaim(c => c.Value == "Administrator")
-    ));
+	options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
+		policy =>
+			policy.RequireAssertion(context => context.User.HasClaim(c => c.Value == "Administrator")
+	));
 });
 
 
 if (sendGridConfiguration != null && !string.IsNullOrWhiteSpace(sendGridConfiguration.ApiKey))
 {
-    builder.Services.AddSingleton<ISendGridClient>(_ => new SendGridClient(sendGridConfiguration.ApiKey));
-    builder.Services.AddSingleton(sendGridConfiguration);
-    builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+	builder.Services.AddSingleton<ISendGridClient>(_ => new SendGridClient(sendGridConfiguration.ApiKey));
+	builder.Services.AddSingleton(sendGridConfiguration);
+	builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 }
 else if (smtpConfiguration != null && !string.IsNullOrWhiteSpace(smtpConfiguration.Host))
 {
-    builder.Services.AddSingleton(smtpConfiguration);
-    builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
+	builder.Services.AddSingleton(smtpConfiguration);
+	builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 }
 else
 {
-    builder.Services.AddSingleton<IEmailSender, LogEmailSender>();
+	builder.Services.AddSingleton<IEmailSender, LogEmailSender>();
 }
 
 builder.Services.AddTransient<IIdentityService, IdentityService>();
@@ -192,46 +192,47 @@ builder.Services.TryAddTransient(typeof(IGenericControllerLocalizer<>), typeof(G
 
 builder.Services.AddControllersWithViews(o =>
 {
-    o.Conventions.Add(new GenericControllerRouteConvention());
+	o.Conventions.Add(new GenericControllerRouteConvention());
 })
-    .AddViewLocalization(
-        LanguageViewLocationExpanderFormat.Suffix,
-        opts => { opts.ResourcesPath = ConfigurationConsts.ResourcesPath; })
-    .AddDataAnnotationsLocalization()
-    .ConfigureApplicationPartManager(m =>
-    {
-        m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider<ApplicationUser, Guid>());
-    });
+	.AddViewLocalization(
+		LanguageViewLocationExpanderFormat.Suffix,
+		opts => { opts.ResourcesPath = ConfigurationConsts.ResourcesPath; })
+	.AddDataAnnotationsLocalization()
+	.ConfigureApplicationPartManager(m =>
+	{
+		m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider<ApplicationUser, Guid>());
+	});
 
 var cultureConfiguration = configuration.GetSection(nameof(CultureConfiguration)).Get<CultureConfiguration>();
 builder.Services.Configure<RequestLocalizationOptions>(
-    opts =>
-    {
-        // If cultures are specified in the configuration, use them (making sure they are among the available cultures),
-        // otherwise use all the available cultures
-        var supportedCultureCodes = (cultureConfiguration?.Cultures?.Count > 0 ?
-            cultureConfiguration.Cultures.Intersect(CultureConfiguration.AvailableCultures) :
-            CultureConfiguration.AvailableCultures).ToArray();
+	opts =>
+	{
+		// If cultures are specified in the configuration, use them (making sure they are among the available cultures),
+		// otherwise use all the available cultures
+		var supportedCultureCodes = (cultureConfiguration?.Cultures?.Count > 0 ?
+			cultureConfiguration.Cultures.Intersect(CultureConfiguration.AvailableCultures) :
+			CultureConfiguration.AvailableCultures).ToArray();
 
-        if (!supportedCultureCodes.Any()) supportedCultureCodes = CultureConfiguration.AvailableCultures;
-        var supportedCultures = supportedCultureCodes.Select(c => new CultureInfo(c)).ToList();
+		if (!supportedCultureCodes.Any()) supportedCultureCodes = CultureConfiguration.AvailableCultures;
+		var supportedCultures = supportedCultureCodes.Select(c => new CultureInfo(c)).ToList();
 
-        // If the default culture is specified use it, otherwise use CultureConfiguration.DefaultRequestCulture ("en")
-        var defaultCultureCode = string.IsNullOrEmpty(cultureConfiguration?.DefaultCulture) ?
-            CultureConfiguration.DefaultRequestCulture : cultureConfiguration?.DefaultCulture;
+		// If the default culture is specified use it, otherwise use CultureConfiguration.DefaultRequestCulture ("en")
+		var defaultCultureCode = string.IsNullOrEmpty(cultureConfiguration?.DefaultCulture) ?
+			CultureConfiguration.DefaultRequestCulture : cultureConfiguration?.DefaultCulture;
 
-        // If the default culture is not among the supported cultures, use the first supported culture as default
-        if (!supportedCultureCodes.Contains(defaultCultureCode)) defaultCultureCode = supportedCultureCodes.FirstOrDefault();
+		// If the default culture is not among the supported cultures, use the first supported culture as default
+		if (!supportedCultureCodes.Contains(defaultCultureCode)) defaultCultureCode = supportedCultureCodes.FirstOrDefault();
 
-        opts.DefaultRequestCulture = new RequestCulture(defaultCultureCode);
-        opts.SupportedCultures = supportedCultures;
-        opts.SupportedUICultures = supportedCultures;
-    });
+		opts.DefaultRequestCulture = new RequestCulture(defaultCultureCode);
+		opts.SupportedCultures = supportedCultures;
+		opts.SupportedUICultures = supportedCultures;
+	});
 
 builder.Services.AddIdentityServer()
-                .AddConfigurationStore<ApplicationDbContext>()
-                .AddOperationalStore<ApplicationDbContext>()
-                .AddAspNetIdentity<ApplicationUser>();
+				.AddConfigurationStore<ApplicationDbContext>()
+				.AddOperationalStore<ApplicationDbContext>()
+				.AddAspNetIdentity<ApplicationUser>()
+				.AddProfileService<ProfileService>();
 
 //builder.Services.AddIdentityServer()
 //.AddInMemoryIdentityResources(Config.GetResources())
@@ -258,8 +259,8 @@ builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandle
 //builder.Services.AddSingleton<IViewLocalizer>();
 
 builder.Services.AddTransient<ApiResponseExceptionAspect>()
-                .AddTransient<LogExceptionAspect>()
-                .AddSingleton<ILoggerFactory>(services => new SerilogLoggerFactory());
+				.AddTransient<LogExceptionAspect>()
+				.AddSingleton<ILoggerFactory>(services => new SerilogLoggerFactory());
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -268,16 +269,16 @@ builder.Services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat
 
 builder.Services.AddControllersWithViews(o =>
 {
-    o.Conventions.Add(new GenericControllerRouteConvention());
+	o.Conventions.Add(new GenericControllerRouteConvention());
 })
-                .AddViewLocalization(
-                    LanguageViewLocationExpanderFormat.Suffix,
-                    opts => { opts.ResourcesPath = "Resources"; })
-                .AddDataAnnotationsLocalization()
-                .ConfigureApplicationPartManager(m =>
-                {
-                    m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider<ApplicationUser, Guid>());
-                });
+				.AddViewLocalization(
+					LanguageViewLocationExpanderFormat.Suffix,
+					opts => { opts.ResourcesPath = "Resources"; })
+				.AddDataAnnotationsLocalization()
+				.ConfigureApplicationPartManager(m =>
+				{
+					m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider<ApplicationUser, Guid>());
+				});
 
 var app = builder.Build();
 
@@ -301,8 +302,8 @@ app.UseMultiTenant();
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
 
-    var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
-    databaseInitializer.SeedAsync().Wait();
+	var databaseInitializer = serviceScope.ServiceProvider.GetService<IDatabaseInitializer>();
+	databaseInitializer.SeedAsync().Wait();
 }
 
 var options = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
