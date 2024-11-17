@@ -1,28 +1,60 @@
 ﻿@namespace WebApp.Components.Dialogs
 @inject Microsoft.Extensions.Localization.IStringLocalizer<DeleteConfirmation> localizer
-<MudDialog>
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Delete" Class="mr-3 mb-n1" />
-            @localizer["Delete Confirmation"]
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <MudText>@ContentText</MudText>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">@localizer["Cancel"]</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Submit">@localizer["Confirm"]</MudButton>
-    </DialogActions>
-</MudDialog>
+<SfDialog @bind-Visible="@IsVisible" ShowCloseIcon="true" Header="@localizer["Delete Confirmation"]" Content="@ContentText" IsModal="true" Width="250px">
+    <DialogTemplates>
+        @*   <SfTextBox Typo="Typo.h6">
+        <SfIcon Name="Deke" Class="mr-3 mb-n1" />
+        @localizer["Delete Confirmation"]
+        </SfTextBox> *@
+        @*    <Content>
+        <SfTextBox>@ContentText</SfTextBox>
+        </Content> *@
+    </DialogTemplates>
+
+    <DialogButtons>
+        <DialogButton OnClick="OnCancel">@localizer["Cancel"]</DialogButton>
+        <DialogButton Color="Color.Error" Variant="Variant.Filled" IsPrimary="true" OnClick="OnSubmit">@localizer["Confirm"]</DialogButton>
+    </DialogButtons>
+
+    <DialogEvents Closed="@Closed"></DialogEvents>
+</SfDialog>
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public string ContentText { get; set; }
 
-    void Submit()
+    public bool IsVisible { get; set; } = false;
+
+    public string userResponse = "No";
+
+    Index mainPageObj = new Index();
+
+    public void OnSubmit()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        userResponse = "OnOkYes";
+        CloseDialog();
     }
-    void Cancel() => MudDialog.Cancel();
+
+    public async Task Closed()
+    {
+        await mainPageObj.dialogClosed(userResponse);
+
+    }
+
+    public void CloseDialog()
+
+    {
+
+        this.IsVisible = false;
+
+        this.StateHasChanged();
+
+    }
+
+    public void OnCancel()
+    {
+        userResponse = "OnCancelYes";
+
+        CloseDialog();
+
+    }
 }

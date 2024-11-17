@@ -1,26 +1,26 @@
 ﻿
 <EditForm Model="@RegisterUserModel" OnValidSubmit="SubmitAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
-    <MudDialog>
+    <SfDialog>
         <TitleContent>
             @{
                 if (RegisterUserModel.Id.ToString() == Guid.Empty.ToString())
                 {
-                    <MudText Typo="Typo.h6">
-                        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-3 mb-n1" />
-                        Add New User
-                    </MudText>
+                    <SfTextBox Typo="Typo.h6">
+                        <SfIcon Name="IconName.add" Title="Add New User" Class="mr-3 mb-n1" />
+
+                    </SfTextBox>
                 }
                 else
                 {
                     <MudText Typo="Typo.h6">
-                        <MudIcon Icon="@Icons.Material.Filled.Update" Class="mr-3 mb-n1" />
+                        <SfIcon Name="IconName.TableUpdate" Class="mr-3 mb-n1" />
                         Update User
                     </MudText>
                 }
             }
         </TitleContent>
-        <DialogContent>
+        <Content>
             @*             <MudTextField Disabled hidden @bind-Value="RegisterUserModel.Id" />
             *@
             <MudTextField For="@(() => RegisterUserModel.UserName)" @bind-Value="RegisterUserModel.UserName" Label="User Name" />
@@ -42,14 +42,14 @@
             }
             <MudCheckBox T="bool" @bind-Checked="@RegisterUserModel.ActivateUser" Label="Activate User?" Color="Color.Primary"></MudCheckBox>
             <MudCheckBox T="bool" @bind-Checked="@RegisterUserModel.AutoConfirmEmail" Label="Auto Confirm Email?" Color="Color.Primary"></MudCheckBox>
-        </DialogContent>
-        <DialogActions>
-            <MudButton Variant="Variant.Filled" OnClick="Cancel">Cancel</MudButton>
+        </Content>
+        <DialogButtons>
+            <DialogButton Variant="Variant.Filled" OnClick="Cancel">Cancel</DialogButton>
             @{
-                <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Disabled="@(!Validated)" Color="Color.Success">Save</MudButton>
+                <DialogButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Disabled="@(!Validated)" Color="Color.Success">Save</DialogButton>
             }
-        </DialogActions>
-    </MudDialog>
+        </DialogButtons>
+    </SfDialog>
 </EditForm>
 
 @code {
@@ -60,7 +60,6 @@
 
     [Parameter] public RegisterViewModel RegisterUserModel { get; set; } = new();
 
-    [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
 
     private void Cancel()
     {

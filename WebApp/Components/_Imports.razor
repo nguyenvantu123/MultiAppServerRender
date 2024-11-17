@@ -11,7 +11,6 @@
 @using WebApp.Components.Shared
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Authorization
-@using MudBlazor
 @using System.ComponentModel.DataAnnotations
 @using System.Diagnostics.CodeAnalysis
 @using Blazored.FluentValidation
@@ -30,11 +29,17 @@
 @using WebApp.DataModels
 @using WebApp.Components.Pages.Admin
 @using WebApp.Components.Layout
+@using WebApp.Shared
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
 
 @attribute [Authorize]
 
 @inject NavigationManager _navigationManager
-@inject IDialogService _dialogService
 @inject IViewNotifier viewNotifier
 @inject AuthenticationStateProvider authStateProvider
 @inject IAuthorizationService _authorizationService

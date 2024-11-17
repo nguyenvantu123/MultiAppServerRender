@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using MudBlazor.Services;
 using WebApp.Components;
 using WebApp.Services;
 using MultiAppServer.ServiceDefaults;
@@ -13,10 +12,6 @@ using Microsoft.VisualBasic;
 using WebApp.Settings;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using WebApp.Interfaces;
-using Breeze.AspNetCore;
-using Breeze.Core;
-using Newtonsoft.Json.Serialization;
-using WebApp.Localizer;
 using FluentValidation.AspNetCore;
 using Microsoft.JSInterop;
 using System.Net.Http;
@@ -35,9 +30,17 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using eShop.WebhookClient.Endpoints;
 using Microsoft.AspNetCore.Http;
+using WebApp.Shared;
+using Syncfusion.Licensing;
+using Syncfusion.Blazor;
+using Syncfusion.Blazor.Popups;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+//builder.Services.AddSyncfusionBlazor();
+
+SyncfusionLicenseProvider.RegisterLicense("");
 builder.AddServiceDefaults();
 
 builder.AddApplicationServices();
@@ -48,7 +51,7 @@ builder.AddRabbitMqEventBus("EventBus");
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddMudServices();
+//builder.Services.AddMudServices();
 //builder.Services.AddCascadingAuthenticationState();
 
 
@@ -107,6 +110,19 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<SfDialogService>();
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddSyncfusionBlazor();
+// Register the Syncfusion locale service to customize the  SyncfusionBlazor component locale culture
+builder.Services.AddSingleton(typeof(ISyncfusionStringLocalizer), typeof(SyncfusionLocalizer));
+
+var supportedCultures = new[] { "en-US", "de-DE", "fr-CH", "zh-CN" };
+var localizationOptions = new RequestLocalizationOptions()
+            .SetDefaultCulture("en-US")
+            .AddSupportedCultures(supportedCultures)
+            .AddSupportedUICultures(supportedCultures);
+builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
+builder.Services.AddSignalR(o => { o.MaximumReceiveMessageSize = 102400000; });
 
 //.AddOpenIdConnect( options =>
 //{
@@ -255,6 +271,8 @@ builder.Services.AddHttpClient<FileApiClient>(httpClient =>
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
+
+app.UseRequestLocalization(localizationOptions);
 
 // Configure the HTTP request pipeline.
 if (builder.Environment.IsDevelopment())

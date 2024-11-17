@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Response\**" />
     <Compile Remove="Services\UserProfile\**" />
+    <Content Remove="Response\**" />
     <Content Remove="Services\UserProfile\**" />
+    <EmbeddedResource Remove="Response\**" />
     <EmbeddedResource Remove="Services\UserProfile\**" />
+    <None Remove="Response\**" />
     <None Remove="Services\UserProfile\**" />
   </ItemGroup>
 
@@ -25,8 +29,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
-    <PackageReference Include="MudBlazor" Version="7.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Syncfusion.Blazor" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.Licensing" Version="27.2.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,7 +51,6 @@
 
   <ItemGroup>
     <Folder Include="Localizer\" />
-    <Folder Include="Response\" />
   </ItemGroup>
 
 </Project>

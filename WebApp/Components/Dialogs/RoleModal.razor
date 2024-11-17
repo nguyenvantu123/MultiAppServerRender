@@ -1,8 +1,8 @@
 ﻿
 <EditForm Model="@RoleModel" OnValidSubmit="SaveAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
-    <MudDialog>
-        <TitleContent>
+    <SfDialog>
+        <Header>
             @{
                 if (RoleModel.Id.ToString() == Guid.Empty.ToString())
                 {
@@ -19,7 +19,7 @@
                     </MudText>
                 }
             }
-        </TitleContent>
+        </Header>
         <DialogContent>
 @*             <MudTextField hidden @bind-Value="RoleModel.Id" Label="Role ID" Disabled />
  *@            <MudTextField For="@(() => RoleModel.Name)" @bind-Value="RoleModel.Name" Label="Role Name" />
@@ -38,7 +38,7 @@
                 }
             }
         </DialogActions>
-    </MudDialog>
+    </SfDialog>
 </EditForm>
 
 @code {

@@ -4,9 +4,6 @@ using MultiAppServer.ServiceDefaults;
 using System.Net.Http.Headers;
 using WebApp.Extensions;
 using WebApp.Models;
-using static MudBlazor.CategoryTypes;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApp.Interfaces
 {
