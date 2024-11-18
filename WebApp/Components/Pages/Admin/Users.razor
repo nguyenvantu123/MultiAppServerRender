@@ -7,34 +7,12 @@
 @layout AdminMainLayout
 @inject LogoutServices LogOutService
 
-<style>
-    .mud-table-container {
-        overflow: auto;
-    }
-
-    .fixed-column {
-        position: sticky;
-        background-color: var(--mud-palette-background);
-    }
-
-    .position {
-        left: 0;
-    }
-
-    .position2 {
-        left: 130px;
-    }
-
-    th.fixed-column {
-        z-index: 30;
-    }
-
-    td.fixed-column {
-        z-index: 20;
-    }
-</style>
-
-<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
+<SfBreadcrumb>
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="BreadCrumbAdmin" Url="/admin" />
+        <BreadcrumbItem Text="BreadCrumbAdminUsers" Url="/admin/users" />
+    </BreadcrumbItems>
+</SfBreadcrumb>
 
 <PageTitle>Users</PageTitle>
 
@@ -45,7 +23,44 @@
 }
 else
 {
-    <MudTable @ref="table" ServerData="ServerReload" Hover="true" Elevation="25" HorizontalScrollbar="true" RowsPerPage="@pageSize" Items="users" FixedHeader="true" Dense="true" @bind-user="users">
+
+    <SfGrid DataSource="@users" AllowPaging="true">
+
+        <GridTemplates>
+            <ToolbarTemplate>
+             @*    <SfToolbar>
+                    <ToolbarEvents Clicked="ToolbarClickHandler"></ToolbarEvents>
+                    <ToolbarItems>
+                        <ToolbarItem Type="@ItemType.Button" PrefixIcon="e-chevron-up icon" Id="collapseall" Text="Collapse All"></ToolbarItem>
+                        <ToolbarItem Type="@ItemType.Button" PrefixIcon="e-chevron-down icon" Id="ExpandAll" Text="Expand All"></ToolbarItem>
+                    </ToolbarItems>
+                </SfToolbar> *@
+            </ToolbarTemplate>
+        </GridTemplates>
+
+        <GridPageSettings CurrentPage="@pageIndex" PageSize="@pageSize" EnableQueryString="true" PageSizes="@TablePageConstant.RowPerPage"></GridPageSettings>
+        <GridEvents PageChanging="PageChangingHandler" OnLoad="LoadHandler" TValue="UserDataViewModel"></GridEvents>
+
+        <GridColumns>
+            <GridColumn HeaderText="Actions" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Left" Width="100"></GridColumn>
+            <GridColumn Field=@nameof(UserDataViewModel.UserName) HeaderText="UserName" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+            <GridColumn Field=@nameof(UserDataViewModel.Email) HeaderText="Email" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field=@nameof(UserDataViewModel.FirstName) HeaderText="FirstName" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field=@nameof(UserDataViewModel.LastName) HeaderText="LastName" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field=@nameof(UserDataViewModel.PhoneNumber) HeaderText="PhoneNumber" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field=@nameof(UserDataViewModel.Email) HeaderText="Email" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field=@nameof(UserDataViewModel.IsActive) HeaderText="Active" TextAlign="TextAlign.Center" DisplayAsCheckBox="true"> </GridColumn>
+
+            @*    <MudTh Class="fixed-column position">First Name</MudTh>
+        <MudTh Class="fixed-column position2">Last Name</MudTh>
+        <MudTh>UserName</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>PhoneNumber</MudTh>
+        <MudTh>Email Confirmation</MudTh>
+        <MudTh>Active</MudTh> *@
+        </GridColumns>
+    </SfGrid>
+    @*  <MudTable @ref="table" ServerData="ServerReload" Hover="true" Elevation="25" HorizontalScrollbar="true" RowsPerPage="@pageSize" Items="users" FixedHeader="true" Dense="true" @bind-user="users">
 
         <ToolBarContent>
             <div class="justify-center mud-text-align-center">
@@ -100,7 +115,6 @@ else
                 }
             </div>
             <MudSpacer />
-            @*  <MudTextField @bind-Value="_searchString" Immediate="true" FullWidth=false Placeholder="Search For Users" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mb-3"></MudTextField> *@
         </ToolBarContent>
 
         <HeaderContent>
@@ -153,10 +167,10 @@ else
         <PagerContent>
             <MudTablePager HorizontalAlignment="HorizontalAlignment.Left" PageSizeOptions="@TablePageConstant.RowPerPage" RowsPerPageString="Rows per page" />
         </PagerContent>
-    </MudTable>
+    </MudTable> *@
 }
 @code {
-    private MudTable<UserDataViewModel> table;
+    // private MudTable<UserDataViewModel> table;
 
     [Inject] AccountApiClient apiClient { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
@@ -175,11 +189,9 @@ else
 
     protected int totalItemsCount { get; set; } = 0;
 
-    private List<BreadcrumbItem> _items { get; set; }
-
     protected List<UserDataViewModel> users { get; set; }
 
-    protected UserDataViewModel user { get; set; }
+    // protected UserDataViewModel user { get; set; }
 
     protected List<SelectItem<Guid>> roleSelections { get; set; } = new();
     protected UserDataViewModel currentUser { get; set; } = new UserDataViewModel();
@@ -219,14 +231,8 @@ else
             _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
             _canUpdateRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
             _canDeleteRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Delete).FirstOrDefault() != null;
-            _items = new List<BreadcrumbItem>
-        {
-            new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
-            new BreadcrumbItem("BreadCrumbAdminUsers", href: "/admin/users")
-        };
 
             await LoadUsers();
-            // await LoadRoles();
         }
         finally
         {
@@ -237,30 +243,30 @@ else
     private async Task Delete(string id)
     {
         string deleteContent = "Delete Content";
-        var parameters = new DialogParameters
-            {
-                {nameof(DeleteConfirmation.ContentText), string.Format(deleteContent, id)}
-            };
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
-        var dialog = _dialogService.Show<DeleteConfirmation>("Delete", parameters, options);
-        var result = await dialog.Result;
-        if (!result.Canceled)
-        {
-            var response = await _accountApiClient.DeleteUser(id);
-            if (response.IsSuccessStatusCode)
-            {
-                await LoadUsers();
-                // await HubConnection.SendAsync(ApplicationConstants.SignalR.SendUpdateDashboard);
-                await table.ReloadServerData();
-                viewNotifier.Show(response.Message, ViewNotifierType.Success);
-            }
-            else
-            {
-                await LoadUsers();
+        // var parameters = new DialogParameters
+        //     {
+        //         {nameof(DeleteConfirmation.ContentText), string.Format(deleteContent, id)}
+        //     };
+        // var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
+        // var dialog = _dialogService.Show<DeleteConfirmation>("Delete", parameters, options);
+        // var result = await dialog.Result;
+        // if (!result.Canceled)
+        // {
+        //     var response = await _accountApiClient.DeleteUser(id);
+        //     if (response.IsSuccessStatusCode)
+        //     {
+        //         await LoadUsers();
+        //         // await HubConnection.SendAsync(ApplicationConstants.SignalR.SendUpdateDashboard);
+        //         await table.ReloadServerData();
+        //         viewNotifier.Show(response.Message, ViewNotifierType.Success);
+        //     }
+        //     else
+        //     {
+        //         await LoadUsers();
 
-                viewNotifier.Show(response.Message, ViewNotifierType.Error);
-            }
-        }
+        //         viewNotifier.Show(response.Message, ViewNotifierType.Error);
+        //     }
+        // }
     }
 
     protected async Task LoadUsers()
@@ -273,11 +279,11 @@ else
             users = result.Result;
             totalItemsCount = (int)result.Count;
 
-            viewNotifier.Show($"{result.Result.Count} items found", ViewNotifierType.Success, L["Operation Successful"]);
+            // viewNotifier.Show($"{result.Result.Count} items found", ViewNotifierType.Success, L["Operation Successful"]);
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
         finally
         {
@@ -285,13 +291,22 @@ else
         }
     }
 
-    private async Task<TableData<UserDataViewModel>> ServerReload(TableState state, CancellationToken cancellationToken)
+    public async void PageChangingHandler(GridPageChangingEventArgs args)
     {
-        await OnPage(state.Page, state.PageSize);
-
-        return new TableData<UserDataViewModel>() { TotalItems = totalItemsCount, Items = users };
-
+        await OnPage(args.CurrentPage, args.CurrentPageSize);
     }
+
+    public async void LoadHandler(object args)
+    {
+        await OnPage(pageIndex, pageSize);
+    }
+
+    // private async Task<TableData<UserDataViewModel>> ServerReload(TableState state, CancellationToken cancellationToken)
+    // {
+
+    //     return new TableData<UserDataViewModel>() { TotalItems = totalItemsCount, Items = users };
+
+    // }
 
     protected async Task OnPage(int index, int size)
     {
@@ -301,49 +316,48 @@ else
         await LoadUsers();
     }
 
-    private async Task InvokeModal(string id = null)
-    {
-        var parameters = new DialogParameters();
+    // private async Task InvokeModal(string id = null)
+    // {
+    //     var parameters = new DialogParameters();
 
-        if (id != null)
-        {
-            user = users!.Where(c => c.Id.ToString() == id).FirstOrDefault()!;
-            if (user != null)
-            {
-                parameters.Add(nameof(RegisterUser.RegisterUserModel), new RegisterViewModel
-                    {
-                        Id = user.Id,
-                        UserName = user.UserName,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        PhoneNumber = user.PhoneNumber,
-                        ActivateUser = user.IsActive,
-                        AutoConfirmEmail = user.EmailConfirmed
-                    });
-            }
-        }
+    //     if (id != null)
+    //     {
+    //         user = users!.Where(c => c.Id.ToString() == id).FirstOrDefault()!;
+    //         if (user != null)
+    //         {
+    //             parameters.Add(nameof(RegisterUser.RegisterUserModel), new RegisterViewModel
+    //                 {
+    //                     Id = user.Id,
+    //                     UserName = user.UserName,
+    //                     FirstName = user.FirstName,
+    //                     LastName = user.LastName,
+    //                     Email = user.Email,
+    //                     PhoneNumber = user.PhoneNumber,
+    //                     ActivateUser = user.IsActive,
+    //                     AutoConfirmEmail = user.EmailConfirmed
+    //                 });
+    //         }
+    //     }
 
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
-        var dialog = _dialogService.Show<RegisterUser>(id == Guid.Empty.ToString() ? "Create" : "Edit", parameters, options);
-        var result = await dialog.Result;
-        if (!result!.Canceled)
-        {
-            await LoadUsers();
-            await table.ReloadServerData();
-        }
-    }
+    //     var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
+    //     var dialog = _dialogService.Show<RegisterUser>(id == Guid.Empty.ToString() ? "Create" : "Edit", parameters, options);
+    //     var result = await dialog.Result;
+    //     if (!result!.Canceled)
+    //     {
+    //         await LoadUsers();
+    //         await table.ReloadServerData();
+    //     }
+    // }
 
     private void ViewProfile(string userId)
     {
         _navigationManager.NavigateTo($"/admin/user-profile/{userId}");
     }
 
-    protected async Task Reload()
-    {
-        await OnPage(pageIndex, pageSize);
-        await table.ReloadServerData();
-    }
+    // protected async Task Reload()
+    // {
+
+    // }
 
     private void ManageRoles(string userId, string userName)
     {

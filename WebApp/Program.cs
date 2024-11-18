@@ -172,7 +172,7 @@ builder.Services.AddSignalR(o => { o.MaximumReceiveMessageSize = 102400000; });
 //    return client;
 //});
 
-builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
+//builder.Services.AddScoped<IViewNotifier, ViewNotifier>();
 
 //var authBuilder = builder.Services.AddAuthentication(options =>
 //        {

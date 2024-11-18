@@ -15,7 +15,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BlazorDemos.Resources {
+namespace WebApp.Resources {
     using System;
     
     

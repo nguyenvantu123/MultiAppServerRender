@@ -1,14 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider Theme="_currentTheme" />
+@* <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudPopoverProvider />
-
+ *@
 <AuthorizeView>
 
     <Authorized>
-        <MudLayout>
+        @* <MudLayout>
             <CascadingValue Value="this">
                 <MudAppBar Elevation="25">
                     <MudIcon Icon="@CustomIcons.BlazorHero" Size="Size.Large" ViewBox="0 0 500 500" />
@@ -34,7 +34,7 @@
                     </footer>
                 </MudMainContent>
             </CascadingValue>
-        </MudLayout>
+        </MudLayout> *@
     </Authorized>
 </AuthorizeView>
 
@@ -42,7 +42,7 @@
 
 @code {
 
-    private MudTheme _currentTheme;
+    // private MudTheme _currentTheme;
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
@@ -63,7 +63,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        _currentTheme = BlazorHeroTheme.DefaultTheme;
+        // _currentTheme = BlazorHeroTheme.DefaultTheme;
 
         var user = (await authenticationStateTask).User;
         _navMenuOpened = true;
