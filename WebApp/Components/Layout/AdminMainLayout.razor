@@ -69,7 +69,7 @@
         _navMenuOpened = true;
 
         _toggleDarkMode = true;
-        _currentTheme = _toggleDarkMode ? BlazorHeroTheme.DefaultTheme : BlazorHeroTheme.DarkTheme;
+        // _currentTheme = _toggleDarkMode ? BlazorHeroTheme.DefaultTheme : BlazorHeroTheme.DarkTheme;
         await Task.CompletedTask;
 
     }
@@ -88,24 +88,24 @@
     {
         _toggleDarkMode = !_toggleDarkMode;
 
-        _currentTheme = _toggleDarkMode
-            ? BlazorHeroTheme.DefaultTheme
-            : BlazorHeroTheme.DarkTheme;
+        // _currentTheme = _toggleDarkMode
+        //     ? BlazorHeroTheme.DefaultTheme
+        //     : BlazorHeroTheme.DarkTheme;
 
         await Task.FromResult(true);
     }
 
-    private void Logout()
-    {
-        var parameters = new DialogParameters
-            {
-                {nameof(Dialogs.Logout.ContentText), $"Logout Confirmation"},
-                {nameof(Dialogs.Logout.ButtonText), $"Logout"},
-                {nameof(Dialogs.Logout.Color), Color.Error}
-            };
+    // private void Logout()
+    // {
+    //     var parameters = new DialogParameters
+    //         {
+    //             {nameof(Dialogs.Logout.ContentText), $"Logout Confirmation"},
+    //             {nameof(Dialogs.Logout.ButtonText), $"Logout"},
+    //             {nameof(Dialogs.Logout.Color), Color.Error}
+    //         };
 
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+    //     var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
 
-        _dialogService.Show<Dialogs.Logout>("Logout", parameters, options);
-    }
+    //     _dialogService.Show<Dialogs.Logout>("Logout", parameters, options);
+    // }
 }
