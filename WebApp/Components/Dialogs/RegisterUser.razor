@@ -1,5 +1,5 @@
 ﻿
-<EditForm Model="@RegisterUserModel" OnValidSubmit="SubmitAsync">
+@* <EditForm Model="@RegisterUserModel" OnValidSubmit="SubmitAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
     <SfDialog>
         <TitleContent>
@@ -21,8 +21,6 @@
             }
         </TitleContent>
         <Content>
-            @*             <MudTextField Disabled hidden @bind-Value="RegisterUserModel.Id" />
-            *@
             <MudTextField For="@(() => RegisterUserModel.UserName)" @bind-Value="RegisterUserModel.UserName" Label="User Name" />
             <MudTextField For="@(() => RegisterUserModel.FirstName)" @bind-Value="RegisterUserModel.FirstName" Label="First Name" />
             <MudTextField For="@(() => RegisterUserModel.LastName)" @bind-Value="RegisterUserModel.LastName" Label="Last Name" />
@@ -50,7 +48,7 @@
             }
         </DialogButtons>
     </SfDialog>
-</EditForm>
+</EditForm> *@
 
 @code {
     private FluentValidationValidator _fluentValidationValidator;
@@ -61,63 +59,63 @@
     [Parameter] public RegisterViewModel RegisterUserModel { get; set; } = new();
 
 
-    private void Cancel()
-    {
-        MudDialog.Cancel();
-    }
+    // private void Cancel()
+    // {
+    //     MudDialog.Cancel();
+    // }
 
-    private async Task SubmitAsync()
-    {
-        var response = RegisterUserModel.Id == Guid.Empty ? await _accountApiClient.CreateUser(RegisterUserModel) : await _accountApiClient.UpdateUser(RegisterUserModel);
-        if (response.IsSuccessStatusCode)
-        {
-            viewNotifier.Show(response.Message, ViewNotifierType.Success);
-            MudDialog.Close();
-        }
-        else
-        {
-            viewNotifier.Show(response.Message, ViewNotifierType.Error);
+    // private async Task SubmitAsync()
+    // {
+    //     var response = RegisterUserModel.Id == Guid.Empty ? await _accountApiClient.CreateUser(RegisterUserModel) : await _accountApiClient.UpdateUser(RegisterUserModel);
+    //     if (response.IsSuccessStatusCode)
+    //     {
+    //         viewNotifier.Show(response.Message, ViewNotifierType.Success);
+    //         MudDialog.Close();
+    //     }
+    //     else
+    //     {
+    //         viewNotifier.Show(response.Message, ViewNotifierType.Error);
 
-        }
-    }
+    //     }
+    // }
 
-    private bool _passwordVisibility;
-    private InputType _passwordInput = InputType.Password;
-    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    // private bool _passwordVisibility;
+    // private InputType _passwordInput = InputType.Password;
+    // private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
 
-    private void TogglePasswordVisibility()
-    {
-        if (_passwordVisibility)
-        {
-            _passwordVisibility = false;
-            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
-            _passwordInput = InputType.Password;
-        }
-        else
-        {
-            _passwordVisibility = true;
-            _passwordInputIcon = Icons.Material.Filled.Visibility;
-            _passwordInput = InputType.Text;
-        }
-    }
+    // private void TogglePasswordVisibility()
+    // {
+    //     if (_passwordVisibility)
+    //     {
+    //         _passwordVisibility = false;
+    //         _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    //         _passwordInput = InputType.Password;
+    //     }
+    //     else
+    //     {
+    //         _passwordVisibility = true;
+    //         _passwordInputIcon = Icons.Material.Filled.Visibility;
+    //         _passwordInput = InputType.Text;
+    //     }
+    // }
 
-    private bool _passwordVisibility1;
-    private InputType _passwordInput1 = InputType.Password;
-    private string _passwordInputIcon1 = Icons.Material.Filled.VisibilityOff;
+    // private bool _passwordVisibility1;
+    // private InputType _passwordInput1 = InputType.Password;
+    // private string _passwordInputIcon1 = Icons.Material.Filled.VisibilityOff;
 
-    private void TogglePasswordVisibility1()
-    {
-        if (_passwordVisibility1)
-        {
-            _passwordVisibility1 = false;
-            _passwordInputIcon1 = Icons.Material.Filled.VisibilityOff;
-            _passwordInput1 = InputType.Password;
-        }
-        else
-        {
-            _passwordVisibility1 = true;
-            _passwordInputIcon1 = Icons.Material.Filled.Visibility;
-            _passwordInput1 = InputType.Text;
-        }
-    }
+    // private void TogglePasswordVisibility1()
+    // {
+    //     if (_passwordVisibility1)
+    //     {
+    //         _passwordVisibility1 = false;
+    //         _passwordInputIcon1 = Icons.Material.Filled.VisibilityOff;
+    //         _passwordInput1 = InputType.Password;
+    //     }
+    //     else
+    //     {
+    //         _passwordVisibility1 = true;
+    //         _passwordInputIcon1 = Icons.Material.Filled.Visibility;
+    //         _passwordInput1 = InputType.Text;
+    //     }
+    // }
 }

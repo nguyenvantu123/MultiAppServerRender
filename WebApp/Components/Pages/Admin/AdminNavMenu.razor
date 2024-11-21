@@ -5,11 +5,8 @@
 @inject HttpClient Http
 @inject IStringLocalizer<Localizer.Global> L
 
-<MudNavMenu Style="flex: 1">
-    @*    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("").AbsoluteUri" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-    Frontend
-    </MudNavLink> *@
-
+@* <MudNavMenu Style="flex: 1">
+ 
     <MudNavLink Href="@_navigationManager.ToAbsoluteUri("").AbsoluteUri" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.BarChart">
         @L["Dashboard"]
     </MudNavLink>
@@ -48,7 +45,7 @@
             @L["AppAdminNavDBLoggingView"]
         </MudNavLink>
     </MudNavGroup>
-</MudNavMenu>
+</MudNavMenu> *@
 
 @code {
     TenantModel tenant = new TenantModel();

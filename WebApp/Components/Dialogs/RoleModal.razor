@@ -1,4 +1,4 @@
-﻿
+﻿@* 
 <EditForm Model="@RoleModel" OnValidSubmit="SaveAsync">
     <FluentValidationValidator @ref="_fluentValidationValidator" />
     <SfDialog>
@@ -21,8 +21,7 @@
             }
         </Header>
         <DialogContent>
-@*             <MudTextField hidden @bind-Value="RoleModel.Id" Label="Role ID" Disabled />
- *@            <MudTextField For="@(() => RoleModel.Name)" @bind-Value="RoleModel.Name" Label="Role Name" />
+            <MudTextField For="@(() => RoleModel.Name)" @bind-Value="RoleModel.Name" Label="Role Name" />
             <MudTextField For="@(() => RoleModel.Description)" @bind-Value="RoleModel.Description" Label="Description" />
         </DialogContent>
         <DialogActions>
@@ -39,10 +38,10 @@
             }
         </DialogActions>
     </SfDialog>
-</EditForm>
+</EditForm> *@
 
 @code {
-    [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
+    // [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public RoleDto RoleModel { get; set; } = new();
 
@@ -51,7 +50,7 @@
 
     public void Cancel()
     {
-        MudDialog.Cancel();
+        // MudDialog.Cancel();
     }
 
     // protected override async Task OnInitializedAsync()
@@ -68,12 +67,12 @@
         var response = RoleModel.Id == Guid.Empty ? await _accountApiClient.CreateRole(RoleModel) : await _accountApiClient.UpdateRole(RoleModel);
         if (response.IsSuccessStatusCode)
         {
-            viewNotifier.Show(response.Message, ViewNotifierType.Success);
-            MudDialog.Close();
+            // viewNotifier.Show(response.Message, ViewNotifierType.Success);
+            // MudDialog.Close();
         }
         else
         {
-            viewNotifier.Show(response.Message, ViewNotifierType.Error);
+            // viewNotifier.Show(response.Message, ViewNotifierType.Error);
         }
     }
 }

@@ -11,11 +11,11 @@
 </TopSection>
  *@
 
-<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
-
+@* <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
+ *@
 <PageTitle>@L["MainSettings"]</PageTitle>
 
-@if (settings == null)
+@* @if (settings == null)
 {
     <LoadingBackground>
         <label>@L["Loading"]</label>
@@ -34,9 +34,8 @@ else
         </MudSelect>
     </EditForm>
 
-    @*     <MudButton OnClick="@(()=> ())">@L["Cancel"]</MudButton>
- *@    <MudButton OnClick="@SaveChanges" Variant="Variant.Filled" Color="Color.Primary">@L["Save"]</MudButton>
-}
+       <MudButton OnClick="@SaveChanges" Variant="Variant.Filled" Color="Color.Primary">@L["Save"]</MudButton>
+} *@
 
 @code {
 
@@ -48,11 +47,11 @@ else
 
     [Inject] protected AccountApiClient accountApiClient { get; set; }
 
-    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-    {
-    new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
-    new BreadcrumbItem("BreadCrumbAdminSettings", href: "/admin/settings")
-    };
+    // private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    // {
+    // new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+    // new BreadcrumbItem("BreadCrumbAdminSettings", href: "/admin/settings")
+    // };
 
 
     // [Inject] protected IViewNotifier viewNotifier { get; set; }
@@ -79,7 +78,7 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 
@@ -94,7 +93,7 @@ else
 
             await apiClient.SaveChanges();
 
-            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
 
             if (reload)
                 _navigationManager.NavigateTo(_navigationManager.Uri, true);
@@ -102,7 +101,7 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 

@@ -51,19 +51,19 @@ else
 }
 
 @code {
-    private MudTable<ApiLogItem> table;
+    // private MudTable<ApiLogItem> table;
 
-    private async Task<TableData<ApiLogItem>> ServerReload(TableState state)
-    {
-        await OnPage(state.Page, state.PageSize);
+    // private async Task<TableData<ApiLogItem>> ServerReload(TableState state)
+    // {
+    //     await OnPage(state.Page, state.PageSize);
 
-        return new TableData<ApiLogItem>() { TotalItems = totalItemsCount, Items = apiLogItems };
-    }
+    //     return new TableData<ApiLogItem>() { TotalItems = totalItemsCount, Items = apiLogItems };
+    // }
 
-    private void Reload()
-    {
-        table.ReloadServerData();
-    }
+    // private void Reload()
+    // {
+    //     table.ReloadServerData();
+    // }
 
     // [Inject] IViewNotifier viewNotifier { get; set; }
     [Inject] IApiClient apiClient { get; set; }
@@ -99,7 +99,7 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
 
         await InvokeAsync(StateHasChanged);

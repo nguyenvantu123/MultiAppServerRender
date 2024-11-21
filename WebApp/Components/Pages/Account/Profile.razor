@@ -4,7 +4,7 @@
 
 @* @layout AdminMainLayout
  *@
-@if (!_loaded)
+@* @if (!_loaded)
 {
     <LoadingBackground>
     </LoadingBackground>
@@ -131,7 +131,7 @@ else
     </MudDialog>
 
 }
-
+ *@
 @code {
     // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
@@ -148,7 +148,7 @@ else
 
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;
-    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    // private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
     private bool _loaded;
 
     protected bool BrowserRemembered
@@ -160,7 +160,10 @@ else
                 ForgetTwoFactorClient().ContinueWith(t =>
                 {
                     if (t.IsFaulted)
-                        viewNotifier.Show(t.Exception.Message, ViewNotifierType.Error, L["Operation Failed"]);
+                    {
+
+                    }
+                    // viewNotifier.Show(t.Exception.Message, ViewNotifierType.Error, L["Operation Failed"]);
                 });
         }
     }
@@ -174,7 +177,10 @@ else
                 EnableDisable2fa().ContinueWith(t =>
                 {
                     if (t.IsFaulted)
-                        viewNotifier.Show(t.Exception.Message, ViewNotifierType.Error, L["Operation Failed"]);
+                    {
+                        
+                    }
+                        // viewNotifier.Show(t.Exception.Message, ViewNotifierType.Error, L["Operation Failed"]);
                 });
         }
     }
@@ -211,7 +217,7 @@ else
     {
         if (updatePasswordViewModel.NewPassword != updatePasswordViewModel.NewPasswordConfirm)
         {
-            viewNotifier.Show(L["PasswordConfirmationFailed"], ViewNotifierType.Warning);
+            // viewNotifier.Show(L["PasswordConfirmationFailed"], ViewNotifierType.Warning);
         }
         else
         {
@@ -219,14 +225,14 @@ else
             {
                 var apiResponse = await _accountApiClient.UpdatePassword(updatePasswordViewModel);
 
-                if (apiResponse.IsSuccessStatusCode)
-                    viewNotifier.Show(L["UpdatePasswordSuccessful"], ViewNotifierType.Success);
-                else
-                    viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["UpdatePasswordFailed"]);
+                // if (apiResponse.IsSuccessStatusCode)
+                //     viewNotifier.Show(L["UpdatePasswordSuccessful"], ViewNotifierType.Success);
+                // else
+                //     viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["UpdatePasswordFailed"]);
             }
             catch (Exception ex)
             {
-                viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["UpdatePasswordFailed"]);
+                // viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["UpdatePasswordFailed"]);
             }
 
             updatePasswordDialogOpen = false;
@@ -246,13 +252,19 @@ else
             var apiResponse = await _accountApiClient.UpdateUser(registerViewModel);
 
             if (apiResponse.IsSuccessStatusCode)
-                viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            {
+
+            }
+            // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
             else
-                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+            {
+                
+            }
+            // viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 
@@ -262,13 +274,10 @@ else
 
         if (apiResponse.IsSuccessStatusCode)
         {
-            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
             userViewModel = apiResponse.Result;
             StateHasChanged();
         }
-        else
-            viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
-
     }
 
     protected async Task DisableAuthenticator()
@@ -279,17 +288,16 @@ else
 
             if (apiResponse.IsSuccessStatusCode)
             {
-                viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+                // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
                 userViewModel = apiResponse.Result;
                 authenticatorVerificationCodeViewModel = new AuthenticatorVerificationCodeViewModel();
                 StateHasChanged();
             }
-            else
-                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+       
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
 
     }
@@ -302,13 +310,13 @@ else
 
             if (apiResponse.IsSuccessStatusCode)
             {
-                viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+                // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
                 userViewModel = apiResponse.Result;
                 StateHasChanged();
             }
             else
             {
-                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+                // viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
             }
         }
     }
@@ -319,31 +327,31 @@ else
 
         if (apiResponse.IsSuccessStatusCode)
         {
-            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
             userViewModel = apiResponse.Result;
             StateHasChanged();
         }
         else
         {
-            viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 
-    void TogglePasswordVisibility()
-    {
-        if (_passwordVisibility)
-        {
-            _passwordVisibility = false;
-            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
-            _passwordInput = InputType.Password;
-        }
-        else
-        {
-            _passwordVisibility = true;
-            _passwordInputIcon = Icons.Material.Filled.Visibility;
-            _passwordInput = InputType.Text;
-        }
-    }
+    // void TogglePasswordVisibility()
+    // {
+    //     if (_passwordVisibility)
+    //     {
+    //         _passwordVisibility = false;
+    //         _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    //         _passwordInput = InputType.Password;
+    //     }
+    //     else
+    //     {
+    //         _passwordVisibility = true;
+    //         _passwordInputIcon = Icons.Material.Filled.Visibility;
+    //         _passwordInput = InputType.Text;
+    //     }
+    // }
 
     private async Task SingleUpload(InputFileChangeEventArgs e)
     {
@@ -375,7 +383,7 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
 
         finally

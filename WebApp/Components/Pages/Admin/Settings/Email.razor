@@ -12,11 +12,11 @@
     </Breadcrumbs>
 </TopSection> *@
 
-<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
-
+@* <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
+ *@
 <PageTitle>EmailSettings</PageTitle>
 
-@if (settings == null)
+@* @if (settings == null)
 {
     <LoadingBackground>
         <label>@L["Loading"]</label>
@@ -105,7 +105,7 @@ else
         </DialogActions>
     </MudDialog>
 }
-
+ *@
 @code {
 
     protected Dictionary<SettingKey, TenantSettingModels> settings;
@@ -120,12 +120,12 @@ else
 
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
-    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-    {
-    new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
-    new BreadcrumbItem("BreadCrumbAdminSettings", href: "/admin/settings"),
-    new BreadcrumbItem("BreadCrumbAdminSettingsEmail", href: "/admin/settings/email")
-    };
+    // private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    // {
+    // new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+    // new BreadcrumbItem("BreadCrumbAdminSettings", href: "/admin/settings"),
+    // new BreadcrumbItem("BreadCrumbAdminSettingsEmail", href: "/admin/settings/email")
+    // };
 
     protected bool isSendEmailDialogOpen = false;
     protected EmailDto email { get; set; } = new();
@@ -144,16 +144,16 @@ else
 
             if (apiResponse.IsSuccessStatusCode)
             {
-                viewNotifier.Show(apiResponse.Message, ViewNotifierType.Success);
+                // viewNotifier.Show(apiResponse.Message, ViewNotifierType.Success);
             }
             else
             {
-                viewNotifier.Show(apiResponse.Message + " : " + apiResponse.StatusCode, ViewNotifierType.Error, L["Operation Failed"]);
+                // viewNotifier.Show(apiResponse.Message + " : " + apiResponse.StatusCode, ViewNotifierType.Error, L["Operation Failed"]);
             }
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 
@@ -177,7 +177,7 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 
@@ -192,7 +192,7 @@ else
 
             await apiClient.SaveChanges();
 
-            viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
 
             if (reload)
                 _navigationManager.NavigateTo(_navigationManager.Uri, true);
@@ -200,7 +200,7 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 

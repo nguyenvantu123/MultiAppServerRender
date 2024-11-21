@@ -2,7 +2,7 @@
 @layout AdminMainLayout
 
 <PageTitle>Manage Permission</PageTitle>
-@if (!_loaded)
+@* @if (!_loaded)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
@@ -52,8 +52,7 @@ else
                             @if (_canEditRolePermissions)
                             {
 
-                                @*   <MudTextField @bind-Value="@context.Description" Margin="Margin.Dense" HelperText="$(context.Selected? "Here you can leave a comment for this permission for the current role" : "Will be saved only when selected Permission")" /> *@
-                                @*    <MudTextField @bind-Value="@context.Description" Margin="Margin.Dense" Disabled="@(!context.Selected)" HelperText="$" (context.Selected ? "Here you can leave a comment for this permission for the current role" : "Will be saved only when selected Permission" )"" /> *@
+                              
                             }
                             else
                             {
@@ -62,20 +61,12 @@ else
                         </MudTd>
                         <MudTd DataLabel="Status"><MudCheckBox T="bool" @bind-Checked="@context.Selected" Disabled="@(!_canEditRolePermissions)" Color="Color.Secondary" /></MudTd>
                     </RowEditingTemplate>
-                    @* <FooterContent>
-            <MudSwitch @bind-Checked="@_dense" Color="Color.Secondary" Style="margin-left: 5px;">@_localizer["Dense"]</MudSwitch>
-            <MudSwitch @bind-Checked="@_striped" Color="Color.Tertiary" Style="margin-left: 5px;">@_localizer["Striped"]</MudSwitch>
-            <MudSwitch @bind-Checked="@_bordered" Color="Color.Warning" Style="margin-left: 5px;">@_localizer["Bordered"]</MudSwitch>
-            </FooterContent> *@
-                    <PagerContent>
-                        <TablePager />
-                    </PagerContent>
                 </MudTable>
             </MudTabPanel>
         }
     </MudTabs>
 }
-
+ *@
 @code {
     // [Inject] private IRoleManager RoleManager { get; set; }
 
@@ -147,7 +138,7 @@ else
         }
         else
         {
-            viewNotifier.Show(result.Message, ViewNotifierType.Error);
+            // viewNotifier.Show(result.Message, ViewNotifierType.Error);
 
             _navigationManager.NavigateTo("/identity/roles");
         }
@@ -189,14 +180,14 @@ else
         return false;
     }
 
-    private Color GetGroupBadgeColor(int selected, int all)
-    {
-        if (selected == 0)
-            return Color.Error;
+    // private Color GetGroupBadgeColor(int selected, int all)
+    // {
+    //     if (selected == 0)
+    //         return Color.Error;
 
-        if (selected == all)
-            return Color.Success;
+    //     if (selected == all)
+    //         return Color.Success;
 
-        return Color.Info;
-    }
+    //     return Color.Info;
+    // }
 }

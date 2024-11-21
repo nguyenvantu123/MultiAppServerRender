@@ -66,7 +66,7 @@ else
 }
 
 @code {
-    private MudTable<DbLog> table;
+    // private MudTable<DbLog> table;
 
     // [Inject] IViewNotifier viewNotifier { get; set; }
     [Inject] IApiClient apiClient { get; set; }
@@ -110,22 +110,22 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
 
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task<TableData<DbLog>> ServerReload(TableState state)
-    {
-        await OnPage(state.Page, state.PageSize);
+    // private async Task<TableData<DbLog>> ServerReload(TableState state)
+    // {
+    //     await OnPage(state.Page, state.PageSize);
 
-        return new TableData<DbLog>() { TotalItems = totalItemsCount, Items = dbLogItems };
-    }
+    //     return new TableData<DbLog>() { TotalItems = totalItemsCount, Items = dbLogItems };
+    // }
 
     private void OnFilter(string debugLevel)
     {
         DebugLevel = debugLevel;
-        table.ReloadServerData();
+        // table.ReloadServerData();
     }
 }

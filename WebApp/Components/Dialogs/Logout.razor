@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Authentication.OpenIdConnect
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Logout> localizer
 
-<MudDialog>
+@* <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Logout" Class="mr-3 mb-n1" />
@@ -16,24 +16,20 @@
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
 
-        @*             <AntiforgeryToken />*@
-
-        @* < button class="action" type="submit">Log out</button> *@
-
         <form method="post" action="logout">
             <MudButton Color="@Color" Variant="Variant.Filled" ButtonType="ButtonType.Submit">@ButtonText</MudButton>
         </form>
 
     </DialogActions>
-</MudDialog>
+</MudDialog> *@
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    // [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public string ContentText { get; set; }
 
     [Parameter] public string ButtonText { get; set; }
 
-    [Parameter] public Color Color { get; set; }
+    // [Parameter] public Color Color { get; set; }
 
     [Parameter] public string CurrentUserId { get; set; }
 
@@ -59,5 +55,5 @@
     //     // await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
     // }
 
-    void Cancel() => MudDialog.Cancel();
+    // void Cancel() => MudDialog.Cancel();
 }

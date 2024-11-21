@@ -11,11 +11,11 @@
     </Breadcrumbs>
 </TopSectionFrame> *@
 
-<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
-
+@* <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
+ *@
 <PageTitle>Tenants</PageTitle>
 
-@if (!_loaded)
+@* @if (!_loaded)
 {
     <LoadingBackground>
     </LoadingBackground>
@@ -148,7 +148,7 @@ else
         <MudButton OnClick="@(e => { isDeleteTenantDialogOpen = false; })">Cancel</MudButton>
         <MudButton OnClick="@DeleteTenantAsync" Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
     </DialogActions>
-</MudDialog>
+</MudDialog> *@
 
 @code {
 
@@ -159,7 +159,7 @@ else
     protected bool isCurrentTenantKeyReadOnly = false;
     private bool _loaded = false;
 
-    private MudTable<TenantModel> table;
+    // private MudTable<TenantModel> table;
 
     [Inject] protected AccountApiClient accountApiClient { get; set; }
 
@@ -195,21 +195,21 @@ else
         // _canSearchRoles = state.User.Claims.Where(x => x.Value == PermissionsWebApp.Role.View).FirstOrDefault() != null;
         _canViewTenant = user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Read).FirstOrDefault() != null;
 
-        _items = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
-        new BreadcrumbItem("BreadCrumbAdminMultitenancy", href: "/admin/multitenancy")
-    };
+    //     _items = new List<BreadcrumbItem>
+    // {
+    //     new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
+    //     new BreadcrumbItem("BreadCrumbAdminMultitenancy", href: "/admin/multitenancy")
+    // };
         await InitializeTenantsListAsync();
     }
 
 
-    private async Task<TableData<TenantModel>> ServerReload(TableState state, CancellationToken cancellationToken)
-    {
-        await OnPage(state.Page, state.PageSize);
+    // private async Task<TableData<TenantModel>> ServerReload(TableState state, CancellationToken cancellationToken)
+    // {
+    //     await OnPage(state.Page, state.PageSize);
 
-        return new TableData<TenantModel>() { TotalItems = totalItemsCount, Items = tenants };
-    }
+    //     return new TableData<TenantModel>() { TotalItems = totalItemsCount, Items = tenants };
+    // }
 
     protected async Task OnPage(int index, int size)
     {
@@ -248,16 +248,16 @@ else
 
             if (response.IsSuccessStatusCode)
             {
-                viewNotifier.Show(response.Message, ViewNotifierType.Success, L["Operation Successful"]);
+                // viewNotifier.Show(response.Message, ViewNotifierType.Success, L["Operation Successful"]);
                 tenants = response.Result;
                 totalItemsCount = response.Count;
             }
-            else
-                viewNotifier.Show(response.Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // else
+                // viewNotifier.Show(response.Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
 
         finally
@@ -304,7 +304,7 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 
@@ -320,7 +320,7 @@ else
         {
             if (currentTenant == null)
             {
-                viewNotifier.Show("Tenant Creation Error", ViewNotifierType.Error, "New Tenant not found");
+                // viewNotifier.Show("Tenant Creation Error", ViewNotifierType.Error, "New Tenant not found");
                 return;
             }
 
@@ -333,12 +333,12 @@ else
 
             if (response.IsSuccessStatusCode)
             {
-                viewNotifier.Show(response.Message, ViewNotifierType.Success);
+                // viewNotifier.Show(response.Message, ViewNotifierType.Success);
 
                 StateHasChanged();
             }
             else
-                viewNotifier.Show(response.Message, ViewNotifierType.Error);
+                // viewNotifier.Show(response.Message, ViewNotifierType.Error);
 
 
             await OnInitializedAsync();
@@ -347,7 +347,7 @@ else
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
         finally
         {
@@ -374,18 +374,18 @@ else
             var response = await accountApiClient.DeleteTenant(currentTenant.Name);
             if (response.StatusCode != 200)
             {
-                viewNotifier.Show("Tenant Delete Failed", ViewNotifierType.Error);
+                // viewNotifier.Show("Tenant Delete Failed", ViewNotifierType.Error);
                 return;
             }
 
-            viewNotifier.Show("Tenant Deleted", ViewNotifierType.Success);
+            // viewNotifier.Show("Tenant Deleted", ViewNotifierType.Success);
             await OnInitializedAsync();
 
-            await table.ReloadServerData();
+            // await table.ReloadServerData();
         }
         catch (Exception ex)
         {
-            viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
         }
     }
 
