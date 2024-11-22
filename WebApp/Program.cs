@@ -40,7 +40,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.AddSyncfusionBlazor();
 
-SyncfusionLicenseProvider.RegisterLicense("");
+SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5ccnRXQmNfWUZ2VkE=");
 builder.AddServiceDefaults();
 
 builder.AddApplicationServices();
