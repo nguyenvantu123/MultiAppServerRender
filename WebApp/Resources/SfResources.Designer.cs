@@ -46,7 +46,7 @@ namespace WebApp.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BlazorDemos.Resources.SfResources", typeof(SfResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WebApp.Resources.SfResources", typeof(SfResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
