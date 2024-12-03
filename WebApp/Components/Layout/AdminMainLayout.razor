@@ -5,7 +5,7 @@
         <div id="control-section">
             <div id="wrapper">
                 @*Initialize the Sidebar component*@
-                <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="SidebarToggle" Type="@SidebarType.Auto">
+                <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" DockSize="50px" EnableDock="true" @bind-IsOpen="SidebarToggle" Type="@SidebarType.Auto">
                     <ChildContent>
                         <div class="main-menu">
                             <div>
@@ -14,25 +14,38 @@
                         </div>
                     </ChildContent>
                 </SfSidebar>
-
-                <SfSidebar @ref="rightSidebarInstance" Width="250px" Position=SidebarPosition.Right @bind-IsOpen="RightToggle">
+                 
+                <SfSidebar Width="250px" Position=SidebarPosition.Right @bind-IsOpen="RightToggle">
                     <ChildContent>
-                        <div style="text-align: center;" class="text-content"> Right Sidebar</div>
+                        <div style="text-align: center;" class="text-content">
+                            <SfToolbar>
+                                <ToolbarItems>
+                                    <ToolbarItem OnClick="ToggleRightSidebar" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
+                                        <Template>
+                                            @*   <SfIcon Name="IconName.IncreaseIndent" Size="IconSize.Large">
+                                            </SfIcon> *@
+                                            <SfIcon IconCss="fas fa-indent" Size="IconSize.Large">
+                                            </SfIcon>
+                                        </Template>
+                                    </ToolbarItem>
+                                </ToolbarItems>
+                            </SfToolbar>
+                        </div>
                     </ChildContent>
                 </SfSidebar>
                 <div>
                     @*Initialize the Toolbar component*@
                     <SfToolbar>
                         <ToolbarItems>
-                            <ToolbarItem>
-                                <Template>
-                                    <SfIcon Name="IconName.Menu" style="cursor:pointer;display: flex;" Size="IconSize.Large" onclick="@Toggle">
-                                        <div class="e-folder">
-                                            <div class="e-folder-name">Blazor Data</div>
-                                        </div>
-                                    </SfIcon>
-                                </Template>
-                            </ToolbarItem>
+                            @*    <ToolbarItem>
+                            <Template>
+                            <SfIcon Name="IconName.Menu" style="cursor:pointer;display: flex;" Size="IconSize.Large" onclick="@Toggle">
+                            <div class="e-folder">
+                            <div class="e-folder-name">Blazor Data</div>
+                            </div>
+                            </SfIcon>
+                            </Template>
+                            </ToolbarItem> *@
                             <ToolbarItem Type="ItemType.Spacer"></ToolbarItem>
                             <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
                             <ToolbarItem style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
@@ -58,6 +71,13 @@
                             <ToolbarItem style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
                                 <Template>
                                     <SfIcon IconCss="fas fa-bell" Size="IconSize.Large">
+                                        <DropDownMenuItems>
+                                            <DropDownMenuItem IconCss="fas fa-user" Text="User"></DropDownMenuItem>
+                                            <DropDownMenuItem IconCss="fas fa-inbox" Text="Inbox"></DropDownMenuItem>
+                                            <DropDownMenuItem IconCss="fas fa-tasks" Text="Task Manager"></DropDownMenuItem>
+                                            <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support"></DropDownMenuItem>
+                                            <DropDownMenuItem IconCss="fas fa-sign-out-alt" Text="Logout"></DropDownMenuItem>
+                                        </DropDownMenuItems>
                                     </SfIcon>
                                 </Template>
                                 @*   <Template>
@@ -141,7 +161,7 @@
     // Specify the value of Sidebar component state. It indicates whether the sidebar component is in an open/close state.
     public bool SidebarToggle = false;
 
-    SfSidebar rightSidebarInstance;
+    // SfSidebar rightSidebarInstance;
     public bool RightToggle = true;
     // private SfDropDownButton ddbtn;
 
@@ -159,7 +179,10 @@
     // Specifies the value of Menu component Datasource property.
     public List<MenuItem>
     MainMenuItems = new List<MenuItem>
-                                                                                                                                                                                                                                                                                                                                                                                            {
+                            {
+         new MenuItem {
+        Text = "Blazor Hero", Id = "1", IconCss ="<path d=\"M 37.00,90.00 C 37.00,90.00 328.90,90.00 328.90,90.00 328.90,90.00 328.90,410.00 328.90,410.00 328.90,410.00 37.00,410.00 37.00,410.00 37.00,410.00 37.00,90.00 37.00,90.00 Z M 381.49,90.75 C 381.49,90.75 464.00,90.75 464.00,90.75 464.00,90.75 464.00,410.00 464.00,410.00 464.00,410.00 381.49,410.00 381.49,410.00 381.49,410.00 381.49,280.80 381.49,280.80 381.49,280.80 337.37,280.80 337.37,280.80 337.37,280.80 337.37,220.44 337.37,220.44 337.37,220.44 381.49,220.44 381.49,220.44 381.49,220.44 381.49,90.75 381.49,90.75 Z M 119.51,150.36 C 119.51,150.36 119.51,220.44 119.51,220.44 119.51,220.44 236.91,220.44 236.91,220.44 236.91,220.44 236.91,280.80 236.91,280.80 236.91,280.80 119.51,280.80 119.51,280.80 119.51,280.80 119.51,349.64 119.51,349.64 119.51,349.64 246.39,349.64 246.39,349.64 246.39,349.64 246.39,150.36 246.39,150.36 246.39,150.36 119.51,150.36 119.51,150.36 Z\"/>"
+            },
         new MenuItem {
         Text = "Overview", IconCss = "icon-user icon",
         Items = new List<MenuItem>
@@ -227,7 +250,7 @@
                                     new MenuItem{ Text = "Add Details" }
                                     }
                                     }
-                                                                                                                                                                                                                                                                                                                                                                                                                        };
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        };
     // Specifies the event handler for Clicked event in Toolbar component.
     public void Toggle() => SidebarToggle = !SidebarToggle;
 }
@@ -264,7 +287,7 @@
         text-align: center;
         font-weight: 500;
         font-size: 16px;
-        margin-left: 5px;
+        margin-left: 50px;
     }
     /* Specific styles for Right side pane elements*/
     #maintext.main-content {
@@ -632,7 +655,6 @@
     }
 
     .e-sidebar {
-        top: 37px !important;
         position: fixed;
         background-color: #f8f8f8;
         color: black;
@@ -656,16 +678,16 @@
     }
 
     /*     .customize-toolbar.e-toolbar {
-                                                                                                                                                        background: white;
-                                                                                                                                                        box-shadow: none;
-                                                                                                                                                    }
+                                                                                                                                                                                                                                                        background: white;
+                                                                                                                                                                                                                                                        box-shadow: none;
+                                                                                                                                                                                                                                                    }
 
-                                                                                                                                                        .customize-toolbar.e-toolbar .e-toolbar-items {
-                                                                                                                                                            background: white;
-                                                                                                                                                        } */
+                                                                                                                                                                                                                                                        .customize-toolbar.e-toolbar .e-toolbar-items {
+                                                                                                                                                                                                                                                            background: white;
+                                                                                                                                                                                                                                                        } */
     /*   .e-toolbar .e-toolbar-item:hover {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    background: #add8e6;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border: white;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    cursor: pointer;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    background: #add8e6;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border: white;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    cursor: pointer;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
 </style>
