@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material.css",
+    "inputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material.scss"
+  },
+  {
+    "outputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material-dark.css",
+    "inputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material-dark.scss"
+  }
+]

@@ -1,5 +1,17 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.WebUtilities
+<!DOCTYPE html>
 <html lang="en">
+
+    @inject NavigationManager UrlHelper;
+
+@{
+
+    var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+    string themeName = string.IsNullOrEmpty(QueryHelpers.ParseQuery(uri.Query).GetValueOrDefault("theme").ToString()) ? "material" : QueryHelpers.ParseQuery(uri.Query).GetValueOrDefault("theme").ToString();
+
+    string data = "";
+
+}
 
 <head>
     <meta charset="utf-8" />
@@ -11,9 +23,12 @@
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/Syncfusion.Blazor.Themes/bootstrap5.css" rel="stylesheet" />
+
     <script src="_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js" type="text/javascript"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+
+    <link href=@("~/lib/syncfusion/blazor-themes/SCSS-Themes/" + themeName + ".css") rel="stylesheet" />
 </head>
 
 <body>

@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@inject NavigationManager UrlHelper;
+@inherits LayoutComponentBase
 
 <AuthorizeView>
     <Authorized>
@@ -9,7 +10,9 @@
                     <ChildContent>
                         <div class="main-menu">
                             <div>
-                                <SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
+                                <AdminNavMenu />
+                                @*                                 <SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
+                                *@
                             </div>
                         </div>
                     </ChildContent>
@@ -47,27 +50,39 @@
                                 <Template>
                                     @*   <SfIcon Name="IconName.IncreaseIndent" Size="IconSize.Large">
                                     </SfIcon> *@
-                                    <SfIcon IconCss="fas fa-language" Size="IconSize.Large">
-                                    </SfIcon>
+                                    @*  <SfIcon IconCss="fas fa-language" Size="IconSize.Large">
+                                    </SfIcon> *@
+                                    <SfDropDownButton IconCss="fas fa-language" style="background-color: #f8f9fa;color:black;border: 0px;" CssClass="e-caret-hide">
+                                        <DropDownMenuItems>
+                                            <DropDownMenuItem Text="English" Url=""></DropDownMenuItem>
+                                            <DropDownMenuItem Text="Chinese" Url=""></DropDownMenuItem>
+                                            <DropDownMenuItem Text="Japanese" Url=""></DropDownMenuItem>
+
+                                        </DropDownMenuItems>
+                                    </SfDropDownButton>
                                 </Template>
                             </ToolbarItem>
+
                             <ToolbarItem Type="ItemType.Separator">
                             </ToolbarItem>
-                            <ToolbarItem style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
+                            <ToolbarItem OnClick="@ToogleDarkMode" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
                                 <Template>
+                                    <SfIcon style="margin-left:5px" IconCss="@(isDarkMode ? "fas fa-moon" : "fas fa-sun")" Size="IconSize.Large">
+                                    </SfIcon>
                                     @*   <SfIcon Name="IconName.IncreaseIndent" Size="IconSize.Large">
                                     </SfIcon> *@
-                                    <SfIcon IconCss="fas fa-sun" Size="IconSize.Large">
-                                    </SfIcon>
+                                    @*   (@isDarkMode ? < SfIcon IconCss = "fas fa-sun" Size = "IconSize.Large" >
+                                    </ SfIcon > : < SfIcon IconCss = "fas fa-moon" Size = "IconSize.Large" >
+                                    </ SfIcon > ) *@
                                 </Template>
                             </ToolbarItem>
                             <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
 
                             <ToolbarItem style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
                                 <Template>
-                                    <SfDropDownButton IconCss="fas fa-bell" Tex style="background-color: white;color:black;border: 0px;" CssClass="e-caret-hide" Content="5">
+                                    <SfDropDownButton IconCss="fas fa-bell" style="background-color: #f8f9fa;color:black;border: 0px;" CssClass="e-caret-hide" Content="5">
                                         <DropDownMenuItems>
-                                            <DropDownMenuItem style="text-align: left; padding-left:0" Text="Notification" Url=""></DropDownMenuItem>
+                                            <DropDownMenuItem style="text-align: left; padding-left:0" Text="Notification" Disabled="true"></DropDownMenuItem>
                                             <DropDownMenuItem Separator=true></DropDownMenuItem>
                                             <DropDownMenuItem IconCss="fas fa-inbox" Text="A new order has been placed" Url=""></DropDownMenuItem>
                                             <DropDownMenuItem IconCss="fas fa-tasks" Text="Completed Task" Url=""></DropDownMenuItem>
@@ -80,11 +95,13 @@
                                         </DropDownMenuItems>
                                     </SfDropDownButton>
                                 </Template>
-                            </ToolbarItem>    <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+                            </ToolbarItem>
+
+                            <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
 
                             <ToolbarItem>
                                 <Template>
-                                    <SfDropDownButton style="background-color: white;color:black;border: 0px;" CssClass="e-caret-hide">
+                                    <SfDropDownButton style="background-color: #f8f9fa;color:black;border: 0px;" CssClass="e-caret-hide">
                                         <div class="e-avatar e-avatar-small image e-avatar-circle" style="display:flex;">
                                             <img src="data:image/sjpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQApAMBIgACEQEDEQH/xAAcAAABBAMBAAAAAAAAAAAAAAAAAgMEBwEFBgj/xAA/EAABAwICBgkCBQIDCQAAAAABAAIDBBEFIQYSEzFBUQcUMlJhcYGRoSIjM0JiscEVchaC0QglNENTkqLC4f/EABoBAQADAQEBAAAAAAAAAAAAAAACAwQBBQb/xAAlEQEAAgIBBAEEAwAAAAAAAAAAAQIDERIEITFRBTM0QYEiIzL/2gAMAwEAAhEDEQA/ALo6u7mFkfYuXZ35KQo9V+VArrDbbikGEvOte1+aYKnR9hvkgYEZiIeTcDkl9YbbcVmo/Ccue0sxlmj2jldir99PEdQc3nJo9yEFZdL3STWQ4nUYBgEuwbE0NqaphO01+LGngALXO+91TRJcSXG5cbknMkpU0sk8r5p3l8sji97j+ZxNyUhHQhCEAhCEAp+DYxiGB18VdhVS+nqIz2mnJw5OHEeBUBCD1L0babQaWYGJnNDK+nsyribuDrdpv6TnbluXWmYOFrEXyXl/olxt+D6bUTS+1PWnq0wO76uyfR1vlemWZPaN2aOHeru5hZb9i989bkpCjVW9vqgX1hvIpGwLswRY5hMKczsjyQMdXdzCFJQghbR/eKch+4Tr/VbddI2T+78pcX2idplfcge2TO6FGc9wcQCQByUjas7wTDo3FxcBcHcgzG4veGvJIPAqtf8AaEldDodSwxts2atYHkeDXEfKsqNpY8OeLAcVwPTxC2p6P5pAc6epik93av8A7IPNyBnuW40NohiOlWFUhALX1LS7yb9R/ZXFpV0bYPjjn1FJfD6x354gNm883M/kWULZK1nUp1pNo3ChUWXZYn0Y6T0MhEFLFWx8HwSjP0dYpGGdG2k9dO1ktCKOL80tRI0ADyBJK7zr7OFvTkWtc5zWtGs5xs0DMk+AXS0vR9pXVQNmjwl7WOFxtJGsJ9Cbq5NE9CcJ0Zia+GPrFbb66qUAuv8Ap7o8l019/iqLZ9eFtcHt5cxXB8SweYRYpRS0zzu1xk7yO4+ihWXqfEsPpMUopKOvp2T08gs5jxf1HI+K8+6f6LnRbGurxOc+jnbtKd7t9r2LSeY/kKzHliyF8fHu56mnfSVMNTHm+GRsgF+LSD/C9mxhjqdsgAuWB1x5Lxa/sHyXsrC3j+kUbXH6zTRg+eqFaqL2j+8U7D9y+v8AVbddN7KTu/Kch+1faWF9yB3ZM7oUZ0jgcnGykbVneCYdE8m4FxwQJ2j+8ULOyf3flYQTVHqvyJPWH8m+yywme4fkByQMnddTI+w3ySOrs5uTZmc0lotllmgdqPwnLkekekFdoNjVORdxpXPaPFpDh8gLqmvMpDHWseS1WKRhtRqkazC0ZHioXvwjaVK8p0oToUw/rWk81cW3ZSU5seTn5D41leAy4rldFdG49HNIMYFKy1JVtjmh5MzdrMHkbHyIXVLLltyttqx11HcIQhVaWhCEIBcz0g6N/wCJdH5YIQOuwHa0zjxcN7fUZey6ZC7EzE7hyY3GnlNlLNJVNpC0smdKIixwsWuJtYjzXsSk1WshawjVYA3LwFlXbNGoKnpAnxuaFhZTU8bYvpFnSm93HmQLZ+K77CWXbM/OzSCPFbIyxa0RDJbHxrMtuo1Vvb6rHWH8m+yUwbe+vlq7rK1UYt4KazsjyTfVmc3JvbObkAMkEpCi9Yfyb7IQN2Kdpsi7yUlMVX5UD1xzUOQfW5JO5TY+w3yQRoQRKOSaxOn20Ye3NzOHMKXUfhOUVRtXlGnazqdtL423oWwrqYCITsFs7OA3ea16xXpxnTdS0WjYQhCgkEIQgEIR5IMgEmwzJ3Le0kGwpdU9q1z5qNHTMht9I2lhcnmn2dtvmtmLHx7yyZcnLtBNjyT9NlrXPJSFGqt7fVXKUi6hOH1HjmVhTWdkeSCHY8kKchAx1gd0+6w47ci2WqmE9Tb3IDq57w9koTBn02vbJPqC/wDEd5oHnSCb6ALX4rHVz3h7JEH4oUxBFfZsZie0uB3+S0k8ZikLTzyW6qPxPRRauNskRvkWi4Kqy05Qtx34y1aFhjmvYHNNwVlYWwIQhdApeHxAzCR4u1u7xKixgOmjjJsXmwW3jaGMDWbgrsNOU7U5b6jSQYzL9QNkbEtIdcWGacp/w/VLf2D5LYyGusDun3SXff3ZavNMp+l/N6IMdXPeHslCcN+nVNxkU+oLu0fMoH+sDun3WVGQgmbNndCan+3bUyunNtH3vhNy/dts87b0DW0fbtFSWMaWgkXNlHMMnd+U+2VjQGuNiN4QYlAYwlosQmBI++9PSvbI3VYbk8FFqJYqVmvUyxxNH5pHho+SglQgPZdwub703XGKKllLrC7SB4my51+n+jNNPHSNxNk88jw0Nga6QXJtm4DVHunauqkqZNZ5yG4DgkwRP5hq4pHwuy4bwpsVRG/InVPIpiqiv9YGfGyjeK829ZpOpenSYvXbalwHEe6Ylqmsybm5QUC+4ZqO0uER5TMOk/3lDLLm0HM8sl14aw2IAXJQxbNljvO9S243FhFHNUVz3CkhYXvIBJaByHHyW/DSa1efnvFrdm8lcWvLWmwSWvcXNu477WWioNMtHcWeOp4rTl7v+XKTE72eAVvIgXasjbOZv1gQQrdTCmJiUrZs7oTU/wBvV1Mr705to+98JqX7pGzztvR03tH95SWxtIGQUfYyd35T4lYAAXZoFbNndCFjbR974QgiJ6m3u9EvYM8VrNIcYo9G8KmxGtdqxMFrDtPdwaPEoJuJ4lR4VSPq8RqY6enZ2pJDYeXiVVWP9L8bJHMwHDxMLn79Vdo9GjP3Kr7SrSbEdKMQNViEhbG0/ZpmOOziHgOfMrSq6uP2otk9OqxLpD0pryR/U3UrDvbSNEfzv+VzklRUVTy6rqJqh53unkMhPqSmEuLtHyU9Qr3J3MWLCQRuI3hXvgNeMTwajrQbmWIa3924/N1Q53KzOirENpQVeHPOcL9owfpdv+Rf1Uckdk8U6nTu9+9Qp49m/LsncpqTJGHsLTx3LHlx86tuHJwsgeKk00X5z6JqOIukLTlq71OAAFgqMGLvuWjqMsRHGAuL6UsQ6vgkVE11n1cguP0NzPzZdoqf6RsQ69pLLE03ZRtEI5A73fJt6LfSNy8/JOocvYHIi48U9RYtiWGy62H4jWUpH/Rnc0e24+yaCYd2ir2fbtMN6UNJaIBs8sFa0b+sRWcfVtl32inSrhOIvZT4tH/Tah5ADnO1oif7uHqFRiPDIjxUJpEpxeYeuWSNewOa4OaRcEHIhRHbz5lUb0d6f1Gj80eH4nK6XCnuAa55JNMeY/TzHDgr4jZFMxsjHBzXtDgWm4IPEKq1dLq22YQpPV2LKikXrDmF586V9JnY5pE6kp5L0FAdmwA5PkHad/A8jzVuaZYt/Q9GcQxBptJHFqxf3u+lvyQvNgyHPxPFWY4/KrJP4CEIVykJcXaPkkLIOruQPLoNBcQ/p2k9I5zrRTkwyXPB27/ysudY4u3pYc5pDmOLXA3a4cCNyT4InUvQw3rTaV4+NHcPjqXU75ZJnFkIGTda18zwW30bmjxXB6PETY7eIOLRwdx+VrulCKB+hda+VpOzdGY7bw7XAH7rHkmYrOnp9JWt81ItG4mVc4dp7i9NiD56stqaeRw14OyGj9J4fKtOhqm1tDTVkTXtiqIxIzXbY2PgqEpGxvqoWT3MTpWh9u7cX+F6VZDEIWQtYBG1oa1o3ADcs/TWtO9vV+Zw4sXHhXUy0mIVbKGhqKyS2rBGXm/gFQU8rqieSeQ3fI9z3HxJuVbXSxVCgwOOjY7OtkAtx1W2cfnV91US9DHHZ83lnvpkJh3aKW55BSCb5qxUwhCEdZV1dCmkzq3D5cCrH3lomh1OXHN0XL/Ll6EKlFu9C8Vdg2lOG1gJ2e2Eco5sf9J/e/ooWjcJVnUvUGsOYQoJ35IVDSrvpzn2GAUFIH/8RVa7gOIa0/yQqWVkdOldt9JqKhBNqWk1yPF7v9Gj3Vbq+kdma8/yCEIU0QhCEcPMGSyksOVkpBbnQ5iW2wmrw2R31Usu0jH6H/8A0H3UzpdqBFouyG9tvUsbbmBd38Kv+jbE/wCm6XUms4iGqBp5M+fZP/cB7rqumqoszCqTm6SX2AH8rH1P8ay9b4mOfU0j1KrXHI2yNsvBek8HqRV4RRVIzE1PHJz3tC82lXrofiUdPoBSVsxsykpXa9+TL/6LJ0v+ph7nz1f6q29SrrpVxPr2lT4GOvHQxiEf3HN38D0XHpyqqJKuqmqZjeSaR0jz4uNz+6aXrVjUPjpnckSDim0p7rnwSV0CEIQCw/WDCWEhwF2kcCsoQep8FeK7B6GrbICJ6eOQHzaChanovqBU6BYOb5xQ7E/5CW/sAhZp8tUeFLdJ0r5tOsVMhuWOYweADAuXQhaK+Ga3kIQhdcCEIRxlu9PrCEGWyvgcJonaskZDmkcCMwu56XJ3zYzhmud9A19hzc43/YIQsnW/Te18D93+nDHJd7HUyxdD8rGOsH1pid/aXgkeqELH0f1XufPfa/uHArDtyyheu+JMcUIQjoQhCAWRmc0IQXj0NVEn+DGs1smVUoHlcH+UIQq58rY8P//Z" width="200" height="300">
                                         </div>
@@ -155,10 +172,11 @@
 @code {
     // Specifies the orientation type of Menu component.
     // Specifies the orientation type of Menu component.
-    public Syncfusion.Blazor.Navigations.Orientation VerOrientation = Syncfusion.Blazor.Navigations.Orientation.Vertical;
     // Specify the value of Sidebar component state. It indicates whether the sidebar component is in an open/close state.
     public bool SidebarToggle = false;
     SfSidebar sidebarObj;
+
+    private bool isDarkMode = false;
 
     private bool Visibility { get; set; } = false;
     private void OnClicked()
@@ -166,87 +184,24 @@
         this.Visibility = !this.Visibility;
     }
 
+    private void ToogleDarkMode()
+    {
+        this.isDarkMode = !this.isDarkMode;
+
+        UrlHelper.NavigateTo(GetUri(), true);
+    }
+
+    private string GetUri()
+    {
+        var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+        return uri.AbsolutePath + "?theme=" + (isDarkMode ? "material-dark" : "material");
+    }
+
     private void OverlayClick(OverlayModalClickEventArgs args)
     {
         this.Visibility = false;
     }
 
-    // Specifies the value of Menu component Datasource property.
-    public List<MenuItem>
-    MainMenuItems = new List<MenuItem>
-                                                                                                                                                                                                                                                                                                                                                                {
-        //  new MenuItem {
-        // Text = "Blazor Hero", Id = "1", IconCss ="<path d=\"M 37.00,90.00 C 37.00,90.00 328.90,90.00 328.90,90.00 328.90,90.00 328.90,410.00 328.90,410.00 328.90,410.00 37.00,410.00 37.00,410.00 37.00,410.00 37.00,90.00 37.00,90.00 Z M 381.49,90.75 C 381.49,90.75 464.00,90.75 464.00,90.75 464.00,90.75 464.00,410.00 464.00,410.00 464.00,410.00 381.49,410.00 381.49,410.00 381.49,410.00 381.49,280.80 381.49,280.80 381.49,280.80 337.37,280.80 337.37,280.80 337.37,280.80 337.37,220.44 337.37,220.44 337.37,220.44 381.49,220.44 381.49,220.44 381.49,220.44 381.49,90.75 381.49,90.75 Z M 119.51,150.36 C 119.51,150.36 119.51,220.44 119.51,220.44 119.51,220.44 236.91,220.44 236.91,220.44 236.91,220.44 236.91,280.80 236.91,280.80 236.91,280.80 119.51,280.80 119.51,280.80 119.51,280.80 119.51,349.64 119.51,349.64 119.51,349.64 246.39,349.64 246.39,349.64 246.39,349.64 246.39,150.36 246.39,150.36 246.39,150.36 119.51,150.36 119.51,150.36 Z\"/>"
-        //     },
-        new MenuItem {
-        Text = "Overview", IconCss = "icon-user icon",
-        Items = new List<MenuItem>
-            {
-            new MenuItem{ Text = "Home" },
-            new MenuItem{ Text = "About" },
-            new MenuItem{ Text = "Contact" }
-            }
-            },
-            new MenuItem {
-            Text = "Notification",
-            IconCss = "icon-bell-alt icon",
-            Items = new List<MenuItem>
-                {
-                new MenuItem{ Text = "Message" },
-                new MenuItem{ Text = "Facebook" },
-                new MenuItem{ Text = "Twitter" }
-                }
-                },
-                new MenuItem {
-                Text = "Info",
-                IconCss = "icon-tag icon",
-                Items = new List<MenuItem>
-                    {
-                    new MenuItem{ Text = "Personal Info" },
-                    new MenuItem{ Text = "Contact Info" },
-                    }
-                    },
-                    new MenuItem {
-                    Text = "Comments",
-                    IconCss = "icon-comment-inv-alt2 icon",
-                    Items = new List<MenuItem>
-                        {
-                        new MenuItem{ Text = "All Comments" },
-                        new MenuItem{ Text = "Add Comments" },
-                        new MenuItem{ Text = "Delete Comments" }
-                        }
-                        },
-                        new MenuItem {
-                        Text = "Bookmarks",
-                        IconCss = "icon-bookmark icon",
-                        Items = new List<MenuItem>
-                            {
-                            new MenuItem{ Text = "Show All bookmarks" },
-                            new MenuItem{ Text = "Bookmark this item" }
-                            }
-                            },
-                            new MenuItem {
-                            Text = "Users",
-                            IconCss = "icon-user icon",
-                            Items = new List<MenuItem>
-                                {
-                                new MenuItem{ Text = "Mobile User" },
-                                new MenuItem{ Text = "Laptop User" },
-                                new MenuItem{ Text = "Desktop User" }
-                                }
-                                },
-                                new MenuItem {
-                                Text = "Settings",
-                                IconCss = "icon-eye icon",
-                                Items = new List<MenuItem>
-                                    {
-                                    new MenuItem{ Text = "Change Profile" },
-                                    new MenuItem{ Text = "Add Name" },
-                                    new MenuItem{ Text = "Add Details" }
-                                    }
-                                    }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
-    // Specifies the event handler for Clicked event in Toolbar component.
     public void Toggle() => SidebarToggle = !SidebarToggle;
 }
 <style>

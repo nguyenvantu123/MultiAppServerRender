@@ -6,7 +6,7 @@
 @inject IStringLocalizer<Localizer.Global> L
 
 @* <MudNavMenu Style="flex: 1">
- 
+
     <MudNavLink Href="@_navigationManager.ToAbsoluteUri("").AbsoluteUri" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.BarChart">
         @L["Dashboard"]
     </MudNavLink>
@@ -47,18 +47,24 @@
     </MudNavGroup>
 </MudNavMenu> *@
 
+<SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
+
 @code {
     TenantModel tenant = new TenantModel();
+
+    public List<MenuItem> MainMenuItems = new List<MenuItem>();
+
+    public Syncfusion.Blazor.Navigations.Orientation VerOrientation = Syncfusion.Blazor.Navigations.Orientation.Vertical;
 
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
 
     [Inject] protected AccountApiClient accountApiClient { get; set; }
 
-    private bool _canViewUsers = true;
-    private bool _canViewRoles = true;
+    // private bool _canViewUsers = true;
+    // private bool _canViewRoles = true;
 
-    private bool _canViewTenant = true;
+    // private bool _canViewTenant = true;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -67,11 +73,67 @@
         if (user!.Identity!.IsAuthenticated)
         {
 
-            _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
+            MainMenuItems.Add(new MenuItem
+                {
+                    Text = "Dashboard",
+                    IconCss = "fas fa-chart-line",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem{ Text = "Marketing" },
+                        new MenuItem{ Text = "Sale" },
+                    }
+                });
 
-            _canViewUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null;
+            MainMenuItems.Add(new MenuItem
+                {
+                    Text = "Setting",
+                    IconCss = "fas fa-tools",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem{ Text = "MainSettings" },
+                        new MenuItem{ Text = "Email" },
+                    }
+                });
 
-            _canViewTenant = user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Read).FirstOrDefault() != null;
+            // MainMenuItems.Add(new MenuItem
+            //     {
+            //         Text = "Dashboard",
+            //         IconCss = "fas fa-chart-line",
+            //         Items = new List<MenuItem>
+            //         {
+            //             new MenuItem{ Text = "Marketing" },
+            //             new MenuItem{ Text = "Sale" },
+            //         }
+            //     });
+
+            MainMenuItems.Add(new MenuItem
+                {
+                    Text = "Monotoring",
+                    IconCss = "fas fa-history",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem{ Text = "History" },
+                        new MenuItem{ Text = "Notes" },
+                    }
+                });
+
+            if (user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null)
+            {
+                MainMenuItems.Add(new MenuItem
+                    {
+                        Text = "Account",
+                        IconCss = "fas fa-users",
+                    });
+            }
+
+            if (user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Read).FirstOrDefault() != null)
+            {
+                MainMenuItems.Add(new MenuItem
+                    {
+                        Text = "MultiTenancy",
+                        IconCss = "fas fa-balance-scale",
+                    });
+            }
 
             // var apiResponse = await accountApiClient.GetTenant();
             // if (apiResponse.StatusCode == 200)
