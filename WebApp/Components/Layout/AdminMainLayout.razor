@@ -1,4 +1,5 @@
-﻿@inject NavigationManager UrlHelper;
+﻿@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager UrlHelper;
 @inherits LayoutComponentBase
 
 <AuthorizeView>
@@ -35,15 +36,15 @@
                     @*Initialize the Toolbar component*@
                     <SfToolbar>
                         <ToolbarItems>
-                            <ToolbarItem>
-                                <Template>
-                                    <SfIcon Name="IconName.Menu" style="cursor:pointer;display: flex;" Size="IconSize.Large" onclick="@Toggle">
-                                        <div class="e-folder">
-                                            <div class="e-folder-name">Blazor Data</div>
-                                        </div>
-                                    </SfIcon>
-                                </Template>
-                            </ToolbarItem>
+                            @*                             <ToolbarItem>
+                            <Template>
+                            <SfIcon Name="IconName.Menu" style="cursor:pointer;display: flex;" Size="IconSize.Large" onclick="@Toggle">
+                            <div class="e-folder">
+                            <div class="e-folder-name">Blazor Data</div>
+                            </div>
+                            </SfIcon>
+                            </Template>
+                            </ToolbarItem> *@
                             <ToolbarItem Type="ItemType.Spacer"></ToolbarItem>
                             <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
                             <ToolbarItem style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
@@ -52,7 +53,7 @@
                                     </SfIcon> *@
                                     @*  <SfIcon IconCss="fas fa-language" Size="IconSize.Large">
                                     </SfIcon> *@
-                                    <SfDropDownButton IconCss="fas fa-language" style="background-color: #f8f9fa;color:black;border: 0px;" CssClass="e-caret-hide">
+                                    <SfDropDownButton IconCss="fas fa-language" style="background: inherit;font-size:20px" CssClass="e-caret-hide">
                                         <DropDownMenuItems>
                                             <DropDownMenuItem Text="English" Url=""></DropDownMenuItem>
                                             <DropDownMenuItem Text="Chinese" Url=""></DropDownMenuItem>
@@ -65,22 +66,17 @@
 
                             <ToolbarItem Type="ItemType.Separator">
                             </ToolbarItem>
-                            <ToolbarItem OnClick="@ToogleDarkMode" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
+                            <ToolbarItem OnClick="@ToogleDarkMode">
                                 <Template>
-                                    <SfIcon style="margin-left:5px" IconCss="@(isDarkMode ? "fas fa-moon" : "fas fa-sun")" Size="IconSize.Large">
+                                    <SfIcon style="margin-left:5px;margin-top:2px;font-size:14px" IconCss="@(themeName == "material" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" Size="IconSize.Large">
                                     </SfIcon>
-                                    @*   <SfIcon Name="IconName.IncreaseIndent" Size="IconSize.Large">
-                                    </SfIcon> *@
-                                    @*   (@isDarkMode ? < SfIcon IconCss = "fas fa-sun" Size = "IconSize.Large" >
-                                    </ SfIcon > : < SfIcon IconCss = "fas fa-moon" Size = "IconSize.Large" >
-                                    </ SfIcon > ) *@
                                 </Template>
                             </ToolbarItem>
                             <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
 
-                            <ToolbarItem style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
+                            <ToolbarItem>
                                 <Template>
-                                    <SfDropDownButton IconCss="fas fa-bell" style="background-color: #f8f9fa;color:black;border: 0px;" CssClass="e-caret-hide" Content="5">
+                                    <SfDropDownButton CssClass="e-caret-hide" IconCss="fas fa-bell" style="background:inherit" Content="5">
                                         <DropDownMenuItems>
                                             <DropDownMenuItem style="text-align: left; padding-left:0" Text="Notification" Disabled="true"></DropDownMenuItem>
                                             <DropDownMenuItem Separator=true></DropDownMenuItem>
@@ -101,7 +97,7 @@
 
                             <ToolbarItem>
                                 <Template>
-                                    <SfDropDownButton style="background-color: #f8f9fa;color:black;border: 0px;" CssClass="e-caret-hide">
+                                    <SfDropDownButton CssClass="e-caret-hide" style="background:inherit">
                                         <div class="e-avatar e-avatar-small image e-avatar-circle" style="display:flex;">
                                             <img src="data:image/sjpeg;base64,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" width="200" height="300">
                                         </div>
@@ -117,30 +113,12 @@
                                 </Template>
 
                             </ToolbarItem>
-                            @*   <ToolbarItem>
-                            <Template>
-                            <SfDropDownButton style="background-color: white;color:black;border: 0px;" CssClass="e-round-corner" Content="NG">
-                            <PopupContent>
-
-                            </PopupContent>
-                            <ChildContent>
-                            <DropDownMenuItems>
-                            <DropDownMenuItem IconCss="fa fa-user" Text="User"></DropDownMenuItem>
-                            <DropDownMenuItem Text="Copy"></DropDownMenuItem>
-                            <DropDownMenuItem Text="Paste"></DropDownMenuItem>
-                            </DropDownMenuItems>
-                            </ChildContent>
-                            </SfDropDownButton>
-                            </Template>
-                            </ToolbarItem>     *@
 
                             <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
-
-                            <ToolbarItem OnClick="@OnClicked" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
+                            @*     style="cursor:pointer; display:flex;align-content:center;margin-left: 5px" *@
+                            <ToolbarItem OnClick="@OnClicked">
                                 <Template>
-                                    @*   <SfIcon Name="IconName.IncreaseIndent" Size="IconSize.Large">
-                                    </SfIcon> *@
-                                    <SfIcon IconCss="fas fa-indent" Size="IconSize.Large">
+                                    <SfIcon style="margin-top: 2px;display: flex;margin-left: 5px;font-size:14px" IconCss="fas fa-indent" Size="IconSize.Large">
                                     </SfIcon>
                                 </Template>
                             </ToolbarItem>
@@ -174,10 +152,13 @@
     // Specifies the orientation type of Menu component.
     // Specify the value of Sidebar component state. It indicates whether the sidebar component is in an open/close state.
     public bool SidebarToggle = false;
+    private bool IsDarkMode = false;
+
+    public string Color = "black";
+
     SfSidebar sidebarObj;
 
-    private bool isDarkMode = false;
-
+    private string themeName;
     private bool Visibility { get; set; } = false;
     private void OnClicked()
     {
@@ -186,15 +167,43 @@
 
     private void ToogleDarkMode()
     {
-        this.isDarkMode = !this.isDarkMode;
+        IsDarkMode = !IsDarkMode;
 
-        UrlHelper.NavigateTo(GetUri(), true);
+        var theme = GetThemeName();
+
+        if (theme == "material-dark")
+        {
+            theme = "material";
+            Color = "black";
+        }
+        else
+        {
+            theme = "material-dark";
+
+            Color = "white";
+        }
+
+        UrlHelper.NavigateTo(GetUri(theme), true);
     }
 
-    private string GetUri()
+    protected override void OnInitialized()
+    {
+        var theme = GetThemeName();
+        themeName = theme;
+    }
+
+    private string? GetThemeName()
     {
         var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-        return uri.AbsolutePath + "?theme=" + (isDarkMode ? "material-dark" : "material");
+        QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var theme);
+
+        return string.IsNullOrEmpty(theme) || theme!.First() == null ? "material" : (theme!.First());
+    }
+
+    private string GetUri(string themeName)
+    {
+        var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+        return uri.AbsolutePath + "?theme=" + themeName;
     }
 
     private void OverlayClick(OverlayModalClickEventArgs args)
@@ -246,7 +255,7 @@
 
     #wrapper .sidebar-menu .e-menu-container {
         border: 0px;
-        height: 500px;
+        height: 1000px;
     }
 
     #maintext .content {
@@ -313,7 +322,7 @@
         src: url('data:application/octet-stream;base64,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') format('truetype');
     }
 
-    .sidebar-menu .icon-up-hand:before {
+   /*  .sidebar-menu .icon-up-hand:before {
         content: '\e801';
     }
 
@@ -347,7 +356,7 @@
 
     .sidebar-menu .icon-globe:before {
         content: '\e809';
-    }
+    } */
 
     .sidebar-menu .icon-bookmark-empty:before {
         content: '\e810';
@@ -604,28 +613,13 @@
         position: fixed;
     }
 
-    .e-sidebar {
-        top: 37px !important;
-        position: fixed;
-        background-color: #f8f8f8;
-        color: black;
-    }
-
     .text-content {
         font-size: 1.5rem;
         padding: 3rem;
     }
 
-    .e-toolbar .e-tbar-btn:hover {
-        background: #c0e3a1;
-        border: white;
-        cursor: pointer;
-    }
-
-    .e-dropdown-btn:hover {
-        background: #c0e3a1;
-        border: white;
-        cursor: pointer;
+    .e-dropdown-btn .e-btn-icon, .e-dropdown-btn.e-btn .e-btn-icon {
+        font-size: 20px;
     }
 
     html,
@@ -735,5 +729,9 @@
         #defaultDialog .e-dlg-content {
             overflow-x: auto;
         }
+    }
+
+    .fa, .fas .fa-moon {
+        color: white;
     }
 </style>
