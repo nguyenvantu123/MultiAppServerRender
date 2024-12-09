@@ -56,7 +56,7 @@
                                 <Template>
                                     @*   <SfIcon style="margin-left:5px;margin-top:2px;font-size:14px;color:inherit" IconCss="@(themeName == "material" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" Size="IconSize.Large" Icon>
                                     </SfIcon> *@
-                                    <SfButton CssClass="e-custom e-flat" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px" IconCss="@(themeName == "material" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" IconPosition="IconPosition.Top">
+                                    <SfButton CssClass="e-custom e-flat" IconCss="@(themeName == "material" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" IconPosition="IconPosition.Top">
                                     </SfButton>
                                 </Template>
                             </ToolbarItem>
@@ -109,7 +109,7 @@
                                     @* <SfIcon style="margin-top: 2px;display: flex;margin-left: 5px;font-size:14px;" IconCss="fas fa-indent" Size="IconSize.Large">
                                     </SfIcon> *@
 
-                                    <SfButton CssClass="e-flat" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px" IconCss="fas fa-indent">
+                                    <SfButton CssClass="e-custom e-flat" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px" IconCss="fas fa-indent">
                                     </SfButton>
                                 </Template>
                             </ToolbarItem>
@@ -445,8 +445,8 @@
     }
 
     .e-custom, .e-custom:hover, .e-custom:focus, .e-custom:active {
-        background-color: #ff6e40;
-        color: #fff;
+        background-color: inherit !important;
+        color: inherit;
     }
 
 </style>
