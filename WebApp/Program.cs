@@ -34,6 +34,8 @@ using WebApp.Shared;
 using Syncfusion.Licensing;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
+using Aspire.StackExchange.Redis.DistributedCaching;
+using BlazorIdentity.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,11 @@ builder.AddServiceDefaults();
 builder.AddApplicationServices();
 
 builder.AddRabbitMqEventBus("EventBus");
+
+builder.AddRedisDistributedCache("Redis");
+
+builder.Services.AddSingleton<RedisUserRepository>();
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

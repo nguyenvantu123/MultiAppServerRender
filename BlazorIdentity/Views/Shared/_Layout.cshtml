@@ -19,7 +19,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    @* <meta charset="utf-8" />
+
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Duende IdentityServer</title>
@@ -28,29 +29,22 @@
     <script src="~/js/helpers/FormMvcHelpers.js" asp-append-version="true"></script>
     <script src="~/js/components/Picker.js" asp-append-version="true"></script>
 
+
     <environment include="Development">
-    <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
-    @await Html.PartialAsync("Common/ThemeResources")
-    <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" />
+        <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+        @await Html.PartialAsync("Common/ThemeResources")
+        <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" />
     </environment>
+
     <environment exclude="Development">
-    <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
-    @await Html.PartialAsync("Common/ThemeResources")
-    <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
-    </environment>
+        <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+        @await Html.PartialAsync("Common/ThemeResources")
+        <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
     </environment>
 
-    @await RenderSectionAsync("styles", required: false) *@
-
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Duende IdentityServer</title>
-    <link rel="icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
-    <link rel="shortcut icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
-    <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+    @*     <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
     @await Html.PartialAsync("Common/ThemeResources")
-    <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" />
+    <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" /> *@
     @*  <environment include="Development">
 
     </environment>
@@ -69,7 +63,7 @@
         <h3 class="menu-logo my-0 mr-md-auto font-weight-normal"><a class="logo" asp-area="" asp-controller="Home" asp-action="Index">Duende IdentityServer</a></h3>
 
         <!--Menu item -->
-        @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(name))
+        @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(name) && (User.IsInRole("Administrator")))
         {
             <!--Menu item -->
             <div class="menu-item my-2 my-md-0 mr-md-3 dropdown">
@@ -119,12 +113,13 @@
             </div>
 
             <a class="menu-item my-2 btn btn-outline-primary" asp-action="Logout" asp-controller="Account">@Localizer["Signout"]</a>
+
+            <!--Menu button - show in < MD -->
+            <a class="my-2 btn btn-outline-primary menu-button" href="#">
+                <span class="oi oi-menu" title="menu" aria-hidden="true"></span> @Localizer["Menu"]
+            </a>
         }
 
-        <!--Menu button - show in < MD -->
-        <a class="my-2 btn btn-outline-primary menu-button" href="#">
-            <span class="oi oi-menu" title="menu" aria-hidden="true"></span> @Localizer["Menu"]
-        </a>
     </div>
 
     <div class="container">
@@ -147,18 +142,18 @@
         </footer>
     </div>
 
-    <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
-    <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
-    @*     <script type="text/javascript" src="knockout-3.3.0.js"></script>
-    *@
-    @* <environment include="Development">
-
+    <script type="text/javascript" src="knockout-3.3.0.js"></script>
+    <environment include="Development">
+        <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
+        <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">
-    <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
-    <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
-    </environment> *@
+        <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
+        <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
+    </environment>
 
+
+    @await Html.PartialAsync("Common/Notification")
     @await RenderSectionAsync("scripts", required: false)
 </body>
 </html>

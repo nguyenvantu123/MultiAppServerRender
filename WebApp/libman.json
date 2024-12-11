@@ -6,8 +6,8 @@
       "library": "@syncfusion/blazor-themes@27.2.2",
       "destination": "wwwroot/lib/syncfusion/blazor-themes/",
       "files": [
-        "SCSS-Themes/material.scss",
-        "SCSS-Themes/material-dark.scss"
+        "SCSS-Themes/material3-dark.scss",
+        "SCSS-Themes/material3.scss"
       ]
     }
   ]

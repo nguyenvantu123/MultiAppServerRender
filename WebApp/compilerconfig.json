@@ -6,5 +6,13 @@
   {
     "outputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material-dark.css",
     "inputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material-dark.scss"
+  },
+  {
+    "outputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material3.css",
+    "inputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material3.scss"
+  },
+  {
+    "outputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material3-dark.css",
+    "inputFile": "wwwroot/lib/syncfusion/blazor-themes/SCSS-Themes/material3-dark.scss"
   }
 ]

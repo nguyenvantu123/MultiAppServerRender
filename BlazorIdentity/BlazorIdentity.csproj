@@ -76,6 +76,7 @@
     <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
     <ProjectReference Include="..\Aspire.Minio.Client\Aspire.Minio.Client.csproj" />
     <ProjectReference Include="..\Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj" />
+    <ProjectReference Include="..\Aspire.StackExchange.Redis.DistributedCaching\Aspire.StackExchange.Redis.DistributedCaching.csproj" />
     <ProjectReference Include="..\Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj" />
     <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
