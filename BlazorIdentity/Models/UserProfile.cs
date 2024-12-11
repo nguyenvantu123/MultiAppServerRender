@@ -7,7 +7,7 @@ namespace BlazorIdentity.Users.Models
     public partial class UserProfile
     {
         [Key]
-        public long Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
 
         public Guid UserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }

@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.WebUtilities
+﻿@using BlazorIdentity.Repositories
+@using Microsoft.AspNetCore.WebUtilities
 @inject NavigationManager UrlHelper;
 
 @inherits LayoutComponentBase
@@ -8,7 +9,7 @@
         <div id="control-section">
             <div id="wrapper">
                 @*Initialize the Sidebar component*@
-                <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="SidebarToggle" Type="@SidebarType.Auto">
+                <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="userProfile.IsNavOpen" Type="@SidebarType.Auto">
                     <ChildContent>
                         <div class="main-menu">
                             <div>
@@ -57,7 +58,7 @@
                                 <Template>
                                     @*   <SfIcon style="margin-left:5px;margin-top:2px;font-size:14px;color:inherit" IconCss="@(themeName == "material" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" Size="IconSize.Large" Icon>
                                     </SfIcon> *@
-                                    <SfButton CssClass="e-custom e-flat" IconCss="@(themeName == "material3" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" IconPosition="IconPosition.Top">
+                                    <SfButton CssClass="e-custom e-flat" IconCss="@( !userProfile.IsDarkMode   ?  "fas fa-sun" : "fas fa-moon")" IconPosition="IconPosition.Top">
                                     </SfButton>
                                 </Template>
                             </ToolbarItem>
@@ -143,10 +144,14 @@
     // Specifies the orientation type of Menu component.
     // Specifies the orientation type of Menu component.
     // Specify the value of Sidebar component state. It indicates whether the sidebar component is in an open/close state.
-    public bool SidebarToggle = false;
+    // public bool SidebarToggle = false;
     private bool IsDarkMode = false;
 
     SfSidebar sidebarObj;
+    [Inject] protected AccountApiClient accountApiClient { get; set; }
+    [Inject] protected RedisUserRepository redisUserRepo { get; set; }
+
+    public BlazorIdentity.Users.Models.UserProfile userProfile;
 
     private string themeName;
     private bool Visibility { get; set; } = false;
@@ -155,48 +160,53 @@
         this.Visibility = !this.Visibility;
     }
 
-    private void ToogleDarkMode()
+    private async void ToogleDarkMode()
     {
+        userProfile.IsDarkMode = !userProfile.IsDarkMode;
 
-        var theme = GetThemeName();
+        await redisUserRepo.UpdateUserProfileAsync(userProfile);
+        // var theme = GetThemeName();
 
-        if (theme == "material3-dark")
-        {
-            theme = "material3";
-        }
-        else
-        {
-            theme = "material3-dark";
-        }
+        // if (theme == "material3-dark")
+        // {
+        //     theme = "material3";
+        // }
+        // else
+        // {
+        //     theme = "material3-dark";
+        // }
 
-        UrlHelper.NavigateTo(GetUri(theme), true);
+        UrlHelper.Refresh();
     }
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
-        var theme = GetThemeName();
-        themeName = theme;
+        userProfile = await _accountApiClient.GetUserProfile();
     }
 
-    private string GetThemeName()
-    {
-        var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-        QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var theme);
-        return string.IsNullOrEmpty(theme) || theme!.First() == null ? "material3" : (theme!.First());
-    }
+    // private string GetThemeName()
+    // {
+    //     var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+    //     QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var theme);
+    //     return string.IsNullOrEmpty(theme) || theme!.First() == null ? "material3" : (theme!.First());
+    // }
 
-    private string GetUri(string themeName)
-    {
-        var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-        return uri.AbsolutePath + "?theme=" + themeName;
-    }
+    // private string GetUri(string themeName)
+    // {
+    //     var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+    //     return uri.AbsolutePath + "?theme=" + themeName;
+    // }
 
     private void OverlayClick(OverlayModalClickEventArgs args)
     {
         this.Visibility = false;
     }
 
-    public void Toggle() => SidebarToggle = !SidebarToggle;
+    public async void Toggle() {
+        userProfile.IsNavOpen = !userProfile.IsNavOpen;
+
+        await redisUserRepo.UpdateUserProfileAsync(userProfile);
+    }
 }
 <style>
     /* Sample specific styles*/
@@ -456,7 +466,8 @@
         white-space: normal !important;
         border-radius: 4px !important;
         /* box-shadow: 0 1px 3px 1px rgba(0, 0, 0, .15), 0 1px 2px 0 rgba(0, 0, 0, .3); */
-        padding: 7px 16px !important;
+        /*         padding: 7px 16px !important;
+                 */
     }
 
 </style>

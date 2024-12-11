@@ -42,6 +42,7 @@ using BlazorIdentityApi.Mappers;
 using BlazorIdentity.Resources;
 using Microsoft.Extensions.Configuration;
 using Aspire.StackExchange.Redis.DistributedCaching;
+using MultiAppServer.EventBus.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,7 +54,8 @@ var configuration = builder.Configuration;
 
 builder.AddRedisDistributedCache("Redis");
 
-builder.AddRabbitMqEventBus("EventBus");
+builder.AddRabbitMqEventBus("EventBus").AddSubscription<UpdateProfileEvent, OrderStatusChangedToStockConfirmedIntegrationEventHandler>();
+;
 
 builder.Services.AddSingleton<RedisUserRepository>();
 

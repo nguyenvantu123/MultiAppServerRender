@@ -6,9 +6,13 @@
 
 @{
 
-    var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-    QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var themeName);
-    themeName = string.IsNullOrEmpty(themeName) ? "material" : themeName.First();
+    // var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+    // QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var themeName);
+    // themeName = string.IsNullOrEmpty(themeName) ? "material" : themeName.First();
+
+    AdminMainLayout adminMainLayout = new AdminMainLayout();
+
+    string themeName = adminMainLayout.userProfile.IsDarkMode ? "material3" : "material3-dark";
 }
 
 <head>

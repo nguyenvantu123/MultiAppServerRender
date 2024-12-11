@@ -54,20 +54,6 @@ namespace WebApp.Interfaces
             return response;
         }
 
-        //public async Task<ApiResponseDto> Logout(string returnUrl = null)
-        //{
-        //    var response = await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/logout", null);
-
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var logoutModel = new AccountFormModel() { ReturnUrl = returnUrl };
-
-        //        //await SubmitServerForm("/server/logout/", logoutModel);
-        //    }
-
-        //    return response;
-        //}
-
         public async Task<ApiResponseDto> CreateUser(RegisterViewModel parameters)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/admin/users", parameters);
@@ -152,17 +138,6 @@ namespace WebApp.Interfaces
             return userViewModel;
         }
 
-        //public async Task<ApiResponseDto<UserViewModel>> GetUserViewModel(string id)
-        //{
-        //    return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>($"api/account/user-view-model/{id}");
-        //}
-
-        //public async Task<UserViewModel> GetUser()
-        //{
-        //    var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserViewModel>>("api/account/get-user");
-        //    return apiResponse.Result;
-        //}
-
         public async Task<ApiResponseDto> UpsertUser(UserDataViewModel userViewModel)
         {
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/UpsertUser", userViewModel);
@@ -178,9 +153,9 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/admin-update-user", userViewModel);
         }
 
-        public async Task<UserProfileViewModel> GetUserProfile()
+        public async Task<BlazorIdentity.Users.Models.UserProfile> GetUserProfile()
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<UserProfileViewModel>("api/admin/user-profile");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<BlazorIdentity.Users.Models.UserProfile>("api/admin/user-profile");
             return apiResponse;
 
         }
@@ -305,6 +280,12 @@ namespace WebApp.Interfaces
             var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<List<string>>($"api/account/get-permission-by-user");
             return apiResponse;
         }
+
+        //public async Task<UserProfile> GetUserProfile()
+        //{
+        //    var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<UserProfile>($"api/account/get-permission-by-user");
+        //    return apiResponse;
+        //}
     }
 
     //public async Task<ApiResponseDto<RoleDto>> GetRoleByName(string roleName)

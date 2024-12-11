@@ -54,6 +54,9 @@ public static class UsersApi
 
         api.MapGet("/users/user-view-model", UserViewModel);
 
+        api.MapGet("/users/user-profile", UserProfile);
+
+
         return api;
     }
 
@@ -376,5 +379,49 @@ public static class UsersApi
         result.Roles = await userServices.UserManager.GetRolesAsync(user);
 
         return new ApiResponse<UserDataViewModel>(200, "Success", result);
+    }
+
+
+    [Authorize]
+    public static async Task<ApiResponse<UserProfile>> UserProfile([AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper, RedisUserRepository redisUserRepository)
+    {
+
+        var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
+
+        if (user == null)
+        {
+            return new ApiResponse<UserProfile>(404, "User Not Found", null);
+        }
+
+        UserProfile dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
+
+        if (dataCache == null)
+        {
+            UserProfile? userProfile = await userServices.ApplicationDbContext.UserProfiles.Where(x => x.UserId.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
+
+            if (userProfile == null)
+            {
+                userProfile = new UserProfile
+                {
+                    IsDarkMode = false,
+                    IsNavOpen = true,
+                    LastPageVisited = "/dashboard",
+                    UserId = Guid.Parse(userAuth!.FindFirstValue("sub")!)
+                };
+
+                await redisUserRepository.UpdateUserProfileAsync(userProfile);
+                await userServices.ApplicationDbContext.UserProfiles.AddAsync(userProfile);
+                return new ApiResponse<UserProfile>(200, "Success", userProfile);
+
+            }
+            else
+            {
+                await redisUserRepository.UpdateUserProfileAsync(userProfile);
+                return new ApiResponse<UserProfile>(200, "Success", userProfile);
+            }
+        }
+
+        return new ApiResponse<UserProfile>(200, "Success", dataCache);
+
     }
 }
