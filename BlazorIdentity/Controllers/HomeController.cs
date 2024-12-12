@@ -49,7 +49,7 @@ namespace BlazorIdentity.Controllers
         public IActionResult SelectTheme(string theme, string returnUrl)
         {
             Response.Cookies.Append(
-                ThemeHelpers.CookieThemeKey,
+                ThemeHelpersIdentity.CookieThemeKey,
                 theme,
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
             );

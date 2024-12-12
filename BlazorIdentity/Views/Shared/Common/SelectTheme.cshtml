@@ -6,20 +6,20 @@
 @inject IOptions<RequestLocalizationOptions> LocOptions
 @{
 
-    var themes = ThemeHelpers.GetThemes().Select(x => new SelectListItem() { Text = x, Value = x }).ToList();
+    var themes = ThemeHelpersIdentity.GetThemes().Select(x => new SelectListItem() { Text = x, Value = x }).ToList();
 
-    var selectedTheme = string.IsNullOrEmpty(Context.Request.Cookies[ThemeHelpers.CookieThemeKey]) ? ThemeHelpers.DefaultTheme : Context.Request.Cookies[ThemeHelpers.CookieThemeKey];
+    var selectedTheme = string.IsNullOrEmpty(Context.Request.Cookies[ThemeHelpersIdentity.CookieThemeKey]) ? ThemeHelpersIdentity.DefaultTheme : Context.Request.Cookies[ThemeHelpersIdentity.CookieThemeKey];
 
     var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
 }
 @if (themes.Count > 1)
 {
-    <div title="@Localizer["Request culture provider:"] @Context.Request.Cookies[ThemeHelpers.CookieThemeKey]">
+    <div title="@Localizer["Request culture provider:"] @Context.Request.Cookies[ThemeHelpersIdentity.CookieThemeKey]">
         <form id="SelectTheme" asp-controller="Home"
               asp-action="SelectTheme" asp-route-returnUrl="@returnUrl"
               method="post" class="form-inline justify-content-end" role="form">
             <div class="form-group">
-                <label asp-for="@Context.Request.Cookies[ThemeHelpers.CookieThemeKey]" class="mr-2">@Localizer["Theme:"]</label>
+                <label asp-for="@Context.Request.Cookies[ThemeHelpersIdentity.CookieThemeKey]" class="mr-2">@Localizer["Theme:"]</label>
                 <select name="theme" onchange="this.form.submit();" class="form-control" asp-for="@selectedTheme" asp-items="themes"></select>
             </div>
         </form>

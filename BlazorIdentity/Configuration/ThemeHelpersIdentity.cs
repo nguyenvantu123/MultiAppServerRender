@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace BlazorIdentity.Localization
 {
-    public static class ThemeHelpers
+    public static class ThemeHelpersIdentity
     {
         public const string CookieThemeKey = "Application.Theme";
 

@@ -184,12 +184,11 @@
 
     protected override async void OnInitialized()
     {
-        await appState.GetUserProfile();
+        var userProfile = await accountApiClient.GetUserProfile();
+
+        appState._userProfile = userProfile.Result;
 
         _navigationManager.NavigateTo(appState._userProfile.LastPageVisited, true);
-        // UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfile);
-
-        // _navigationManager.Refresh();
     }
 
     // private string GetThemeName()
