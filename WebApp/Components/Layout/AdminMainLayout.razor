@@ -1,15 +1,18 @@
 ﻿@using BlazorIdentity.Repositories
 @using Microsoft.AspNetCore.WebUtilities
+@using MultiAppServer.EventBus.Abstractions
+@using WebApp.Events
 @inject NavigationManager UrlHelper;
 
 @inherits LayoutComponentBase
 
 <AuthorizeView>
     <Authorized>
+
         <div id="control-section">
             <div id="wrapper">
                 @*Initialize the Sidebar component*@
-                <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="userProfile.IsNavOpen" Type="@SidebarType.Auto">
+                <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="appState.IsNavOpen" Type="@SidebarType.Auto">
                     <ChildContent>
                         <div class="main-menu">
                             <div>
@@ -58,7 +61,7 @@
                                 <Template>
                                     @*   <SfIcon style="margin-left:5px;margin-top:2px;font-size:14px;color:inherit" IconCss="@(themeName == "material" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" Size="IconSize.Large" Icon>
                                     </SfIcon> *@
-                                    <SfButton CssClass="e-custom e-flat" IconCss="@( !userProfile.IsDarkMode   ?  "fas fa-sun" : "fas fa-moon")" IconPosition="IconPosition.Top">
+                                    <SfButton CssClass="e-custom e-flat" IconCss="@( !appState.IsDarkMode   ?  "fas fa-sun" : "fas fa-moon")" IconPosition="IconPosition.Top">
                                     </SfButton>
                                 </Template>
                             </ToolbarItem>
@@ -150,8 +153,8 @@
     SfSidebar sidebarObj;
     [Inject] protected AccountApiClient accountApiClient { get; set; }
     [Inject] protected RedisUserRepository redisUserRepo { get; set; }
-
-    public BlazorIdentity.Users.Models.UserProfile userProfile;
+    [Inject] protected IEventBus eventBus { get; set; }
+    [Inject] protected AppState appState { get; set; }
 
     private string themeName;
     private bool Visibility { get; set; } = false;
@@ -162,9 +165,9 @@
 
     private async void ToogleDarkMode()
     {
-        userProfile.IsDarkMode = !userProfile.IsDarkMode;
+        appState.IsDarkMode = !appState.IsDarkMode;
 
-        await redisUserRepo.UpdateUserProfileAsync(userProfile);
+        await redisUserRepo.UpdateUserProfileAsync(appState._userProfile);
         // var theme = GetThemeName();
 
         // if (theme == "material3-dark")
@@ -181,7 +184,12 @@
 
     protected override async void OnInitialized()
     {
-        userProfile = await _accountApiClient.GetUserProfile();
+        await appState.GetUserProfile();
+
+        _navigationManager.NavigateTo(appState._userProfile.LastPageVisited, true);
+        // UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfile);
+
+        // _navigationManager.Refresh();
     }
 
     // private string GetThemeName()
@@ -202,10 +210,15 @@
         this.Visibility = false;
     }
 
-    public async void Toggle() {
-        userProfile.IsNavOpen = !userProfile.IsNavOpen;
+    public async void Toggle()
+    {
+        appState.IsNavOpen = !appState.IsNavOpen;
 
-        await redisUserRepo.UpdateUserProfileAsync(userProfile);
+        await redisUserRepo.UpdateUserProfileAsync(appState._userProfile);
+
+        UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(appState._userProfile);
+
+        await eventBus.PublishAsync(updateProfileEvent);
     }
 }
 <style>
@@ -467,7 +480,7 @@
         border-radius: 4px !important;
         /* box-shadow: 0 1px 3px 1px rgba(0, 0, 0, .15), 0 1px 2px 0 rgba(0, 0, 0, .3); */
         /*         padding: 7px 16px !important;
-                 */
+                                             */
     }
 
 </style>

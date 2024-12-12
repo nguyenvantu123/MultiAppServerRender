@@ -10,7 +10,6 @@ using WebApp.DataModels;
 using WebApp.Extensions;
 using WebApp.Models;
 using WebApp.Settings;
-using WebApp.State;
 using static System.Net.WebRequestMethods;
 using static WebApp.Components.Pages.Admin.UserProfile;
 
@@ -153,9 +152,9 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/admin-update-user", userViewModel);
         }
 
-        public async Task<BlazorIdentity.Users.Models.UserProfile> GetUserProfile()
+        public async Task<ApiResponse<BlazorIdentity.Users.Models.UserProfile>> GetUserProfile()
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<BlazorIdentity.Users.Models.UserProfile>("api/admin/user-profile");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponse<BlazorIdentity.Users.Models.UserProfile>>("api/admin/users/user-profile");
             return apiResponse;
 
         }
@@ -174,11 +173,6 @@ namespace WebApp.Interfaces
         {
             return await _httpClient.GetJsonAsync<ApiResponseDto<List<UserDataViewModel>>>($"api/admin/users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
-
-        //public Task<QueryResult<ApplicationUser>> GetTodoCreators(ToDoFilter filter)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public Task<ApiResponseDto> SendTestEmail(EmailDto email)
         {

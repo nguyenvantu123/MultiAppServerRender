@@ -424,4 +424,10 @@ public static class UsersApi
         return new ApiResponse<UserProfile>(200, "Success", dataCache);
 
     }
+
+    //[NonController]
+    //public static async Task<bool> UpdateUserProfile()
+    //{
+    //    var data 
+    //}
 }

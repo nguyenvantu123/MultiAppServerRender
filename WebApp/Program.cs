@@ -19,7 +19,6 @@ using WebApp;
 using WebApp.Extensions;
 using WebApp.Permissions;
 using Microsoft.AspNetCore.Components;
-using WebApp.State;
 using BlazorIdentity.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using BlazorIdentity.Users.Models;
@@ -36,6 +35,9 @@ using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
 using Aspire.StackExchange.Redis.DistributedCaching;
 using BlazorIdentity.Repositories;
+using WebApp.Events;
+using MultiAppServer.EventBus.Abstractions;
+using System.Net.NetworkInformation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,7 +55,7 @@ builder.AddRedisDistributedCache("Redis");
 
 builder.Services.AddSingleton<RedisUserRepository>();
 
-
+builder.Services.AddScoped<AppState>();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

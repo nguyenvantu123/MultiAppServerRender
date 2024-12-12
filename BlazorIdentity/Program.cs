@@ -54,7 +54,7 @@ var configuration = builder.Configuration;
 
 builder.AddRedisDistributedCache("Redis");
 
-builder.AddRabbitMqEventBus("EventBus").AddSubscription<UpdateProfileEvent, OrderStatusChangedToStockConfirmedIntegrationEventHandler>();
+builder.AddRabbitMqEventBus("EventBus");
 ;
 
 builder.Services.AddSingleton<RedisUserRepository>();

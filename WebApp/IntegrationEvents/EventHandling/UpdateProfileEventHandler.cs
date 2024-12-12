@@ -1,27 +1,32 @@
 ﻿using MultiAppServer.EventBus.Abstractions;
-using MultiAppServer.EventBus.Events;
 using WebApp.Events;
 
-namespace WebApp.EventHandling;
+namespace WebApp.IntegrationEvents.EventHandling;
 
 public class UpdateProfileEventHandler(
-    IEventBus eventBus,
-    ILogger<UpdateProfileEventHandler> logger) :
-    IIntegrationEventHandler<UpdateProfileEvent>
+    ILogger<UpdateProfileEventHandler> logger) : IIntegrationEventHandler<UpdateProfileEvent>
 {
+    /// <summary>
+    /// Event handler which confirms that the grace period
+    /// has been completed and order will not initially be cancelled.
+    /// Therefore, the order process continues for validation. 
+    /// </summary>
+    /// <param name="event">       
+    /// </param>
+    /// <returns></returns>
     public async Task Handle(UpdateProfileEvent @event)
     {
         logger.LogInformation("Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.Id, @event);
 
-        // Business feature comment:
-        // When OrderStatusChangedToStockConfirmed Integration Event is handled.
-        // Here we're simulating that we'd be performing the payment against any payment gateway
-        // Instead of a real payment we just take the env. var to simulate the payment 
-        // The payment can be successful or it can fail
+        //var command = new SetAwaitingValidationOrderStatusCommand(@event.OrderId);
 
+        //logger.LogInformation(
+        //    "Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
+        //    command.GetGenericTypeName(),
+        //    nameof(command.OrderNumber),
+        //    command.OrderNumber,
+        //    command);
 
-        //logger.LogInformation("Publishing integration event: {IntegrationEventId} - ({@IntegrationEvent})", orderPaymentIntegrationEvent.Id, orderPaymentIntegrationEvent);
-
-        await eventBus.PublishAsync(@event);
+        await Task.CompletedTask;
     }
 }

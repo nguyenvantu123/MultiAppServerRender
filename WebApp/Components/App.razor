@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.WebUtilities
 @inject NavigationManager UrlHelper;
-
+@inject AppState appState
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,11 +8,16 @@
 
     // var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
     // QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var themeName);
-    // themeName = string.IsNullOrEmpty(themeName) ? "material" : themeName.First();
 
-    AdminMainLayout adminMainLayout = new AdminMainLayout();
+    string themeName = appState.IsDarkMode ? "material3-dark" : "material3";
 
-    string themeName = adminMainLayout.userProfile.IsDarkMode ? "material3" : "material3-dark";
+    // AdminMainLayout adminMainLayout = new AdminMainLayout();
+
+    // string themeName = "material3";
+    // if (adminMainLayout.userProfile != null)
+    // {
+    //     themeName = adminMainLayout.userProfile.IsDarkMode ? "material3-darkmaterial3" : "";
+    // }
 }
 
 <head>
