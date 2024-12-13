@@ -1,9 +1,11 @@
 ﻿@using BlazorIdentity.Repositories
 @using Microsoft.AspNetCore.WebUtilities
 @using MultiAppServer.EventBus.Abstractions
-@using WebApp.Events
+@using Newtonsoft.Json
+@using global::Shared
+@using global::Shared.Models
 @inject NavigationManager UrlHelper;
-
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inherits LayoutComponentBase
 
 <AuthorizeView>
@@ -11,135 +13,134 @@
 
         <div id="control-section">
             <div id="wrapper">
-                @*Initialize the Sidebar component*@
-                <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="appState.IsNavOpen" Type="@SidebarType.Auto">
-                    <ChildContent>
-                        <div class="main-menu">
-                            <div>
-                                <AdminNavMenu />
-                                @*                                 <SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
+                @if (userProfileViewModel != null)
+                {
+
+                    @*Initialize the Sidebar component*@
+                    <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="userProfileViewModel.IsNavOpen" Type="@SidebarType.Auto">
+                        <ChildContent>
+                            <div class="main-menu">
+                                <div>
+                                    <AdminNavMenu />
+                                    @*                                 <SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
                                 *@
+                                </div>
                             </div>
-                        </div>
-                    </ChildContent>
-                </SfSidebar>
+                        </ChildContent>
+                    </SfSidebar>
 
-                <SfDialog ID="defaultDialog" Width="350" CssClass="dialog-medium" style="height: 1000px" Target="#target" ShowCloseIcon="true" @bind-Visible="Visibility">
-                    <DialogEvents OnOverlayModalClick="@OverlayClick"></DialogEvents>
-                    <DialogTemplates>
-                        <Header>Choose a Dialog Position</Header>
+                    <SfDialog ID="defaultDialog" Width="350" CssClass="dialog-medium" style="height: 1000px" Target="#target" ShowCloseIcon="true" @bind-Visible="Visibility">
+                        <DialogEvents OnOverlayModalClick="@OverlayClick"></DialogEvents>
+                        <DialogTemplates>
+                            <Header>Choose a Dialog Position</Header>
 
-                        <FooterTemplate>
-                        </FooterTemplate>
-                    </DialogTemplates>
+                            <FooterTemplate>
+                            </FooterTemplate>
+                        </DialogTemplates>
 
-                    <DialogPositionData X="right" Y="top"></DialogPositionData>
+                        <DialogPositionData X="right" Y="top"></DialogPositionData>
 
-                </SfDialog>
+                    </SfDialog>
 
-                <div>
-                    <SfToolbar>
-                        <ToolbarItems>
-                            <ToolbarItem Type="ItemType.Spacer"></ToolbarItem>
-                            <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
-                            <ToolbarItem style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
-                                <Template>
-                                    <SfDropDownButton IconCss="fas fa-language" style="background: inherit;font-size:20px" CssClass="customsfdropdrown e-caret-hide">
-                                        <DropDownMenuItems>
-                                            <DropDownMenuItem Text="English" Url=""></DropDownMenuItem>
-                                            <DropDownMenuItem Text="Chinese" Url=""></DropDownMenuItem>
-                                            <DropDownMenuItem Text="Japanese" Url=""></DropDownMenuItem>
+                    <div>
+                        <SfToolbar>
+                            <ToolbarItems>
+                                <ToolbarItem Type="ItemType.Spacer"></ToolbarItem>
+                                <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+                                <ToolbarItem style="cursor:pointer; display:flex;align-content:center;margin-left: 5px">
+                                    <Template>
+                                        <SfDropDownButton IconCss="fas fa-language" style="background: inherit;font-size:20px" CssClass="customsfdropdrown e-caret-hide">
+                                            <DropDownMenuItems>
+                                                <DropDownMenuItem Text="English" Url=""></DropDownMenuItem>
+                                                <DropDownMenuItem Text="Chinese" Url=""></DropDownMenuItem>
+                                                <DropDownMenuItem Text="Japanese" Url=""></DropDownMenuItem>
 
-                                        </DropDownMenuItems>
-                                    </SfDropDownButton>
-                                </Template>
-                            </ToolbarItem>
+                                            </DropDownMenuItems>
+                                        </SfDropDownButton>
+                                    </Template>
+                                </ToolbarItem>
 
-                            <ToolbarItem Type="ItemType.Separator">
-                            </ToolbarItem>
-                            <ToolbarItem OnClick="@ToogleDarkMode">
-                                <Template>
-                                    @*   <SfIcon style="margin-left:5px;margin-top:2px;font-size:14px;color:inherit" IconCss="@(themeName == "material" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" Size="IconSize.Large" Icon>
+                                <ToolbarItem Type="ItemType.Separator">
+                                </ToolbarItem>
+                                <ToolbarItem OnClick="@ToogleDarkMode">
+                                    <Template>
+                                        @*   <SfIcon style="margin-left:5px;margin-top:2px;font-size:14px;color:inherit" IconCss="@(themeName == "material" || string.IsNullOrEmpty(themeName)   ?  "fas fa-sun" : "fas fa-moon")" Size="IconSize.Large" Icon>
                                     </SfIcon> *@
-                                    <SfButton CssClass="e-custom e-flat" IconCss="@( !appState.IsDarkMode   ?  "fas fa-sun" : "fas fa-moon")" IconPosition="IconPosition.Top">
-                                    </SfButton>
-                                </Template>
-                            </ToolbarItem>
-                            <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+                                        <SfButton CssClass="e-custom e-flat" IconCss="@( !userProfileViewModel.IsDarkMode   ?  "fas fa-sun" : "fas fa-moon")" IconPosition="IconPosition.Top">
+                                        </SfButton>
+                                    </Template>
+                                </ToolbarItem>
+                                <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
 
-                            <ToolbarItem>
-                                <Template>
-                                    <SfDropDownButton CssClass="customsfdropdrown e-caret-hide" IconCss="fas fa-bell" style="background:inherit; font-size:16px" Content="5">
-                                        <DropDownMenuItems>
-                                            <DropDownMenuItem style="text-align: left; padding-left:0" Text="Notification" Disabled="true"></DropDownMenuItem>
-                                            <DropDownMenuItem Separator=true></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-inbox" Text="A new order has been placed" Url=""></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-tasks" Text="Completed Task" Url=""></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support completed" Url=""></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-cog" Text="Setting Update" Url=""></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-calendar-alt" Text="Direction meeting start" Url=""></DropDownMenuItem>
-                                            <DropDownMenuItem Separator=true></DropDownMenuItem>
-                                            <DropDownMenuItem style="text-align: right" Text="See All" Url=""></DropDownMenuItem>
+                                <ToolbarItem>
+                                    <Template>
+                                        <SfDropDownButton CssClass="customsfdropdrown e-caret-hide" IconCss="fas fa-bell" style="background:inherit; font-size:16px" Content="5">
+                                            <DropDownMenuItems>
+                                                <DropDownMenuItem style="text-align: left; padding-left:0" Text="Notification" Disabled="true"></DropDownMenuItem>
+                                                <DropDownMenuItem Separator=true></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-inbox" Text="A new order has been placed" Url=""></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-tasks" Text="Completed Task" Url=""></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support completed" Url=""></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-cog" Text="Setting Update" Url=""></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-calendar-alt" Text="Direction meeting start" Url=""></DropDownMenuItem>
+                                                <DropDownMenuItem Separator=true></DropDownMenuItem>
+                                                <DropDownMenuItem style="text-align: right" Text="See All" Url=""></DropDownMenuItem>
 
-                                        </DropDownMenuItems>
-                                    </SfDropDownButton>
-                                </Template>
-                            </ToolbarItem>
+                                            </DropDownMenuItems>
+                                        </SfDropDownButton>
+                                    </Template>
+                                </ToolbarItem>
 
-                            <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+                                <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
 
-                            <ToolbarItem>
-                                <Template>
-                                    <SfDropDownButton CssClass="customsfdropdrown e-caret-hide" style="background:inherit">
-                                        <div class="e-avatar e-avatar-small image e-avatar-circle" style="display:flex;">
-                                            <img src="data:image/sjpeg;base64,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" width="200" height="300">
-                                        </div>
+                                <ToolbarItem>
+                                    <Template>
+                                        <SfDropDownButton CssClass="customsfdropdrown e-caret-hide" style="background:inherit">
+                                            <div class="e-avatar e-avatar-small image e-avatar-circle" style="display:flex;">
+                                                <img src="data:image/sjpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQApAMBIgACEQEDEQH/xAAcAAABBAMBAAAAAAAAAAAAAAAAAgMEBwEFBgj/xAA/EAABAwICBgkCBQIDCQAAAAABAAIDBBEFIQYSEzFBUQcUMlJhcYGRoSIjM0JiscEVchaC0QglNENTkqLC4f/EABoBAQADAQEBAAAAAAAAAAAAAAACAwQBBQb/xAAlEQEAAgIBBAEEAwAAAAAAAAAAAQIDERIEITFRBTM0QYEiIzL/2gAMAwEAAhEDEQA/ALo6u7mFkfYuXZ35KQo9V+VArrDbbikGEvOte1+aYKnR9hvkgYEZiIeTcDkl9YbbcVmo/Ccue0sxlmj2jldir99PEdQc3nJo9yEFZdL3STWQ4nUYBgEuwbE0NqaphO01+LGngALXO+91TRJcSXG5cbknMkpU0sk8r5p3l8sji97j+ZxNyUhHQhCEAhCEAp+DYxiGB18VdhVS+nqIz2mnJw5OHEeBUBCD1L0babQaWYGJnNDK+nsyribuDrdpv6TnbluXWmYOFrEXyXl/olxt+D6bUTS+1PWnq0wO76uyfR1vlemWZPaN2aOHeru5hZb9i989bkpCjVW9vqgX1hvIpGwLswRY5hMKczsjyQMdXdzCFJQghbR/eKch+4Tr/VbddI2T+78pcX2idplfcge2TO6FGc9wcQCQByUjas7wTDo3FxcBcHcgzG4veGvJIPAqtf8AaEldDodSwxts2atYHkeDXEfKsqNpY8OeLAcVwPTxC2p6P5pAc6epik93av8A7IPNyBnuW40NohiOlWFUhALX1LS7yb9R/ZXFpV0bYPjjn1FJfD6x354gNm883M/kWULZK1nUp1pNo3ChUWXZYn0Y6T0MhEFLFWx8HwSjP0dYpGGdG2k9dO1ktCKOL80tRI0ADyBJK7zr7OFvTkWtc5zWtGs5xs0DMk+AXS0vR9pXVQNmjwl7WOFxtJGsJ9Cbq5NE9CcJ0Zia+GPrFbb66qUAuv8Ap7o8l019/iqLZ9eFtcHt5cxXB8SweYRYpRS0zzu1xk7yO4+ihWXqfEsPpMUopKOvp2T08gs5jxf1HI+K8+6f6LnRbGurxOc+jnbtKd7t9r2LSeY/kKzHliyF8fHu56mnfSVMNTHm+GRsgF+LSD/C9mxhjqdsgAuWB1x5Lxa/sHyXsrC3j+kUbXH6zTRg+eqFaqL2j+8U7D9y+v8AVbddN7KTu/Kch+1faWF9yB3ZM7oUZ0jgcnGykbVneCYdE8m4FxwQJ2j+8ULOyf3flYQTVHqvyJPWH8m+yywme4fkByQMnddTI+w3ySOrs5uTZmc0lotllmgdqPwnLkekekFdoNjVORdxpXPaPFpDh8gLqmvMpDHWseS1WKRhtRqkazC0ZHioXvwjaVK8p0oToUw/rWk81cW3ZSU5seTn5D41leAy4rldFdG49HNIMYFKy1JVtjmh5MzdrMHkbHyIXVLLltyttqx11HcIQhVaWhCEIBcz0g6N/wCJdH5YIQOuwHa0zjxcN7fUZey6ZC7EzE7hyY3GnlNlLNJVNpC0smdKIixwsWuJtYjzXsSk1WshawjVYA3LwFlXbNGoKnpAnxuaFhZTU8bYvpFnSm93HmQLZ+K77CWXbM/OzSCPFbIyxa0RDJbHxrMtuo1Vvb6rHWH8m+yUwbe+vlq7rK1UYt4KazsjyTfVmc3JvbObkAMkEpCi9Yfyb7IQN2Kdpsi7yUlMVX5UD1xzUOQfW5JO5TY+w3yQRoQRKOSaxOn20Ye3NzOHMKXUfhOUVRtXlGnazqdtL423oWwrqYCITsFs7OA3ea16xXpxnTdS0WjYQhCgkEIQgEIR5IMgEmwzJ3Le0kGwpdU9q1z5qNHTMht9I2lhcnmn2dtvmtmLHx7yyZcnLtBNjyT9NlrXPJSFGqt7fVXKUi6hOH1HjmVhTWdkeSCHY8kKchAx1gd0+6w47ci2WqmE9Tb3IDq57w9koTBn02vbJPqC/wDEd5oHnSCb6ALX4rHVz3h7JEH4oUxBFfZsZie0uB3+S0k8ZikLTzyW6qPxPRRauNskRvkWi4Kqy05Qtx34y1aFhjmvYHNNwVlYWwIQhdApeHxAzCR4u1u7xKixgOmjjJsXmwW3jaGMDWbgrsNOU7U5b6jSQYzL9QNkbEtIdcWGacp/w/VLf2D5LYyGusDun3SXff3ZavNMp+l/N6IMdXPeHslCcN+nVNxkU+oLu0fMoH+sDun3WVGQgmbNndCan+3bUyunNtH3vhNy/dts87b0DW0fbtFSWMaWgkXNlHMMnd+U+2VjQGuNiN4QYlAYwlosQmBI++9PSvbI3VYbk8FFqJYqVmvUyxxNH5pHho+SglQgPZdwub703XGKKllLrC7SB4my51+n+jNNPHSNxNk88jw0Nga6QXJtm4DVHunauqkqZNZ5yG4DgkwRP5hq4pHwuy4bwpsVRG/InVPIpiqiv9YGfGyjeK829ZpOpenSYvXbalwHEe6Ylqmsybm5QUC+4ZqO0uER5TMOk/3lDLLm0HM8sl14aw2IAXJQxbNljvO9S243FhFHNUVz3CkhYXvIBJaByHHyW/DSa1efnvFrdm8lcWvLWmwSWvcXNu477WWioNMtHcWeOp4rTl7v+XKTE72eAVvIgXasjbOZv1gQQrdTCmJiUrZs7oTU/wBvV1Mr705to+98JqX7pGzztvR03tH95SWxtIGQUfYyd35T4lYAAXZoFbNndCFjbR974QgiJ6m3u9EvYM8VrNIcYo9G8KmxGtdqxMFrDtPdwaPEoJuJ4lR4VSPq8RqY6enZ2pJDYeXiVVWP9L8bJHMwHDxMLn79Vdo9GjP3Kr7SrSbEdKMQNViEhbG0/ZpmOOziHgOfMrSq6uP2otk9OqxLpD0pryR/U3UrDvbSNEfzv+VzklRUVTy6rqJqh53unkMhPqSmEuLtHyU9Qr3J3MWLCQRuI3hXvgNeMTwajrQbmWIa3924/N1Q53KzOirENpQVeHPOcL9owfpdv+Rf1Uckdk8U6nTu9+9Qp49m/LsncpqTJGHsLTx3LHlx86tuHJwsgeKk00X5z6JqOIukLTlq71OAAFgqMGLvuWjqMsRHGAuL6UsQ6vgkVE11n1cguP0NzPzZdoqf6RsQ69pLLE03ZRtEI5A73fJt6LfSNy8/JOocvYHIi48U9RYtiWGy62H4jWUpH/Rnc0e24+yaCYd2ir2fbtMN6UNJaIBs8sFa0b+sRWcfVtl32inSrhOIvZT4tH/Tah5ADnO1oif7uHqFRiPDIjxUJpEpxeYeuWSNewOa4OaRcEHIhRHbz5lUb0d6f1Gj80eH4nK6XCnuAa55JNMeY/TzHDgr4jZFMxsjHBzXtDgWm4IPEKq1dLq22YQpPV2LKikXrDmF586V9JnY5pE6kp5L0FAdmwA5PkHad/A8jzVuaZYt/Q9GcQxBptJHFqxf3u+lvyQvNgyHPxPFWY4/KrJP4CEIVykJcXaPkkLIOruQPLoNBcQ/p2k9I5zrRTkwyXPB27/ysudY4u3pYc5pDmOLXA3a4cCNyT4InUvQw3rTaV4+NHcPjqXU75ZJnFkIGTda18zwW30bmjxXB6PETY7eIOLRwdx+VrulCKB+hda+VpOzdGY7bw7XAH7rHkmYrOnp9JWt81ItG4mVc4dp7i9NiD56stqaeRw14OyGj9J4fKtOhqm1tDTVkTXtiqIxIzXbY2PgqEpGxvqoWT3MTpWh9u7cX+F6VZDEIWQtYBG1oa1o3ADcs/TWtO9vV+Zw4sXHhXUy0mIVbKGhqKyS2rBGXm/gFQU8rqieSeQ3fI9z3HxJuVbXSxVCgwOOjY7OtkAtx1W2cfnV91US9DHHZ83lnvpkJh3aKW55BSCb5qxUwhCEdZV1dCmkzq3D5cCrH3lomh1OXHN0XL/Ll6EKlFu9C8Vdg2lOG1gJ2e2Eco5sf9J/e/ooWjcJVnUvUGsOYQoJ35IVDSrvpzn2GAUFIH/8RVa7gOIa0/yQqWVkdOldt9JqKhBNqWk1yPF7v9Gj3Vbq+kdma8/yCEIU0QhCEcPMGSyksOVkpBbnQ5iW2wmrw2R31Usu0jH6H/8A0H3UzpdqBFouyG9tvUsbbmBd38Kv+jbE/wCm6XUms4iGqBp5M+fZP/cB7rqumqoszCqTm6SX2AH8rH1P8ay9b4mOfU0j1KrXHI2yNsvBek8HqRV4RRVIzE1PHJz3tC82lXrofiUdPoBSVsxsykpXa9+TL/6LJ0v+ph7nz1f6q29SrrpVxPr2lT4GOvHQxiEf3HN38D0XHpyqqJKuqmqZjeSaR0jz4uNz+6aXrVjUPjpnckSDim0p7rnwSV0CEIQCw/WDCWEhwF2kcCsoQep8FeK7B6GrbICJ6eOQHzaChanovqBU6BYOb5xQ7E/5CW/sAhZp8tUeFLdJ0r5tOsVMhuWOYweADAuXQhaK+Ga3kIQhdcCEIRxlu9PrCEGWyvgcJonaskZDmkcCMwu56XJ3zYzhmud9A19hzc43/YIQsnW/Te18D93+nDHJd7HUyxdD8rGOsH1pid/aXgkeqELH0f1XufPfa/uHArDtyyheu+JMcUIQjoQhCAWRmc0IQXj0NVEn+DGs1smVUoHlcH+UIQq58rY8P//Z" width="200" height="300">
+                                            </div>
 
-                                        <DropDownMenuItems>
-                                            <DropDownMenuItem IconCss="fas fa-user" Text="User"></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-inbox" Text="Inbox"></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-tasks" Text="Task Manager"></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support"></DropDownMenuItem>
-                                            <DropDownMenuItem IconCss="fas fa-sign-out-alt" Text="Logout"></DropDownMenuItem>
-                                        </DropDownMenuItems>
-                                    </SfDropDownButton>
-                                </Template>
+                                            <DropDownMenuItems>
+                                                <DropDownMenuItem IconCss="fas fa-user" Text="User"></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-inbox" Text="Inbox"></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-tasks" Text="Task Manager"></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support"></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-sign-out-alt" Text="Logout"></DropDownMenuItem>
+                                            </DropDownMenuItems>
+                                        </SfDropDownButton>
+                                    </Template>
 
-                            </ToolbarItem>
+                                </ToolbarItem>
 
-                            <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
-                            @*     style="cursor:pointer; display:flex;align-content:center;margin-left: 5px" *@
-                            <ToolbarItem OnClick="@OnClicked">
-                                <Template>
-                                    @* <SfIcon style="margin-top: 2px;display: flex;margin-left: 5px;font-size:14px;" IconCss="fas fa-indent" Size="IconSize.Large">
+                                <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+                                @*     style="cursor:pointer; display:flex;align-content:center;margin-left: 5px" *@
+                                <ToolbarItem OnClick="@OnClicked">
+                                    <Template>
+                                        @* <SfIcon style="margin-top: 2px;display: flex;margin-left: 5px;font-size:14px;" IconCss="fas fa-indent" Size="IconSize.Large">
                                     </SfIcon> *@
 
-                                    <SfButton CssClass="e-custom e-flat" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px" IconCss="fas fa-indent">
-                                    </SfButton>
-                                </Template>
-                            </ToolbarItem>
-                        </ToolbarItems>
-                    </SfToolbar>
-                </div>
-                @*main content declaration*@
-                <div class="e-main-content" id="maintext">
-                    <div class="content">
-                        <div class="sidebar-heading"> Responsive Sidebar with Menu</div>
-                        <p class="paragraph-content">
-                            The Blazor Sidebar is an expandable and collapsible component that typically acts as a side container to place primary or secondary content alongside the main content. It provides flexible options that can be shown and hidden based on user interactions. Any type of HTML content or component can be placed in the Blazor Sidebar for quick access and easy navigation, like quick references, menus, lists, and tree views.
-                        </p>
-                        <div class="sidebar-heading"> HTML side content position</div>
-                        <p class="paragraph-content">
-                            The Blazor Sidebar component positions its content to the left or right side of the main content area. This option allows the placement of two sidebars on a page, one on the left and one on the right, to show primary and secondary content simultaneously.
-                        </p>
-                        <div class="sidebar-heading"> Responsive sidebar</div>
-                        <p class="paragraph-content">
-                            Auto closing the Blazor Sidebar component’s content makes the main content area more readable.
-                        </p>
+                                        <SfButton CssClass="e-custom e-flat" style="cursor:pointer; display:flex;align-content:center;margin-left: 5px" IconCss="fas fa-indent">
+                                        </SfButton>
+                                    </Template>
+                                </ToolbarItem>
+                            </ToolbarItems>
+                        </SfToolbar>
                     </div>
-                </div>
+                    @*main content declaration*@
+                    <div class="e-main-content" id="maintext">
+                        <div class="content">
+                            @Body
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <SfSpinner Size="40" Label="Material" Type="SpinnerType.Material" Visible="true"></SfSpinner>
+                }
             </div>
         </div>
+
     </Authorized>
 </AuthorizeView>
 
@@ -154,8 +155,7 @@
     [Inject] protected AccountApiClient accountApiClient { get; set; }
     [Inject] protected RedisUserRepository redisUserRepo { get; set; }
     [Inject] protected IEventBus eventBus { get; set; }
-    [Inject] protected AppState appState { get; set; }
-
+    UserProfileViewModel? userProfileViewModel = null;
     private string themeName;
     private bool Visibility { get; set; } = false;
     private void OnClicked()
@@ -165,30 +165,31 @@
 
     private async void ToogleDarkMode()
     {
-        appState.IsDarkMode = !appState.IsDarkMode;
+        userProfileViewModel!.IsDarkMode = !userProfileViewModel.IsDarkMode;
 
-        await redisUserRepo.UpdateUserProfileAsync(appState._userProfile);
-        // var theme = GetThemeName();
+        var data1123456 = await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
 
-        // if (theme == "material3-dark")
-        // {
-        //     theme = "material3";
-        // }
-        // else
-        // {
-        //     theme = "material3-dark";
-        // }
+        UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
 
-        UrlHelper.Refresh();
+        await eventBus.PublishAsync(updateProfileEvent);
+
+        
     }
 
     protected override async void OnInitialized()
     {
-        var userProfile = await accountApiClient.GetUserProfile();
+        userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
+        if (userProfileViewModel == null)
+        {
+            var userProfile = await accountApiClient.GetUserProfile();
 
-        appState._userProfile = userProfile.Result;
+            userProfileViewModel = userProfile.Result;
 
-        _navigationManager.NavigateTo(appState._userProfile.LastPageVisited, true);
+            await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
+
+            _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
+        }
+
     }
 
     // private string GetThemeName()
@@ -211,11 +212,11 @@
 
     public async void Toggle()
     {
-        appState.IsNavOpen = !appState.IsNavOpen;
+        userProfileViewModel!.IsNavOpen = !userProfileViewModel.IsNavOpen;
 
-        await redisUserRepo.UpdateUserProfileAsync(appState._userProfile);
+        var data1123456 = await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
 
-        UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(appState._userProfile);
+        UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
 
         await eventBus.PublishAsync(updateProfileEvent);
     }
@@ -479,7 +480,7 @@
         border-radius: 4px !important;
         /* box-shadow: 0 1px 3px 1px rgba(0, 0, 0, .15), 0 1px 2px 0 rgba(0, 0, 0, .3); */
         /*         padding: 7px 16px !important;
-                                             */
+                                                                                                         */
     }
 
 </style>

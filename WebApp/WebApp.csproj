@@ -24,6 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Http.Client" Version="8.1.0" />
     <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
+    <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageReference Include="Breeze.AspNetCore.NetCore" Version="7.3.0" />
     <PackageReference Include="Breeze.Sharp" Version="0.8.2" />
     <PackageReference Include="Finbuckle.MultiTenant" Version="7.0.1" />
@@ -44,6 +45,7 @@
     <ProjectReference Include="..\BlazorIdentity\BlazorIdentity.csproj" />
     <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

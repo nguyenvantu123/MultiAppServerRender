@@ -25,6 +25,7 @@ using BlazorIdentity.Users.Constants;
 using BlazorIdentity.Users.Extensions;
 using BlazorIdentity.Users;
 using BlazorIdentity.Repositories;
+using Shared.Models;
 
 public static class UsersApi
 {
@@ -383,45 +384,52 @@ public static class UsersApi
 
 
     [Authorize]
-    public static async Task<ApiResponse<UserProfile>> UserProfile([AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper, RedisUserRepository redisUserRepository)
+    public static async Task<ApiResponse<UserProfileViewModel>> UserProfile([AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper, RedisUserRepository redisUserRepository)
     {
 
         var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
 
         if (user == null)
         {
-            return new ApiResponse<UserProfile>(404, "User Not Found", null);
+            return new ApiResponse<UserProfileViewModel>(404, "User Not Found", null);
         }
 
-        UserProfile dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
+		UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
 
         if (dataCache == null)
         {
-            UserProfile? userProfile = await userServices.ApplicationDbContext.UserProfiles.Where(x => x.UserId.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
+			UserProfile? userProfile = await userServices.ApplicationDbContext.UserProfiles.Where(x => x.UserId.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
 
             if (userProfile == null)
             {
                 userProfile = new UserProfile
-                {
+				{
                     IsDarkMode = false,
                     IsNavOpen = true,
                     LastPageVisited = "/dashboard",
-                    UserId = Guid.Parse(userAuth!.FindFirstValue("sub")!)
+                    UserId = Guid.Parse(userAuth!.FindFirstValue("sub")!),
+                    Id = Guid.NewGuid()
                 };
 
-                await redisUserRepository.UpdateUserProfileAsync(userProfile);
-                await userServices.ApplicationDbContext.UserProfiles.AddAsync(userProfile);
-                return new ApiResponse<UserProfile>(200, "Success", userProfile);
+				var result = autoMapper.Map<UserProfileViewModel>(userProfile);
+				await redisUserRepository.UpdateUserProfileAsync(result);
+
+				await userServices.ApplicationDbContext.UserProfiles.AddAsync(userProfile);
+
+				return new ApiResponse<UserProfileViewModel>(200, "Success", result);
 
             }
             else
             {
-                await redisUserRepository.UpdateUserProfileAsync(userProfile);
-                return new ApiResponse<UserProfile>(200, "Success", userProfile);
+
+				var result = autoMapper.Map<UserProfileViewModel>(userProfile);
+
+				await redisUserRepository.UpdateUserProfileAsync(result);
+                return new ApiResponse<UserProfileViewModel>(200, "Success", result);
             }
         }
 
-        return new ApiResponse<UserProfile>(200, "Success", dataCache);
+        return new ApiResponse<UserProfileViewModel>(200, "Success", dataCache);
 
     }
 

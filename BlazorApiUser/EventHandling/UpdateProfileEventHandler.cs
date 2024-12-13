@@ -1,7 +1,7 @@
 ﻿using MultiAppServer.EventBus.Abstractions;
-using WebApp.Events;
+using Shared;
 
-namespace WebApp.IntegrationEvents.EventHandling;
+namespace BlazorApiUser.EventHandling;
 
 public class UpdateProfileEventHandler(
     ILogger<UpdateProfileEventHandler> logger) : IIntegrationEventHandler<UpdateProfileEvent>

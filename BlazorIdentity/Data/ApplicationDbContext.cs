@@ -1,12 +1,10 @@
-﻿using BlazorIdentity.Users.Models;
-using Finbuckle.MultiTenant;
+﻿using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.EntityFrameworkCore;
 using BlazorIdentity.Users.Constants;
 using Microsoft.EntityFrameworkCore.Storage;
 using BlazorIdentity.Interfaces;
 using Duende.IdentityServer.EntityFramework.Entities;
-using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace BlazorIdentity.Data

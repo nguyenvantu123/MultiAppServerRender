@@ -1,6 +1,7 @@
 using AutoMapper;
 using BlazorIdentity.Models;
 using BlazorIdentity.Users.Models;
+using Shared.Models;
 
 
 namespace BlazorApiUser.MapperProfile
@@ -13,8 +14,10 @@ namespace BlazorApiUser.MapperProfile
             // Add as many of these lines as you need to map your objects
             CreateMap<ApplicationUser, UserDataViewModel>();
             CreateMap<AppTenantInfo, TenantDto>();
-            //CreateMap<UserDto, User>();
-        }
+
+            CreateMap<UserProfile, UserProfileViewModel>();
+			//CreateMap<UserDto, User>();
+		}
 
         //public static IMapper Initialize()
         //{

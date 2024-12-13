@@ -1,4 +1,5 @@
 ﻿using BlazorIdentity.Users.Models;
+using Shared.Models;
 using StackExchange.Redis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -22,7 +23,7 @@ public class RedisUserRepository(ILogger<RedisUserRepository> logger, IConnectio
         return await _database.KeyDeleteAsync(GetUserKey(id));
     }
 
-    public async Task<UserProfile> GetUserProfileAsync(Guid userId)
+    public async Task<UserProfileViewModel> GetUserProfileAsync(Guid userId)
     {
         using var data = await _database.StringGetLeaseAsync(GetUserKey(userId));
 
@@ -30,12 +31,12 @@ public class RedisUserRepository(ILogger<RedisUserRepository> logger, IConnectio
         {
             return null;
         }
-        return JsonSerializer.Deserialize(data.Span, UserSerializationContext.Default.UserProfile);
+        return JsonSerializer.Deserialize(data.Span, UserSerializationContext.Default.UserProfileViewModel);
     }
 
-    public async Task<UserProfile> UpdateUserProfileAsync(UserProfile userProfile)
+    public async Task<UserProfileViewModel> UpdateUserProfileAsync(UserProfileViewModel userProfile)
     {
-        var json = JsonSerializer.SerializeToUtf8Bytes(userProfile, UserSerializationContext.Default.UserProfile);
+        var json = JsonSerializer.SerializeToUtf8Bytes(userProfile, UserSerializationContext.Default.UserProfileViewModel);
         var created = await _database.StringSetAsync(GetUserKey(userProfile.UserId), json);
 
         if (!created)
@@ -50,7 +51,7 @@ public class RedisUserRepository(ILogger<RedisUserRepository> logger, IConnectio
     }
 }
 
-[JsonSerializable(typeof(UserProfile))]
+[JsonSerializable(typeof(UserProfileViewModel))]
 [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
 public partial class UserSerializationContext : JsonSerializerContext
 {

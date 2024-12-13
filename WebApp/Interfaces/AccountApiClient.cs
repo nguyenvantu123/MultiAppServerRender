@@ -2,6 +2,7 @@
 using Breeze.Sharp;
 using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
+using Shared.Models;
 using System.Linq.Expressions;
 using System.Net.Http.Json;
 using WebApp.Components.Pages.Admin;
@@ -152,9 +153,9 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/admin-update-user", userViewModel);
         }
 
-        public async Task<ApiResponse<BlazorIdentity.Users.Models.UserProfile>> GetUserProfile()
+        public async Task<ApiResponse<UserProfileViewModel>> GetUserProfile()
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponse<BlazorIdentity.Users.Models.UserProfile>>("api/admin/users/user-profile");
+            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponse<UserProfileViewModel>>("api/admin/users/user-profile");
             return apiResponse;
 
         }

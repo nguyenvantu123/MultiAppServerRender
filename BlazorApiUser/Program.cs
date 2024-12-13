@@ -25,6 +25,8 @@ using BlazorApiUser.Filter;
 using BlazorApiUser.Apis;
 using Aspire.StackExchange.Redis;
 using BlazorIdentity.Repositories;
+using MultiAppServer.EventBus.Abstractions;
+using Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 

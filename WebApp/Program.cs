@@ -35,10 +35,10 @@ using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
 using Aspire.StackExchange.Redis.DistributedCaching;
 using BlazorIdentity.Repositories;
-using WebApp.Events;
 using MultiAppServer.EventBus.Abstractions;
 using System.Net.NetworkInformation;
-
+using Blazored.SessionStorage;
+using Shared.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -53,9 +53,10 @@ builder.AddRabbitMqEventBus("EventBus");
 
 builder.AddRedisDistributedCache("Redis");
 
+builder.Services.AddBlazoredSessionStorage();
+
 builder.Services.AddSingleton<RedisUserRepository>();
 
-builder.Services.AddScoped<AppState>();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

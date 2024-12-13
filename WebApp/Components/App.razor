@@ -1,23 +1,23 @@
 ﻿@using Microsoft.AspNetCore.WebUtilities
+@using global::Shared.Models
 @inject NavigationManager UrlHelper;
-@inject AppState appState
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
 <!DOCTYPE html>
 <html lang="en">
 
-@{
+@code {
+    string themeName = "material3";
 
-    // var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-    // QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var themeName);
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //     if (!firstRender)
+        //     {
+        UserProfileViewModel appState = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
 
-    string themeName = appState.IsDarkMode ? "material3-dark" : "material3";
-
-    // AdminMainLayout adminMainLayout = new AdminMainLayout();
-
-    // string themeName = "material3";
-    // if (adminMainLayout.userProfile != null)
-    // {
-    //     themeName = adminMainLayout.userProfile.IsDarkMode ? "material3-darkmaterial3" : "";
-    // }
+        string themeName = appState == null || !appState.IsDarkMode ? "material3" : "material3-dark";
+        // }
+    }
 }
 
 <head>
