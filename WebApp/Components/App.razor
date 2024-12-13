@@ -1,22 +1,19 @@
-﻿@using Microsoft.AspNetCore.WebUtilities
+﻿@using BlazorIdentity.Repositories
+@using Microsoft.AspNetCore.WebUtilities
 @using global::Shared.Models
 @inject NavigationManager UrlHelper;
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-
+@inject AccountApiClient accountApiClient;
 <!DOCTYPE html>
 <html lang="en">
 
 @code {
     string themeName = "material3";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async void OnInitialized()
     {
-        //     if (!firstRender)
-        //     {
-        UserProfileViewModel appState = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
-
-        string themeName = appState == null || !appState.IsDarkMode ? "material3" : "material3-dark";
-        // }
+        var userProfile = await accountApiClient.GetUserProfile();
+        themeName = userProfile.Result == null || !userProfile.Result.IsDarkMode ? "material3" : "material3-dark";
     }
 }
 

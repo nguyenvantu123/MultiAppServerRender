@@ -46,6 +46,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5ccnRTRmNeVkR0V0o=");
 builder.AddServiceDefaults();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddScoped<LogoutServices>();
+
+builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
+{
+    httpClient.BaseAddress = new("https://blazorapiuser");
+}).AddApiVersion(1.0).AddAuthToken();
+
+builder.Services.AddHttpClient<FileApiClient>(httpClient =>
+{
+    httpClient.BaseAddress = new("https://blazorfiles");
+}).AddApiVersion(1.0).AddAuthToken();
 
 builder.AddApplicationServices();
 
@@ -233,18 +245,6 @@ builder.Services.AddSignalR(o => { o.MaximumReceiveMessageSize = 102400000; });
 //               };
 //           });
 
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddScoped<LogoutServices>();
-
-builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
-{
-    httpClient.BaseAddress = new("https://blazorapiuser");
-}).AddApiVersion(1.0).AddAuthToken();
-
-builder.Services.AddHttpClient<FileApiClient>(httpClient =>
-{
-    httpClient.BaseAddress = new("https://blazorfiles");
-}).AddApiVersion(1.0).AddAuthToken();
 
 //builder.Services.AddHttpForwarderWithServiceDiscovery();
 

@@ -155,7 +155,7 @@
     [Inject] protected AccountApiClient accountApiClient { get; set; }
     [Inject] protected RedisUserRepository redisUserRepo { get; set; }
     [Inject] protected IEventBus eventBus { get; set; }
-    UserProfileViewModel? userProfileViewModel = null;
+    public UserProfileViewModel? userProfileViewModel = null;
     private string themeName;
     private bool Visibility { get; set; } = false;
     private void OnClicked()
@@ -173,7 +173,7 @@
 
         await eventBus.PublishAsync(updateProfileEvent);
 
-        
+        _navigationManager.Refresh();
     }
 
     protected override async void OnInitialized()
@@ -191,6 +191,13 @@
         }
 
     }
+
+    // public string GetDarkMode()
+    // {
+    //     var userProfileViewModel = sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData").Result;
+
+    //     return userProfileViewModel == null || !userProfileViewModel.IsDarkMode ? "material3" : "material3-dark";
+    // }
 
     // private string GetThemeName()
     // {
@@ -258,8 +265,8 @@
 
     #maintext .content {
         padding: 15px;
-        height: calc(100vh);
-        background: rgba(var(--color-sf-background));
+        /*         height: calc(100vh);
+                                 */ background: rgba(var(--color-sf-background));
         color: rgba(var(--color-sf-on-background));
     }
 
@@ -480,7 +487,7 @@
         border-radius: 4px !important;
         /* box-shadow: 0 1px 3px 1px rgba(0, 0, 0, .15), 0 1px 2px 0 rgba(0, 0, 0, .3); */
         /*         padding: 7px 16px !important;
-                                                                                                         */
+                                                                                                                                         */
     }
 
 </style>
