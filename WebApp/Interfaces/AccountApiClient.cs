@@ -130,7 +130,7 @@ namespace WebApp.Interfaces
         {
             UserDataViewModel userViewModel = new UserDataViewModel();
 
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserDataViewModel>>("api/admin/users/user-view-model");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<UserDataViewModel>>("api/admin/users/user-view-model");
 
             if (apiResponse.IsSuccessStatusCode)
                 userViewModel = apiResponse.Result;
@@ -155,7 +155,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponse<UserProfileViewModel>> GetUserProfile()
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponse<UserProfileViewModel>>("api/admin/users/user-profile");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponse<UserProfileViewModel>>("api/admin/users/user-profile");
             return apiResponse;
 
         }
@@ -188,7 +188,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<List<TenantModel>>> GetListTenant(int pageSize, int pageNumber, string searchText)
         {
-            return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantModel>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&name={searchText}");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<TenantModel>>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&name={searchText}");
         }
 
 
@@ -240,7 +240,7 @@ namespace WebApp.Interfaces
 
         public async Task<UserDataViewModel> GetUserById(string id)
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<UserDataViewModel>>($"api/admin/users/{id}");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<UserDataViewModel>>($"api/admin/users/{id}");
             return apiResponse.Result;
         }
 
@@ -272,7 +272,7 @@ namespace WebApp.Interfaces
 
         public async Task<List<string>> GetPermissionByUser()
         {
-            var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<List<string>>($"api/account/get-permission-by-user");
+            var apiResponse = await _httpClient.GetJsonAsync<List<string>>($"api/account/get-permission-by-user");
             return apiResponse;
         }
 

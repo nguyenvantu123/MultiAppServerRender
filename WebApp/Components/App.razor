@@ -1,20 +1,18 @@
 ﻿@using BlazorIdentity.Repositories
 @using Microsoft.AspNetCore.WebUtilities
+@using System.Security.Claims
 @using global::Shared.Models
-@inject NavigationManager UrlHelper;
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject AccountApiClient accountApiClient;
+@inject AppState appState
+
 <!DOCTYPE html>
 <html lang="en">
 
-@code {
+@{
     string themeName = "material3";
 
-    protected override async void OnInitialized()
-    {
-        var userProfile = await accountApiClient.GetUserProfile();
-        themeName = userProfile.Result == null || !userProfile.Result.IsDarkMode ? "material3" : "material3-dark";
-    }
+    themeName = appState.IsDarkMode.HasValue ? "material3-dark" : "material3";
+
+    string da = themeName;
 }
 
 <head>
@@ -32,11 +30,17 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
 
+
+    @*     <HeadOutlet @rendermode="InteractiveServer" />
+    *@
     <link href=@("_content/Syncfusion.Blazor.Themes/" + themeName + ".css") rel="stylesheet" />
 </head>
 
 <body>
     <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+
+    @*     <Routes @rendermode="InteractiveServer" />
+    *@
     <script src="js/interop.js"></script>
     <script src="_framework/blazor.web.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>

@@ -4,8 +4,9 @@
 @using Syncfusion.Blazor.Charts
 @using Syncfusion.Blazor.Grids
 @using global::Shared.Models
+@inject AppState appState
 
-@attribute [Authorize]
+@attribute [AllowAnonymous]
 @layout AdminMainLayout
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
@@ -200,12 +201,32 @@
         "#61EFCD", "#CDDE1F", "#FEC200", "#CA765A", "#2485FA", "#F57D7D", "#C152D2",
         "#8854D9", "#3D4EB8", "#00BCD7", "#4472c4", "#ed7d31", "#ffc000", "#70ad47", "#5b9bd5", "#c1c1c1", "#6f6fe2", "#e269ae", "#9e480e", "#997300"
     };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Theme = appState.IsDarkMode!.Value ? Theme.Material3Dark : Theme.Material3;
+        }
+
+        await Task.CompletedTask;
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Theme = appState.IsDarkMode!.Value ? Theme.Material3Dark : Theme.Material3;
+        await Task.CompletedTask;
+
+    }
+
     protected async override void OnInitialized()
     {
 
-        UserProfileViewModel appState = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
+        Theme = appState.IsDarkMode!.Value ? Theme.Material3Dark : Theme.Material3;
 
-        Theme = appState.IsDarkMode ? Theme.Material3Dark : Theme.Material3;
+        await Task.CompletedTask;
     }
     private class RenderingData
     {

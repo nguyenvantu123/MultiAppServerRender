@@ -48,7 +48,7 @@ SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpR
 builder.AddServiceDefaults();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped<LogoutServices>();
-
+builder.Services.AddSingleton<AppState>();
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new("https://blazorapiuser");
@@ -145,6 +145,7 @@ var localizationOptions = new RequestLocalizationOptions()
             .AddSupportedUICultures(supportedCultures);
 builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 builder.Services.AddSignalR(o => { o.MaximumReceiveMessageSize = 102400000; });
+//builder.Services.AddRazorPages();
 
 //.AddOpenIdConnect( options =>
 //{
@@ -315,6 +316,8 @@ app.UseAuthorization();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+//app.MapBlazorHub();
+//app.MapFallbackToPage("/_Host");
 //app.MapRazorPages();
 //app.MapControllers();
 

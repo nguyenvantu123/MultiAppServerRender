@@ -11,7 +11,7 @@ namespace WebApp.Extensions
         public static async Task<T> GetNewtonsoftJsonAsync<T>(this HttpClient httpClient, string requestUri)
         {
             var stringContent = await httpClient.GetStringAsync(requestUri);
-            return JsonConvert.DeserializeObject<T>(stringContent);
+            return  JsonConvert.DeserializeObject<T>(stringContent);
         }
 
         public static async Task<T> PostNewtonsoftJsonAsync<T>(this HttpClient httpClient, string requestUri, object content)

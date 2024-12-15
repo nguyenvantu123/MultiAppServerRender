@@ -6,6 +6,7 @@
 @using global::Shared.Models
 @inject NavigationManager UrlHelper;
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject AppState appState
 @inherits LayoutComponentBase
 
 <AuthorizeView>
@@ -151,6 +152,9 @@
     // public bool SidebarToggle = false;
     private bool IsDarkMode = false;
 
+    IDisposable? basketStateSubscription;
+
+
     SfSidebar sidebarObj;
     [Inject] protected AccountApiClient accountApiClient { get; set; }
     [Inject] protected RedisUserRepository redisUserRepo { get; set; }
@@ -173,22 +177,45 @@
 
         await eventBus.PublishAsync(updateProfileEvent);
 
-        _navigationManager.Refresh();
+        // httpContextAccessor!.HttpContext!.Response.Cookies.Append(
+        //       "Application.Theme",
+        //       userProfileViewModel.IsDarkMode ? "material3-dark" : "material3",
+        //       new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+        //   );
+        appState.IsDarkMode = userProfileViewModel.IsDarkMode;
+        _navigationManager.NavigateTo(GetUri(), true);
+        // ;
+
     }
 
-    protected override async void OnInitialized()
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         if(appState.VisitPage != null)
+    //         {
+    //             _navigationManager.NavigateTo(appState.VisitPage, true);
+
+    //         }
+    //     }
+
+    //     await Task.CompletedTask;
+    // }
+
+    protected override async Task OnInitializedAsync()
     {
-        userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
-        if (userProfileViewModel == null)
+
+        if (appState.IsDarkMode == null)
         {
             var userProfile = await accountApiClient.GetUserProfile();
 
             userProfileViewModel = userProfile.Result;
-
-            await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
-
-            _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
+            appState.IsDarkMode = userProfileViewModel.IsDarkMode;
+            appState.VisitPage = userProfile.Result.LastPageVisited;
+            _navigationManager.NavigateTo(userProfile.Result.LastPageVisited, true);
         }
+
+        await Task.CompletedTask;
 
     }
 
@@ -206,11 +233,11 @@
     //     return string.IsNullOrEmpty(theme) || theme!.First() == null ? "material3" : (theme!.First());
     // }
 
-    // private string GetUri(string themeName)
-    // {
-    //     var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-    //     return uri.AbsolutePath + "?theme=" + themeName;
-    // }
+    private string GetUri()
+    {
+        var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+        return uri.AbsolutePath;
+    }
 
     private void OverlayClick(OverlayModalClickEventArgs args)
     {
@@ -258,16 +285,17 @@
         height: 500px;
     }
 
-    #wrapper .sidebar-menu .e-menu-container {
-        border: 0px;
-        height: 1000px;
-    }
+    /*     #wrapper .sidebar-menu .e-menu-container {
+                                        border: 0px;
+                                        height: 1000px;
+                                    } */
 
     #maintext .content {
         padding: 15px;
-        /*         height: calc(100vh);
-                                 */ background: rgba(var(--color-sf-background));
+        background: rgba(var(--color-sf-background));
         color: rgba(var(--color-sf-on-background));
+        height: 1000px;
+        overflow-y: auto;
     }
 
     #maintext .paragraph-content {
@@ -487,7 +515,26 @@
         border-radius: 4px !important;
         /* box-shadow: 0 1px 3px 1px rgba(0, 0, 0, .15), 0 1px 2px 0 rgba(0, 0, 0, .3); */
         /*         padding: 7px 16px !important;
-                                                                                                                                         */
+                                                                                                                                                                         */
+    }
+
+    .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+        background: rgba(var(--color-sf-background));
+        color: rgba(var(--color-sf-on-background));
+        /*         text-align: center;
+                             */
+    }
+
+    .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-content {
+        background: rgba(var(--color-sf-background));
+        color: rgba(var(--color-sf-on-background));
+        /*         padding: 50px;
+                             */
+    }
+
+    .e-dashboardlayout.e-control.e-responsive {
+        background: rgba(var(--color-sf-background));
+        color: rgba(var(--color-sf-on-background));
     }
 
 </style>
