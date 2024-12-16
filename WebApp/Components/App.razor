@@ -10,7 +10,7 @@
 @{
     string themeName = "material3";
 
-    themeName = appState.IsDarkMode.HasValue ? "material3-dark" : "material3";
+    themeName = appState.IsDarkMode ? "material3-dark" : "material3";
 
     string da = themeName;
 }

@@ -20,6 +20,7 @@
                     @*Initialize the Sidebar component*@
                     <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="userProfileViewModel.IsNavOpen" Type="@SidebarType.Auto">
                         <ChildContent>
+                            <ToolbarEvents Clicked="@ToolbarClicked"></ToolbarEvents>
                             <div class="main-menu">
                                 <div>
                                     <AdminNavMenu />
@@ -29,6 +30,17 @@
                             </div>
                         </ChildContent>
                     </SfSidebar>
+
+                    <SfDialog Width="250px" ShowCloseIcon="true" IsModal="true" @bind-Visible="@IsVisible">
+                        <DialogTemplates>
+                            <Header> Logout </Header>
+                            <Content> Are you want to logout all services? </Content>
+                        </DialogTemplates>
+                        <DialogButtons>
+                            <DialogButton Content="OK" IsPrimary="true" OnClick="@OkClick" />
+                            <DialogButton Content="Cancel" OnClick="@CancelClick" />
+                        </DialogButtons>
+                    </SfDialog>
 
                     <SfDialog ID="defaultDialog" Width="350" CssClass="dialog-medium" style="height: 1000px" Target="#target" ShowCloseIcon="true" @bind-Visible="Visibility">
                         <DialogEvents OnOverlayModalClick="@OverlayClick"></DialogEvents>
@@ -106,7 +118,7 @@
                                                 <DropDownMenuItem IconCss="fas fa-inbox" Text="Inbox"></DropDownMenuItem>
                                                 <DropDownMenuItem IconCss="fas fa-tasks" Text="Task Manager"></DropDownMenuItem>
                                                 <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support"></DropDownMenuItem>
-                                                <DropDownMenuItem IconCss="fas fa-sign-out-alt" Text="Logout"></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-sign-out-alt" onclick="@OpenDialog" Text="Logout"></DropDownMenuItem>
                                             </DropDownMenuItems>
                                         </SfDropDownButton>
                                     </Template>
@@ -150,10 +162,6 @@
     // Specifies the orientation type of Menu component.
     // Specify the value of Sidebar component state. It indicates whether the sidebar component is in an open/close state.
     // public bool SidebarToggle = false;
-    private bool IsDarkMode = false;
-
-    IDisposable? basketStateSubscription;
-
 
     SfSidebar sidebarObj;
     [Inject] protected AccountApiClient accountApiClient { get; set; }
@@ -162,76 +170,70 @@
     public UserProfileViewModel? userProfileViewModel = null;
     private string themeName;
     private bool Visibility { get; set; } = false;
+
+    private bool IsVisible { get; set; } = true;
+
     private void OnClicked()
     {
         this.Visibility = !this.Visibility;
     }
 
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void CancelClick()
+    {
+        this.IsVisible = false;
+    }
+
+    private void OkClick()
+    {
+        this.IsVisible = false;
+        _navigationManager.NavigateTo("/logout");
+    }
+
     private async void ToogleDarkMode()
     {
+        userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
+
         userProfileViewModel!.IsDarkMode = !userProfileViewModel.IsDarkMode;
 
-        var data1123456 = await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
+        appState.IsDarkMode = userProfileViewModel.IsDarkMode;
+        await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
 
         UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
 
         await eventBus.PublishAsync(updateProfileEvent);
 
-        // httpContextAccessor!.HttpContext!.Response.Cookies.Append(
-        //       "Application.Theme",
-        //       userProfileViewModel.IsDarkMode ? "material3-dark" : "material3",
-        //       new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
-        //   );
-        appState.IsDarkMode = userProfileViewModel.IsDarkMode;
-        _navigationManager.NavigateTo(GetUri(), true);
-        // ;
+        await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfileViewModel));
+        _navigationManager.Refresh(true);
 
     }
 
-    // protected override async Task OnAfterRenderAsync(bool firstRender)
-    // {
-    //     if (firstRender)
-    //     {
-    //         if(appState.VisitPage != null)
-    //         {
-    //             _navigationManager.NavigateTo(appState.VisitPage, true);
-
-    //         }
-    //     }
-
-    //     await Task.CompletedTask;
-    // }
-
-    protected override async Task OnInitializedAsync()
+    protected override async void OnInitialized()
     {
 
-        if (appState.IsDarkMode == null)
+        userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
+        if (userProfileViewModel == null)
         {
             var userProfile = await accountApiClient.GetUserProfile();
 
             userProfileViewModel = userProfile.Result;
+
             appState.IsDarkMode = userProfileViewModel.IsDarkMode;
-            appState.VisitPage = userProfile.Result.LastPageVisited;
-            _navigationManager.NavigateTo(userProfile.Result.LastPageVisited, true);
+
+            appState.IsNavOpen = userProfileViewModel.IsNavOpen;
+
+
+            await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
+
+            _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
         }
 
-        await Task.CompletedTask;
-
+        _navigationManager.Refresh();
     }
-
-    // public string GetDarkMode()
-    // {
-    //     var userProfileViewModel = sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData").Result;
-
-    //     return userProfileViewModel == null || !userProfileViewModel.IsDarkMode ? "material3" : "material3-dark";
-    // }
-
-    // private string GetThemeName()
-    // {
-    //     var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-    //     QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var theme);
-    //     return string.IsNullOrEmpty(theme) || theme!.First() == null ? "material3" : (theme!.First());
-    // }
 
     private string GetUri()
     {
@@ -244,9 +246,13 @@
         this.Visibility = false;
     }
 
-    public async void Toggle()
+
+    public async void ToolbarClicked(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+
     {
         userProfileViewModel!.IsNavOpen = !userProfileViewModel.IsNavOpen;
+
+        appState.IsNavOpen = userProfileViewModel.IsNavOpen;
 
         var data1123456 = await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
 
@@ -254,6 +260,10 @@
 
         await eventBus.PublishAsync(updateProfileEvent);
     }
+    // public async void Toggle()
+    // {
+
+    // }
 }
 <style>
     /* Sample specific styles*/
@@ -286,9 +296,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                        border: 0px;
-                                        height: 1000px;
-                                    } */
+                                                                                                                                                                            border: 0px;
+                                                                                                                                                                            height: 1000px;
+                                                                                                                                                                        } */
 
     #maintext .content {
         padding: 15px;
@@ -513,23 +523,16 @@
         text-transform: none !important;
         white-space: normal !important;
         border-radius: 4px !important;
-        /* box-shadow: 0 1px 3px 1px rgba(0, 0, 0, .15), 0 1px 2px 0 rgba(0, 0, 0, .3); */
-        /*         padding: 7px 16px !important;
-                                                                                                                                                                         */
     }
 
     .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
         background: rgba(var(--color-sf-background));
         color: rgba(var(--color-sf-on-background));
-        /*         text-align: center;
-                             */
     }
 
     .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-content {
         background: rgba(var(--color-sf-background));
         color: rgba(var(--color-sf-on-background));
-        /*         padding: 50px;
-                             */
     }
 
     .e-dashboardlayout.e-control.e-responsive {

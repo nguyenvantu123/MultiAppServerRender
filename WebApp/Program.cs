@@ -293,16 +293,16 @@ if (builder.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//app.Use(async (context, next) =>
-//{
-//    if (context.Request.Path
-//            .Equals("/logout", System.StringComparison.OrdinalIgnoreCase))
-//    {
-//        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-//        await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-//    }
-//    await next();
-//});
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path
+            .Equals("/logout", System.StringComparison.OrdinalIgnoreCase))
+    {
+        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+    }
+    await next();
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
