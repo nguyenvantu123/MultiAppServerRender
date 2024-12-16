@@ -1,4 +1,6 @@
 ﻿@using BlazorIdentity.Repositories
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Authentication.OpenIdConnect
 @using Microsoft.AspNetCore.WebUtilities
 @using MultiAppServer.EventBus.Abstractions
 @using Newtonsoft.Json
@@ -8,7 +10,8 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject AppState appState
 @inherits LayoutComponentBase
-
+@inject LogoutServices LogOutService
+@inject IHttpContextAccessor httpContextAccessor
 <AuthorizeView>
     <Authorized>
 
@@ -20,8 +23,8 @@
                     @*Initialize the Sidebar component*@
                     <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="userProfileViewModel.IsNavOpen" Type="@SidebarType.Auto">
                         <ChildContent>
-                            <ToolbarEvents Clicked="@ToolbarClicked"></ToolbarEvents>
-                            <div class="main-menu">
+                            @*                             <ToolbarEvents Clicked="@ToolbarClicked"></ToolbarEvents>
+                        *@                            <div class="main-menu">
                                 <div>
                                     <AdminNavMenu />
                                     @*                                 <SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
@@ -31,14 +34,25 @@
                         </ChildContent>
                     </SfSidebar>
 
-                    <SfDialog Width="250px" ShowCloseIcon="true" IsModal="true" @bind-Visible="@IsVisible">
-                        <DialogTemplates>
-                            <Header> Logout </Header>
-                            <Content> Are you want to logout all services? </Content>
-                        </DialogTemplates>
+                    @*        <SfDialog Width="350" ShowCloseIcon="true" IsModal="true" @bind-Visible="@IsVisible">
+                <DialogTemplates>
+                <Header> Logout </Header>
+                <Content> Are you want to logout all services? </Content>
+                </DialogTemplates>
+                <DialogButtons>
+                <DialogButton Content="OK" IsPrimary="true" OnClick="@OkClick" />
+                <DialogButton Content="Cancel" OnClick="@CancelClick" />
+                </DialogButtons>
+                </SfDialog> *@
+
+                    <SfDialog Content="Are you want to logout all services?" Width="350" Header="Logout" Visible="false" @ref="DialogObj">
+                        <DialogPositionData X="center" Y="center"></DialogPositionData>
                         <DialogButtons>
-                            <DialogButton Content="OK" IsPrimary="true" OnClick="@OkClick" />
-                            <DialogButton Content="Cancel" OnClick="@CancelClick" />
+                     @*        <form method="post" action="logout">
+                                <AntiforgeryToken /> *@
+                            <DialogButton Content="OK" OnClick="@okclick" IsPrimary="true"></DialogButton>
+                          @*   </form> *@
+                            <DialogButton Content="Cancel" OnClick="@cancelclick"></DialogButton>
                         </DialogButtons>
                     </SfDialog>
 
@@ -114,11 +128,12 @@
                                             </div>
 
                                             <DropDownMenuItems>
+                                                <DropDownButtonEvents ItemSelected="select"></DropDownButtonEvents>
                                                 <DropDownMenuItem IconCss="fas fa-user" Text="User"></DropDownMenuItem>
                                                 <DropDownMenuItem IconCss="fas fa-inbox" Text="Inbox"></DropDownMenuItem>
                                                 <DropDownMenuItem IconCss="fas fa-tasks" Text="Task Manager"></DropDownMenuItem>
                                                 <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support"></DropDownMenuItem>
-                                                <DropDownMenuItem IconCss="fas fa-sign-out-alt" onclick="@OpenDialog" Text="Logout"></DropDownMenuItem>
+                                                <DropDownMenuItem IconCss="fas fa-sign-out-alt" Text="Logout"></DropDownMenuItem>
                                             </DropDownMenuItems>
                                         </SfDropDownButton>
                                     </Template>
@@ -162,6 +177,8 @@
     // Specifies the orientation type of Menu component.
     // Specify the value of Sidebar component state. It indicates whether the sidebar component is in an open/close state.
     // public bool SidebarToggle = false;
+    // [CascadingParameter]
+    // public HttpContext? HttpContext { get; set; }
 
     SfSidebar sidebarObj;
     [Inject] protected AccountApiClient accountApiClient { get; set; }
@@ -171,28 +188,53 @@
     private string themeName;
     private bool Visibility { get; set; } = false;
 
-    private bool IsVisible { get; set; } = true;
-
+    HttpClient httpClient = new HttpClient();
     private void OnClicked()
     {
         this.Visibility = !this.Visibility;
     }
+    SfDialog DialogObj;
 
-    private void OpenDialog()
+    private async void cancelclick(object args)
     {
-        this.IsVisible = true;
+        await DialogObj.HideAsync();
     }
 
-    private void CancelClick()
+    private async void okclick(object args)
     {
-        this.IsVisible = false;
+        // await LogOutService.LogOutAsync(httpContextAccessor.HttpContext!);
+
+        await httpClient.PostAsync("https://localhost:7221/logout", null);
+
+        _navigationManager.Refresh(true);
+
     }
 
-    private void OkClick()
+
+    private async void select(MenuEventArgs args)
     {
-        this.IsVisible = false;
-        _navigationManager.NavigateTo("/logout");
+        if (args.Item.Text == "Logout")
+        {
+            await DialogObj.ShowAsync();
+        }
     }
+
+    // private void OpenDialog()
+    // {
+    //     this.IsVisible = true;
+
+    // }
+
+    // private void CancelClick()
+    // {
+    //     this.IsVisible = false;
+    // }
+
+    // private void OkClick()
+    // {
+    //     this.IsVisible = false;
+    //     _navigationManager.NavigateTo("/logout");
+    // }
 
     private async void ToogleDarkMode()
     {
@@ -296,9 +338,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                            border: 0px;
-                                                                                                                                                                            height: 1000px;
-                                                                                                                                                                        } */
+                                                                                                                                                                                                                            border: 0px;
+                                                                                                                                                                                                                            height: 1000px;
+                                                                                                                                                                                                                        } */
 
     #maintext .content {
         padding: 15px;
