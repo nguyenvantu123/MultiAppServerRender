@@ -1,5 +1,6 @@
 ﻿
 using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
+using Aspire.MySqlConnector;
 using eShop.ServiceDefaults;
 using MultiAppServer.EventBus.Abstractions;
 using Webhooks.API.Infrastructure;
@@ -12,10 +13,10 @@ internal static class Extensions
     {
         builder.AddDefaultAuthentication();
 
+        builder.AddMySqlDataSource("webhooksdb");
         builder.AddRabbitMqEventBus("EventBus").AddEventBusSubscriptions();
 
-        builder.AddSqlServerDbContext<WebhooksContext>("webhooksdb");
-
+        //builder.AddSqlServerDbContext<WebhooksContext>("webhooksdb");
         //builder.Services.AddMigration<WebhooksContext>();
 
         builder.Services.AddTransient<IGrantUrlTesterService, GrantUrlTesterService>();

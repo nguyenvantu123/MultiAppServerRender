@@ -15,6 +15,7 @@ using Finbuckle.MultiTenant;
 using BlazorIdentityApi.Mappers.Configuration;
 using AutoMapper;
 using BlazorIdentityApi.Mappers;
+using Aspire.MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +27,11 @@ var withApiVersioning = builder.Services.AddApiVersioning();
 builder.AddDefaultOpenApi(withApiVersioning);
 // Add services to the container.
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+//builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
-builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
+//builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
+
+builder.AddMySqlDataSource("Identitydb");
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")

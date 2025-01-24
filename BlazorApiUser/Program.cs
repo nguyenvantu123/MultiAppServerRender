@@ -27,6 +27,7 @@ using Aspire.StackExchange.Redis;
 using BlazorIdentity.Repositories;
 using MultiAppServer.EventBus.Abstractions;
 using Shared;
+using Aspire.MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,9 +39,9 @@ builder.AddServiceDefaults();
 
 builder.Services.AddSingleton<RedisUserRepository>();
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+builder.AddMySqlDataSource("Identitydb");
 
-builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
+//builder.AddMySqlDataSource("Identitydb");
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")

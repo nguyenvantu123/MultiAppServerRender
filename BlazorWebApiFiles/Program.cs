@@ -13,15 +13,18 @@ using IntegrationEventLogEF.Services;
 using BlazorIdentity.Repository;
 using BlazorIdentityFiles.SeedWork;
 using BetkingLol.DataAccess.UnitOfWork;
+using Aspire.MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.AddMySqlDataSource("FileDb");
+
 builder.AddServiceDefaults();
-
-
 builder.AddRabbitMqEventBus("EventBus");
 
-builder.AddSqlServerDbContext<FileDbContext>("FileDb");
+//builder.AddSqlServerDbContext<FileDbContext>("FileDb");
+
 
 builder.AddDefaultAuthentication();
 
@@ -29,19 +32,19 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IFilesQueries, FilesQueries>();
 
-builder.Services.AddScoped<IRequestManager, RequestManager>();
+builder.Services.AddScoped<IRequestManager, RequestManager> ();
 
 builder.Services.AddScoped<FileServices>();
 
-var configSection = builder.Configuration.GetSection("MinioClient");
+//var configSection = builder.Configuration.GetSection("MinioClient");
 
-var settings = new MinIoClientSettings();
-configSection.Bind(settings);
+//var settings = new MinIoClientSettings();
+//configSection.Bind(settings);
 
-builder.Services.AddMinio(configureClient => configureClient
-       .WithEndpoint(settings.Endpoint)
-       .WithSSL(false)
-       .WithCredentials(settings.AccessKey, settings.SecretKey));
+//builder.Services.AddMinio(configureClient => configureClient
+//       .WithEndpoint(settings.Endpoint)
+//       .WithSSL(false)
+//       .WithCredentials(settings.AccessKey, settings.SecretKey));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IIdentityService, IdentityService>();

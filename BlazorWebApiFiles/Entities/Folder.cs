@@ -1,6 +1,5 @@
 ﻿using BlazorIdentityFiles.Entity._base;
 using BlazorIdentityFiles.SeedWork;
-using Finbuckle.MultiTenant;
 
 namespace BlazorIdentity.Files.Entities
 {

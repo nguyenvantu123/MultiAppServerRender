@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
+    <ProjectReference Include="..\Aspire.MySqlConnector\Aspire.MySqlConnector.csproj" />
     <ProjectReference Include="..\Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj" />
     <ProjectReference Include="..\BlazorIdentity\BlazorIdentity.csproj" />
     <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />

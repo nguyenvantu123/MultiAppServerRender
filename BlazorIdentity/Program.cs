@@ -43,6 +43,7 @@ using BlazorIdentity.Resources;
 using Microsoft.Extensions.Configuration;
 using Aspire.StackExchange.Redis.DistributedCaching;
 using MultiAppServer.EventBus.Abstractions;
+using Aspire.MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,7 +84,9 @@ builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>()
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
 
-builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
+//builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
+
+builder.AddMySqlDataSource("Identitydb");
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")
@@ -97,7 +100,8 @@ builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver<AppTenantI
 
 builder.Services.Replace(new ServiceDescriptor(typeof(ITenantResolver), sp => sp.GetRequiredService<ITenantResolver<AppTenantInfo>>(), ServiceLifetime.Scoped));
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+//builder.AddMySqlDataSource("Identitydb");
+//builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
 builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 var withApiVersioning = builder.Services.AddApiVersioning();

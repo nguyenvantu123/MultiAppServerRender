@@ -47,7 +47,6 @@ var builder = WebApplication.CreateBuilder(args);
 SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5ccnRTRmNeVkR0V0o=");
 builder.AddServiceDefaults();
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddScoped<LogoutServices>();
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {

@@ -10,7 +10,6 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject AppState appState
 @inherits LayoutComponentBase
-@inject LogoutServices LogOutService
 @inject IHttpContextAccessor httpContextAccessor
 <AuthorizeView>
     <Authorized>
@@ -48,10 +47,11 @@
                     <SfDialog Content="Are you want to logout all services?" Width="350" Header="Logout" Visible="false" @ref="DialogObj">
                         <DialogPositionData X="center" Y="center"></DialogPositionData>
                         <DialogButtons>
-                     @*        <form method="post" action="logout">
-                                <AntiforgeryToken /> *@
-                            <DialogButton Content="OK" OnClick="@okclick" IsPrimary="true"></DialogButton>
-                          @*   </form> *@
+                            <form method="post" action="logout">
+                                @* <SfButton IsPrimary Type>Yes</SfButton> *@
+                                <SfButton Type="submit" IsPrimary="true" Content="Yes"></SfButton>
+                            </form>
+
                             <DialogButton Content="Cancel" OnClick="@cancelclick"></DialogButton>
                         </DialogButtons>
                     </SfDialog>
@@ -200,15 +200,15 @@
         await DialogObj.HideAsync();
     }
 
-    private async void okclick(object args)
-    {
-        // await LogOutService.LogOutAsync(httpContextAccessor.HttpContext!);
+    // private async void okclick(object args)
+    // {
+    //     // await LogOutService.LogOutAsync(httpContextAccessor.HttpContext!);
 
-        await httpClient.PostAsync("https://localhost:7221/logout", null);
+    //     // await httpClient.PostAsync("https://localhost:7221/logout", null);
 
-        _navigationManager.Refresh(true);
+    //     // _navigationManager.Refresh(true);
 
-    }
+    // }
 
 
     private async void select(MenuEventArgs args)
@@ -218,23 +218,6 @@
             await DialogObj.ShowAsync();
         }
     }
-
-    // private void OpenDialog()
-    // {
-    //     this.IsVisible = true;
-
-    // }
-
-    // private void CancelClick()
-    // {
-    //     this.IsVisible = false;
-    // }
-
-    // private void OkClick()
-    // {
-    //     this.IsVisible = false;
-    //     _navigationManager.NavigateTo("/logout");
-    // }
 
     private async void ToogleDarkMode()
     {
@@ -338,9 +321,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                            border: 0px;
-                                                                                                                                                                                                                            height: 1000px;
-                                                                                                                                                                                                                        } */
+                                                                                                                                                                                                                                        border: 0px;
+                                                                                                                                                                                                                                        height: 1000px;
+                                                                                                                                                                                                                                    } */
 
     #maintext .content {
         padding: 15px;
