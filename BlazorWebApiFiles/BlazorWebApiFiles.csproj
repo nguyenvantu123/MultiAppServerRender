@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
     <ProjectReference Include="..\Aspire.Minio.Client\Aspire.Minio.Client.csproj" />
-    <ProjectReference Include="..\Aspire.MySqlConnector\Aspire.MySqlConnector.csproj" />
     <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\IntegrationEventLogEF\IntegrationEventLogEF.csproj" />
