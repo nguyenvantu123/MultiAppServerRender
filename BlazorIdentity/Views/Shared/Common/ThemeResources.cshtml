@@ -1,0 +1,10 @@
+﻿@using BlazorIdentity.Localization
+
+@if (!string.IsNullOrEmpty(Context.Request.Cookies[ThemeHelpersIdentity.CookieThemeKey]) && Context.Request.Cookies[ThemeHelpersIdentity.CookieThemeKey] != ThemeHelpersIdentity.DefaultTheme)
+{
+    <link href="@UrlHelper.Content(string.Concat("~/dist/css/themes/",Context.Request.Cookies[ThemeHelpersIdentity.CookieThemeKey],"/bootstrap.min.css"))" asp-append-version="true" rel="stylesheet" />
+}
+else
+{
+    <link href="@UrlHelper.Content(string.Concat("~/dist/css/themes/bootstrap.min.css"))" asp-append-version="true" rel="stylesheet" />
+}

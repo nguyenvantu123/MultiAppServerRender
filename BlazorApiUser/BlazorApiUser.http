@@ -1,0 +1,6 @@
+@BlazorApiUser_HostAddress = http://localhost:5072
+
+GET {{BlazorApiUser_HostAddress}}/api/admin?api-version=1.0
+Accept: application/json
+
+###

@@ -1,0 +1,145 @@
+@using Microsoft.AspNetCore.Components;
+@using MultiAppServer.ServiceDefaults
+@using System.Security.Claims
+@using WebApp.Constant
+@inject HttpClient Http
+@inject IStringLocalizer<Localizer.Global> L
+
+@* <MudNavMenu Style="flex: 1">
+
+    <MudNavLink Href="@_navigationManager.ToAbsoluteUri("").AbsoluteUri" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.BarChart">
+        @L["Dashboard"]
+    </MudNavLink>
+    <MudNavGroup Title="@L["Settings"]">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/settings?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.SettingsApplications">
+            @L["MainSettings"]
+        </MudNavLink>
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/settings/email?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.Email">
+            @L["Email"]
+        </MudNavLink>
+    </MudNavGroup>
+    @if (_canViewUsers)
+    {
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/users?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
+            @L["Users"]
+        </MudNavLink>
+    }
+
+    @if (_canViewRoles)
+    {
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/roles?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.SupervisorAccount">
+            @L["Roles"]
+        </MudNavLink>
+    }
+    @if (_canViewTenant)
+    {
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/multitenancy?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.AccountBalance">
+            @L["MultiTenancy"]
+        </MudNavLink>
+    }
+    <MudNavGroup Title="@L["AppAdminNavMonitoring"]">
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/apilog?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.ChangeHistory">
+            @L["AppAdminNavApiAuditLog"]
+        </MudNavLink>
+        <MudNavLink Href="@_navigationManager.ToAbsoluteUri($"admin/dblog?pageSize={TablePageConstant.PageSize}&pageIndex={TablePageConstant.PageIndex}").AbsoluteUri" Icon="@Icons.Material.Filled.Notes">
+            @L["AppAdminNavDBLoggingView"]
+        </MudNavLink>
+    </MudNavGroup>
+</MudNavMenu> *@
+
+<SfMenu CssClass="dock-menu" HamburgerMode="true" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
+
+@code {
+    TenantModel tenant = new TenantModel();
+
+    public List<MenuItem> MainMenuItems = new List<MenuItem>();
+
+    public Syncfusion.Blazor.Navigations.Orientation VerOrientation = Syncfusion.Blazor.Navigations.Orientation.Vertical;
+
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [Inject] protected AccountApiClient accountApiClient { get; set; }
+
+    // private bool _canViewUsers = true;
+    // private bool _canViewRoles = true;
+
+    // private bool _canViewTenant = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        if (user!.Identity!.IsAuthenticated)
+        {
+
+            MainMenuItems.Add(new MenuItem
+                {
+                    Text = "Dashboard",
+                    IconCss = "fas fa-chart-line",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem{ Text = "Marketing", Url= "/dashboard" },
+                        new MenuItem{ Text = "Sale" ,  Url= "/dashboard"},
+                    }
+                });
+
+            MainMenuItems.Add(new MenuItem
+                {
+                    Text = "Setting",
+                    IconCss = "fas fa-tools",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem{ Text = "MainSettings" },
+                        new MenuItem{ Text = "Email" },
+                    }
+                });
+
+            // MainMenuItems.Add(new MenuItem
+            //     {
+            //         Text = "Dashboard",
+            //         IconCss = "fas fa-chart-line",
+            //         Items = new List<MenuItem>
+            //         {
+            //             new MenuItem{ Text = "Marketing" },
+            //             new MenuItem{ Text = "Sale" },
+            //         }
+            //     });
+
+            MainMenuItems.Add(new MenuItem
+                {
+                    Text = "Monotoring",
+                    IconCss = "fas fa-history",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem{ Text = "History" },
+                        new MenuItem{ Text = "Notes" },
+                    }
+                });
+
+            if (user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null)
+            {
+                MainMenuItems.Add(new MenuItem
+                    {
+                        Text = "Account",
+                        IconCss = "fas fa-users",
+                    });
+            }
+
+            if (user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Read).FirstOrDefault() != null)
+            {
+                MainMenuItems.Add(new MenuItem
+                    {
+                        Text = "MultiTenancy",
+                        IconCss = "fas fa-balance-scale",
+                    });
+            }
+
+            // var apiResponse = await accountApiClient.GetTenant();
+            // if (apiResponse.StatusCode == 200)
+            // {
+            //     tenant = apiResponse.Result;
+            // }
+        }
+    }
+}

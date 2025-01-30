@@ -1,0 +1,224 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>BlazorIdentity</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Commands\**" />
+    <Compile Remove="UserConst\**" />
+    <Compile Remove="wwwroot\lib\**" />
+    <Content Remove="Commands\**" />
+    <Content Remove="UserConst\**" />
+    <Content Remove="wwwroot\lib\**" />
+    <EmbeddedResource Remove="Commands\**" />
+    <EmbeddedResource Remove="UserConst\**" />
+    <EmbeddedResource Remove="wwwroot\lib\**" />
+    <None Remove="Commands\**" />
+    <None Remove="UserConst\**" />
+    <None Remove="wwwroot\lib\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\dist\js\bundle.min.js" />
+    <Content Remove="wwwroot\dist\js\CryptoUtils.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageReference Include="AspectInjector" Version="2.8.2" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.6.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.6.0" />
+    <PackageReference Include="Breeze.AspNetCore.NetCore" Version="7.3.0" />
+    <PackageReference Include="Duende.IdentityServer" Version="7.0.6" />
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.0.6" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="7.0.6" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.0.6" />
+    <PackageReference Include="Duende.IdentityServer.Storage" Version="7.0.6" />
+    <PackageReference Include="Finbuckle.MultiTenant" Version="7.0.1" />
+    <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="7.0.1" />
+    <PackageReference Include="Finbuckle.MultiTenant.EntityFrameworkCore" Version="7.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.9.2" />
+    <PackageReference Include="FormatWith" Version="3.0.1" />
+    <PackageReference Include="Humanizer" Version="2.14.1" />
+    <PackageReference Include="LazyCache" Version="2.4.0" />
+    <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />
+    <PackageReference Include="MediatR" Version="12.4.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjectionFixed" Version="5.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NSwag.Annotations" Version="14.0.8" />
+    <PackageReference Include="ObjectCloner.Extensions" Version="2.0.1" />
+    <PackageReference Include="SendGrid" Version="9.29.3" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
+    <ProjectReference Include="..\Aspire.Minio.Client\Aspire.Minio.Client.csproj" />
+    <ProjectReference Include="..\Aspire.MongoDb.Driver\Aspire.MongoDb.Driver.csproj" />
+    <ProjectReference Include="..\Aspire.Pomelo.EntityFrameworkCore.MySql\Aspire.Pomelo.EntityFrameworkCore.MySql.csproj" />
+    <ProjectReference Include="..\Aspire.StackExchange.Redis.DistributedCaching\Aspire.StackExchange.Redis.DistributedCaching.csproj" />
+    <ProjectReference Include="..\Aspire.StackExchange.Redis\Aspire.StackExchange.Redis.csproj" />
+    <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Migrations\ApplicationDb\" />
+    <Folder Include="Data\Migrations\TenantStoreDb\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Account\AccessDenied.cshtml" />
+    <None Include="Views\Account\ConfirmEmail.cshtml" />
+    <None Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <None Include="Views\Account\ExternalLoginFailure.cshtml" />
+    <None Include="Views\Account\ForgotPassword.cshtml" />
+    <None Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <None Include="Views\Account\Lockout.cshtml" />
+    <None Include="Views\Account\LoggedOut.cshtml" />
+    <None Include="Views\Account\Login.cshtml" />
+    <None Include="Views\Account\LoginWith2fa.cshtml" />
+    <None Include="Views\Account\LoginWithRecoveryCode.cshtml" />
+    <None Include="Views\Account\Logout.cshtml" />
+    <None Include="Views\Account\ResetPassword.cshtml" />
+    <None Include="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <None Include="Views\Configuration\ApiResource.cshtml" />
+    <None Include="Views\Configuration\ApiResourceDelete.cshtml" />
+    <None Include="Views\Configuration\ApiResourceProperties.cshtml" />
+    <None Include="Views\Configuration\ApiResourcePropertyDelete.cshtml" />
+    <None Include="Views\Configuration\ApiResources.cshtml" />
+    <None Include="Views\Configuration\ApiResource\Section\Label.cshtml" />
+    <None Include="Views\Configuration\ApiScope.cshtml" />
+    <None Include="Views\Configuration\ApiScopeDelete.cshtml" />
+    <None Include="Views\Configuration\ApiScopeProperties.cshtml" />
+    <None Include="Views\Configuration\ApiScopePropertyDelete.cshtml" />
+    <None Include="Views\Configuration\ApiScopes.cshtml" />
+    <None Include="Views\Configuration\ApiScope\Section\Label.cshtml" />
+    <None Include="Views\Configuration\ApiSecretDelete.cshtml" />
+    <None Include="Views\Configuration\ApiSecrets.cshtml" />
+    <None Include="Views\Configuration\Client.cshtml" />
+    <None Include="Views\Configuration\ClientClaimDelete.cshtml" />
+    <None Include="Views\Configuration\ClientClaims.cshtml" />
+    <None Include="Views\Configuration\ClientClone.cshtml" />
+    <None Include="Views\Configuration\ClientDelete.cshtml" />
+    <None Include="Views\Configuration\ClientProperties.cshtml" />
+    <None Include="Views\Configuration\ClientPropertyDelete.cshtml" />
+    <None Include="Views\Configuration\Clients.cshtml" />
+    <None Include="Views\Configuration\ClientSecretDelete.cshtml" />
+    <None Include="Views\Configuration\ClientSecrets.cshtml" />
+    <None Include="Views\Configuration\Client\Section\ActionButtons.cshtml" />
+    <None Include="Views\Configuration\Client\Section\Advanced.cshtml" />
+    <None Include="Views\Configuration\Client\Section\Authentication.cshtml" />
+    <None Include="Views\Configuration\Client\Section\ClientProperties.cshtml" />
+    <None Include="Views\Configuration\Client\Section\Consent.cshtml" />
+    <None Include="Views\Configuration\Client\Section\DeviceFlow.cshtml" />
+    <None Include="Views\Configuration\Client\Section\GrantTypes.cshtml" />
+    <None Include="Views\Configuration\Client\Section\Label.cshtml" />
+    <None Include="Views\Configuration\Client\Section\Name.cshtml" />
+    <None Include="Views\Configuration\Client\Section\Resources.cshtml" />
+    <None Include="Views\Configuration\Client\Section\Token.cshtml" />
+    <None Include="Views\Configuration\Client\Section\Urls.cshtml" />
+    <None Include="Views\Configuration\Client\Settings.cshtml" />
+    <None Include="Views\Configuration\IdentityResource.cshtml" />
+    <None Include="Views\Configuration\IdentityResourceDelete.cshtml" />
+    <None Include="Views\Configuration\IdentityResourceProperties.cshtml" />
+    <None Include="Views\Configuration\IdentityResourcePropertyDelete.cshtml" />
+    <None Include="Views\Configuration\IdentityResources.cshtml" />
+    <None Include="Views\Configuration\IdentityResource\Section\Label.cshtml" />
+    <None Include="Views\Consent\Index.cshtml" />
+    <None Include="Views\Device\Success.cshtml" />
+    <None Include="Views\Device\UserCodeCapture.cshtml" />
+    <None Include="Views\Diagnostics\Index.cshtml" />
+    <None Include="Views\Grants\Index.cshtml" />
+    <None Include="Views\Grant\PersistedGrant.cshtml" />
+    <None Include="Views\Grant\PersistedGrantDelete.cshtml" />
+    <None Include="Views\Grant\PersistedGrants.cshtml" />
+    <None Include="Views\Home\Error.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\IdentityProvider\IdentityProvider.cshtml" />
+    <None Include="Views\IdentityProvider\IdentityProviderDelete.cshtml" />
+    <None Include="Views\IdentityProvider\IdentityProviders.cshtml" />
+    <None Include="Views\IdentityProvider\IdentityProvider\Section\Label.cshtml" />
+    <None Include="Views\Identity\Role.cshtml" />
+    <None Include="Views\Identity\RoleClaims.cshtml" />
+    <None Include="Views\Identity\RoleClaimsDelete.cshtml" />
+    <None Include="Views\Identity\RoleDelete.cshtml" />
+    <None Include="Views\Identity\Roles.cshtml" />
+    <None Include="Views\Identity\RoleUsers.cshtml" />
+    <None Include="Views\Identity\Role\Section\Label.cshtml" />
+    <None Include="Views\Identity\UserChangePassword.cshtml" />
+    <None Include="Views\Identity\UserClaims.cshtml" />
+    <None Include="Views\Identity\UserClaimsDelete.cshtml" />
+    <None Include="Views\Identity\UserDelete.cshtml" />
+    <None Include="Views\Identity\UserProfile.cshtml" />
+    <None Include="Views\Identity\UserProviders.cshtml" />
+    <None Include="Views\Identity\UserProvidersDelete.cshtml" />
+    <None Include="Views\Identity\UserRoles.cshtml" />
+    <None Include="Views\Identity\UserRolesDelete.cshtml" />
+    <None Include="Views\Identity\Users.cshtml" />
+    <None Include="Views\Identity\User\Section\Label.cshtml" />
+    <None Include="Views\Key\KeyDelete.cshtml" />
+    <None Include="Views\Key\Keys.cshtml" />
+    <None Include="Views\Manage\ChangePassword.cshtml" />
+    <None Include="Views\Manage\DeletePersonalData.cshtml" />
+    <None Include="Views\Manage\Disable2fa.cshtml" />
+    <None Include="Views\Manage\DownloadPersonalData.cshtml" />
+    <None Include="Views\Manage\EnableAuthenticator.cshtml" />
+    <None Include="Views\Manage\ExternalLogins.cshtml" />
+    <None Include="Views\Manage\GenerateRecoveryCodes.cshtml" />
+    <None Include="Views\Manage\Index.cshtml" />
+    <None Include="Views\Manage\LinkLoginFailure.cshtml" />
+    <None Include="Views\Manage\PersonalData.cshtml" />
+    <None Include="Views\Manage\ResetAuthenticator.cshtml" />
+    <None Include="Views\Manage\SetPassword.cshtml" />
+    <None Include="Views\Manage\ShowRecoveryCodes.cshtml" />
+    <None Include="Views\Manage\TwoFactorAuthentication.cshtml" />
+    <None Include="Views\Manage\_StatusMessage.cshtml" />
+    <None Include="Views\Shared\Common\ErrorPage.cshtml" />
+    <None Include="Views\Shared\Common\Notification.cshtml" />
+    <None Include="Views\Shared\Common\Pager.cshtml" />
+    <None Include="Views\Shared\Common\PagerDynamic.cshtml" />
+    <None Include="Views\Shared\Common\Search.cshtml" />
+    <None Include="Views\Shared\Common\SelectLanguage.cshtml" />
+    <None Include="Views\Shared\Common\SelectTheme.cshtml" />
+    <None Include="Views\Shared\Common\ThemeResources.cshtml" />
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\Redirect.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_ScopeListItem.cshtml" />
+    <None Include="Views\Shared\_ValidationSummary.cshtml" />
+    <None Include="Views\_ViewImports.cshtml" />
+    <None Include="Views\_ViewStart.cshtml" />
+    <None Include="wwwroot\dist\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\dist\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\dist\fonts\open-iconic.svg" />
+    <None Include="wwwroot\dist\js\bundle.min.js" />
+    <None Include="wwwroot\dist\js\CryptoUtils.js" />
+    <None Include="wwwroot\js\bundle.min.js" />
+    <None Include="wwwroot\js\CryptoUtils.js" />
+    <None Include="wwwroot\js\forgot-password.js" />
+    <None Include="wwwroot\js\qrcode.js" />
+    <None Include="wwwroot\js\qrcode.min.js" />
+    <None Include="wwwroot\js\signin-redirect.js" />
+    <None Include="wwwroot\js\signout-redirect.js" />
+  </ItemGroup>
+
+</Project>

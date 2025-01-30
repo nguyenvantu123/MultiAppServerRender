@@ -1,53 +1,87 @@
-using Aspire.RabbitMQ.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using MultiAppServer.ServiceDefaults;
+using BlazorIdentity.Files.Data;
+using BlazorIdentityFiles.Application.Behaviors;
+using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
+using IntegrationEventLogEF.Services;
+using BlazorIdentity.Repository;
+using BlazorIdentityFiles.SeedWork;
+using BetkingLol.DataAccess.UnitOfWork;
+using Aspire.Pomelo.EntityFrameworkCore.MySql;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+//builder.AddMySqlDataSource("FileDb");
+
 builder.AddServiceDefaults();
+builder.AddRabbitMqEventBus("EventBus");
+builder.AddMySqlDbContext<FileDbContext>("FileDb");
 
-// Add services to the container.
+//builder.AddSqlServerDbContext<FileDbContext>("FileDb");
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.AddDefaultAuthentication();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IFilesQueries, FilesQueries>();
+
+builder.Services.AddScoped<IRequestManager, RequestManager> ();
+
+builder.Services.AddScoped<FileServices>();
+
+//var configSection = builder.Configuration.GetSection("MinioClient");
+
+//var settings = new MinIoClientSettings();
+//configSection.Bind(settings);
+
+//builder.Services.AddMinio(configureClient => configureClient
+//       .WithEndpoint(settings.Endpoint)
+//       .WithSSL(false)
+//       .WithCredentials(settings.AccessKey, settings.SecretKey));
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IIdentityService, IdentityService>();
+
+builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<FileDbContext>>();
+builder.Services.AddAntiforgery();
+
+// Configure mediatR
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining(typeof(Program));
+
+    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
+    cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
+});
 
 
-builder.ConfigureJwtBearToken();
+var withApiVersioning = builder.Services.AddApiVersioning();
 
-builder.AddRabbitMQ("messaging");
+builder.AddDefaultOpenApi(withApiVersioning);
 
-builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-var cs = builder.GetAppConfiguration();
-
-if (cs.BehindSSLProxy)
-{
-    app.UseCors();
-    app.UseForwardedHeaders();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.UseAuthentication();
 
-app.MapControllers();
+
+app.UseRouting();
+app.UseAntiforgery();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapDefaultEndpoints();
+
+var files = app.NewVersionedApi("Files");
+
+files.MapFilesApiV1()
+      .RequireAuthorization();
+
+app.UseDefaultOpenApi();
 
 app.Run();

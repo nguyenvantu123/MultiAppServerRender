@@ -1,0 +1,146 @@
+﻿@page "/admin/user-profile/{Id}"
+@inject Microsoft.Extensions.Localization.IStringLocalizer<UserProfile> _localizer
+@layout AdminMainLayout
+
+<PageTitle>@Title</PageTitle>
+@* @if (!_loaded)
+{
+    <LoadingBackground>
+    </LoadingBackground>
+}
+else
+{
+    <MudGrid>
+        <AuthorizeView Roles="Role.AdministratorRole">
+            <MudItem xs="12" sm="12" md="12">
+                <MudCard Elevation="25">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.body1">@_localizer["Administrator Settings."]</MudText>
+                            <MudText Typo="Typo.body2">@_localizer["This is an Administrator Only View."]</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent Class="pa-46" Style="padding:26px!important">
+                        <MudGrid>
+                            <MudCheckBox T="bool" @bind-Checked="@_active" Label="@_localizer["Active?"]" Color="Color.Primary"></MudCheckBox>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="ToggleUserStatus" ButtonType="ButtonType.Submit">@_localizer["Save Changes"]</MudButton>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </AuthorizeView>
+        <MudItem xs="12" sm="4" md="3">
+            <MudCard Elevation="5">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText>@_localizer["Avatar"]</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div class="d-flex justify-center mb-4">
+                        @if (!string.IsNullOrEmpty(@ImageDataUrl))
+                        {
+                            <MudAvatar Image="@ImageDataUrl" Style="height:115px; width:115px;"> </MudAvatar>
+                        }
+                        else
+                        {
+                            <MudAvatar Color="Color.Secondary" Style="height:115px; width:115px;">@_firstLetterOfName</MudAvatar>
+                        }
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="8" md="9">
+            <MudCard Elevation="25">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText>@_localizer["Public Profile"]</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="12" md="6">
+                            <MudField Label="@_localizer["First Name"]" Variant="Variant.Text">@_firstName</MudField>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudField Label="@_localizer["Last Name"]" Variant="Variant.Text">@_lastName</MudField>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudField Label="@_localizer["Phone Number"]" Variant="Variant.Text">@_phoneNumber</MudField>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudField Label="@_localizer["Email"]" Variant="Variant.Text">@_email</MudField>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+}
+ *@
+@code {
+    [Parameter] public string Id { get; set; }
+
+    private bool _active;
+    private char _firstLetterOfName;
+    private string _firstName;
+    private string _lastName;
+    private string _phoneNumber;
+    private string _email;
+
+    public string Title;
+
+    private bool _loaded;
+
+    private async Task ToggleUserStatus()
+    {
+        var request = new ToggleUserStatusRequest { ActivateUser = _active, UserId = Id };
+        var result = await _accountApiClient.ToggleUserStatusAsync(request);
+        if (result.IsSuccessStatusCode)
+        {
+            // viewNotifier.Show(_localizer["Updated User Status."], ViewNotifierType.Success);
+            _navigationManager.NavigateTo("/identity/users");
+        }
+        else
+        {
+            // viewNotifier.Show(result.Message, ViewNotifierType.Error);
+        }
+    }
+
+    [Parameter] public string ImageDataUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userId = Id;
+        var result = await _accountApiClient.GetUserById(userId);
+
+        if (result != null)
+        {
+            _firstName = result.FirstName;
+            _lastName = result.LastName;
+            _email = result.Email;
+            _phoneNumber = result.PhoneNumber;
+            _active = result.IsActive;
+            // var data = await _accountManager.GetProfilePictureAsync(userId);
+            // if (data.Succeeded)
+            // {
+            //     ImageDataUrl = data.Data;
+            // }
+        }
+        Title = $"{_firstName} {_lastName}' Profile";
+        // Description = _email;
+        if (_firstName != null && _firstName.Length > 0)
+        {
+            _firstLetterOfName = _firstName[0];
+        }
+
+        _loaded = true;
+    }
+
+    public class ToggleUserStatusRequest
+    {
+        public bool ActivateUser { get; set; }
+        public string UserId { get; set; }
+    }
+}
+

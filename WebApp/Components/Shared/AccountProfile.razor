@@ -1,0 +1,93 @@
+﻿@using Microsoft.AspNetCore.Components
+@using WebApp.Components.Pages.Admin
+@inject AuthenticationStateProvider authStateProvider
+
+<style>
+    .e-file::before {
+        content: '\e7cb';
+    }
+
+    .e-edit::before {
+        content: '\e78f';
+    }
+
+    .e-open::before {
+        content: '\e70f';
+    }
+
+    .e-save::before {
+        content: '\e74d';
+    }
+
+    .e-cut::before {
+        content: '\e73f';
+    }
+
+    .e-copy::before {
+        content: '\e77b';
+    }
+
+    .e-paste::before {
+        content: '\e739';
+    }
+</style>
+
+<AuthorizeView>
+    <Authorized>
+        <SfMenu TValue="MenuItem">
+
+            <MenuItems>
+                <MenuItems>        
+                    <MenuItem Text="Save" IconCss="e-icons e-save"></MenuItem>
+                    <MenuItem Separator="true"></MenuItem>              
+                    <MenuItem Text="Account" Url="account/profile" IconCss="bi bi-person-circle"></MenuItem>
+                    <MenuItem Text="Logout" IconCss="bi bi-box-arrow-right"></MenuItem>
+                </MenuItems>
+            </MenuItems>
+
+
+            @*  <ActivatorContent>
+            <MudAvatar Color="Color.Secondary">@userName</MudAvatar>
+            </ActivatorContent>
+            <ChildContent>
+            <MudDivider Class="mb-2" />
+            <MudListItem T="string" Text="Account" Href="/account/profile" Icon="@Icons.Material.Outlined.Person" />
+            <MudListItem T="string" Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
+            </ChildContent> *@
+        </SfMenu>
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+
+    [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private char userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // userViewModel = null;
+
+        var user = (await authenticationStateTask).User;
+
+        userName = user.FindFirst("name")?.Value == null ? 'a' : user.FindFirst("name").Value[0];
+
+        // if (user.Identity!.IsAuthenticated)
+        //     userViewModel = await ((IdentityAuthenticationStateProvider)authStateProvider).GetUserViewModel();
+    }
+
+    // private void Logout()
+    // {
+    //     var parameters = new DialogParameters
+    //         {
+    //             {nameof(Dialogs.Logout.ContentText), $"Logout Confirmation"},
+    //             {nameof(Dialogs.Logout.ButtonText), $"Logout"},
+    //             {nameof(Dialogs.Logout.Color), Color.Error}
+    //         };
+
+    //     var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+
+    //     _dialogService.Show<Dialogs.Logout>("Logout", parameters, options);
+    // }
+}

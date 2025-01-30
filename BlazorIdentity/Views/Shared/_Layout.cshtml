@@ -1,0 +1,159 @@
+﻿@using BlazorIdentity.Localization
+@using Duende.IdentityServer.Extensions
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+@{
+    string name = null;
+    if (!true.Equals(ViewData["signed-out"]))
+    {
+        name = Context.User?.GetDisplayName();
+    }
+}
+
+@* @inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+} *@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Duende IdentityServer</title>
+    <link rel="icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
+    <script src="~/js/helpers/FormMvcHelpers.js" asp-append-version="true"></script>
+    <script src="~/js/components/Picker.js" asp-append-version="true"></script>
+
+
+    <environment include="Development">
+        <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+        @await Html.PartialAsync("Common/ThemeResources")
+        <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" />
+    </environment>
+
+    <environment exclude="Development">
+        <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+        @await Html.PartialAsync("Common/ThemeResources")
+        <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
+    </environment>
+
+    @*     <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+    @await Html.PartialAsync("Common/ThemeResources")
+    <link href="~/dist/css/web.css" asp-append-version="true" rel="stylesheet" /> *@
+    @*  <environment include="Development">
+
+    </environment>
+    <environment exclude="Development">
+    <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
+    @await Html.PartialAsync("Common/ThemeResources")
+    <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
+    </environment> *@
+
+</head>
+<body>
+
+    <div class="menu d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom box-shadow">
+        <!--Site name -->
+
+        <h3 class="menu-logo my-0 mr-md-auto font-weight-normal"><a class="logo" asp-area="" asp-controller="Home" asp-action="Index">Duende IdentityServer</a></h3>
+
+        <!--Menu item -->
+        @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(name) && (User.IsInRole("Administrator")))
+        {
+            <!--Menu item -->
+            <div class="menu-item my-2 my-md-0 mr-md-3 dropdown">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    @Localizer["TitleConfiguration"]
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" asp-controller="Configuration" asp-action="Clients">@Localizer["LinkClients"]</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" asp-controller="Configuration" asp-action="IdentityResources">@Localizer["LinkIdentityResources"]</a>
+                    <a class="dropdown-item" asp-controller="Configuration" asp-action="ApiResources">@Localizer["LinkApiResources"]</a>
+                    <a class="dropdown-item" asp-controller="Configuration" asp-action="ApiScopes">@Localizer["LinkApiScopes"]</a>
+                    <a class="dropdown-item" asp-controller="IdentityProvider" asp-action="IdentityProviders">@Localizer["LinkIdentityProviders"]</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" asp-controller="Grant" asp-action="PersistedGrants">@Localizer["LinkPersistedGrants"]</a>
+                    <a class="dropdown-item" asp-controller="Key" asp-action="Keys">@Localizer["Keys"]</a>
+                </div>
+            </div>
+
+            <!--Menu item -->
+            <div class="menu-item my-2 my-md-0 mr-md-3 dropdown">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    @Localizer["TitleUsermanagement"]
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" asp-controller="Identity" asp-action="Users">@Localizer["LinkUsers"]</a>
+                    <a class="dropdown-item" asp-controller="Identity" asp-action="Roles">@Localizer["LinkRoles"]</a>
+                </div>
+            </div>
+
+            <!--Menu item -->
+            <div class="menu-item my-2 my-md-0 mr-md-3 dropdown">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    @Localizer["Settings"] - @name
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" asp-controller="Manage" asp-action="Index">@Localizer["ManageProfile"]</a>
+                    <a class="dropdown-item" asp-controller="Manage" asp-action="PersonalData">@Localizer["ManagePersonalData"]</a>
+                    @*   @if (hasExternalLogins)
+                {
+                <a class="dropdown-item" asp-controller="Manage" asp-action="ExternalLogins">@Localizer["ExternalLogins"]</a>
+                } *@
+                    <a class="dropdown-item" asp-controller="Manage" asp-action="TwoFactorAuthentication">@Localizer["2FA"]</a>
+                    <a class="dropdown-item" asp-controller="Manage" asp-action="ChangePassword">@Localizer["ChangePassword"]</a>
+                    <a class="dropdown-item" asp-controller="Grants" asp-action="Index">@Localizer["Grants"]</a>
+                </div>
+            </div>
+
+            <a class="menu-item my-2 btn btn-outline-primary" asp-action="Logout" asp-controller="Account">@Localizer["Signout"]</a>
+
+            <!--Menu button - show in < MD -->
+            <a class="my-2 btn btn-outline-primary menu-button" href="#">
+                <span class="oi oi-menu" title="menu" aria-hidden="true"></span> @Localizer["Menu"]
+            </a>
+        }
+
+    </div>
+
+    <div class="container">
+        @RenderBody()
+
+        <footer class="pt-4 my-md-5 pt-md-5 border-top">
+            <div class="row">
+                <div class="col-6 col-md">
+                    IdentityServer
+                    <small class="d-block mb-3 text-muted">@Localizer["FooterCopyright"] @DateTime.Now.Year - v1</small>
+                </div>
+
+                <div class="col-md-3 text-right">
+                    @await Html.PartialAsync("Common/SelectTheme")
+                </div>
+                <div class="col-md-3 text-right">
+                    @await Html.PartialAsync("Common/SelectLanguage")
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="text/javascript" src="knockout-3.3.0.js"></script>
+    <environment include="Development">
+        <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
+        <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/dist/js/bundle.min.js" asp-append-version="true"></script>
+        <script src="~/dist/js/CryptoUtils.js" asp-append-version="true"></script>
+    </environment>
+
+
+    @await Html.PartialAsync("Common/Notification")
+    @await RenderSectionAsync("scripts", required: false)
+</body>
+</html>

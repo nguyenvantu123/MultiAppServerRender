@@ -1,0 +1,61 @@
+﻿@inject HooksRepository HooksRepository
+@implements IDisposable
+
+@if (messages is null)
+{
+    <div class="grid-placeholder">Loading...</div>
+}
+else if (messages.Any())
+{
+    <SfGrid DataSource="@messages" AllowPaging="true" AllowSorting="true">
+        <GridColumns>
+            <GridColumn Field=@nameof(WebHookReceived.When) HeaderText="When" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(WebHookReceived.Data) HeaderText="Data" Width="150"></GridColumn>
+            <GridColumn Field=@nameof(WebHookReceived.Token) HeaderText="Token" TextAlign="TextAlign.Right" Width="130"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+    @* <QuickGrid Items="@messages">
+        <PropertyColumn Sortable="@true" Title="When" Property="@messages.When" />
+        <PropertyColumn Sortable="@true" Title="Data" Property="@(hook => hook.Data)" />
+        <PropertyColumn Sortable="@true" Title="Token" Property="@(hook => hook.Token)" />
+    </QuickGrid> *@
+}
+else
+{
+    <div class="grid-placeholder">
+        <div>None yet received</div>
+    </div>
+    <p>Webhook messages will appear once a webhook is registered and an order transitions into "paid" status.</p>
+}
+
+@code {
+    private List<WebHookReceived>? messages;
+    private IDisposable? subscription;
+
+    protected override async Task OnInitializedAsync()
+    {
+        subscription = HooksRepository.Subscribe(() => InvokeAsync(OnMessageReceivedAsync));
+        await RefreshDataAsync();
+    }
+
+    private async Task RefreshDataAsync()
+        => messages = (await HooksRepository.GetAll()).AsQueryable().ToList();
+
+    private async Task OnMessageReceivedAsync()
+    {
+        try
+        {
+            await RefreshDataAsync();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await DispatchExceptionAsync(ex);
+        }
+    }
+
+    public void Dispose()
+    {
+        subscription?.Dispose();
+    }
+}

@@ -13,15 +13,8 @@ namespace Aspire.Minio.Client
     public static class MinIoExtensions
     {
 
-        // public static void AddMinIoClient(this IHostApplicationBuilder builder, string connectionName, Action<MinIOClientSettings>? configureSettings = null)
-        //    => AddMinIoClient(builder, connectionName, configureSettings);
-
-        //public static void AddMinIOClient(this IHostApplicationBuilder builder, string configurationSectionName, Action<MinIOClientSettings>? configureSettings = null)
-        // => AddMinIoClient(builder, configurationSectionName, configureSettings);
-
-
         private static void AddMinIoClient(
-         IHostApplicationBuilder builder,
+         this IHostApplicationBuilder builder,
          string configurationSectionName,
          Action<MinIoClientSettings>? configureSettings)
         {

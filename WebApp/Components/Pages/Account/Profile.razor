@@ -1,0 +1,405 @@
+﻿@page "/account/profile"
+@using WebApp.Components.Pages.Admin
+@attribute [Authorize]
+
+@* @layout AdminMainLayout
+ *@
+@* @if (!_loaded)
+{
+    <LoadingBackground>
+    </LoadingBackground>
+}
+else
+{
+    <MudGrid>
+
+        <MudItem xs="12" sm="4" md="3">
+            <MudCard Elevation="5">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText>Avatar</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div class="d-flex justify-center mb-4">
+                        @if (!string.IsNullOrEmpty(@ImageDataUrl))
+                        {
+                            <MudAvatar Image="@ImageDataUrl" Style="height:115px; width:115px;"> </MudAvatar>
+                        }
+                        else
+                        {
+                            <MudAvatar Color="Color.Secondary" Style="height:115px; width:115px;">@_firstLetterOfName</MudAvatar>
+                        }
+                    </div>
+                </MudCardContent>
+            </MudCard>
+            <InputFile OnChange="@SingleUpload" />
+        </MudItem>
+        <MudItem xs="12" sm="8" md="9">
+            <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+                <MudTabPanel Text="Profile">
+                    @if (userViewModel.HasPassword)
+                    {
+                        <MudButton StartIcon="@Icons.Material.Filled.RotateRight" OnClick="@(() => OpenUpdatePasswordDialog())" Style="margin-left: 10px">@L["Change Password"]</MudButton>
+                    }
+                    @if (userViewModel.HasAuthenticator)
+                    {
+                        <MudButton StartIcon="@Icons.Material.Filled.RotateRight" OnClick="@(() => DisableAuthenticator())" Style="margin-left: 10px">@L["ResetAuthenticator"]</MudButton>
+                    }
+
+                    <EditForm id="mainForm" Model="@userViewModel" OnValidSubmit="@UpdateUser">
+                        <FluentValidationValidator />
+                        <MudValidationSummary />
+                        <MudTextField Disabled="true" @bind-Value="@userViewModel.UserName" Label=@L["UserName"] AdornmentIcon="@Icons.Material.Filled.Person" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] ReadOnly="true"></MudTextField>
+
+                        <MudTextField Disabled="true" @bind-Value="@userViewModel.Email" Label="Email" AdornmentIcon="@Icons.Material.Outlined.Mail" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"]></MudTextField>
+
+                        <MudTextField @bind-Value="@userViewModel.FirstName" Label=@L["FirstName"] FullWidth="true"></MudTextField>
+
+                        <MudTextField @bind-Value="@userViewModel.LastName" Label=@L["LastName"] FullWidth="true"></MudTextField>
+
+                        <strong>@L["Roles"]</strong><br />
+                        <MudChipSet T="bool">
+                    @foreach (var role in userViewModel.Roles)
+                    {
+                    <MudChip Text="@role"></MudChip>
+                    }
+                    </MudChipSet>
+
+                        <MudButton Class="gap-4" ButtonType="ButtonType.Submit" form="mainForm" Variant="Variant.Filled" Color="Color.Primary">@L["Save"]</MudButton>
+                        <MudButton Class="gap-4" Href="/admin" form="mainForm" Variant="Variant.Filled" Color="Color.Secondary">@L["Cancel"]</MudButton>
+                    </EditForm>
+                </MudTabPanel>
+                <MudTabPanel Text="TwoFactorAuthentication">
+                    @if (userViewModel.TwoFactorEnabled)
+                    {
+                        <MudSwitch Value="@TwoFactorEnabled" Label=@L["TwoFactorAuthentication"] Color="Color.Primary" />
+
+                        @if (userViewModel.BrowserRemembered)
+                        {
+                            <MudSwitch Value="@BrowserRemembered" Label=@L["BrowserRemembered"] Color="Color.Primary" />
+                        }
+                        if (userViewModel.RecoveryCodes != null)
+                        {
+                            <MudChipSet T="bool">
+                                @foreach (var rCode in userViewModel.RecoveryCodes)
+                                {
+                                    <MudChip T="bool" Text="@rCode"></MudChip>
+                                }
+                            </MudChipSet>
+                        }
+                        else
+                        {
+                            <span>@L["RecoveryCodesLeft"]</span> @userViewModel.CountRecoveryCodes
+                        }
+                    }
+                    else
+                    {
+                        <h3>@L["TwoFactorAuthentication"]</h3>
+                        @L["EnableAuthenticatorInstructions", userViewModel.SharedKey, $"https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl={userViewModel.AuthenticatorUri}"].ToMarkup()
+                        <MudTextField @bind-Value="@authenticatorVerificationCodeViewModel.Code" Label=@L["Code"] FullWidth="true"></MudTextField>
+                        <MudButton OnClick="@EnableAuthenticator">@L["VerifyCode"]</MudButton>
+                    }
+                </MudTabPanel>
+            </MudTabs>
+        </MudItem>
+    </MudGrid>
+
+    <MudDialog @bind-IsVisible="@updatePasswordDialogOpen">
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Lock" Class="mr-3 mb-n1" />
+                Password Update for @userViewModel.UserName
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <EditForm Model="@updatePasswordViewModel" OnValidSubmit="@UpdatePassword">
+                <FluentValidationValidator />
+                <MudValidationSummary />
+                <MudTextField @bind-Value="@updatePasswordViewModel.CurrentPassword" Label=@L["CurrentPassword"] AdornmentIcon="@_passwordInputIcon" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password" OnAdornmentClick="TogglePasswordVisibility"></MudTextField>
+
+                <MudTextField @bind-Value="@updatePasswordViewModel.NewPassword" Label=@L["NewPassword"] AdornmentIcon="@_passwordInputIcon" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password" OnAdornmentClick="TogglePasswordVisibility"></MudTextField>
+
+                <MudTextField @bind-Value="@updatePasswordViewModel.NewPasswordConfirm" Label=@L["Password Confirmation"] AdornmentIcon="@_passwordInputIcon" Adornment="Adornment.End" FullWidth="true" Required="true" RequiredError=@L["Required"] InputType="InputType.Password" OnAdornmentClick="TogglePasswordVisibility"></MudTextField>
+
+            </EditForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="@(e => { updatePasswordDialogOpen = false; })">@L["Cancel"]</MudButton>
+            <MudButton OnClick="@UpdatePassword" Variant="Variant.Filled" Color="Color.Primary">@L["Update Password"]</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+}
+ *@
+@code {
+    // [Inject] AuthenticationStateProvider authStateProvider { get; set; }
+    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+    // [Inject] IViewNotifier viewNotifier { get; set; }
+
+    protected UserDataViewModel userViewModel;
+    protected bool updatePasswordDialogOpen = false;
+    protected UpdatePasswordViewModel updatePasswordViewModel { get; set; } = new UpdatePasswordViewModel();
+    protected AuthenticatorVerificationCodeViewModel authenticatorVerificationCodeViewModel { get; set; } = new AuthenticatorVerificationCodeViewModel();
+    [Parameter] public string ImageDataUrl { get; set; }
+    private char _firstLetterOfName;
+
+    [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private bool _passwordVisibility;
+    private InputType _passwordInput = InputType.Password;
+    // private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private bool _loaded;
+
+    protected bool BrowserRemembered
+    {
+        get { return userViewModel.BrowserRemembered; }
+        set
+        {
+            if (userViewModel.BrowserRemembered != value)
+                ForgetTwoFactorClient().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+
+                    }
+                    // viewNotifier.Show(t.Exception.Message, ViewNotifierType.Error, L["Operation Failed"]);
+                });
+        }
+    }
+
+    protected bool TwoFactorEnabled
+    {
+        get { return userViewModel.TwoFactorEnabled; }
+        set
+        {
+            if (userViewModel.TwoFactorEnabled != value)
+                EnableDisable2fa().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        
+                    }
+                        // viewNotifier.Show(t.Exception.Message, ViewNotifierType.Error, L["Operation Failed"]);
+                });
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // var user = (await authenticationStateTask).User;
+
+        // identityAuthenticationStateProvider = (AuthenticationState)authStateProvider;
+
+        userViewModel = await _accountApiClient.GetUserViewModel();
+
+        // // if (userViewModel.FirstName.Length > 0)
+        // // {
+        // _firstLetterOfName = userViewModel.UserName[0];
+        // // }
+
+        // if (!string.IsNullOrEmpty(userViewModel.AvatarUrl))
+        // {
+        //     ImageDataUrl = await GetPresisignedUrl(userViewModel.AvatarUrl);
+
+        // }
+        _loaded = true;
+    }
+
+    protected void OpenUpdatePasswordDialog()
+    {
+        updatePasswordViewModel = new UpdatePasswordViewModel();
+        updatePasswordDialogOpen = true;
+    }
+
+    protected async Task UpdatePassword()
+    {
+        if (updatePasswordViewModel.NewPassword != updatePasswordViewModel.NewPasswordConfirm)
+        {
+            // viewNotifier.Show(L["PasswordConfirmationFailed"], ViewNotifierType.Warning);
+        }
+        else
+        {
+            try
+            {
+                var apiResponse = await _accountApiClient.UpdatePassword(updatePasswordViewModel);
+
+                // if (apiResponse.IsSuccessStatusCode)
+                //     viewNotifier.Show(L["UpdatePasswordSuccessful"], ViewNotifierType.Success);
+                // else
+                //     viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["UpdatePasswordFailed"]);
+            }
+            catch (Exception ex)
+            {
+                // viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["UpdatePasswordFailed"]);
+            }
+
+            updatePasswordDialogOpen = false;
+        }
+    }
+
+    protected async Task UpdateUser()
+    {
+        try
+        {
+            RegisterViewModel registerViewModel = new RegisterViewModel();
+
+
+            registerViewModel.FirstName = userViewModel.FirstName;
+            registerViewModel.LastName = userViewModel.LastName;
+
+            var apiResponse = await _accountApiClient.UpdateUser(registerViewModel);
+
+            if (apiResponse.IsSuccessStatusCode)
+            {
+
+            }
+            // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            else
+            {
+                
+            }
+            // viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+        catch (Exception ex)
+        {
+            // viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    protected async Task EnableAuthenticator()
+    {
+        var apiResponse = await _accountApiClient.EnableAuthenticator(authenticatorVerificationCodeViewModel);
+
+        if (apiResponse.IsSuccessStatusCode)
+        {
+            // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            userViewModel = apiResponse.Result;
+            StateHasChanged();
+        }
+    }
+
+    protected async Task DisableAuthenticator()
+    {
+        try
+        {
+            var apiResponse = await _accountApiClient.DisableAuthenticator();
+
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+                userViewModel = apiResponse.Result;
+                authenticatorVerificationCodeViewModel = new AuthenticatorVerificationCodeViewModel();
+                StateHasChanged();
+            }
+       
+        }
+        catch (Exception ex)
+        {
+            // viewNotifier.Show(ex.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+
+    }
+
+    async Task ForgetTwoFactorClient()
+    {
+        if (userViewModel.BrowserRemembered)
+        {
+            var apiResponse = await _accountApiClient.ForgetTwoFactorClient();
+
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+                userViewModel = apiResponse.Result;
+                StateHasChanged();
+            }
+            else
+            {
+                // viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+            }
+        }
+    }
+
+    async Task EnableDisable2fa()
+    {
+        var apiResponse = userViewModel.TwoFactorEnabled ? await _accountApiClient.Disable2fa() : await _accountApiClient.Enable2fa();
+
+        if (apiResponse.IsSuccessStatusCode)
+        {
+            // viewNotifier.Show(L["Operation Successful"], ViewNotifierType.Success);
+            userViewModel = apiResponse.Result;
+            StateHasChanged();
+        }
+        else
+        {
+            // viewNotifier.Show(apiResponse.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+    }
+
+    // void TogglePasswordVisibility()
+    // {
+    //     if (_passwordVisibility)
+    //     {
+    //         _passwordVisibility = false;
+    //         _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    //         _passwordInput = InputType.Password;
+    //     }
+    //     else
+    //     {
+    //         _passwordVisibility = true;
+    //         _passwordInputIcon = Icons.Material.Filled.Visibility;
+    //         _passwordInput = InputType.Text;
+    //     }
+    // }
+
+    private async Task SingleUpload(InputFileChangeEventArgs e)
+    {
+        //TODO upload the files to the server
+
+        _loaded = false;
+
+        FileUploadEntry fileUploadEntry = new FileUploadEntry(e.File);
+
+        using var ms = new MemoryStream();
+        await fileUploadEntry.WriteToStreamAsync(ms);
+
+        MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent
+        {
+        // Send form text values here
+        {new StringContent("0"),"FileType"},
+        {new StringContent("UserProfile"),"RelationType" },
+        {new StringContent(userViewModel.Id.ToString()),"RelationId" },
+        { new ByteArrayContent(ms.GetBuffer()), "\"uploadedFile\"", fileUploadEntry.Name }
+        };
+        try
+        {
+            var data = await _fileApiClient.UploadFile(null, multipartFormDataContent);
+
+            if (data.IsSuccessStatusCode)
+            {
+                ImageDataUrl = await GetPresisignedUrl(data.Result);
+            }
+        }
+        catch (Exception ex)
+        {
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+
+        finally
+        {
+            _loaded = true;
+        }
+    }
+
+    public async Task<string> GetPresisignedUrl(string objectName)
+    {
+
+        GetPresignedUserProfileModel getPresignedUserProfileUrl = new GetPresignedUserProfileModel();
+
+        getPresignedUserProfileUrl.ObjectName = objectName;
+        getPresignedUserProfileUrl.RelationType = "UserProfile";
+
+        return (await _fileApiClient.GetPresignedUrl(getPresignedUserProfileUrl)).Result;
+    }
+}

@@ -1,0 +1,131 @@
+﻿@page "/admin/dblog"
+
+@attribute [Authorize(Policies.IsAdmin)]
+@layout AdminMainLayout
+
+@* <TopSection>
+    <Breadcrumbs>
+        <Breadcrumb Link="/admin" Title=@L["BreadCrumbadmin"] />
+        <Breadcrumb Title=@L["BreadCrumbadmindblog"] />
+    </Breadcrumbs>
+</TopSection> *@
+
+<PageTitle>Db Log Viewer</PageTitle>
+<p>
+    Paginated viewing and fetching of system logs from the database.
+</p>
+
+@if (dbLogItems == null)
+{
+    <LoadingBackground>
+        <label>@L["Loading"]</label>
+    </LoadingBackground>
+}
+else
+{
+    <MudGrid Class="my-4">
+        <MudItem xs="12" sm="4" md="2">
+            <MudSelect Value="DebugLevel" ValueChanged="(string i) => OnFilter(i)" Clearable="true">
+                @foreach (var item in DebugLevels)
+                {
+                    <MudSelectItem Value="@item">@item</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+
+    @* <MudTable ServerData="@(new Func<TableState, Task<TableData<DbLog>>>(ServerReload))" Striped="true" Bordered="true" Dense="true" Hover="true" Elevation="2" @ref="table">
+        <HeaderContent>
+            <MudTh>Timestamp</MudTh>
+            <MudTh>Logging Level</MudTh>
+            <MudTh>Log Message</MudTh>
+            <MudTh>Exception</MudTh>
+            <MudTh>Recorded Properties</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd><span style="font-size:small">@context.TimeStamp.ToString()</span></MudTd>
+            <MudTd><span style="font-size:small">@context.Level</span></MudTd>
+            <MudTd><span style="font-size:small">@context.Message</span></MudTd>
+            <MudTd><span style="font-size:small">@context.Exception?.ToString()</span></MudTd>
+            <MudTd>
+                @if (context.LogProperties?.Any() ?? false)
+                {
+                    <ul>
+                        @foreach (var propertyPair in context.LogProperties)
+                        {
+                            <li style="font-size:small">@($"{propertyPair.Key}:  {propertyPair.Value}")</li>
+                        }
+                    </ul>
+                }
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager RowsPerPageString=@L["Rows per page"] />
+        </PagerContent>
+    </MudTable> *@
+}
+
+@code {
+    // private MudTable<DbLog> table;
+
+    // [Inject] IViewNotifier viewNotifier { get; set; }
+    [Inject] IApiClient apiClient { get; set; }
+    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+
+    protected List<DbLog> dbLogItems;
+    protected string[] DebugLevels = { "Debug", "Information", "Warning", "Error" };
+    protected string DebugLevel = string.Empty;
+    protected int pageSize { get; set; } = 10;
+    protected int pageIndex { get; set; } = 0;
+    protected int totalItemsCount { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    protected async Task OnPage(int index, int size)
+    {
+        pageSize = size;
+        pageIndex = index;
+
+        await LoadData(DebugLevel);
+    }
+
+    protected async Task LoadData(string debugLevel = "")
+    {
+        try
+        {
+            DebugLevel = debugLevel;
+            Expression<Func<DbLog, bool>> predicate = null;
+
+            if (!string.IsNullOrWhiteSpace(debugLevel))
+                predicate = i => i.Level == debugLevel;
+
+            // var result = await apiClient.GetLogs(predicate, pageSize, pageIndex * pageSize);
+
+            // dbLogItems = new List<DbLog>(result);
+            // totalItemsCount = (int)result.InlineCount.Value;
+            // viewNotifier.Show($"{totalItemsCount} items found", ViewNotifierType.Success, L["Operation Successful"]);
+        }
+        catch (Exception ex)
+        {
+            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // private async Task<TableData<DbLog>> ServerReload(TableState state)
+    // {
+    //     await OnPage(state.Page, state.PageSize);
+
+    //     return new TableData<DbLog>() { TotalItems = totalItemsCount, Items = dbLogItems };
+    // }
+
+    private void OnFilter(string debugLevel)
+    {
+        DebugLevel = debugLevel;
+        // table.ReloadServerData();
+    }
+}

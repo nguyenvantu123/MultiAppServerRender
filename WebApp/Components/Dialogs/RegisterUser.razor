@@ -1,0 +1,121 @@
+﻿
+@* <EditForm Model="@RegisterUserModel" OnValidSubmit="SubmitAsync">
+    <FluentValidationValidator @ref="_fluentValidationValidator" />
+    <SfDialog>
+        <TitleContent>
+            @{
+                if (RegisterUserModel.Id.ToString() == Guid.Empty.ToString())
+                {
+                    <SfTextBox Typo="Typo.h6">
+                        <SfIcon Name="IconName.add" Title="Add New User" Class="mr-3 mb-n1" />
+
+                    </SfTextBox>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">
+                        <SfIcon Name="IconName.TableUpdate" Class="mr-3 mb-n1" />
+                        Update User
+                    </MudText>
+                }
+            }
+        </TitleContent>
+        <Content>
+            <MudTextField For="@(() => RegisterUserModel.UserName)" @bind-Value="RegisterUserModel.UserName" Label="User Name" />
+            <MudTextField For="@(() => RegisterUserModel.FirstName)" @bind-Value="RegisterUserModel.FirstName" Label="First Name" />
+            <MudTextField For="@(() => RegisterUserModel.LastName)" @bind-Value="RegisterUserModel.LastName" Label="Last Name" />
+            <MudTextField For="@(() => RegisterUserModel.Email)" InputType="InputType.Email" @bind-Value="RegisterUserModel.Email" Label="Email" />
+            <MudTextField For="@(() => RegisterUserModel.PhoneNumber)" @bind-Value="RegisterUserModel.PhoneNumber" Label="Phone Number" />
+            @{
+                if (RegisterUserModel.Id.ToString() == Guid.Empty.ToString())
+                {
+                    <MudTextField For="@(() => RegisterUserModel.Password)" InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" @bind-Value="RegisterUserModel.Password" Label="Password" />
+                }
+            }
+            @{
+                if (RegisterUserModel.Id.ToString() == Guid.Empty.ToString())
+                {
+                    <MudTextField For="@(() => RegisterUserModel.ConfirmPassword)" InputType="@_passwordInput1" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon1" OnAdornmentClick="TogglePasswordVisibility1" @bind-Value="RegisterUserModel.ConfirmPassword" Label="ConfirmPassword" />
+                }
+            }
+            <MudCheckBox T="bool" @bind-Checked="@RegisterUserModel.ActivateUser" Label="Activate User?" Color="Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="@RegisterUserModel.AutoConfirmEmail" Label="Auto Confirm Email?" Color="Color.Primary"></MudCheckBox>
+        </Content>
+        <DialogButtons>
+            <DialogButton Variant="Variant.Filled" OnClick="Cancel">Cancel</DialogButton>
+            @{
+                <DialogButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Disabled="@(!Validated)" Color="Color.Success">Save</DialogButton>
+            }
+        </DialogButtons>
+    </SfDialog>
+</EditForm> *@
+
+@code {
+    private FluentValidationValidator _fluentValidationValidator;
+    private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
+
+    // [Parameter] public RegisterViewModel RegisterUserModel = new();
+
+    [Parameter] public RegisterViewModel RegisterUserModel { get; set; } = new();
+
+
+    // private void Cancel()
+    // {
+    //     MudDialog.Cancel();
+    // }
+
+    // private async Task SubmitAsync()
+    // {
+    //     var response = RegisterUserModel.Id == Guid.Empty ? await _accountApiClient.CreateUser(RegisterUserModel) : await _accountApiClient.UpdateUser(RegisterUserModel);
+    //     if (response.IsSuccessStatusCode)
+    //     {
+    //         viewNotifier.Show(response.Message, ViewNotifierType.Success);
+    //         MudDialog.Close();
+    //     }
+    //     else
+    //     {
+    //         viewNotifier.Show(response.Message, ViewNotifierType.Error);
+
+    //     }
+    // }
+
+    // private bool _passwordVisibility;
+    // private InputType _passwordInput = InputType.Password;
+    // private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    // private void TogglePasswordVisibility()
+    // {
+    //     if (_passwordVisibility)
+    //     {
+    //         _passwordVisibility = false;
+    //         _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    //         _passwordInput = InputType.Password;
+    //     }
+    //     else
+    //     {
+    //         _passwordVisibility = true;
+    //         _passwordInputIcon = Icons.Material.Filled.Visibility;
+    //         _passwordInput = InputType.Text;
+    //     }
+    // }
+
+    // private bool _passwordVisibility1;
+    // private InputType _passwordInput1 = InputType.Password;
+    // private string _passwordInputIcon1 = Icons.Material.Filled.VisibilityOff;
+
+    // private void TogglePasswordVisibility1()
+    // {
+    //     if (_passwordVisibility1)
+    //     {
+    //         _passwordVisibility1 = false;
+    //         _passwordInputIcon1 = Icons.Material.Filled.VisibilityOff;
+    //         _passwordInput1 = InputType.Password;
+    //     }
+    //     else
+    //     {
+    //         _passwordVisibility1 = true;
+    //         _passwordInputIcon1 = Icons.Material.Filled.Visibility;
+    //         _passwordInput1 = InputType.Text;
+    //     }
+    // }
+}

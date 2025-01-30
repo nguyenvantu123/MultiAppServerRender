@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Services
+<Error>
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(AdminMainLayout)">
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+
+        <NotFound>
+            <CascadingAuthenticationState>
+                <LayoutView Layout="@typeof(AdminMainLayout)">
+                    <NotFoundLayout />
+                </LayoutView>
+            </CascadingAuthenticationState>
+        </NotFound>
+
+
+        <NotFound>
+            <CascadingAuthenticationState>
+                <LayoutView Layout="@typeof(NotFoundLayout)">
+                    <p>Sorry, there's nothing at this address.</p>
+                </LayoutView>
+            </CascadingAuthenticationState>
+        </NotFound>
+    </Router>
+</Error>
+
