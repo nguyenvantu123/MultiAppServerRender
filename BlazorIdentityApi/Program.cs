@@ -15,7 +15,7 @@ using Finbuckle.MultiTenant;
 using BlazorIdentityApi.Mappers.Configuration;
 using AutoMapper;
 using BlazorIdentityApi.Mappers;
-using Aspire.MySqlConnector;
+using Aspire.Pomelo.EntityFrameworkCore.MySql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +31,10 @@ builder.AddDefaultOpenApi(withApiVersioning);
 
 //builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
-builder.AddMySqlDataSource("Identitydb");
+//builder.AddMySqlDataSource("Identitydb");
+
+builder.AddMySqlDbContext<ApplicationDbContext>("Identitydb");
+builder.AddMySqlDbContext<TenantStoreDbContext>("Identitydb");
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")

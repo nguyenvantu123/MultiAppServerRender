@@ -12,23 +12,21 @@ namespace BlazorIdentity.Data
 
     public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         ApplicationUserClaim, ApplicationUserRole, IdentityUserLogin<Guid>,
-        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext, IAdminPersistedGrantDbContext, IAdminLogDbContext,
-         IAdminConfigurationDbContext
+        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
         public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
         {
             TenantInfo = (AppTenantInfo)multiTenantContextAccessor.MultiTenantContext.TenantInfo ?? new AppTenantInfo { Id = DefaultTenant.DefaultTenantId, Identifier = DefaultTenant.DefaultTenantId, Name = DefaultTenant.DefaultTenantId };
             TenantNotSetMode = TenantNotSetMode.Overwrite;
-            TenantMismatchMode = TenantMismatchMode.Overwrite;        }
-
-
+            TenantMismatchMode = TenantMismatchMode.Overwrite;
+        }
 
         private IDbContextTransaction _currentTransaction;
         public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
 
         public new ITenantInfo TenantInfo { get; }
 
-        public ClaimsPrincipal claimsPrincipal { get; set; }
+        public ClaimsPrincipal ClaimsPrincipal { get; set; }
 
         public DbSet<ApiLogItem> ApiLogs { get; set; }
 
@@ -36,7 +34,7 @@ namespace BlazorIdentity.Data
 
         public DbSet<Message> Messages { get; set; }
 
-        public DbSet<TenantSetting> TenantSettings { get; set; }
+        //public DbSet<TenantSetting> TenantSettings { get; set; }
 
         public bool HasActiveTransaction => _currentTransaction != null;
 
@@ -146,9 +144,9 @@ namespace BlazorIdentity.Data
                       .OnDelete(DeleteBehavior.Cascade);
               });
 
-            builder.Entity<Message>().ToTable("Messages");
+            //builder.Entity<Message>().ToTable("Messages");
 
-            builder.Entity<TenantSetting>().ToTable("TenantSettings").HasKey(i => new { i.TenantId, i.Key });
+            //builder.Entity<TenantSetting>().ToTable("TenantSettings").HasNoKey();
 
             builder.Entity<DeviceFlowCodes>().ToTable("DeviceFlowCodes").HasKey(x => x.DeviceCode);
 

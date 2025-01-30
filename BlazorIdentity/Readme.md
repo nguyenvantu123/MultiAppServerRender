@@ -1,6 +1,6 @@
 -- Migration Command
 
-add-migration GenDBForSoftDelete123 -OutputDir  Data/Migrations/ApplicationDb  -StartupProject BlazorIdentity -Context ApplicationDbContext
+add-migration FirstMigrate -OutputDir  Data/Migrations/ApplicationDb  -StartupProject BlazorIdentity -Context ApplicationDbContext
 
 add-migration GenerateApplicationTenantDB1 -OutputDir  Data/Migrations/TenantStoreDb  -StartupProject BlazorIdentity -Context TenantStoreDbContext
 

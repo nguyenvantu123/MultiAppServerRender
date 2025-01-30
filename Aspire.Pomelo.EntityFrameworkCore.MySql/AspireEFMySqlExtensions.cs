@@ -4,10 +4,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MySqlConnector;
 using MySqlConnector.Logging;
 using Polly;
 using Polly.Registry;
 using Polly.Retry;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Storage.Internal;
 using System;
@@ -90,7 +92,8 @@ namespace Aspire.Pomelo.EntityFrameworkCore.MySql
                 // use the legacy method of setting the ILoggerFactory because Pomelo EF Core doesn't use MySqlDataSource
                 if (serviceProvider.GetService<ILoggerFactory>() is { } loggerFactory)
                 {
-                    MySqlConnectorLogManager.Provider = new MicrosoftExtensionsLoggingLoggerProvider(loggerFactory);
+                    //MySqlConnectorLogManager.Provider = new MicrosoftExtensionsLoggingLoggerProvider(loggerFactory);
+
                 }
 
                 var connectionString = settings.ConnectionString ?? string.Empty;
@@ -124,6 +127,8 @@ namespace Aspire.Pomelo.EntityFrameworkCore.MySql
                     {
                         builder.CommandTimeout(settings.CommandTimeout);
                     }
+
+                    builder.SchemaBehavior(MySqlSchemaBehavior.Ignore);
                 });
 
                 configureDbContextOptions?.Invoke(dbContextOptionsBuilder);

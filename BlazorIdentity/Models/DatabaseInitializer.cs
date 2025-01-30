@@ -1,6 +1,9 @@
 ﻿using BlazorIdentity.Data;
 using BlazorIdentity.Users.Constants;
 using BlazorIdentity.Users.Data;
+using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
+using static BlazorIdentity.Users.Models.Permissions;
 
 namespace BlazorIdentity.Users.Models
 {
@@ -12,6 +15,7 @@ namespace BlazorIdentity.Users.Models
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly EntityPermissions _entityPermissions;
         private readonly ILogger _logger;
+
 
         public DatabaseInitializer(
             TenantStoreDbContext tenantStoreDbContext,
@@ -55,29 +59,33 @@ namespace BlazorIdentity.Users.Models
                 await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Multiapp", "nguyenvantu0207943@gmail.com", "0334336232");
             }
 
-            //if (_tenantStoreDbContext.AppTenantInfo.Count() < 2)
-            //{
-            //    _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo() { 
-            //        Id = "tenant1", 
-            //        Identifier = "tenant1.local", 
-            //        Name = "Microsoft Inc." ,
-            //        CreatedBy = "super admin",
-            //        CreatedOn = DateTime.Now,
-            //        LastModifiedBy = "super admin",
-            //        LastModifiedOn = DateTime.Now,
-            //        IsDeleted = false
-            //    });
-            //    _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo() { 
-            //        Id = "tenant2", Identifier = "tenant2.local", Name = "Contoso Corp.",
-            //        CreatedBy = "super admin",
-            //        CreatedOn = DateTime.Now,
-            //        LastModifiedBy = "super admin",
-            //        LastModifiedOn = DateTime.Now,
-            //        IsDeleted = false
-            //    });
+            if (_tenantStoreDbContext.AppTenantInfo.Count() < 2)
+            {
+                _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo()
+                {
+                    Id = "tenant1",
+                    Identifier = "tenant1.local",
+                    Name = "Microsoft Inc.",
+                    CreatedBy = "super admin",
+                    CreatedOn = DateTime.Now,
+                    LastModifiedBy = "super admin",
+                    LastModifiedOn = DateTime.Now,
+                    IsDeleted = false
+                });
+                _tenantStoreDbContext.AppTenantInfo.Add(new AppTenantInfo()
+                {
+                    Id = "tenant2",
+                    Identifier = "tenant2.local",
+                    Name = "Contoso Corp.",
+                    CreatedBy = "super admin",
+                    CreatedOn = DateTime.Now,
+                    LastModifiedBy = "super admin",
+                    LastModifiedOn = DateTime.Now,
+                    IsDeleted = false
+                });
 
-            //    _tenantStoreDbContext.SaveChanges();
-            //}
+                _tenantStoreDbContext.SaveChanges();
+            }
         }
 
         public async Task EnsureAdminIdentitiesAsync()
@@ -114,18 +122,18 @@ namespace BlazorIdentity.Users.Models
                 if (invalidClaims.Any())
                     throw new Exception("The following claim types are invalid: " + string.Join(", ", invalidClaims));
 
-                ApplicationRole applicationRole = new(roleName);
+                ApplicationRole applicationRole = new ApplicationRole(roleName);
 
                 var result = await _roleManager.CreateAsync(applicationRole);
 
-                ApplicationRole role = await _roleManager.FindByNameAsync(applicationRole.Name);
+                //ApplicationRole role = await _roleManager.FindByNameAsync(applicationRole.Name);
 
                 foreach (string claim in claims.Distinct())
                 {
-                    result = await _roleManager.AddClaimAsync(role, new Claim(ApplicationClaimTypes.Permission, _entityPermissions.GetPermissionByValue(claim)));
+                    result = await _roleManager.AddClaimAsync(applicationRole, new Claim(ApplicationClaimTypes.Permission, _entityPermissions.GetPermissionByValue(claim)));
 
                     if (!result.Succeeded)
-                        await _roleManager.DeleteAsync(role);
+                        await _roleManager.DeleteAsync(applicationRole);
                 }
             }
         }

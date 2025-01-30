@@ -36,7 +36,6 @@ public static class FileApi
     public static async Task<ApiResponseDto<string>> GetPresignedAsync(
          [AsParameters] GetPresignedUserProfileUrl queries,
          [FromServices] FileServices services,
-         IMinioClient minioClient,
          IHttpContextAccessor HttpContextAccessor
         )
     {
@@ -60,9 +59,9 @@ public static class FileApi
             return new ApiResponseDto<string>(400, "Not Found File", string.Empty);
         }
 
-        string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappbucket").WithObject(objectName).WithExpiry(60 * 60));
+        //string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappbucket").WithObject(objectName).WithExpiry(60 * 60));
 
-        return new ApiResponseDto<string>(200, "Success", file);
+        return new ApiResponseDto<string>(200, "Success", "");
     }
 
     public static async Task<ApiResponseDto<string>> UploadFile(
@@ -71,8 +70,7 @@ public static class FileApi
          Guid? FolerId,
          [FromForm] string RelationType,
          [FromForm] Guid RelationId,
-         FileServices services,
-        IMinioClient minioClient)
+         FileServices services)
     {
 
         //if (FormFile != null && FormFile.Length > 0)

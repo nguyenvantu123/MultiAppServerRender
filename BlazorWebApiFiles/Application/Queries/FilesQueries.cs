@@ -4,15 +4,12 @@ using Minio.DataModel.Args;
 
 namespace BlazorIdentityFiles.Application.Queries;
 
-public class FilesQueries(IMinioClient minioClient)
+public class FilesQueries()
     : IFilesQueries
 {
-    public async Task<string> GetPresignedUserProfileAsync(GetPresignedUserProfileUrl getPresignedUrl)
+    public async Task<string> GetPresignedUserProfileAsync()
     {
 
-        string data = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
-                 .WithObject(getPresignedUrl.ObjectName));
-
-        return data;
+        return "";
     }
 }

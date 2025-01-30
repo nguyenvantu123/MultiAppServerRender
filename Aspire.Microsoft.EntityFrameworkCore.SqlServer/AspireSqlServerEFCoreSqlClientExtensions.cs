@@ -58,14 +58,14 @@ public static class AspireSqlServerEfCoreSqlClientExtensions
 
         configureSettings?.Invoke(settings);
 
-        if (settings.DbContextPooling)
-        {
-            builder.Services.AddDbContextPool<TContext>(ConfigureDbContext);
-        }
-        else
-        {
-            builder.Services.AddDbContext<TContext>(ConfigureDbContext);
-        }
+        //if (settings.DbContextPooling)
+        //{
+        //    builder.Services.AddDbContextPool<TContext>(ConfigureDbContext);
+        //}
+        //else
+        //{
+        //    builder.Services.AddDbContext<TContext>(ConfigureDbContext);
+        //}
 
         if (settings.Tracing)
         {

@@ -5,5 +5,5 @@ namespace BlazorIdentityFiles.Application.Queries;
 
 public interface IFilesQueries
 {
-    Task<string> GetPresignedUserProfileAsync(GetPresignedUserProfileUrl getPresignedUrl);
+    Task<string> GetPresignedUserProfileAsync();
 }

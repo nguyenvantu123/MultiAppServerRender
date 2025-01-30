@@ -6,25 +6,23 @@ using System.Text;
 using MultiAppServer.ServiceDefaults;
 using BlazorIdentity.Files.Data;
 using BlazorIdentityFiles.Application.Behaviors;
-using Minio;
-using Aspire.Minio.Client;
 using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 using IntegrationEventLogEF.Services;
 using BlazorIdentity.Repository;
 using BlazorIdentityFiles.SeedWork;
 using BetkingLol.DataAccess.UnitOfWork;
-using Aspire.MySqlConnector;
+using Aspire.Pomelo.EntityFrameworkCore.MySql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.AddMySqlDataSource("FileDb");
+//builder.AddMySqlDataSource("FileDb");
 
 builder.AddServiceDefaults();
 builder.AddRabbitMqEventBus("EventBus");
+builder.AddMySqlDbContext<FileDbContext>("FileDb");
 
 //builder.AddSqlServerDbContext<FileDbContext>("FileDb");
-
 
 builder.AddDefaultAuthentication();
 

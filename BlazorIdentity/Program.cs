@@ -43,7 +43,9 @@ using BlazorIdentity.Resources;
 using Microsoft.Extensions.Configuration;
 using Aspire.StackExchange.Redis.DistributedCaching;
 using MultiAppServer.EventBus.Abstractions;
-using Aspire.MySqlConnector;
+using Aspire.Pomelo.EntityFrameworkCore.MySql;
+using CatalogDb;
+using Duende.IdentityServer.EntityFramework.DbContexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +58,10 @@ var configuration = builder.Configuration;
 builder.AddRedisDistributedCache("Redis");
 
 builder.AddRabbitMqEventBus("EventBus");
-;
+builder.AddMySqlDbContext<TenantStoreDbContext>("Identitydb");
+builder.AddMySqlDbContext<ApplicationDbContext>("Identitydb");
+
+//builder.AddMySqlDbContext<CatalogDbContext>("Identitydb");
 
 builder.Services.AddSingleton<RedisUserRepository>();
 
@@ -86,7 +91,7 @@ builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandle
 
 //builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
 
-builder.AddMySqlDataSource("Identitydb");
+//builder.AddMySqlDataSource("Identitydb");
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")
@@ -236,8 +241,8 @@ builder.Services.Configure<RequestLocalizationOptions>(
     });
 
 builder.Services.AddIdentityServer()
-                .AddConfigurationStore<ApplicationDbContext>()
-                .AddOperationalStore<ApplicationDbContext>()
+                .AddConfigurationStore<ConfigurationDbContext>()
+                .AddOperationalStore<PersistedGrantDbContext>()
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddProfileService<ProfileService>();
 
