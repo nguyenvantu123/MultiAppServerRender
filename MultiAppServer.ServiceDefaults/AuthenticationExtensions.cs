@@ -94,17 +94,10 @@ public static class AuthenticationExtensions
                     }
                     else
                     {
-#if DEBUG
                         c.NoResult();
                         c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         c.Response.ContentType = "text/plain";
                         return c.Response.WriteAsync(c.Exception.ToString());
-#else
-                                c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                c.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(Result.Fail(localizer["An unhandled error has occurred."]));
-                                return c.Response.WriteAsync(result);
-#endif
                     }
                 },
                 OnChallenge = context =>

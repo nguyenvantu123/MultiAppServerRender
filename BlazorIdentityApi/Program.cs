@@ -65,16 +65,6 @@ builder.Services.AddAdminAspNetIdentityMapping()
             .UseIdentityMappingProfile()
             .AddProfilesType(profileTypes);
 
-//var builderMapper = new MapperConfigurationBuilder();
-
-//builder.Services.AddSingleton<AutoMapper.IConfigurationProvider>(sp => new MapperConfiguration(cfg =>
-//{
-//    foreach (var profileType in builderMapper.ProfileTypes)
-//        cfg.AddProfile(profileType);
-//}));
-
-//builder.Services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));
-
 builder.Services.AddTransient<IClientRepository, ClientRepository>();
 builder.Services.AddTransient<IIdentityResourceRepository, IdentityResourceRepository>();
 builder.Services.AddTransient<IApiResourceRepository, ApiResourceRepository>();
@@ -82,7 +72,6 @@ builder.Services.AddTransient<IApiScopeRepository, ApiScopeRepository>();
 builder.Services.AddTransient<IPersistedGrantRepository, PersistedGrantRepository>();
 builder.Services.AddTransient<IIdentityProviderRepository, IdentityProviderRepository>();
 builder.Services.AddTransient<IKeyRepository, KeyRepository>();
-//builder.Services.AddTransient<ILogRepository, LogRepository>();
 builder.Services.AddTransient<IDashboardRepository, DashboardRepository>();
 
 builder.Services.AddTransient<IClientService, ClientService>();
@@ -92,7 +81,6 @@ builder.Services.AddTransient<IIdentityResourceService, IdentityResourceService>
 builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
 builder.Services.AddTransient<IPersistedGrantService, PersistedGrantService>();
 builder.Services.AddTransient<IKeyService, KeyService>();
-//builder.Services.AddTransient<ILogService, LogService>();
 builder.Services.AddTransient<IDashboardService, DashboardService>();
 
 builder.Services.AddScoped<IApiResourceServiceResources, ApiResourceServiceResources>();
@@ -106,13 +94,6 @@ builder.Services.AddScoped<IKeyServiceResources, KeyServiceResources>();
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
-
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
 
 app.UseHttpsRedirection();
 
