@@ -1,10 +1,19 @@
 {
+  "projectPath": ".",
   "inputPath": "aspirate-output",
+  "outputPath": "aspirate-output",
+  "namespace": "multiapp",
   "containerImageTags": [
     "latest"
   ],
+  "imagePullPolicy": "IfNotPresent",
+  "containerBuilder": "docker",
   "kubeContext": "do-sgp1-k8s-1-31-1-do-5-sgp1-1737637718655",
-  "outputFormat": "docker",
+  "outputFormat": "kustomize",
+  "skipFinalKustomizeGeneration": false,
+  "privateRegistryEmail": "aspir8@aka.ms",
+  "includeDashboard": true,
+  "useCustomNamespace": true,
   "secrets": {
     "salt": "SEHhfDFZySImlNyb",
     "hash": "YbWN2jAQx0i/2S4Aun2J4jTFhEs106HGvle2xZcxoXw=",

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: registry.digitalocean.com/multiappserverregistry/multiappserver/webapp:latest
+        image: nguyenvantu/webapp:v2
         imagePullPolicy: IfNotPresent
         ports:
         - name: http

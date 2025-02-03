@@ -95,7 +95,7 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

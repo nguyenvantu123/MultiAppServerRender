@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>BlazorIdentity</RootNamespace>
+    <UserSecretsId>8443aafe-8d83-47b2-a73d-0f4083fa522a</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +26,19 @@
   <ItemGroup>
     <Content Remove="wwwroot\dist\js\bundle.min.js" />
     <Content Remove="wwwroot\dist\js\CryptoUtils.js" />
+    <Content Remove="wwwroot\js\components\CookieConsent.js" />
+    <Content Remove="wwwroot\js\components\DatePicker.js" />
+    <Content Remove="wwwroot\js\components\Language.js" />
+    <Content Remove="wwwroot\js\components\Menu.js" />
+    <Content Remove="wwwroot\js\components\Picker.es5.js" />
+    <Content Remove="wwwroot\js\components\Picker.es5.min.js" />
+    <Content Remove="wwwroot\js\components\Picker.js" />
+    <Content Remove="wwwroot\js\components\Picker.min.js" />
+    <Content Remove="wwwroot\js\components\Theme.js" />
+    <Content Remove="wwwroot\js\CookieConsent.js" />
+    <Content Remove="wwwroot\js\helpers\DateTimeHelpers.js" />
+    <Content Remove="wwwroot\js\helpers\FormMvcHelpers.js" />
+    <Content Remove="wwwroot\js\helpers\jsontree.min.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +75,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NSwag.Annotations" Version="14.0.8" />
     <PackageReference Include="ObjectCloner.Extensions" Version="2.0.1" />
@@ -213,8 +229,21 @@
     <None Include="wwwroot\dist\js\bundle.min.js" />
     <None Include="wwwroot\dist\js\CryptoUtils.js" />
     <None Include="wwwroot\js\bundle.min.js" />
+    <None Include="wwwroot\js\components\CookieConsent.js" />
+    <None Include="wwwroot\js\components\DatePicker.js" />
+    <None Include="wwwroot\js\components\Language.js" />
+    <None Include="wwwroot\js\components\Menu.js" />
+    <None Include="wwwroot\js\components\Picker.es5.js" />
+    <None Include="wwwroot\js\components\Picker.es5.min.js" />
+    <None Include="wwwroot\js\components\Picker.js" />
+    <None Include="wwwroot\js\components\Picker.min.js" />
+    <None Include="wwwroot\js\components\Theme.js" />
+    <None Include="wwwroot\js\CookieConsent.js" />
     <None Include="wwwroot\js\CryptoUtils.js" />
     <None Include="wwwroot\js\forgot-password.js" />
+    <None Include="wwwroot\js\helpers\DateTimeHelpers.js" />
+    <None Include="wwwroot\js\helpers\FormMvcHelpers.js" />
+    <None Include="wwwroot\js\helpers\jsontree.min.js" />
     <None Include="wwwroot\js\qrcode.js" />
     <None Include="wwwroot\js\qrcode.min.js" />
     <None Include="wwwroot\js\signin-redirect.js" />

@@ -1,48 +1,26 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using WebApp.Components;
-using WebApp.Services;
 using MultiAppServer.ServiceDefaults;
 using Microsoft.AspNetCore.Components.Server;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.VisualBasic;
-using WebApp.Settings;
-using static Microsoft.AspNetCore.Http.StatusCodes;
 using WebApp.Interfaces;
 using FluentValidation.AspNetCore;
-using Microsoft.JSInterop;
-using System.Net.Http;
 using WebApp;
 using WebApp.Extensions;
-using WebApp.Permissions;
-using Microsoft.AspNetCore.Components;
-using BlazorIdentity.Authorization;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using BlazorIdentity.Users.Models;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using eShop.WebhookClient.Endpoints;
-using Microsoft.AspNetCore.Http;
 using WebApp.Shared;
 using Syncfusion.Licensing;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
 using Aspire.StackExchange.Redis.DistributedCaching;
 using BlazorIdentity.Repositories;
-using MultiAppServer.EventBus.Abstractions;
-using System.Net.NetworkInformation;
 using Blazored.SessionStorage;
-using Shared.Models;
 var builder = WebApplication.CreateBuilder(args);
 
-
-//builder.Services.AddSyncfusionBlazor();
 
 SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5ccnRTRmNeVkR0V0o=");
 builder.AddServiceDefaults();
@@ -292,17 +270,6 @@ if (builder.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//app.Use(async (context, next) =>
-//{
-//    if (context.Request.Path
-//            .Equals("/logout", System.StringComparison.OrdinalIgnoreCase))
-//    {
-//        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-//        await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-//    }
-//    await next();
-//});
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
@@ -314,10 +281,5 @@ app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-//app.MapBlazorHub();
-//app.MapFallbackToPage("/_Host");
-//app.MapRazorPages();
-//app.MapControllers();
 
 app.Run();

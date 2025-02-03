@@ -1,4 +1,4 @@
-namespace: multiappserver
+namespace: multiapp
 
 resources:
 - blazorwebidentity
