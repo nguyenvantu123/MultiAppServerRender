@@ -13,6 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["BlazorIdentity/BlazorIdentity.csproj", "BlazorIdentity/"]
+COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "MultiAppServer.ServiceDefaults/"]
 RUN dotnet restore "./BlazorIdentity/BlazorIdentity.csproj"
 COPY . .
 WORKDIR "/src/BlazorIdentity"

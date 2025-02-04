@@ -1,8 +1,8 @@
-﻿using BlazorIdentity.Users.Constants;
-using BlazorIdentityApi.Dtos.Key;
+﻿using BlazorIdentityApi.Dtos.Key;
 using BlazorIdentityApi.ExceptionHandling;
 using BlazorIdentityApi.Services.Interfaces;
 using BlazorIdentityApi.UI.Api.Mappers;
+using BlazorIdentityApi.Users.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

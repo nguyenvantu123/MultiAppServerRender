@@ -1,10 +1,8 @@
-using BlazorIdentity.Users.Constants;
-using BlazorIdentity.Users.Services;
+using BlazorIdentityApi.Users.Constants;
 using BlazorIdentityApi.Repositories.Interfaces;
 using BlazorIdentityApi.Resources;
 using BlazorIdentityApi.Services.Interfaces;
 using BlazorIdentityApi.Services;
-using IdentityModel;
 using MultiAppServer.ServiceDefaults;
 using BlazorIdentityApi.Repositories;
 using BlazorIdentity.Data;
@@ -95,7 +93,7 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

@@ -26,19 +26,7 @@
   <ItemGroup>
     <Content Remove="wwwroot\dist\js\bundle.min.js" />
     <Content Remove="wwwroot\dist\js\CryptoUtils.js" />
-    <Content Remove="wwwroot\js\components\CookieConsent.js" />
-    <Content Remove="wwwroot\js\components\DatePicker.js" />
-    <Content Remove="wwwroot\js\components\Language.js" />
-    <Content Remove="wwwroot\js\components\Menu.js" />
-    <Content Remove="wwwroot\js\components\Picker.es5.js" />
-    <Content Remove="wwwroot\js\components\Picker.es5.min.js" />
-    <Content Remove="wwwroot\js\components\Picker.js" />
-    <Content Remove="wwwroot\js\components\Picker.min.js" />
-    <Content Remove="wwwroot\js\components\Theme.js" />
     <Content Remove="wwwroot\js\CookieConsent.js" />
-    <Content Remove="wwwroot\js\helpers\DateTimeHelpers.js" />
-    <Content Remove="wwwroot\js\helpers\FormMvcHelpers.js" />
-    <Content Remove="wwwroot\js\helpers\jsontree.min.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -229,21 +217,20 @@
     <None Include="wwwroot\dist\js\bundle.min.js" />
     <None Include="wwwroot\dist\js\CryptoUtils.js" />
     <None Include="wwwroot\js\bundle.min.js" />
-    <None Include="wwwroot\js\components\CookieConsent.js" />
-    <None Include="wwwroot\js\components\DatePicker.js" />
-    <None Include="wwwroot\js\components\Language.js" />
-    <None Include="wwwroot\js\components\Menu.js" />
-    <None Include="wwwroot\js\components\Picker.es5.js" />
-    <None Include="wwwroot\js\components\Picker.es5.min.js" />
-    <None Include="wwwroot\js\components\Picker.js" />
-    <None Include="wwwroot\js\components\Picker.min.js" />
-    <None Include="wwwroot\js\components\Theme.js" />
+    <None Include="wwwroot\js\DatePicker.js" />
+    <None Include="wwwroot\js\Language.js" />
+    <None Include="wwwroot\js\Menu.js" />
+    <None Include="wwwroot\js\Picker.es5.js" />
+    <None Include="wwwroot\js\Picker.es5.min.js" />
+    <None Include="wwwroot\js\Picker.js" />
+    <None Include="wwwroot\js\Picker.min.js" />
+    <None Include="wwwroot\js\Theme.js" />
     <None Include="wwwroot\js\CookieConsent.js" />
     <None Include="wwwroot\js\CryptoUtils.js" />
     <None Include="wwwroot\js\forgot-password.js" />
-    <None Include="wwwroot\js\helpers\DateTimeHelpers.js" />
-    <None Include="wwwroot\js\helpers\FormMvcHelpers.js" />
-    <None Include="wwwroot\js\helpers\jsontree.min.js" />
+    <None Include="wwwroot\js\DateTimeHelpers.js" />
+    <None Include="wwwroot\js\FormMvcHelpers.js" />
+    <None Include="wwwroot\js\jsontree.min.js" />
     <None Include="wwwroot\js\qrcode.js" />
     <None Include="wwwroot\js\qrcode.min.js" />
     <None Include="wwwroot\js\signin-redirect.js" />

@@ -1,4 +1,4 @@
-﻿using BlazorIdentity.Users.Constants;
+﻿using BlazorIdentityApi.Users.Constants;
 using BlazorIdentityApi.Dtos.Dashboard;
 using BlazorIdentityApi.ExceptionHandling;
 using BlazorIdentityApi.Services.Interfaces;
