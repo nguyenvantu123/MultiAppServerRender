@@ -51,17 +51,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-//builder.AddApplicationServices();
-
 var configuration = builder.Configuration;
 
 builder.AddRedisDistributedCache("Redis");
 
 builder.AddRabbitMqEventBus("EventBus");
-builder.AddMySqlDbContext<TenantStoreDbContext>("Identitydb");
 builder.AddMySqlDbContext<ApplicationDbContext>("Identitydb");
-
-//builder.AddMySqlDbContext<CatalogDbContext>("Identitydb");
+builder.AddMySqlDbContext<TenantStoreDbContext>("Identitydb");
 
 builder.Services.AddSingleton<RedisUserRepository>();
 
@@ -88,10 +84,6 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyP
 builder.Services.AddTransient<IAuthorizationHandler, DomainRequirementHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, EmailVerifiedHandler>();
 builder.Services.AddTransient<IAuthorizationHandler, PermissionRequirementHandler>();
-
-//builder.AddSqlServerDbContext<TenantStoreDbContext>("Identitydb");
-
-//builder.AddMySqlDataSource("Identitydb");
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")

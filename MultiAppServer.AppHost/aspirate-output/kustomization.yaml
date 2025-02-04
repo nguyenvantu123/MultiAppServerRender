@@ -1,0 +1,12 @@
+namespace: multiapp
+
+resources:
+# - blazorwebidentity
+- blazoridentityapi
+- namespace.yaml
+- dashboard.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+

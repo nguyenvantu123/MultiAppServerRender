@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blazorwebidentity
+  labels:
+    app: blazorwebidentity
+spec:
+  minReadySeconds: 60
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blazorwebidentity
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: blazorwebidentity
+    spec:
+      containers:
+      - name: blazorwebidentity
+        image: nguyenvantu/blazorwebidentity:v6
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        envFrom:
+        - configMapRef:
+            name: blazorwebidentity-env
+      terminationGracePeriodSeconds: 180

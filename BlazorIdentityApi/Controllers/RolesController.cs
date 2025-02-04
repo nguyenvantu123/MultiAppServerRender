@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using BlazorIdentity.Helpers.Localization;
-using BlazorIdentity.Users.Constants;
+﻿using BlazorIdentityApi.Users.Constants;
 using BlazorIdentityApi.Dtos.Identity;
 using BlazorIdentityApi.Dtos.Roles;
 using BlazorIdentityApi.ExceptionHandling;
@@ -10,7 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.Models;
+using AutoMapper;
+using BlazorIdentityApi.Models;
 
 namespace BlazorIdentityApi.Controllers
 {

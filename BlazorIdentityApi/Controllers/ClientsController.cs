@@ -1,4 +1,4 @@
-﻿using BlazorIdentity.Users.Constants;
+﻿using BlazorIdentityApi.Users.Constants;
 using BlazorIdentityApi.Common;
 using BlazorIdentityApi.Dtos.Clients;
 using BlazorIdentityApi.Dtos.Configuration;

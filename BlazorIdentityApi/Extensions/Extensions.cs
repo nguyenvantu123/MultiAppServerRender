@@ -4,25 +4,23 @@ using AutoMapper;
 using BlazorIdentity.Data;
 using BlazorIdentityApi.Mappers.Configuration;
 using eShop.ServiceDefaults;
-using MultiAppServer.EventBus.Abstractions;
-
 
 internal static class Extensions
 {
-    public static void AddApplicationServices(this IHostApplicationBuilder builder)
-    {
-        builder.AddDefaultAuthentication();
+    //public static void AddApplicationServices(this IHostApplicationBuilder builder)
+    //{
+    //    builder.AddDefaultAuthentication();
 
-        //builder.AddRabbitMqEventBus("EventBus").AddEventBusSubscriptions();
+    //    //builder.AddRabbitMqEventBus("EventBus").AddEventBusSubscriptions();
 
-        builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
+    //    builder.AddSqlServerDbContext<ApplicationDbContext>("Identitydb");
 
-        //builder.Services.AddMigration<WebhooksContext>();
+    //    //builder.Services.AddMigration<WebhooksContext>();
 
-        //builder.Services.AddTransient<IGrantUrlTesterService, GrantUrlTesterService>();
-        //builder.Services.AddTransient<IWebhooksRetriever, WebhooksRetriever>();
-        //builder.Services.AddTransient<IWebhooksSender, WebhooksSender>();
-    }
+    //    //builder.Services.AddTransient<IGrantUrlTesterService, GrantUrlTesterService>();
+    //    //builder.Services.AddTransient<IWebhooksRetriever, WebhooksRetriever>();
+    //    //builder.Services.AddTransient<IWebhooksSender, WebhooksSender>();
+    //}
 
     public static IMapperConfigurationBuilder AddAdminAspNetIdentityMapping(this IServiceCollection services)
     {
