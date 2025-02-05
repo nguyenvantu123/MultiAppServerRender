@@ -3,7 +3,7 @@
   "containerImageTags": [
     "latest"
   ],
-  "kubeContext": "docker-desktop",
+  "kubeContext": "do-sgp1-k8s-1-31-1-do-5-sgp1-1737637718655",
   "outputFormat": "docker",
   "secrets": {
     "salt": "SEHhfDFZySImlNyb",
