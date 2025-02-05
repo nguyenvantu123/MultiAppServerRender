@@ -1,7 +1,7 @@
 namespace: multiapp
 
 resources:
-# - blazorwebidentity
+- blazorwebidentity
 - blazoridentityapi
 - namespace.yaml
 - dashboard.yaml
