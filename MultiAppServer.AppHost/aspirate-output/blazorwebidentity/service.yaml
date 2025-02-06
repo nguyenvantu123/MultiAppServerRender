@@ -4,13 +4,13 @@ kind: Service
 metadata:
   name: blazorwebidentity
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: blazorwebidentity
   ports:
   - name: http
-    port: 8080
+    port: 80
     targetPort: 8080
   - name: https
-    port: 8443
+    port: 443
     targetPort: 8443
