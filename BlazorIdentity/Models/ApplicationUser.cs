@@ -1,4 +1,5 @@
-﻿using Finbuckle.MultiTenant;
+﻿using BlazorIdentity.Users.Constants;
+using Finbuckle.MultiTenant;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorIdentity.Users.Models
@@ -49,7 +50,6 @@ namespace BlazorIdentity.Users.Models
 
         public string AvatarUrl { get; set; }
 
-        public string TenantId { get; set; }
-
+        public string UserType { get; set; }
     }
 }

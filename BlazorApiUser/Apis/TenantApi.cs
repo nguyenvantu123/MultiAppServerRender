@@ -20,7 +20,7 @@ namespace BlazorApiUser.Apis
 
             api.MapGet("/tenants", GetTenants);
 
-            api.MapGet("/tenant-by-user", GetTenantByUser);
+            //api.MapGet("/tenant-by-user", GetTenantByUser);
 
             //api.MapPost("/users/create", Create);
 
@@ -65,33 +65,33 @@ namespace BlazorApiUser.Apis
             return new ApiResponse<List<TenantDto>>(200, $"{totalItems} users fetched", tenantDto, totalItems);
         }
 
-        [Authorize]
-        public static async Task<ApiResponse<TenantDto>> GetTenantByUser(ClaimsPrincipal userAuth, [AsParameters] UserServices userServices)
-        {
+        //[Authorize]
+        //public static async Task<ApiResponse<TenantDto>> GetTenantByUser(ClaimsPrincipal userAuth, [AsParameters] UserServices userServices)
+        //{
 
-            var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
+        //    var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
 
-            if (user == null)
-            {
-                return new ApiResponse(400, $"User doesn't exist!!!!");
-            }
+        //    if (user == null)
+        //    {
+        //        return new ApiResponse(400, $"User doesn't exist!!!!");
+        //    }
 
-            if (string.IsNullOrEmpty(user.TenantId))
-            {
-                return new ApiResponse(200, "", new TenantDto { Id = "", Name = "" });
-            }
+        //    //if (string.IsNullOrEmpty(user.TenantId))
+        //    //{
+        //    //    return new ApiResponse(200, "", new TenantDto { Id = "", Name = "" });
+        //    //}
 
-            var dto = userServices.TenantStoreDbContext.AppTenantInfo.Where(x => x.Id == user.TenantId).FirstOrDefault();
+        //    var dto = userServices.TenantStoreDbContext.AppTenantInfo.Where(x => x.Id == user.TenantId).FirstOrDefault();
 
-            if (dto == null)
-            {
-                return new ApiResponse(200, "", new TenantDto { Id = "", Name = "" });
-            }
+        //    if (dto == null)
+        //    {
+        //        return new ApiResponse(200, "", new TenantDto { Id = "", Name = "" });
+        //    }
 
-            TenantDto tenantDto = userServices.Mapper.Map<TenantDto>(dto);
+        //    TenantDto tenantDto = userServices.Mapper.Map<TenantDto>(dto);
 
-            return new ApiResponse<TenantDto>(200, "", tenantDto);
-        }
+        //    return new ApiResponse<TenantDto>(200, "", tenantDto);
+        //}
 
         private static async Task<DbSet<AppTenantInfo>> Filter(GetListRoleQuery SearchQuery, UserServices userServices)
         {
