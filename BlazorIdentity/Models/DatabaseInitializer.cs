@@ -143,8 +143,6 @@ namespace BlazorIdentity.Users.Models
         private async Task<ApplicationUser> CreateUserAsync(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string[] roles = null, string userType = null)
         {
 
-            //var dataDCMM = _context.Users.Where(x => x.UserName == userName).Select(x => x.Id).FirstOrDefault();
-
             ApplicationUser applicationUser = await _userManager.FindByNameAsync(userName);
 
             if (applicationUser == null)

@@ -50,7 +50,7 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
         policy =>
-            policy.RequireAssertion(context => context.User.HasClaim(c => c.Value == "Administrator")
+            policy.RequireAssertion(context => context.User.HasClaim(c => c.Value != DefaultRoleNames.User)
     ));
 });
 

@@ -20,7 +20,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BlazorIdentity.Controllers
 {
-    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     public class IdentityController : BaseController
     {

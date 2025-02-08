@@ -151,7 +151,6 @@
     <None Include="Views\Device\Success.cshtml" />
     <None Include="Views\Device\UserCodeCapture.cshtml" />
     <None Include="Views\Diagnostics\Index.cshtml" />
-    <None Include="Views\Grants\Index.cshtml" />
     <None Include="Views\Grant\PersistedGrant.cshtml" />
     <None Include="Views\Grant\PersistedGrantDelete.cshtml" />
     <None Include="Views\Grant\PersistedGrants.cshtml" />

@@ -50,5 +50,7 @@ namespace BlazorIdentity.Users.Models
 
         public string AvatarUrl { get; set; }
 
+        public string UserType { get; set; }
+
     }
 }

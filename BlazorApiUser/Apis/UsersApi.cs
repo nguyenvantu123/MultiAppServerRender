@@ -202,7 +202,7 @@ public static class UsersApi
             return new ApiResponse(400, "User not found!!!", null);
         }
 
-        if (user.UserName == "Administrator")
+        if (user.UserName == DefaultUserNames.Administrator)
         {
             return new ApiResponse(400, "Can't delete admin user!!!", null);
         }

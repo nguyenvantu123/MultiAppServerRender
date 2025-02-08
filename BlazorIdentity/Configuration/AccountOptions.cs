@@ -18,5 +18,8 @@ namespace Configuration
         public static bool AutomaticRedirectAfterSignOut = false;
 
         public static string InvalidCredentialsErrorMessage = "Invalid username or password";
+
+        public static string InvalidCredentialsAdmin = "Only admin can access";
+
     }
 }

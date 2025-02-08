@@ -27,7 +27,7 @@ namespace BlazorIdentity.Controllers
     /// <summary>
     /// This sample controller allows a user to revoke grants given to clients
     /// </summary>
-    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     public class GrantController : BaseController
     {
