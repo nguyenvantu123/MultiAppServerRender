@@ -27,16 +27,16 @@ namespace BlazorIdentity.Controllers
     /// <summary>
     /// This sample controller allows a user to revoke grants given to clients
     /// </summary>
-    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
-    public class GrantController : BaseController
+    public class GrantsController : BaseController
     {
         private readonly IPersistedGrantAspNetIdentityService _persistedGrantService;
-        private readonly IStringLocalizer<GrantController> _localizer;
+        private readonly IStringLocalizer<GrantsController> _localizer;
 
-        public GrantController(IPersistedGrantAspNetIdentityService persistedGrantService,
-            ILogger<GrantController> logger,
-            IStringLocalizer<GrantController> localizer) : base(logger)
+        public GrantsController(IPersistedGrantAspNetIdentityService persistedGrantService,
+            ILogger<GrantsController> logger,
+            IStringLocalizer<GrantsController> localizer) : base(logger)
         {
             _persistedGrantService = persistedGrantService;
             _localizer = localizer;

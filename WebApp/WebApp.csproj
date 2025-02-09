@@ -11,6 +11,9 @@
     <Compile Remove="Services\UserProfile\**" />
     <Content Remove="Response\**" />
     <Content Remove="Services\UserProfile\**" />
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
     <EmbeddedResource Remove="Response\**" />
     <EmbeddedResource Remove="Services\UserProfile\**" />
     <None Remove="Response\**" />
