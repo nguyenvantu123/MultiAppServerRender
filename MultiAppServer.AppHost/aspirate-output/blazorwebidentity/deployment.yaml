@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: blazorwebidentity
-        image: nguyenvantu/blazorwebidentity:v7
+        image: nguyenvantu/blazorwebidentity:v9
         imagePullPolicy: IfNotPresent
         ports:
         - name: http

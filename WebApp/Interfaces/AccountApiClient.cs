@@ -1,5 +1,4 @@
-﻿using BlazorIdentity.Users.Models;
-using Breeze.Sharp;
+﻿using Breeze.Sharp;
 using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
 using Shared.Models;
@@ -153,9 +152,9 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/admin-update-user", userViewModel);
         }
 
-        public async Task<ApiResponse<UserProfileViewModel>> GetUserProfile()
+        public async Task<ApiResponseDto<UserProfileViewModel>> GetUserProfile()
         {
-            var apiResponse = await _httpClient.GetJsonAsync<ApiResponse<UserProfileViewModel>>("api/admin/users/user-profile");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<UserProfileViewModel>>("api/admin/users/user-profile");
             return apiResponse;
 
         }
@@ -264,9 +263,9 @@ namespace WebApp.Interfaces
             return apiResponse;
         }
 
-        public async Task<ApiResponse<PermissionModel>> GetAllByRoleIdAsync(string roleId)
+        public async Task<ApiResponseDto<PermissionModel>> GetAllByRoleIdAsync(string roleId)
         {
-            var apiResponse = await _httpClient.GetJsonAsync<ApiResponse<PermissionModel>>($"api/admin/get-all-permission-by-role-id/{roleId}");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<PermissionModel>>($"api/admin/get-all-permission-by-role-id/{roleId}");
             return apiResponse;
         }
 

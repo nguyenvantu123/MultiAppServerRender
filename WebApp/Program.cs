@@ -9,7 +9,6 @@ using FluentValidation.AspNetCore;
 using WebApp;
 using WebApp.Extensions;
 using Microsoft.IdentityModel.JsonWebTokens;
-using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using eShop.WebhookClient.Endpoints;
 using WebApp.Shared;
@@ -17,8 +16,9 @@ using Syncfusion.Licensing;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
 using Aspire.StackExchange.Redis.DistributedCaching;
-using BlazorIdentity.Repositories;
 using Blazored.SessionStorage;
+using IdentityModel;
+using WebApp.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -75,8 +75,10 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
 
-var identityUrl = configuration.GetRequiredValue("IdentityUrl");
-var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
+var identitySection = configuration.GetSection("Identity");
+
+var identityUrl = identitySection.GetRequiredValue("Url");
+var callBackUrl = identitySection.GetRequiredValue("Url");
 
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 var sessionCookieLifetime = configuration.GetValue("SessionCookieLifetimeMinutes", 60);

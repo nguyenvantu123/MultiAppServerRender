@@ -67,7 +67,7 @@ namespace Aspire.Pomelo.EntityFrameworkCore.MySql
 
             configureSettings?.Invoke(settings);
 
-            builder.Services.AddDbContextPool<TContext>(ConfigureDbContext);
+            builder.Services.AddDbContext<TContext>(ConfigureDbContext);
 
             const string resilienceKey = "Microsoft.Extensions.Hosting.AspireEFMySqlExtensions.ServerVersion";
             builder.Services.AddResiliencePipeline(resilienceKey, static builder =>

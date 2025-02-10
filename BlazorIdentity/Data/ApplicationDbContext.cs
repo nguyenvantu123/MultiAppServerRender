@@ -6,13 +6,15 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BlazorIdentity.Interfaces;
 using Duende.IdentityServer.EntityFramework.Entities;
 using System.Reflection;
+using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Interfaces;
 
 namespace BlazorIdentity.Data
 {
 
     public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         ApplicationUserClaim, ApplicationUserRole, IdentityUserLogin<Guid>,
-        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
+        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext, IPersistedGrantDbContext,IConfigurationDbContext
     {
         public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
         {

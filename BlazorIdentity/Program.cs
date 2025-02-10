@@ -46,6 +46,7 @@ using MultiAppServer.EventBus.Abstractions;
 using Aspire.Pomelo.EntityFrameworkCore.MySql;
 using CatalogDb;
 using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -233,8 +234,8 @@ builder.Services.Configure<RequestLocalizationOptions>(
     });
 
 builder.Services.AddIdentityServer()
-                .AddConfigurationStore<ConfigurationDbContext>()
-                .AddOperationalStore<PersistedGrantDbContext>()
+                .AddConfigurationStore<ApplicationDbContext>()
+                .AddOperationalStore<ApplicationDbContext>()
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddProfileService<ProfileService>();
 

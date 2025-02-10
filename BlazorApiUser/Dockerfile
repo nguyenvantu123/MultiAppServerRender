@@ -12,10 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["BlazorIdentity/BlazorIdentity.csproj", "BlazorIdentity/"]
-COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "MultiAppServer.ServiceDefaults/"]
+COPY ["BlazorApiUser/BlazorApiUser.csproj", "BlazorApiUser/"]
 COPY ["Aspire.Microsoft.EntityFrameworkCore.SqlServer/Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj", "Aspire.Microsoft.EntityFrameworkCore.SqlServer/"]
 COPY ["Aspire.StackExchange.Redis/Aspire.StackExchange.Redis.csproj", "Aspire.StackExchange.Redis/"]
+COPY ["BlazorIdentity/BlazorIdentity.csproj", "BlazorIdentity/"]
 COPY ["Aspire.Minio.Client/Aspire.Minio.Client.csproj", "Aspire.Minio.Client/"]
 COPY ["Aspire.MongoDb.Driver/Aspire.MongoDb.Driver.csproj", "Aspire.MongoDb.Driver/"]
 COPY ["Aspire.Pomelo.EntityFrameworkCore.MySql/Aspire.Pomelo.EntityFrameworkCore.MySql.csproj", "Aspire.Pomelo.EntityFrameworkCore.MySql/"]
@@ -25,18 +25,18 @@ COPY ["EventBus/EventBus.csproj", "EventBus/"]
 COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "MultiAppServer.ServiceDefaults/"]
 COPY ["Shared/Shared.csproj", "Shared/"]
 COPY ["IntegrationEventLogEF/IntegrationEventLogEF.csproj", "IntegrationEventLogEF/"]
-RUN dotnet restore "./BlazorIdentity/BlazorIdentity.csproj"
+RUN dotnet restore "./BlazorApiUser/BlazorApiUser.csproj"
 COPY . .
-WORKDIR "/src/BlazorIdentity"
-RUN dotnet build "./BlazorIdentity.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/BlazorApiUser"
+RUN dotnet build "./BlazorApiUser.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./BlazorIdentity.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./BlazorApiUser.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BlazorIdentity.dll"]
+ENTRYPOINT ["dotnet", "BlazorApiUser.dll"]

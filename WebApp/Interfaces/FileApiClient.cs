@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
 using System.Net.Http.Headers;
 using WebApp.Extensions;
