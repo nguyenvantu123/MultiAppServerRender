@@ -8,6 +8,7 @@ using LazyCache;
 using Finbuckle.MultiTenant;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System;
+using System.Diagnostics;
 using Finbuckle.MultiTenant.Abstractions;
 using BlazorIdentity.Users.Configuration;
 using BlazorIdentity.Users.Services;
@@ -47,10 +48,28 @@ using Aspire.Pomelo.EntityFrameworkCore.MySql;
 using CatalogDb;
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Interfaces;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
+using Log = Serilog.Log;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+
+// Log.Logger = new LoggerConfiguration()
+//     .MinimumLevel.Debug()
+//     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+//     .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+//     .MinimumLevel.Override("System", LogEventLevel.Warning)
+//     .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+//     .Enrich.FromLogContext()
+//     .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
+//     .CreateLogger();
+//
+// builder.Logging.AddSerilog();
 
 var configuration = builder.Configuration;
 

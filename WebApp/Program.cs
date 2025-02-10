@@ -272,6 +272,8 @@ if (builder.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseDeveloperExceptionPage();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
