@@ -39,4 +39,5 @@ RUN dotnet publish "./BlazorIdentity.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_ENVIRONMENT Production
 ENTRYPOINT ["dotnet", "BlazorIdentity.dll"]

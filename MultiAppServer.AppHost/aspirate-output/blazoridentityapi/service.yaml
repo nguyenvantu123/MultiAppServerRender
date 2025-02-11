@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: blazoridentityapi
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: blazoridentityapi
   ports:

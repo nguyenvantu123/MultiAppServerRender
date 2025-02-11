@@ -46,13 +46,13 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IApiErrorResources, ApiErrorResources>();
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
-        policy =>
-            policy.RequireAssertion(context => context.User.HasClaim(c => c.Value != DefaultRoleNames.User)
-    ));
-});
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
+//        policy =>
+//            policy.RequireAssertion(context => context.User.HasClaim(c => c.Value != DefaultRoleNames.User)
+//    ));
+//});
 
 var profileTypes = new HashSet<Type>
             {
