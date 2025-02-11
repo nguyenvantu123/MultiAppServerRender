@@ -98,11 +98,6 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
     options.RequireHttpsMetadata = false;
-    options.Scope.Add("openid");
-    options.Scope.Add("profile");
-    options.Scope.Add("files");
-    options.Scope.Add("identity");
-    options.Scope.Add("offline_access");
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
     options.MapInboundClaims = false;
 });
