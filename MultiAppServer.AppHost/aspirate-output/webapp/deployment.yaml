@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: nguyenvantu/webapp:latest
+        image: nguyenvantu/webapp:v8
         imagePullPolicy: IfNotPresent
         ports:
         - name: http

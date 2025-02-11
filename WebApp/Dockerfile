@@ -12,6 +12,7 @@ COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "M
 COPY ["Aspire.StackExchange.Redis.DistributedCaching/Aspire.StackExchange.Redis.DistributedCaching.csproj", "Aspire.StackExchange.Redis.DistributedCaching/"]
 COPY ["EventBus.RabbitMQ/EventBus.RabbitMQ.csproj", "EventBus.RabbitMQ/"]
 COPY ["Shared/Shared.csproj", "Shared/"]
+COPY ["Aspire.Pomelo.EntityFrameworkCore.MySql/Aspire.Pomelo.EntityFrameworkCore.MySql.csproj", "Aspire.Pomelo.EntityFrameworkCore.MySql/"]
 
 RUN dotnet restore "WebApp/WebApp.csproj"
 COPY . .
