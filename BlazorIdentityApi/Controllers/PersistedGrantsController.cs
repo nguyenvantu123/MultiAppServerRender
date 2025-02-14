@@ -14,7 +14,7 @@ namespace BlazorIdentityApi.Controllers
     [ApiController]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     [Produces("application/json", "application/problem+json")]
-    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class PersistedGrantsController : ControllerBase
     {
         private readonly IPersistedGrantService _persistedGrantsService;

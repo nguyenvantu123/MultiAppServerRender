@@ -12,7 +12,7 @@ namespace BlazorIdentityApi.Controllers
     [ApiController]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     [Produces("application/json")]
-    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class DashboardController : ControllerBase
     {
         private readonly IDashboardService _dashboardService;

@@ -15,7 +15,7 @@ namespace BlazorIdentityApi.Controllers
     [ApiController]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     [Produces("application/json", "application/problem+json")]
-    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class ApiResourcesController : ControllerBase
     {
         private readonly IApiResourceService _apiResourceService;
