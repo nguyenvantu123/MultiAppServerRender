@@ -26,14 +26,19 @@ SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpR
 builder.AddServiceDefaults();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddSingleton<AppState>();
+
+var configuration = builder.Configuration;
+
+var url = configuration.GetSection("HostUrl");
+
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
-    httpClient.BaseAddress = new("https://blazorapiuser");
+    httpClient.BaseAddress = new(url.GetRequiredValue("UserApi"));
 }).AddApiVersion(1.0).AddAuthToken();
 
 builder.Services.AddHttpClient<FileApiClient>(httpClient =>
 {
-    httpClient.BaseAddress = new("https://blazorfiles");
+    httpClient.BaseAddress = new(url.GetRequiredValue("FileApi"));
 }).AddApiVersion(1.0).AddAuthToken();
 
 builder.AddApplicationServices();
@@ -56,9 +61,6 @@ builder.Services.AddRazorComponents()
 
 //builder.Services.AddSingleton<CookieEvents>();
 //builder.Services.AddScoped<AppState>();
-
-var configuration = builder.Configuration;
-
 
 //var identityUrl = configuration.GetRequiredValue("IdentityUrl");
 //var callBackUrl = configuration.GetRequiredValue("CallBackUrl");

@@ -1,6 +1,7 @@
 namespace: multiapp
 
 resources:
+- blazorfiles    
 - webapp
 - blazorwebidentity
 - blazoridentityapi
