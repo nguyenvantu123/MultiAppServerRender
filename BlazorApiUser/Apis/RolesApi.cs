@@ -6,11 +6,9 @@ using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using BlazorIdentity.Users.Models;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using static BlazorIdentity.Users.Models.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Polly;
 using Microsoft.AspNetCore.Components.Forms;
@@ -19,7 +17,7 @@ using System.ComponentModel.Design;
 using BlazorApiUser.Commands.Users;
 using BlazorApiUser.Queries.Users;
 using BlazorApiUser.Queries.Roles;
-using WebApp.Models;
+using BlazorApiUser.Models;
 
 public static class RolesApi
 {
@@ -40,21 +38,21 @@ public static class RolesApi
     }
 
     [Authorize(Roles = Permissions.Role.Read)]
-    public static async Task<ApiResponse<List<RoleDto>>> GetRoles([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto<List<RoleDto>>> GetRoles([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
     {
 
         var userLst = await userServices.Mediator.Send(getListRoleQuery);
 
-        return new ApiResponse<List<RoleDto>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
+        return new ApiResponseDto<List<RoleDto>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
     }
 
     [Authorize(Roles = Permissions.Role.Update)]
-    public static async Task<ApiResponse> Update(string id, CreateRoleCommand command, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> Update(string id, CreateRoleCommand command, [AsParameters] UserServices userServices)
     {
 
         if (await userServices.RoleManager.FindByIdAsync(id) == null)
         {
-            return new ApiResponse(400, $"Role doesn't exist!!!!");
+            return new ApiResponseDto(400, $"Role doesn't exist!!!!");
         }
 
         var role = await userServices.RoleManager.FindByIdAsync(id);
@@ -63,7 +61,7 @@ public static class RolesApi
         {
             if (await userServices.RoleManager.FindByNameAsync(command.Name) != null)
             {
-                return new ApiResponse(400, $"Name is exist!!!!");
+                return new ApiResponseDto(400, $"Name is exist!!!!");
             }
         }
 
@@ -74,24 +72,24 @@ public static class RolesApi
 
         if (!result.Succeeded)
         {
-            return new ApiResponse(400, $"{string.Join(";", result.Errors)}");
+            return new ApiResponseDto(400, $"{string.Join(";", result.Errors)}");
         }
 
-        return new ApiResponse(200, $"Update Success!!!!");
+        return new ApiResponseDto(200, $"Update Success!!!!");
     }
 
     [Authorize(Roles = Permissions.Role.Update)]
-    public static async Task<ApiResponse> UpdatePermission(string id, CreateRoleCommand command, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> UpdatePermission(string id, CreateRoleCommand command, [AsParameters] UserServices userServices)
     {
 
         if (await userServices.RoleManager.FindByNameAsync(command.Name) != null)
         {
-            return new ApiResponse(400, $"Name is exist!!!!");
+            return new ApiResponseDto(400, $"Name is exist!!!!");
         }
 
         if (await userServices.RoleManager.FindByIdAsync(id) == null)
         {
-            return new ApiResponse(400, $"Role doesn't exist!!!!");
+            return new ApiResponseDto(400, $"Role doesn't exist!!!!");
         }
 
         var role = await userServices.RoleManager.FindByIdAsync(id);
@@ -102,21 +100,21 @@ public static class RolesApi
 
         if (!result.Succeeded)
         {
-            return new ApiResponse(400, $"{string.Join(";", result.Errors)}");
+            return new ApiResponseDto(400, $"{string.Join(";", result.Errors)}");
         }
 
-        return new ApiResponse(200, $"Update Success!!!!");
+        return new ApiResponseDto(200, $"Update Success!!!!");
     }
 
     [Authorize(Roles = Permissions.Role.Update)]
-    public static async Task<ApiResponse<RoleDto>> GetRoleById(string id, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto<RoleDto>> GetRoleById(string id, [AsParameters] UserServices userServices)
     {
 
         var identityRole = await userServices.RoleManager.FindByIdAsync(id);
 
         if (identityRole == null)
         {
-            return new ApiResponse(404, "Role not found!!!", null);
+            return new ApiResponseDto(404, "Role not found!!!", null);
         }
 
         var claims = await userServices.RoleManager.GetClaimsAsync(identityRole);
@@ -127,19 +125,19 @@ public static class RolesApi
             Name = identityRole.Name
         };
 
-        return new ApiResponse(200, "Role fetched", roleDto);
+        return new ApiResponseDto(200, "Role fetched", roleDto);
     }
 
     [Authorize(Roles = Permissions.Role.Create)]
-    public static async Task<ApiResponse> Create(CreateRoleCommand command, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> Create(CreateRoleCommand command, [AsParameters] UserServices userServices)
     {
         var sendCommand = await userServices.Mediator.Send(command);
 
-        return new ApiResponse(sendCommand.Item1, sendCommand.Item2, command);
+        return new ApiResponseDto(sendCommand.Item1, sendCommand.Item2, command);
     }
 
     [Authorize(Roles = Permissions.Role.Delete)]
-    public static async Task<ApiResponse> Delete(string id, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> Delete(string id, [AsParameters] UserServices userServices)
     {
         var roleDelete = await userServices.RoleManager.FindByIdAsync(id);
 
@@ -151,22 +149,22 @@ public static class RolesApi
 
         if ((await userServices.UserManager.GetUsersInRoleAsync(roleDelete.Name)).Any())
         {
-            return new ApiResponse(400, "Role map with user, can't delete!!!", null);
+            return new ApiResponseDto(400, "Role map with user, can't delete!!!", null);
         }
 
         var sendCommand = await userServices.RoleManager.DeleteAsync(roleDelete);
 
         if (!sendCommand.Succeeded)
         {
-            return new ApiResponse(400, string.Join(";", sendCommand.Errors), null);
+            return new ApiResponseDto(400, string.Join(";", sendCommand.Errors), null);
 
         }
 
-        return new ApiResponse(200, "Role fetched", null);
+        return new ApiResponseDto(200, "Role fetched", null);
 
     }
 
-    public static async Task<ApiResponse<UserRolesResponse>> GetUserByRoleId([FromQuery] string id, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto<UserRolesResponse>> GetUserByRoleId([FromQuery] string id, [AsParameters] UserServices userServices)
     {
 
         var viewModel = new List<UserRoleModel>();
@@ -174,7 +172,7 @@ public static class RolesApi
 
         if (user == null)
         {
-            return new ApiResponse<UserRolesResponse>(200, "Success", null);
+            return new ApiResponseDto<UserRolesResponse>(200, "Success", null);
         }
         var roles = await userServices.RoleManager.Roles.ToListAsync();
 
@@ -196,6 +194,6 @@ public static class RolesApi
             viewModel.Add(userRolesViewModel);
         }
         var result = new UserRolesResponse { UserRoles = viewModel };
-        return new ApiResponse<UserRolesResponse>(200, "Success", result);
+        return new ApiResponseDto<UserRolesResponse>(200, "Success", result);
     }
 }

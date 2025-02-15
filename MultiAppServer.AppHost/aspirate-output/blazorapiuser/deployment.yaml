@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: blazorapiuser
-        image: registry.digitalocean.com/multiappserverregistry/multiappserver/blazorapiuser:latest
+        image: nguyenvantu/blazorapiuser:v1
         imagePullPolicy: IfNotPresent
         ports:
         - name: http

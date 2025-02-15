@@ -13,9 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["BlazorApiUser/BlazorApiUser.csproj", "BlazorApiUser/"]
-COPY ["Aspire.Microsoft.EntityFrameworkCore.SqlServer/Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj", "Aspire.Microsoft.EntityFrameworkCore.SqlServer/"]
 COPY ["Aspire.StackExchange.Redis/Aspire.StackExchange.Redis.csproj", "Aspire.StackExchange.Redis/"]
-COPY ["BlazorIdentity/BlazorIdentity.csproj", "BlazorIdentity/"]
 COPY ["Aspire.Minio.Client/Aspire.Minio.Client.csproj", "Aspire.Minio.Client/"]
 COPY ["Aspire.MongoDb.Driver/Aspire.MongoDb.Driver.csproj", "Aspire.MongoDb.Driver/"]
 COPY ["Aspire.Pomelo.EntityFrameworkCore.MySql/Aspire.Pomelo.EntityFrameworkCore.MySql.csproj", "Aspire.Pomelo.EntityFrameworkCore.MySql/"]

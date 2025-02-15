@@ -23,32 +23,32 @@ public static partial class Extensions
 
         app.UseSwagger();
 
-        if (app.Environment.IsDevelopment())
+        //if (app.Environment.IsDevelopment())
+        //{
+        app.UseSwaggerUI(setup =>
         {
-            app.UseSwaggerUI(setup =>
+
+            var pathBase = configuration["PATH_BASE"] ?? string.Empty;
+            var authSection = openApiSection.GetSection("Auth");
+            var endpointSection = openApiSection.GetRequiredSection("Endpoint");
+
+            foreach (var description in app.DescribeApiVersions())
             {
+                var name = description.GroupName;
+                var url = endpointSection["Url"] ?? $"{pathBase}/swagger/{name}/swagger.json";
 
-                var pathBase = configuration["PATH_BASE"] ?? string.Empty;
-                var authSection = openApiSection.GetSection("Auth");
-                var endpointSection = openApiSection.GetRequiredSection("Endpoint");
+                setup.SwaggerEndpoint(url, name);
+            }
 
-                foreach (var description in app.DescribeApiVersions())
-                {
-                    var name = description.GroupName;
-                    var url = endpointSection["Url"] ?? $"{pathBase}/swagger/{name}/swagger.json";
+            if (authSection.Exists())
+            {
+                setup.OAuthClientId(authSection.GetRequiredValue("ClientId"));
+                setup.OAuthAppName(authSection.GetRequiredValue("AppName"));
+            }
+        });
 
-                    setup.SwaggerEndpoint(url, name);
-                }
-
-                if (authSection.Exists())
-                {
-                    setup.OAuthClientId(authSection.GetRequiredValue("ClientId"));
-                    setup.OAuthAppName(authSection.GetRequiredValue("AppName"));
-                }
-            });
-
-            app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
-        }
+        app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+        //}
 
         return app;
     }
