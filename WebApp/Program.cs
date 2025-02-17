@@ -10,7 +10,6 @@ using WebApp;
 using WebApp.Extensions;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.AspNetCore.Authentication;
-using eShop.WebhookClient.Endpoints;
 using WebApp.Shared;
 using Syncfusion.Licensing;
 using Syncfusion.Blazor;
@@ -85,11 +84,16 @@ var callBackUrl = identitySection.GetRequiredValue("Url");
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 var sessionCookieLifetime = configuration.GetValue("SessionCookieLifetimeMinutes", 60);
 
+builder.Services.AddControllersWithViews(options =>
+{
+    options.EnableEndpointRouting = false;
+});
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-}).AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime)).AddOpenIdConnect(options =>
+}).AddCookie(options => { options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime); options.LogoutPath = "/logout"; }).AddOpenIdConnect(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = identityUrl;
@@ -102,6 +106,8 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
     options.MapInboundClaims = false;
+
+
 });
 
 //builder.Services.AddScoped<CustomAuthenticationStateProvider>();
@@ -270,12 +276,10 @@ if (builder.Environment.IsDevelopment())
 }
 
 app.UseDeveloperExceptionPage();
-
+app.UseMvcWithDefaultRoute();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-app.MapAuthenticationEndpoints();
 
 app.UseAuthentication();
 app.UseAuthorization();

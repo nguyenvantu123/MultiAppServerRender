@@ -1,5 +1,5 @@
-﻿using BlazorApiUser.IntegrationEvents;
-using BlazorIdentity.Data;
+﻿using BlazorApiUser.Db;
+using BlazorApiUser.IntegrationEvents;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MultiAppServer.EventBus.Extensions;

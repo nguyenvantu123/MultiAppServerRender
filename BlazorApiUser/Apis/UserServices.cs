@@ -1,11 +1,11 @@
 ﻿
 
 using AutoMapper;
+using BlazorApiUser.Db;
+using BlazorApiUser.Models;
+using BlazorApiUser.Repositories;
 using BlazorApiUser.Repository;
-using BlazorIdentity.Data;
-using BlazorIdentity.Repositories;
-using BlazorIdentity.Users.Data;
-using BlazorIdentity.Users.Models;
+
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 

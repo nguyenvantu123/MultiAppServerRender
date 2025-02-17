@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: blazorapiuser
-        image: nguyenvantu/blazorapiuser:v1
+        image: nguyenvantu/blazorapiuser:v3
         imagePullPolicy: IfNotPresent
         ports:
         - name: http

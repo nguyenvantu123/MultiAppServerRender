@@ -143,7 +143,7 @@ public static class RolesApi
 
         if (roleDelete == null)
         {
-            return new ApiResponse(400, "Role doesn't exit!!!", null);
+            return new ApiResponseDto(400, "Role doesn't exit!!!", null);
 
         }
 

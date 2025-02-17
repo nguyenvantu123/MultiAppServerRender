@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using BlazorApiUser.Commands.Users;
+using BlazorApiUser.Models;
 using BlazorApiUser.Queries.Roles;
 using BlazorApiUser.Queries.Users;
-using BlazorIdentity.Models;
-using BlazorIdentity.Users.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver.Linq;
+using MultiAppServer.ServiceDefaults;
 using System.Security.Claims;
-using WebApp.Models;
 
 namespace BlazorApiUser.Apis
 {
@@ -46,7 +44,7 @@ namespace BlazorApiUser.Apis
         }
 
         [Authorize(Roles = Permissions.Tenant.Read)]
-        public static async Task<ApiResponse<List<TenantDto>>> GetTenants([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
+        public static async Task<ApiResponseDto<List<TenantDto>>> GetTenants([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
         {
 
             //var userLst = await userServices.Mediator.Send(getListRoleQuery);
@@ -62,7 +60,7 @@ namespace BlazorApiUser.Apis
 
             List<TenantDto> tenantDto = userServices.Mapper.Map<List<TenantDto>>(itemsOnPage);
 
-            return new ApiResponse<List<TenantDto>>(200, $"{totalItems} users fetched", tenantDto, totalItems);
+            return new ApiResponseDto<List<TenantDto>>(200, $"{totalItems} users fetched", tenantDto, totalItems);
         }
 
         //[Authorize]

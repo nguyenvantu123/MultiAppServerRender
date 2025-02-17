@@ -1,10 +1,12 @@
-﻿using Finbuckle.MultiTenant;
+﻿using BlazorApiUser.Users;
+using Finbuckle.MultiTenant;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorApiUser.Models
 {
     [MultiTenant]
-    [Permissions(Actions.CRUD)]
+    //[Permissions(Actions.CRUD)]
     public class ApplicationUserRole : IdentityUserRole<Guid>
     {
         public virtual ApplicationUser User { get; set; }

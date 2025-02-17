@@ -1,4 +1,4 @@
-﻿using BlazorIdentity.Users.Models;
+﻿using BlazorApiUser.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.Serialization;

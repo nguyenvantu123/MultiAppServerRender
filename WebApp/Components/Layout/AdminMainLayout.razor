@@ -47,11 +47,8 @@
                     <SfDialog Content="Are you want to logout all services?" Width="350" Header="Logout" Visible="false" @ref="DialogObj">
                         <DialogPositionData X="center" Y="center"></DialogPositionData>
                         <DialogButtons>
-                            <form method="post" action="logout">
-                                @* <SfButton IsPrimary Type>Yes</SfButton> *@
-                                <SfButton Type="submit" IsPrimary="true" Content="Yes"></SfButton>
-                            </form>
 
+                            <DialogButton OnClick="@NavigateToCshtmlPage" IsPrimary Content="Log out"></DialogButton>
                             <DialogButton Content="Cancel" OnClick="@cancelclick"></DialogButton>
                         </DialogButtons>
                     </SfDialog>
@@ -185,6 +182,9 @@
     [Inject] protected RedisUserRepository redisUserRepo { get; set; }
     [Inject] protected IEventBus eventBus { get; set; }
     public UserProfileViewModel? userProfileViewModel = null;
+
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
     private string themeName;
     private bool Visibility { get; set; } = false;
 
@@ -200,95 +200,92 @@
         await DialogObj.HideAsync();
     }
 
-    // private async void okclick(object args)
-    // {
-    //     // await LogOutService.LogOutAsync(httpContextAccessor.HttpContext!);
-
-    //     // await httpClient.PostAsync("https://localhost:7221/logout", null);
-
-    //     // _navigationManager.Refresh(true);
-
-    // }
 
 
-    private async void select(MenuEventArgs args)
-    {
-        if (args.Item.Text == "Logout")
+        private void NavigateToCshtmlPage()
         {
-            await DialogObj.ShowAsync();
+            _navigationManager.NavigateTo("/WebApp/Components/Pages/Account/Logout.cshtml");
         }
-    }
 
-    private async void ToogleDarkMode()
+
+        private async void select(MenuEventArgs args)
+        {
+    if (args.Item.Text == "Logout")
     {
-        userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
+        await DialogObj.ShowAsync();
+    }
+        }
 
-        userProfileViewModel!.IsDarkMode = !userProfileViewModel.IsDarkMode;
+        private async void ToogleDarkMode()
+        {
+    userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
+
+    userProfileViewModel!.IsDarkMode = !userProfileViewModel.IsDarkMode;
+
+    appState.IsDarkMode = userProfileViewModel.IsDarkMode;
+    await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
+
+    UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
+
+    await eventBus.PublishAsync(updateProfileEvent);
+
+    await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfileViewModel));
+    _navigationManager.Refresh(true);
+
+        }
+
+        protected override async void OnInitialized()
+        {
+
+    userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
+    if (userProfileViewModel == null)
+    {
+        var userProfile = await accountApiClient.GetUserProfile();
+
+        userProfileViewModel = userProfile.Result;
 
         appState.IsDarkMode = userProfileViewModel.IsDarkMode;
-        await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
-
-        UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
-
-        await eventBus.PublishAsync(updateProfileEvent);
-
-        await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfileViewModel));
-        _navigationManager.Refresh(true);
-
-    }
-
-    protected override async void OnInitialized()
-    {
-
-        userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
-        if (userProfileViewModel == null)
-        {
-            var userProfile = await accountApiClient.GetUserProfile();
-
-            userProfileViewModel = userProfile.Result;
-
-            appState.IsDarkMode = userProfileViewModel.IsDarkMode;
-
-            appState.IsNavOpen = userProfileViewModel.IsNavOpen;
-
-
-            await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
-
-            _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
-        }
-
-        _navigationManager.Refresh();
-    }
-
-    private string GetUri()
-    {
-        var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-        return uri.AbsolutePath;
-    }
-
-    private void OverlayClick(OverlayModalClickEventArgs args)
-    {
-        this.Visibility = false;
-    }
-
-
-    public async void ToolbarClicked(Syncfusion.Blazor.Navigations.ClickEventArgs args)
-
-    {
-        userProfileViewModel!.IsNavOpen = !userProfileViewModel.IsNavOpen;
 
         appState.IsNavOpen = userProfileViewModel.IsNavOpen;
 
-        var data1123456 = await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
 
-        UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
+        await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
 
-        await eventBus.PublishAsync(updateProfileEvent);
+        _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
     }
-    // public async void Toggle()
-    // {
 
-    // }
+    _navigationManager.Refresh();
+        }
+
+        private string GetUri()
+        {
+    var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+    return uri.AbsolutePath;
+        }
+
+        private void OverlayClick(OverlayModalClickEventArgs args)
+        {
+    this.Visibility = false;
+        }
+
+
+        public async void ToolbarClicked(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+
+        {
+    userProfileViewModel!.IsNavOpen = !userProfileViewModel.IsNavOpen;
+
+    appState.IsNavOpen = userProfileViewModel.IsNavOpen;
+
+    var data1123456 = await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
+
+    UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
+
+    await eventBus.PublishAsync(updateProfileEvent);
+        }
+        // public async void Toggle()
+        // {
+
+        // }
 }
 <style>
     /* Sample specific styles*/
@@ -321,9 +318,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                                        border: 0px;
-                                                                                                                                                                                                                                        height: 1000px;
-                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                            border: 0px;
+                                                                                                                                                                                                                                                            height: 1000px;
+                                                                                                                                                                                                                                                        } */
 
     #maintext .content {
         padding: 15px;

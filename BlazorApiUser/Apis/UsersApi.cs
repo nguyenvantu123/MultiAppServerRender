@@ -6,11 +6,9 @@ using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using BlazorIdentity.Users.Models;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using static BlazorIdentity.Users.Models.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Polly;
 using Microsoft.AspNetCore.Components.Forms;
@@ -19,13 +17,12 @@ using System.ComponentModel.Design;
 using BlazorApiUser.Commands.Users;
 using BlazorApiUser.Queries.Users;
 using BlazorApiUser.Queries.Roles;
-using WebApp.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using BlazorIdentity.Users.Constants;
-using BlazorIdentity.Users.Extensions;
-using BlazorIdentity.Users;
-using BlazorIdentity.Repositories;
 using Shared.Models;
+using BlazorApiUser.Models;
+using BlazorApiUser.Constants;
+using BlazorApiUser.Repositories;
+using BlazorApiUser.Extensions;
 
 public static class UsersApi
 {
@@ -62,33 +59,33 @@ public static class UsersApi
     }
 
     [Authorize(Roles = Permissions.User.Read)]
-    public static async Task<ApiResponse<List<UserDataViewModel>>> GetUsers([AsParameters] GetListUserQuery getListUserQuery, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto<List<UserDataViewModel>>> GetUsers([AsParameters] GetListUserQuery getListUserQuery, [AsParameters] UserServices userServices)
     {
         var userLst = await userServices.Mediator.Send(getListUserQuery);
 
-        return new ApiResponse<List<UserDataViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
+        return new ApiResponseDto<List<UserDataViewModel>>(200, $"{userLst.Item1} users fetched", userLst.Item2, userLst.Item1);
     }
 
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponse> ToggleUserStatus(ToogleUserRequestCommand toggleUserStatusCommand, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> ToggleUserStatus(ToogleUserRequestCommand toggleUserStatusCommand, [AsParameters] UserServices userServices)
     {
 
         var userById = await userServices.UserManager.FindByIdAsync(toggleUserStatusCommand.UserId);
 
         if (userById == null)
         {
-            return new ApiResponse(404, "User not found!!!");
+            return new ApiResponseDto(404, "User not found!!!");
         }
 
         userById.IsActive = toggleUserStatusCommand.ActivateUser;
 
         await userServices.UserManager.UpdateAsync(userById);
 
-        return new ApiResponse(200, "Success!!!");
+        return new ApiResponseDto(200, "Success!!!");
     }
 
     [Authorize(Roles = Permissions.User.Create)]
-    public static async Task<ApiResponse> Create(CreateUserCommand command, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> Create(CreateUserCommand command, [AsParameters] UserServices userServices)
     {
         var user = new ApplicationUser
         {
@@ -104,14 +101,14 @@ public static class UsersApi
         var checkUserIsExist = await userServices.UserManager.FindByNameAsync(command.UserName);
         if (checkUserIsExist != null)
         {
-            return new ApiResponse(400, "User Name is exist");
+            return new ApiResponseDto(400, "User Name is exist");
         }
 
         checkUserIsExist = await userServices.UserManager.FindByEmailAsync(command.Email);
 
         if (checkUserIsExist != null)
         {
-            return new ApiResponse(400, "Email is exist");
+            return new ApiResponseDto(400, "Email is exist");
         }
 
         var result = await userServices.UserManager.CreateAsync(user, command.Password);
@@ -120,11 +117,10 @@ public static class UsersApi
         {
             var msg = result.GetErrors();
 
-            return new ApiResponse(400, msg);
+            return new ApiResponseDto(400, msg);
         }
 
         var claimsResult = userServices.UserManager.AddClaimsAsync(user, new Claim[]{
-                        new Claim(Policies.IsAdmin, string.Empty),
                         new Claim(ClaimTypes.Name, command.UserName),
                         new Claim(ClaimTypes.Email, command.Email),
                         new Claim(ApplicationClaimTypes.EmailVerified, ClaimValues.falseString, ClaimValueTypes.Boolean)
@@ -157,23 +153,23 @@ public static class UsersApi
 
         //}
 
-        return new ApiResponse(200, $"User {command.UserName} created");
+        return new ApiResponseDto(200, $"User {command.UserName} created");
     }
 
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponse> AdminUpdateUser(string id, AdminUpdateUserCommand command, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> AdminUpdateUser(string id, AdminUpdateUserCommand command, [AsParameters] UserServices userServices)
     {
         //var sendCommand = await userServices.Mediator.Send(command);
 
         var user = await userServices.UserManager.FindByIdAsync(id);
         if (user == null)
         {
-            return new ApiResponse(400, "User not found!!!", null);
+            return new ApiResponseDto(400, "User not found!!!", null);
         }
 
         if (user.UserName == "admin")
         {
-            return new ApiResponse(400, "Can't update admin user!!!", null);
+            return new ApiResponseDto(400, "Can't update admin user!!!", null);
         }
 
         //user.UserName = command.UserName;
@@ -186,25 +182,25 @@ public static class UsersApi
 
         if (!result.Succeeded)
         {
-            return new ApiResponse(400, string.Join(";", result.Errors), null);
+            return new ApiResponseDto(400, string.Join(";", result.Errors), null);
         }
 
-        return new ApiResponse(200, $"{command.UserName} update successfully!!!", null);
+        return new ApiResponseDto(200, $"{command.UserName} update successfully!!!", null);
     }
 
     [Authorize(Roles = Permissions.User.Delete)]
-    public static async Task<ApiResponse> AdminDelete(string id, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> AdminDelete(string id, [AsParameters] UserServices userServices)
     {
 
         var user = await userServices.UserManager.FindByIdAsync(id);
         if (user == null)
         {
-            return new ApiResponse(400, "User not found!!!", null);
+            return new ApiResponseDto(400, "User not found!!!", null);
         }
 
         if (user.UserName == DefaultUserNames.Administrator)
         {
-            return new ApiResponse(400, "Can't delete admin user!!!", null);
+            return new ApiResponseDto(400, "Can't delete admin user!!!", null);
         }
 
         user.IsDeleted = true;
@@ -215,20 +211,20 @@ public static class UsersApi
 
         if (!result.Succeeded)
         {
-            return new ApiResponse(400, string.Join(";", result.Errors), null);
+            return new ApiResponseDto(400, string.Join(";", result.Errors), null);
         }
 
-        return new ApiResponse(200, $"{user.UserName} delete successfully!!!", null);
+        return new ApiResponseDto(200, $"{user.UserName} delete successfully!!!", null);
     }
 
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponse> ResetPasswordUser(ChangePasswordCommand changePasswordCommand, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> ResetPasswordUser(ChangePasswordCommand changePasswordCommand, [AsParameters] UserServices userServices)
     {
 
         var user = await userServices.UserManager.FindByIdAsync(changePasswordCommand.UserId);
         if (user == null)
         {
-            return new ApiResponse(200, $"User not found!!!");
+            return new ApiResponseDto(200, $"User not found!!!");
 
         }
         var passToken = await userServices.UserManager.GeneratePasswordResetTokenAsync(user);
@@ -242,11 +238,11 @@ public static class UsersApi
         //    return new ApiResponse((int)HttpStatusCode.BadRequest, msg);
         //}
 
-        return new ApiResponse(200, $"User {user.UserName}  password reset");
+        return new ApiResponseDto(200, $"User {user.UserName}  password reset");
     }
 
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponse<List<string>>> GetPermissionByUser([AsParameters] UserServices userServices, ClaimsPrincipal userAuth)
+    public static async Task<ApiResponseDto<List<string>>> GetPermissionByUser([AsParameters] UserServices userServices, ClaimsPrincipal userAuth)
     {
 
         var user = await userServices.UserManager.GetUserAsync(userAuth);
@@ -257,13 +253,13 @@ public static class UsersApi
 
             if (claims != null)
             {
-                return new ApiResponse<List<string>>(statusCode: 200, message: "", result: claims.ToList().Select(x => x.Value).ToList());
+                return new ApiResponseDto<List<string>>(statusCode: 200, message: "", result: claims.ToList().Select(x => x.Value).ToList());
 
             }
-            return new ApiResponse<List<string>>(statusCode: 200, message: "", result: new List<string>());
+            return new ApiResponseDto<List<string>>(statusCode: 200, message: "", result: new List<string>());
         }
 
-        return new ApiResponse<List<string>>(statusCode: 200, message: "", result: new List<string>());
+        return new ApiResponseDto<List<string>>(statusCode: 200, message: "", result: new List<string>());
     }
 
     //public static async Task<ApiResponse<List<UserDataViewModel>>> GetUser([FromServices] UserServices userServices)
@@ -271,22 +267,22 @@ public static class UsersApi
 
     //}
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponse<UserDataViewModel>> GetUserById(string id, [AsParameters] UserServices userServices, IMapper autoMapper)
+    public static async Task<ApiResponseDto<UserDataViewModel>> GetUserById(string id, [AsParameters] UserServices userServices, IMapper autoMapper)
     {
 
         var user = await userServices.UserManager.FindByIdAsync(id);
 
         if (user == null)
         {
-            return new ApiResponse<UserDataViewModel>(404, "User Not Found", null);
+            return new ApiResponseDto<UserDataViewModel>(404, "User Not Found", null);
         }
 
         var result = autoMapper.Map<UserDataViewModel>(user);
 
-        return new ApiResponse<UserDataViewModel>(200, "Success", result);
+        return new ApiResponseDto<UserDataViewModel>(200, "Success", result);
     }
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponse<UserRolesResponse>> GetRoleByUserId(string id, [AsParameters] UserServices userServices, IMapper autoMapper)
+    public static async Task<ApiResponseDto<UserRolesResponse>> GetRoleByUserId(string id, [AsParameters] UserServices userServices, IMapper autoMapper)
     {
 
         var viewModel = new List<UserRoleModel>();
@@ -294,7 +290,7 @@ public static class UsersApi
 
         if (user == null)
         {
-            return new ApiResponse<UserRolesResponse>(200, "Success", null);
+            return new ApiResponseDto<UserRolesResponse>(200, "Success", null);
         }
         var roles = await userServices.RoleManager.Roles.ToListAsync();
 
@@ -316,21 +312,21 @@ public static class UsersApi
             viewModel.Add(userRolesViewModel);
         }
         var result = new UserRolesResponse { UserRoles = viewModel };
-        return new ApiResponse<UserRolesResponse>(200, "Success", result);
+        return new ApiResponseDto<UserRolesResponse>(200, "Success", result);
     }
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponse> UpdateUserRoles(string id, UpdateUserRolesCommand updateUserRolesCommand, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> UpdateUserRoles(string id, UpdateUserRolesCommand updateUserRolesCommand, [AsParameters] UserServices userServices)
     {
         var user = await userServices.UserManager.FindByIdAsync(id);
 
         if (user == null)
         {
-            return new ApiResponse(400, "Not found user!!!");
+            return new ApiResponseDto(400, "Not found user!!!");
         }
 
         if (user.UserName == DefaultUserNames.Administrator)
         {
-            return new ApiResponse(400, "Not Allowed");
+            return new ApiResponseDto(400, "Not Allowed");
         }
 
         var userAccessor = userServices.HttpContextAccessor!.HttpContext!.User;
@@ -343,7 +339,7 @@ public static class UsersApi
 
         if (currentUser == null)
         {
-            return new ApiResponse(401, "Unauthorized!!!");
+            return new ApiResponseDto(401, "Unauthorized!!!");
         }
 
         if (!await userServices.UserManager.IsInRoleAsync(currentUser, DefaultRoleNames.Administrator))
@@ -354,7 +350,7 @@ public static class UsersApi
             if (tryToAddAdministratorRole && !userHasAdministratorRole || !tryToAddAdministratorRole && userHasAdministratorRole)
             {
 
-                return new ApiResponse(400, "Not Allowed to add or delete Administrator Role if you have not this role.");
+                return new ApiResponseDto(400, "Not Allowed to add or delete Administrator Role if you have not this role.");
 
             }
         }
@@ -362,37 +358,37 @@ public static class UsersApi
         var result = await userServices.UserManager.RemoveFromRolesAsync(user, roles);
         result = await userServices.UserManager.AddToRolesAsync(user, selectedRoles.Select(y => y.RoleName));
 
-        return new ApiResponse(200, "Roles Updated");
+        return new ApiResponseDto(200, "Roles Updated");
     }
 
     [Authorize]
-    public static async Task<ApiResponse<UserDataViewModel>> UserViewModel([AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper)
+    public static async Task<ApiResponseDto<UserDataViewModel>> UserViewModel([AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper)
     {
         var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
 
         if (user == null)
         {
-            return new ApiResponse<UserDataViewModel>(404, "User Not Found", null);
+            return new ApiResponseDto<UserDataViewModel>(404, "User Not Found", null);
         }
 
         var result = autoMapper.Map<UserDataViewModel>(user);
 
         result.Roles = await userServices.UserManager.GetRolesAsync(user);
 
-        return new ApiResponse<UserDataViewModel>(200, "Success", result);
+        return new ApiResponseDto<UserDataViewModel>(200, "Success", result);
     }
 
 
     [Authorize]
-    public static async Task<ApiResponse<UserProfileViewModel>> UserProfile([AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper, RedisUserRepository redisUserRepository)
+    public static async Task<ApiResponseDto<UserProfileViewModel>> UserProfile([AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper, RedisUserRepository redisUserRepository)
     {
 
-        var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
+        //ApplicationUser? user = await userServices.UserManager.FindByIdAsync(userId: userAuth.FindFirstValue("sub"));
 
-        if (user == null)
-        {
-            return new ApiResponse<UserProfileViewModel>(404, "User Not Found", null);
-        }
+        //if (user == null)
+        //{
+        //    return new ApiResponseDto<UserProfileViewModel>(404, "User Not Found", null);
+        //}
 
 		UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
 
@@ -416,7 +412,7 @@ public static class UsersApi
 
 				await userServices.ApplicationDbContext.UserProfiles.AddAsync(userProfile);
 
-				return new ApiResponse<UserProfileViewModel>(200, "Success", result);
+				return new ApiResponseDto<UserProfileViewModel>(200, "Success", result);
 
             }
             else
@@ -425,11 +421,11 @@ public static class UsersApi
 				var result = autoMapper.Map<UserProfileViewModel>(userProfile);
 
 				await redisUserRepository.UpdateUserProfileAsync(result);
-                return new ApiResponse<UserProfileViewModel>(200, "Success", result);
+                return new ApiResponseDto<UserProfileViewModel>(200, "Success", result);
             }
         }
 
-        return new ApiResponse<UserProfileViewModel>(200, "Success", dataCache);
+        return new ApiResponseDto<UserProfileViewModel>(200, "Success", dataCache);
 
     }
 

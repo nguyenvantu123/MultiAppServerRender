@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webhooks.API", "Webhooks.AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorIdentityApi", "BlazorIdentityApi\BlazorIdentityApi.csproj", "{7019B6F9-13C0-41A2-BB01-E9298D14DCCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.Pomelo.EntityFrameworkCore.MySql", "Aspire.Pomelo.EntityFrameworkCore.MySql\Aspire.Pomelo.EntityFrameworkCore.MySql.csproj", "{FD324955-23E2-415F-8EFB-FAD071105430}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.Pomelo.EntityFrameworkCore.MySql", "Aspire.Pomelo.EntityFrameworkCore.MySql\Aspire.Pomelo.EntityFrameworkCore.MySql.csproj", "{FD324955-23E2-415F-8EFB-FAD071105430}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

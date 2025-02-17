@@ -13,7 +13,7 @@ namespace WebApp.Models
     [Permissions(Actions.CRUD)]
     public class ApplicationUser : IdentityUser<Guid>
     {
-        public override Guid Id { get => base.Id; set => base.Id = value; }
+        public Guid Id = new Guid();
         public override string UserName { get => base.UserName; set => base.UserName = value; }
         public override string NormalizedUserName { get => base.NormalizedUserName; set => base.NormalizedUserName = value; }
         public override string Email { get => base.Email; set => base.Email = value; }

@@ -1,4 +1,5 @@
-﻿using Finbuckle.MultiTenant;
+﻿using BlazorApiUser.Users;
+using Finbuckle.MultiTenant;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +8,7 @@ namespace BlazorApiUser.Models
     // Add profile data for application users by adding properties to the ApplicationUser class
     //[Table("ApplicationUser")]
     [MultiTenant]
-    [Permissions(Actions.CRUD)]
+    //[Permissions(Actions.CRUD)]
     public class ApplicationUser : IdentityUser<Guid>, ISoftDelete
     {
         public override Guid Id { get => base.Id; set => base.Id = value; }
@@ -46,7 +47,6 @@ namespace BlazorApiUser.Models
 
         public UserProfile Profile { get; set; }
 
-        public virtual ICollection<Message> Messages { get; set; }
 
         public string AvatarUrl { get; set; }
 
