@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Authentication.Cookies
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
 @using Microsoft.AspNetCore.Authentication.OpenIdConnect
 @using Microsoft.AspNetCore.WebUtilities
 @using MultiAppServer.EventBus.Abstractions
@@ -10,7 +11,9 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject AppState appState
 @inherits LayoutComponentBase
-@inject IHttpContextAccessor httpContextAccessor
+
+@inject NavigationManager Navigation
+@inject IHttpContextAccessor HttpContextAccessor
 <AuthorizeView>
     <Authorized>
 
@@ -55,14 +58,7 @@
 
                      @*        <DialogButton Content="Logout" OnClick="@LogOutAsync"></DialogButton> *@
 
-                            <form action="Account/Logout" method="post">
-                                <AntiforgeryToken />
-                                @* <input type="hidden" name="ReturnUrl" value="@currentUrl" /> *@
-                                <button type="submit" class="dropdown-item notify-item">
-                                    <i class="ri-logout-box-line"></i>
-                                    <span>Logout</span>
-                                </button>
-                            </form>
+                            <DialogButton CssClass="e-danger" Content="Logout" OnClick="@Logout"></DialogButton>
 
                             <DialogButton Content="Cancel" OnClick="@cancelclick"></DialogButton>
                         </DialogButtons>
@@ -215,6 +211,27 @@
     private async void cancelclick(object args)
     {
         await DialogObj.HideAsync();
+    }
+
+    private async void Logout()
+    {
+  
+
+        // var identityServerUrl = Configuration["IdentityServer:Authority"];
+        // var postLogoutRedirectUri = Configuration["IdentityServer:PostLogoutRedirectUri"];
+        var authResult = await HttpContextAccessor.HttpContext.AuthenticateAsync();
+        var idToken = authResult.Properties.GetTokenValue("id_token"); // Retrieve the ID Token
+        var logoutUrl = $"https://localhost:7021/connect/endsession?id_token_hint={idToken}&post_logout_redirect_uri=https://localhost:7221/signout-callback-oidc";
+
+        Navigation.NavigateTo(logoutUrl, forceLoad: true);
+        // var httpContext = HttpContextAccessor.HttpContext;
+        // if (httpContext != null && !httpContext.Response.HasStarted)
+        // {
+        //     await httpContext.SignOutAsync("Cookies");
+        //     await httpContext.SignOutAsync("oidc");
+        // }
+
+        // Navigation.NavigateTo("signout-callback-oidc");
     }
 
     private async void select(MenuEventArgs args)

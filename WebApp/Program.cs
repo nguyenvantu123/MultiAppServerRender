@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using WebApp.Components;
@@ -18,6 +18,7 @@ using Aspire.StackExchange.Redis.DistributedCaching;
 using Blazored.SessionStorage;
 using IdentityModel;
 using WebApp.Repositories;
+using WebApp.Endpoints;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -97,7 +98,7 @@ builder.Services.AddAuthentication(options =>
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = identityUrl;
-    options.SignedOutRedirectUri = callBackUrl;
+    //options.SignedOutRedirectUri = callBackUrl;
     options.ClientId = "webapp";
     options.ClientSecret = "secret";
     options.ResponseType = "code";
@@ -106,8 +107,8 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
     options.MapInboundClaims = false;
-    options.SignedOutCallbackPath = new PathString("/signout-callback-oidc");
-    options.SignedOutRedirectUri = "/";
+    options.CallbackPath = "/signin-oidc";
+    options.SignedOutCallbackPath = "/signout-callback-oidc";
 });
 
 //builder.Services.AddScoped<CustomAuthenticationStateProvider>();
@@ -275,6 +276,7 @@ if (builder.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.MapAuthenticationEndpoints();
 app.UseDeveloperExceptionPage();
 app.UseMvcWithDefaultRoute();
 app.UseHttpsRedirection();

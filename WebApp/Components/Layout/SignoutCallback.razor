@@ -1,0 +1,10 @@
+﻿@inject NavigationManager Navigation
+@page "/signout-callback-oidc"
+<h3>Logging out...</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo("/", forceLoad: true);
+    }
+}
