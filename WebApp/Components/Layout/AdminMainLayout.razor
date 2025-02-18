@@ -48,7 +48,22 @@
                         <DialogPositionData X="center" Y="center"></DialogPositionData>
                         <DialogButtons>
 
-                            <DialogButton OnClick="@NavigateToCshtmlPage" IsPrimary Content="Log out"></DialogButton>
+                            @* <form class="dropdown-item" method="post" action="user/logout" @formname="logout" @onsubmit="LogOutAsync">
+                                <AntiforgeryToken />
+                                <DialogButton type="Syncfusion.Blazor.Popups.ButtonType.Submit">Log out</DialogButton>
+                            </form> *@
+
+                     @*        <DialogButton Content="Logout" OnClick="@LogOutAsync"></DialogButton> *@
+
+                            <form action="Account/Logout" method="post">
+                                <AntiforgeryToken />
+                                @* <input type="hidden" name="ReturnUrl" value="@currentUrl" /> *@
+                                <button type="submit" class="dropdown-item notify-item">
+                                    <i class="ri-logout-box-line"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
+
                             <DialogButton Content="Cancel" OnClick="@cancelclick"></DialogButton>
                         </DialogButtons>
                     </SfDialog>
@@ -177,14 +192,16 @@
     // [CascadingParameter]
     // public HttpContext? HttpContext { get; set; }
 
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
     SfSidebar sidebarObj;
     [Inject] protected AccountApiClient accountApiClient { get; set; }
     [Inject] protected RedisUserRepository redisUserRepo { get; set; }
     [Inject] protected IEventBus eventBus { get; set; }
     public UserProfileViewModel? userProfileViewModel = null;
 
-    [CascadingParameter]
-    public HttpContext? HttpContext { get; set; }
+
     private string themeName;
     private bool Visibility { get; set; } = false;
 
@@ -200,92 +217,88 @@
         await DialogObj.HideAsync();
     }
 
-
-
-        private void NavigateToCshtmlPage()
-        {
-            _navigationManager.NavigateTo("/WebApp/Components/Pages/Account/Logout.cshtml");
-        }
-
-
-        private async void select(MenuEventArgs args)
-        {
-    if (args.Item.Text == "Logout")
+    private async void select(MenuEventArgs args)
     {
-        await DialogObj.ShowAsync();
+        if (args.Item.Text == "Logout")
+        {
+            await DialogObj.ShowAsync();
+        }
     }
-        }
 
-        private async void ToogleDarkMode()
-        {
-    userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
-
-    userProfileViewModel!.IsDarkMode = !userProfileViewModel.IsDarkMode;
-
-    appState.IsDarkMode = userProfileViewModel.IsDarkMode;
-    await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
-
-    UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
-
-    await eventBus.PublishAsync(updateProfileEvent);
-
-    await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfileViewModel));
-    _navigationManager.Refresh(true);
-
-        }
-
-        protected override async void OnInitialized()
-        {
-
-    userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
-    if (userProfileViewModel == null)
+    private async void ToogleDarkMode()
     {
-        var userProfile = await accountApiClient.GetUserProfile();
+        userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
 
-        userProfileViewModel = userProfile.Result;
+        userProfileViewModel!.IsDarkMode = !userProfileViewModel.IsDarkMode;
 
         appState.IsDarkMode = userProfileViewModel.IsDarkMode;
+        await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
+
+        UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
+
+        await eventBus.PublishAsync(updateProfileEvent);
+
+        await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfileViewModel));
+        _navigationManager.Refresh(true);
+
+    }
+
+    protected override async void OnInitialized()
+    {
+
+        userProfileViewModel = await sessionStorage.GetItemAsync<UserProfileViewModel>("userProfileData");
+        if (userProfileViewModel == null)
+        {
+            var userProfile = await accountApiClient.GetUserProfile();
+
+            userProfileViewModel = userProfile.Result;
+
+            appState.IsDarkMode = userProfileViewModel.IsDarkMode;
+
+            appState.IsNavOpen = userProfileViewModel.IsNavOpen;
+
+
+            await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
+
+            _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
+        }
+
+        _navigationManager.Refresh();
+    }
+
+    private string GetUri()
+    {
+        var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
+        return uri.AbsolutePath;
+    }
+
+    private void OverlayClick(OverlayModalClickEventArgs args)
+    {
+        this.Visibility = false;
+    }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async void ToolbarClicked(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+
+    {
+        userProfileViewModel!.IsNavOpen = !userProfileViewModel.IsNavOpen;
 
         appState.IsNavOpen = userProfileViewModel.IsNavOpen;
 
+        var data1123456 = await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
 
-        await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
+        UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
 
-        _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
+        await eventBus.PublishAsync(updateProfileEvent);
     }
+    // public async void Toggle()
+    // {
 
-    _navigationManager.Refresh();
-        }
-
-        private string GetUri()
-        {
-    var uri = UrlHelper.ToAbsoluteUri(UrlHelper.Uri);
-    return uri.AbsolutePath;
-        }
-
-        private void OverlayClick(OverlayModalClickEventArgs args)
-        {
-    this.Visibility = false;
-        }
-
-
-        public async void ToolbarClicked(Syncfusion.Blazor.Navigations.ClickEventArgs args)
-
-        {
-    userProfileViewModel!.IsNavOpen = !userProfileViewModel.IsNavOpen;
-
-    appState.IsNavOpen = userProfileViewModel.IsNavOpen;
-
-    var data1123456 = await redisUserRepo.UpdateUserProfileAsync(userProfileViewModel);
-
-    UpdateProfileEvent updateProfileEvent = new UpdateProfileEvent(userProfileViewModel);
-
-    await eventBus.PublishAsync(updateProfileEvent);
-        }
-        // public async void Toggle()
-        // {
-
-        // }
+    // }
 }
 <style>
     /* Sample specific styles*/
@@ -318,9 +331,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                                                            border: 0px;
-                                                                                                                                                                                                                                                            height: 1000px;
-                                                                                                                                                                                                                                                        } */
+                                                                                                                                                                                                                                                                                    border: 0px;
+                                                                                                                                                                                                                                                                                    height: 1000px;
+                                                                                                                                                                                                                                                                                } */
 
     #maintext .content {
         padding: 15px;

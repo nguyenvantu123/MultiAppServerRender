@@ -41,7 +41,6 @@ builder.Services.AddHttpClient<FileApiClient>(httpClient =>
 }).AddApiVersion(1.0).AddAuthToken();
 
 builder.AddApplicationServices();
-
 builder.AddRabbitMqEventBus("EventBus");
 
 builder.AddRedisDistributedCache("Redis");
@@ -93,9 +92,10 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-}).AddCookie(options => { options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime); options.LogoutPath = "/logout"; }).AddOpenIdConnect(options =>
+}).AddCookie(options => { options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime); }).AddOpenIdConnect(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = identityUrl;
     options.SignedOutRedirectUri = callBackUrl;
     options.ClientId = "webapp";
@@ -106,8 +106,8 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
     options.MapInboundClaims = false;
-
-
+    options.SignedOutCallbackPath = new PathString("/signout-callback-oidc");
+    options.SignedOutRedirectUri = "/";
 });
 
 //builder.Services.AddScoped<CustomAuthenticationStateProvider>();
