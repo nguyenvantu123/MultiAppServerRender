@@ -12,8 +12,8 @@
 @inject AppState appState
 @inherits LayoutComponentBase
 
-@inject NavigationManager Navigation
-@inject IHttpContextAccessor HttpContextAccessor
+@attribute [Authorize]
+
 <AuthorizeView>
     <Authorized>
 
@@ -56,7 +56,7 @@
                                 <DialogButton type="Syncfusion.Blazor.Popups.ButtonType.Submit">Log out</DialogButton>
                             </form> *@
 
-                     @*        <DialogButton Content="Logout" OnClick="@LogOutAsync"></DialogButton> *@
+                            @*        <DialogButton Content="Logout" OnClick="@LogOutAsync"></DialogButton> *@
 
                             <DialogButton CssClass="e-danger" Content="Logout" OnClick="@Logout"></DialogButton>
 
@@ -213,25 +213,33 @@
         await DialogObj.HideAsync();
     }
 
-    private async void Logout()
+    // private async void Logout()
+    // {
+
+
+    //     // var identityServerUrl = Configuration["IdentityServer:Authority"];
+    //     // var postLogoutRedirectUri = Configuration["IdentityServer:PostLogoutRedirectUri"];
+
+    //     await sessionStorage.RemoveItemAsync("userProfileData");
+
+    //     var authResult = await HttpContextAccessor.HttpContext.AuthenticateAsync();
+    //     var idToken = authResult.Properties.GetTokenValue("id_token"); // Retrieve the ID Token
+    //     var logoutUrl = $"https://localhost:7021/connect/endsession?id_token_hint={idToken}&post_logout_redirect_uri=https://localhost:7221/signout-callback-oidc";
+
+    //     Navigation.NavigateTo(logoutUrl, forceLoad: true);
+    //     // var httpContext = HttpContextAccessor.HttpContext;
+    //     // if (httpContext != null && !httpContext.Response.HasStarted)
+    //     // {
+    //     //     await httpContext.SignOutAsync("Cookies");
+    //     //     await httpContext.SignOutAsync("oidc");
+    //     // }
+
+    //     // Navigation.NavigateTo("signout-callback-oidc");
+    // }
+
+    private async Task Logout()
     {
-  
-
-        // var identityServerUrl = Configuration["IdentityServer:Authority"];
-        // var postLogoutRedirectUri = Configuration["IdentityServer:PostLogoutRedirectUri"];
-        var authResult = await HttpContextAccessor.HttpContext.AuthenticateAsync();
-        var idToken = authResult.Properties.GetTokenValue("id_token"); // Retrieve the ID Token
-        var logoutUrl = $"https://localhost:7021/connect/endsession?id_token_hint={idToken}&post_logout_redirect_uri=https://localhost:7221/signout-callback-oidc";
-
-        Navigation.NavigateTo(logoutUrl, forceLoad: true);
-        // var httpContext = HttpContextAccessor.HttpContext;
-        // if (httpContext != null && !httpContext.Response.HasStarted)
-        // {
-        //     await httpContext.SignOutAsync("Cookies");
-        //     await httpContext.SignOutAsync("oidc");
-        // }
-
-        // Navigation.NavigateTo("signout-callback-oidc");
+        UrlHelper.NavigateTo("logout");
     }
 
     private async void select(MenuEventArgs args)
@@ -348,9 +356,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                                                                                    border: 0px;
-                                                                                                                                                                                                                                                                                    height: 1000px;
-                                                                                                                                                                                                                                                                                } */
+                                                                                                                                                                                                                                                                                        border: 0px;
+                                                                                                                                                                                                                                                                                        height: 1000px;
+                                                                                                                                                                                                                                                                                    } */
 
     #maintext .content {
         padding: 15px;

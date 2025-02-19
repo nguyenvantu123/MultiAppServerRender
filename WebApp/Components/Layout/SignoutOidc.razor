@@ -1,0 +1,13 @@
+﻿   @page "/signout-callback-oidc"
+   @using Microsoft.AspNetCore.Authentication
+   @inject NavigationManager Navigation
+   @inject IHttpContextAccessor HttpContextAccessor
+
+@code {
+    protected override async void OnInitialized()
+    {
+        await _jsRuntime.InvokeVoidAsync("cookieHelper.deleteAllCookies");
+
+        Navigation.NavigateTo("/", forceLoad: true);
+    }
+}

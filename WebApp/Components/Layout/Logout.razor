@@ -1,0 +1,16 @@
+﻿   @page "/logout"
+   @using Microsoft.AspNetCore.Authentication
+   @inject NavigationManager Navigation
+   @inject IHttpContextAccessor HttpContextAccessor
+
+@code {
+    protected override async void OnInitialized()
+    {
+        await _jsRuntime.InvokeVoidAsync("cookieHelper.deleteAllCookies");
+
+        var idToken = await HttpContextAccessor.HttpContext?.GetTokenAsync("id_token");
+        var logoutUrl = $"https://localhost:7021/connect/endsession?id_token_hint={idToken}&post_logout_redirect_uri=https://localhost:7221/signout-callback-oidc";
+
+        Navigation.NavigateTo("signout-callback-oidc", forceLoad: true);
+    }
+}

@@ -93,7 +93,9 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-}).AddCookie(options => { options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime); }).AddOpenIdConnect(options =>
+}).AddCookie(options => { options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime); options.SlidingExpiration = true;
+
+}).AddOpenIdConnect(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -107,8 +109,8 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
     options.MapInboundClaims = false;
-    options.CallbackPath = "/signin-oidc";
     options.SignedOutCallbackPath = "/signout-callback-oidc";
+    options.SignedOutRedirectUri = "https://localhost:7221/signout-callback-oidc";
 });
 
 //builder.Services.AddScoped<CustomAuthenticationStateProvider>();
