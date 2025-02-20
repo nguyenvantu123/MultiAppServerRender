@@ -52,18 +52,15 @@
                         <DialogPositionData X="center" Y="center"></DialogPositionData>
 
                         <DialogTemplates>
-                            <Header>Logout</Header>
-                            <Content>Are you want to logout all services?</Content>
-                         
+                            <FooterTemplate>
+                                <form method="post" action="account/logout" @formname="logout">
+                                    <AntiforgeryToken />
+                                    <SfButton IsPrimary Type="Syncfusion.Blazor.Popups.ButtonType.Submit">Log out</SfButton>
+                                    <SfButton Content="Cancel" OnClick="@cancelclick" />
+                                </form>
+                            </FooterTemplate>
                         </DialogTemplates>
-                        <DialogButtons>
-                            <form class="dropdown-item" method="post" action="account/logout" @formname="logout">
-                                <AntiforgeryToken />
-                                <button type="submit">Log out</button>
-                            </form>
-                            <button>Cancel</button>
-                        </DialogButtons>
-                       
+
                     </SfDialog>
 
                     <SfDialog ID="defaultDialog" Width="350" CssClass="dialog-medium" style="height: 1000px" Target="#target" ShowCloseIcon="true" @bind-Visible="Visibility">
@@ -363,9 +360,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                                                                                                                    border: 0px;
-                                                                                                                                                                                                                                                                                                                    height: 1000px;
-                                                                                                                                                                                                                                                                                                                } */
+                                                                                                                                                                                                                                                                                                                                                                                            border: 0px;
+                                                                                                                                                                                                                                                                                                                                                                                            height: 1000px;
+                                                                                                                                                                                                                                                                                                                                                                                        } */
 
     #maintext .content {
         padding: 15px;
