@@ -216,25 +216,64 @@
     <None Include="wwwroot\dist\fonts\open-iconic.svg" />
     <None Include="wwwroot\dist\js\bundle.min.js" />
     <None Include="wwwroot\dist\js\CryptoUtils.js" />
-    <None Include="wwwroot\js\bundle.min.js" />
-    <None Include="wwwroot\js\DatePicker.js" />
-    <None Include="wwwroot\js\Language.js" />
-    <None Include="wwwroot\js\Menu.js" />
+    <None Include="wwwroot\js\bundle.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\DatePicker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\Language.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\Menu.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\js\Picker.es5.js" />
     <None Include="wwwroot\js\Picker.es5.min.js" />
-    <None Include="wwwroot\js\Picker.js" />
+    <None Include="wwwroot\js\Picker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\js\Picker.min.js" />
-    <None Include="wwwroot\js\Theme.js" />
-    <None Include="wwwroot\js\CookieConsent.js" />
-    <None Include="wwwroot\js\CryptoUtils.js" />
-    <None Include="wwwroot\js\forgot-password.js" />
-    <None Include="wwwroot\js\DateTimeHelpers.js" />
-    <None Include="wwwroot\js\FormMvcHelpers.js" />
-    <None Include="wwwroot\js\jsontree.min.js" />
-    <None Include="wwwroot\js\qrcode.js" />
+    <None Include="wwwroot\js\Theme.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\CookieConsent.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\CryptoUtils.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\forgot-password.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\DateTimeHelpers.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\FormMvcHelpers.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\jsontree.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\qrcode.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\js\qrcode.min.js" />
-    <None Include="wwwroot\js\signin-redirect.js" />
-    <None Include="wwwroot\js\signout-redirect.js" />
+    <None Include="wwwroot\js\signin-redirect.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\signout-redirect.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\js\IdentityProviders.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\js\knockout-3.5.1.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

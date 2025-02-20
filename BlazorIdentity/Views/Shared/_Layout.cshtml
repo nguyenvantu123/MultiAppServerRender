@@ -34,6 +34,9 @@
     @await Html.PartialAsync("Common/ThemeResources")
     <link href="~/dist/css/web.min.css" asp-append-version="true" rel="stylesheet" />
 
+    <script src="~/js/knockout-3.5.1.js" asp-append-version="true"></script>
+    <script src="~/js/bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/CryptoUtils.js" asp-append-version="true"></script>
 </head>
 <body>
 
@@ -118,9 +121,6 @@
         </footer>
     </div>
 
-    <script src="~/js/knockout-3.5.1.js" asp-append-version="true"></script>
-    <script src="~/js/bundle.min.js" asp-append-version="true"></script>
-    <script src="~/js/CryptoUtils.js" asp-append-version="true"></script>
 
     @await Html.PartialAsync("Common/Notification")
     @await RenderSectionAsync("scripts", required: false)
