@@ -11,7 +11,7 @@ public static class AuthenticationEndpoints
     {
         app.MapPost("/account/logout", async (HttpContext httpContext, IAntiforgery antiforgery) =>
         {
-            await antiforgery.ValidateRequestAsync(httpContext);
+            //await antiforgery.ValidateRequestAsync(httpContext);
             await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         });
