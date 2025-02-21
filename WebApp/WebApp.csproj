@@ -18,6 +18,9 @@
     <EmbeddedResource Remove="Services\UserProfile\**" />
     <None Remove="Response\**" />
     <None Remove="Services\UserProfile\**" />
+    <Content Update="wwwroot\js\knockout-3.5.1.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
