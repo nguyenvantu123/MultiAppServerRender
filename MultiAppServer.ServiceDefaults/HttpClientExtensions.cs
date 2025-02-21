@@ -23,16 +23,16 @@ public static class HttpClientExtensions
     private class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        
+
         private readonly ILogger<HttpClientAuthorizationDelegatingHandler> _logger;
 
-        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor , ILogger<HttpClientAuthorizationDelegatingHandler> logger)
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor, ILogger<HttpClientAuthorizationDelegatingHandler> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
 
-        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor, HttpMessageHandler innerHandler , ILogger<HttpClientAuthorizationDelegatingHandler> logger) : base(innerHandler)
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor, HttpMessageHandler innerHandler, ILogger<HttpClientAuthorizationDelegatingHandler> logger) : base(innerHandler)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
@@ -53,8 +53,8 @@ public static class HttpClientExtensions
                         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     }
                 }
-                
-                _logger.LogInformation("access_token:", accessToken);
+
+                _logger.LogInformation("access_token:" + accessToken);
             }
 
             var data = await base.SendAsync(request, cancellationToken);
