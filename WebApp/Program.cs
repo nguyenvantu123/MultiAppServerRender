@@ -17,6 +17,7 @@ using Syncfusion.Blazor.Popups;
 using Aspire.StackExchange.Redis.DistributedCaching;
 using Blazored.SessionStorage;
 using IdentityModel;
+using Microsoft.AspNetCore.Http.Connections;
 using WebApp.Repositories;
 using WebApp.Endpoints;
 var builder = WebApplication.CreateBuilder(args);
@@ -47,7 +48,9 @@ builder.AddRabbitMqEventBus("EventBus");
 builder.AddRedisDistributedCache("Redis");
 
 builder.Services.AddBlazoredSessionStorage();
-
+builder.Services.AddSignalR(e => {
+    e.MaximumReceiveMessageSize = 102400000;
+});
 builder.Services.AddSingleton<RedisUserRepository>();
 
 // Add services to the container.
@@ -305,6 +308,14 @@ if (builder.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapBlazorHub(configureOptions: options =>
+    {
+        options.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
+    });
+});
 
 app.MapAuthenticationEndpoints();
 app.UseDeveloperExceptionPage();
