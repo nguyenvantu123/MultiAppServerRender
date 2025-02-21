@@ -93,11 +93,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 }).AddCookie(options =>
 {
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime); 
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime);
     options.SlidingExpiration = true;
-
 }).AddOpenIdConnect(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
