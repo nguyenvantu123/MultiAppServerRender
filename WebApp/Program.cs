@@ -95,7 +95,8 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 }).AddCookie(options =>
 {
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime); options.SlidingExpiration = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime); 
+    options.SlidingExpiration = true;
 
 }).AddOpenIdConnect(options =>
 {

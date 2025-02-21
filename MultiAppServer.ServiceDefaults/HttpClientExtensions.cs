@@ -54,7 +54,7 @@ public static class HttpClientExtensions
                     }
                 }
 
-                _logger.LogInformation("access_token:" + accessToken);
+                _logger.LogError("access_token:" + accessToken);
             }
 
             var data = await base.SendAsync(request, cancellationToken);
