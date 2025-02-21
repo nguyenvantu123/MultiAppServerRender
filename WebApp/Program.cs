@@ -93,15 +93,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie(options =>
-{
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime);
-    options.SlidingExpiration = true;
-}).AddOpenIdConnect(options =>
+})
+.AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime))
+.AddOpenIdConnect(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Authority = identityUrl;
     //options.SignedOutRedirectUri = callBackUrl;
     options.ClientId = "webapp";
@@ -112,7 +108,38 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
     options.MapInboundClaims = false;
+    options.Scope.Add("webhooks"); 
+    options.Scope.Add("users");
+    options.Scope.Add("profile");
+    options.Scope.Add("openid");
+    options.Scope.Add("identity");
+    options.Scope.Add("files");
 });
+
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+//    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//}).AddCookie(options =>
+//{
+//    options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime);
+//    options.SlidingExpiration = true;
+//}).AddOpenIdConnect(options =>
+//{
+//    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.Authority = identityUrl;
+//    //options.SignedOutRedirectUri = callBackUrl;
+//    options.ClientId = "webapp";
+//    options.ClientSecret = "secret";
+//    options.ResponseType = "code";
+//    options.SaveTokens = true;
+//    options.GetClaimsFromUserInfoEndpoint = true;
+//    options.RequireHttpsMetadata = false;
+//    options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
+//    options.MapInboundClaims = false;
+//});
 
 //builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 
