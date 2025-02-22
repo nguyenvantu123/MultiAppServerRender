@@ -92,6 +92,8 @@ builder.Services.AddControllersWithViews(options =>
     options.EnableEndpointRouting = false;
 });
 
+builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -118,6 +120,7 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("identity");
     options.Scope.Add("files");
 });
+
 
 //builder.Services.AddAuthentication(options =>
 //{
@@ -178,8 +181,6 @@ builder.Services.AddSignalR(o => { o.MaximumReceiveMessageSize = 102400000; });
 //    options.Scope.Add("profile");
 //    options.Scope.Add("files");
 //}); ;
-
-//builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
 
 //builder.Services.AddScoped(s =>
 //{
