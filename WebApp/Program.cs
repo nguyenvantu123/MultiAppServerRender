@@ -309,13 +309,13 @@ if (builder.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapBlazorHub(configureOptions: options =>
-    {
-        options.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
-    });
-});
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapBlazorHub(configureOptions: options =>
+//    {
+//        options.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
+//    });
+//});
 
 app.MapAuthenticationEndpoints();
 app.UseDeveloperExceptionPage();
