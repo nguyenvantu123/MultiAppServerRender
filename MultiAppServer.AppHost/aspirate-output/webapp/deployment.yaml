@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: nguyenvantu/webapp:v17
+        image: nguyenvantu/webapp:4a3816202cf0a2133916bccaa3778b0cef68e02cd01b2b58d9e5c6a557e41833
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
