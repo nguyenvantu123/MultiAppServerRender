@@ -17,9 +17,13 @@ using Syncfusion.Blazor.Popups;
 using Aspire.StackExchange.Redis.DistributedCaching;
 using Blazored.SessionStorage;
 using IdentityModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using WebApp.Repositories;
 using WebApp.Endpoints;
+using WebApp.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -31,7 +35,8 @@ builder.Services.AddSingleton<AppState>();
 var configuration = builder.Configuration;
 
 var url = configuration.GetSection("HostUrl");
-
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new(url.GetRequiredValue("UserApi"));
@@ -53,6 +58,13 @@ builder.Services.AddSignalR(e => {
 });
 builder.Services.AddSingleton<RedisUserRepository>();
 
+builder.Services.Configure<OpenIdConnectOptions>(
+    OpenIdConnectDefaults.AuthenticationScheme, options =>
+    {
+        options.ResponseType = OpenIdConnectResponseType.Code;
+        options.SaveTokens = true;
+        options.Scope.Add(OpenIdConnectScope.OfflineAccess);
+    });
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -330,5 +342,9 @@ app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
+app.MapBlazorHub().RequireAuthorization(
+    new AuthorizeAttribute 
+    {
+        AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme
+    });
 app.Run();
