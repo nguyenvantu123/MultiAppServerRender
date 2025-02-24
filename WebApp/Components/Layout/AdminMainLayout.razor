@@ -12,8 +12,6 @@
 @inject AppState appState
 @inherits LayoutComponentBase
 @inject IHttpContextAccessor HttpContextAccessor
-@inject TokenProvider TokenProvider
-
 @attribute [Authorize]
 
 <AuthorizeView>
@@ -57,8 +55,6 @@
                                 <form method="post" action="account/logout" @formname="logout">
                                     <AntiforgeryToken />
                                     <SfButton IsPrimary Type="Syncfusion.Blazor.Popups.ButtonType.Submit">Log out</SfButton>
-                                    <input name="__RequestVerificationToken" type="hidden"
-                                           value="@TokenProvider.XsrfToken"> 
                                     <SfButton Content="Cancel" OnClick="@cancelclick" />
                                 </form>
                             </FooterTemplate>
@@ -274,18 +270,7 @@
         _navigationManager.Refresh(true);
 
     }
-    [Parameter]
-    public InitialApplicationState? InitialState { get; set; }
-    
-    protected override Task OnInitializedAsync()
-    {
-        TokenProvider.AccessToken = InitialState?.AccessToken;
-        TokenProvider.RefreshToken = InitialState?.RefreshToken;
-        TokenProvider.XsrfToken = InitialState?.XsrfToken;
 
-        return base.OnInitializedAsync();
-    }
-    
     protected override async void OnInitialized()
     {
 
@@ -374,9 +359,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                                                                                                                                                                                            border: 0px;
-                                                                                                                                                                                                                                                                                                                                                                                            height: 1000px;
-                                                                                                                                                                                                                                                                                                                                                                                        } */
+                                                                                                                                                                                                                                                                                                                                                                                                border: 0px;
+                                                                                                                                                                                                                                                                                                                                                                                                height: 1000px;
+                                                                                                                                                                                                                                                                                                                                                                                            } */
 
     #maintext .content {
         padding: 15px;

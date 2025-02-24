@@ -42,9 +42,11 @@ public static class HttpClientExtensions
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
 
+            string accessToken = "";
+
             if (_httpContextAccessor.HttpContext is HttpContext context)
             {
-                var accessToken = await context.GetTokenAsync("access_token");
+                accessToken = await context.GetTokenAsync("access_token");
 
                 if (accessToken is not null)
                 {
@@ -54,8 +56,9 @@ public static class HttpClientExtensions
                     }
                 }
 
-                _logger.LogError("access_token:" + accessToken);
             }
+
+            _logger.LogError("access_token:" + accessToken);
 
             var data = await base.SendAsync(request, cancellationToken);
 
