@@ -31,7 +31,7 @@ builder.Services.AddSingleton<AppState>();
 
 //builder.Services.AddScoped<TokenProvider>();
 var configuration = builder.Configuration;
-
+builder.Services.AddDataProtection();
 var url = configuration.GetSection("HostUrl");
 
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>

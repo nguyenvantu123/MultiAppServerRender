@@ -11,6 +11,14 @@ else if (webhooks.Any())
         <PropertyColumn Sortable="@true" Title="Destination" Property="@(hook => hook.DestUrl)" />
         <PropertyColumn Sortable="@true" Title="Token" Property="@(hook => hook.Token)" />
     </QuickGrid> *@
+
+    <SfGrid DataSource="@webhooks" AllowPaging="true" AllowSorting="true">
+        <GridColumns>
+            <GridColumn Field=@nameof(WebhookResponse.Date) HeaderText="Date" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(WebhookResponse.DestUrl) HeaderText="DestUrl" Width="150"></GridColumn>
+            <GridColumn Field=@nameof(WebhookResponse.Token) HeaderText="Token" TextAlign="TextAlign.Right" Width="130"></GridColumn>
+        </GridColumns>
+    </SfGrid>
 }
 else
 {

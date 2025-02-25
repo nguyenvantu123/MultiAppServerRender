@@ -16,8 +16,12 @@ public static class Extensions
         builder.Services.AddOptions<WebhookClientOptions>().BindConfiguration(nameof(WebhookClientOptions));
         builder.Services.AddSingleton<HooksRepository>();
 
+        var configuration = builder.Configuration;
+
+        var url = configuration.GetSection("HostUrl");
+
         // HTTP client registrations
-        builder.Services.AddHttpClient<WebhooksClient>(o => o.BaseAddress = new("http://webhooks-api"))
+        builder.Services.AddHttpClient<WebhooksClient>(o => o.BaseAddress = new(url.GetRequiredValue("WebhooksApi")))
             .AddApiVersion(1.0)
             .AddAuthToken();
     }
@@ -27,8 +31,13 @@ public static class Extensions
         var configuration = builder.Configuration;
         var services = builder.Services;
 
-        var identityUrl = configuration.GetRequiredValue("IdentityUrl");
-        var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
+
+        var identitySection = configuration.GetSection("Identity");
+
+        var identityUrl = identitySection.GetRequiredValue("Url");
+        var callBackUrl = identitySection.GetRequiredValue("Url");
+
+        //var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
         var sessionCookieLifetime = configuration.GetValue("SessionCookieLifetimeMinutes", 60);
 
         // Add Authentication services
@@ -50,7 +59,7 @@ public static class Extensions
         {
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             options.Authority = identityUrl.ToString();
-            options.SignedOutRedirectUri = callBackUrl.ToString();
+            //options.SignedOutRedirectUri = callBackUrl.ToString();
             options.ClientId = "webhooksclient";
             options.ClientSecret = "secret";
             options.ResponseType = "code";

@@ -12,27 +12,25 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["BlazorWebApiFiles/BlazorWebApiFiles.csproj", "BlazorWebApiFiles/"]
+COPY ["Webhooks.API/Webhooks.API.csproj", "Webhooks.API/"]
 COPY ["Aspire.Microsoft.EntityFrameworkCore.SqlServer/Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj", "Aspire.Microsoft.EntityFrameworkCore.SqlServer/"]
-COPY ["Aspire.Minio.Client/Aspire.Minio.Client.csproj", "Aspire.Minio.Client/"]
 COPY ["Aspire.Pomelo.EntityFrameworkCore.MySql/Aspire.Pomelo.EntityFrameworkCore.MySql.csproj", "Aspire.Pomelo.EntityFrameworkCore.MySql/"]
 COPY ["EventBus.RabbitMQ/EventBus.RabbitMQ.csproj", "EventBus.RabbitMQ/"]
 COPY ["EventBus/EventBus.csproj", "EventBus/"]
-COPY ["IntegrationEventLogEF/IntegrationEventLogEF.csproj", "IntegrationEventLogEF/"]
 COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "MultiAppServer.ServiceDefaults/"]
-RUN dotnet restore "./BlazorWebApiFiles/BlazorWebApiFiles.csproj"
+RUN dotnet restore "./Webhooks.API/Webhooks.API.csproj"
 COPY . .
-WORKDIR "/src/BlazorWebApiFiles"
-RUN dotnet build "./BlazorWebApiFiles.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Webhooks.API"
+RUN dotnet build "./Webhooks.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./BlazorWebApiFiles.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Webhooks.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_ENVIRONMENT Production
-ENTRYPOINT ["dotnet", "BlazorWebApiFiles.dll"]
+ENTRYPOINT ["dotnet", "Webhooks.API.dll"]

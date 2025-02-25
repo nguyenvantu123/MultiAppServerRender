@@ -10,10 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-SyncfusionLicenseProvider.RegisterLicense("");
+SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5ccnRTRmNeVkR0V0o=");
 builder.Services.AddServerSideBlazor();
 //builder.Services.AddScoped<SfDialogService>();
-
+builder.Services.AddDataProtection();
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddSyncfusionBlazor();
 // Register the Syncfusion locale service to customize the  SyncfusionBlazor component locale culture
