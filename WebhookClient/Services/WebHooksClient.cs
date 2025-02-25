@@ -9,6 +9,8 @@ public class WebhooksClient(HttpClient client)
 
     public async Task<IEnumerable<WebhookResponse>> LoadWebhooks()
     {
-        return await client.GetFromJsonAsync<IEnumerable<WebhookResponse>>("/api/webhooks") ?? [];
+
+        return await new Task<IEnumerable<WebhookResponse>>(() => new List<WebhookResponse>());
+        //return await client.GetFromJsonAsync<IEnumerable<WebhookResponse>>("/api/webhooks") ?? [];
     }
 }

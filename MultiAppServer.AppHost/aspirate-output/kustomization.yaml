@@ -7,8 +7,8 @@ resources:
 # - blazorwebidentity
 # - blazoridentityapi
 # - webhooksapi
-- webhooksclient
-- namespace.yaml
+# - namespace.yaml
+- webhooksclient 
 - dashboard.yaml
 
 generatorOptions:

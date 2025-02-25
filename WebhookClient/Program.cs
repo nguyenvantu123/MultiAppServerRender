@@ -19,7 +19,6 @@ builder.Services.AddSyncfusionBlazor();
 // Register the Syncfusion locale service to customize the  SyncfusionBlazor component locale culture
 builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 builder.Services.AddSignalR(o => { o.MaximumReceiveMessageSize = 102400000; });
-
 builder.AddApplicationServices();
 
 var app = builder.Build();

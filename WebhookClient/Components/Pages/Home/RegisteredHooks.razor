@@ -26,10 +26,10 @@ else
 }
 
 @code {
-    IQueryable<WebhookResponse>? webhooks;
+    List<WebhookResponse>? webhooks;
 
     protected override async Task OnInitializedAsync()
     {
-        webhooks = (await WebhooksClient.LoadWebhooks()).AsQueryable();
+        webhooks = new List<WebhookResponse>();
     }
 }
