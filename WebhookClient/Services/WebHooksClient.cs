@@ -8,10 +8,10 @@ public class WebhooksClient(HttpClient client, ILogger<WebhooksClient> _logger)
         return client.PostAsJsonAsync("/api/webhooks", payload);
     }
 
-    public async Task<IEnumerable<WebhookResponse>> LoadWebhooks(string accessToken)
+    public async Task<List<WebhookResponse>> LoadWebhooks(string accessToken)
     {
         _logger.LogError("day la access_token trong LoadWebhooks:" + accessToken);
         client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
-        return await client.GetFromJsonAsync<IEnumerable<WebhookResponse>>("/api/webhooks") ?? [];
+        return await client.GetFromJsonAsync<List<WebhookResponse>>("/api/webhooks") ?? [];
     }
 }

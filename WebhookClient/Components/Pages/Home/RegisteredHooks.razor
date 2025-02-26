@@ -31,7 +31,7 @@ else
 }
 
 @code {
-    IQueryable<WebhookResponse>? webhooks;
+    List<WebhookResponse>? webhooks;
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,6 +39,8 @@ else
         string token = await HttpContextAccessor!.HttpContext!.GetTokenAsync("access_token");
         Logger.LogError("day la access_token trong OnInitializedAsync:" + token);
 
-        webhooks = (await WebhooksClient.LoadWebhooks(token)).AsQueryable();
+        webhooks = await WebhooksClient.LoadWebhooks(token);
+
+        Logger.LogError("Xong webhooks:" + webhooks.Count().ToString());
     }
 }

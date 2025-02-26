@@ -32,23 +32,23 @@ public static class HttpClientExtensions
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
 
-            string accessToken = "";
+            //string accessToken = "";
 
-            if (_httpContextAccessor.HttpContext is HttpContext context)
-            {
-                accessToken = await context.GetTokenAsync("access_token");
+            //if (_httpContextAccessor.HttpContext is HttpContext context)
+            //{
+            //    accessToken = await context.GetTokenAsync("access_token");
 
-                if (accessToken is not null)
-                {
-                    if (request.Headers.Authorization?.Scheme != "Bearer")
-                    {
-                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    }
-                }
+            //    if (accessToken is not null)
+            //    {
+            //        if (request.Headers.Authorization?.Scheme != "Bearer")
+            //        {
+            //            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            //        }
+            //    }
 
-            }
+            //}
 
-            _logger.LogError("day la access_token trong HttpClientAuthorizationDelegatingHandler:" + accessToken);
+            //_logger.LogError("day la access_token trong HttpClientAuthorizationDelegatingHandler:" + accessToken);
 
             var data = await base.SendAsync(request, cancellationToken);
 
