@@ -1,5 +1,10 @@
 ﻿@inject WebhooksClient WebhooksClient
-
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authorization
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@inject ILogger<RegisteredHooks> Logger
+@inject IHttpContextAccessor HttpContextAccessor
+@attribute [Authorize]
 @if (webhooks is null)
 {
     <div class="grid-placeholder">Loading...</div>
@@ -30,6 +35,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        webhooks = (await WebhooksClient.LoadWebhooks()).AsQueryable();
+
+        string token = await HttpContextAccessor!.HttpContext!.GetTokenAsync("access_token");
+        Logger.LogError("day la access_token trong OnInitializedAsync:" + token);
+
+        webhooks = (await WebhooksClient.LoadWebhooks(token)).AsQueryable();
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using static WebhookClient.ServiceDefaults.HttpClientExtensions;
 
 namespace WebhookClient.Extensions;
 
@@ -16,14 +18,15 @@ public static class Extensions
         builder.Services.AddOptions<WebhookClientOptions>().BindConfiguration(nameof(WebhookClientOptions));
         builder.Services.AddSingleton<HooksRepository>();
 
+        builder.Services.TryAddTransient<HttpClientAuthorizationDelegatingHandler>();
+
         var configuration = builder.Configuration;
 
         var url = configuration.GetSection("HostUrl");
 
         // HTTP client registrations
         builder.Services.AddHttpClient<WebhooksClient>(o => o.BaseAddress = new(url.GetRequiredValue("WebhooksApi")))
-            .AddApiVersion(1.0)
-            .AddAuthToken();
+            .AddApiVersion(1.0).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>(); ;
     }
 
     public static void AddAuthenticationServices(this IHostApplicationBuilder builder)

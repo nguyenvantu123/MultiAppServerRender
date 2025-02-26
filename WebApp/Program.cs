@@ -37,12 +37,12 @@ var url = configuration.GetSection("HostUrl");
 builder.Services.AddHttpClient<AccountApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new(url.GetRequiredValue("UserApi"));
-}).AddApiVersion(1.0).AddAuthToken();
+}).AddApiVersion(1.0);
 
 builder.Services.AddHttpClient<FileApiClient>(httpClient =>
 {
     httpClient.BaseAddress = new(url.GetRequiredValue("FileApi"));
-}).AddApiVersion(1.0).AddAuthToken();
+}).AddApiVersion(1.0);
 
 builder.AddApplicationServices();
 builder.AddRabbitMqEventBus("EventBus");

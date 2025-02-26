@@ -5,12 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace MultiAppServer.ServiceDefaults;
+namespace WebhookClient.ServiceDefaults;
 
 public static class HttpClientExtensions
 {
 
-    private class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 

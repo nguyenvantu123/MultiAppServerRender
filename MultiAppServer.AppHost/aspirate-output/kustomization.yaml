@@ -8,8 +8,8 @@ resources:
 # - blazoridentityapi
 # - webhooksapi
 - webhooksclient
-- namespace.yaml
-- dashboard.yaml
+# - namespace.yaml
+# - dashboard.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

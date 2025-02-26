@@ -15,6 +15,6 @@ configMapGenerator:
     - services__blazorwebidentity__http__0=http://blazorwebidentity:8080
     - services__webhooksapi__http__0=http://webhooksapi:8080
     - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
-    - OTEL_SERVICE_NAME=webhooksapi
+    - OTEL_SERVICE_NAME=webhooksclient
     - ASPNETCORE_URLS=http://+:8080;
 
