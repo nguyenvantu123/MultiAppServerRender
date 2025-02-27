@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MultiAppServer.ServiceDefaults;
 using Syncfusion.Blazor;
@@ -33,9 +34,9 @@ if (!app.Environment.IsDevelopment())
 app.UseAntiforgery();
 
 app.UseStaticFiles();
-
+app.UseAuthentication();
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
-
+app.MapBlazorHub(options => options.Transports = HttpTransportType.WebSockets);
 app.MapAuthenticationEndpoints();
 
 app.MapWebhookEndpoints();
