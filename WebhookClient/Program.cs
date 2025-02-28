@@ -13,6 +13,11 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5ccnRTRmNeVkR0V0o=");
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddLogging();
+builder.Services.AddSignalR(hubOptions =>
+{
+    hubOptions.EnableDetailedErrors = true;
+    hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(1);
+});
 
 builder.AddApplicationServices();
 builder.Services.AddDataProtection();
@@ -34,9 +39,9 @@ if (!app.Environment.IsDevelopment())
 app.UseAntiforgery();
 
 app.UseStaticFiles();
-app.UseAuthentication();
+//app.UseAuthentication();
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
-app.MapBlazorHub(options => options.Transports = HttpTransportType.WebSockets);
+//app.MapBlazorHub(options => options.Transports = HttpTransportType.WebSockets);
 app.MapAuthenticationEndpoints();
 
 app.MapWebhookEndpoints();

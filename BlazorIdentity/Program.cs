@@ -263,8 +263,7 @@ builder.Services.Configure<RequestLocalizationOptions>(
 builder.Services.AddIdentityServer()
                 .AddConfigurationStore<ApplicationDbContext>()
                 .AddOperationalStore<ApplicationDbContext>()
-                .AddAspNetIdentity<ApplicationUser>()
-                .AddProfileService<ProfileService>();
+                .AddAspNetIdentity<ApplicationUser>();
 
 //builder.Services.AddIdentityServer()
 //.AddInMemoryIdentityResources(Config.GetResources())

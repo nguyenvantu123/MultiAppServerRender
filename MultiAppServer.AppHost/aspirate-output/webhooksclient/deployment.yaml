@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: webhooksclient
-        image: nguyenvantu/webhooksclient:026a833e0ae08f8ea40b52e47a595c2a86c3d002ac3798606ea40c7c2f440bcf
+        image: nguyenvantu/webhooksclient:6823cdf2d5bb3d20b3f9ba263a62283c68bbfcc937ed4f25c0f659c3672e053c
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
