@@ -26,7 +26,7 @@ public static class Extensions
         var url = configuration.GetSection("HostUrl");
 
         // HTTP client registrations
-        builder.Services.AddUserAccessTokenHttpClient("WebHooksClient", configureClient: client =>
+        builder.Services.AddUserAccessTokenHttpClient("ApiClient", configureClient: client =>
         {
             client.BaseAddress =  new(url.GetRequiredValue("WebhooksApi"));
         }).AddApiVersion(1.0) ;
