@@ -1,3 +1,4 @@
+using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MultiAppServer.ServiceDefaults;
@@ -11,7 +12,7 @@ builder.AddServiceDefaults();
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5ccnRTRmNeVkR0V0o=");
-builder.Services.AddHttpContextAccessor();
+//builder.Services.AddHttpContextAccessor();
 builder.Services.AddLogging();
 builder.Services.AddSignalR(hubOptions =>
 {
@@ -23,7 +24,10 @@ builder.AddApplicationServices();
 builder.Services.AddDataProtection();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
+builder.Services.AddOpenIdConnectAccessTokenManagement()
+    .AddBlazorServerAccessTokenManagement<ServerSideTokenStore>();
 
+builder.Services.AddSingleton<IUserTokenStore, ServerSideTokenStore>();
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -35,7 +39,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
 
 app.UseStaticFiles();

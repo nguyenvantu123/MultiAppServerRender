@@ -32,14 +32,11 @@ else
 
 @code {
     List<WebhookResponse>? webhooks;
-
     protected override async Task OnInitializedAsync()
     {
 
-        string token = await HttpContextAccessor!.HttpContext!.GetTokenAsync("access_token");
-        Logger.LogError("day la access_token trong OnInitializedAsync:" + token);
 
-        webhooks = await WebhooksClient.LoadWebhooks(token);
+        webhooks = await WebhooksClient.LoadWebhooks();
 
         Logger.LogError("Xong webhooks:" + webhooks.Count().ToString());
     }
