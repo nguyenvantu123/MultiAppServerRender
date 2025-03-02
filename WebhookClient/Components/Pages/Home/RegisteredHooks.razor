@@ -1,9 +1,12 @@
-﻿@inject WebhooksClient WebhooksClient
-@using Microsoft.AspNetCore.Authentication
+﻿@using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authorization
+@using Duende.AccessTokenManagement
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @inject ILogger<RegisteredHooks> Logger
 @inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpClientFactory Factory
+
+
 @attribute [Authorize]
 @if (webhooks is null)
 {
@@ -32,12 +35,13 @@ else
 
 @code {
     List<WebhookResponse>? webhooks;
+
+    private HttpClient Http = default!;
+
     protected override async Task OnInitializedAsync()
     {
-
-
-        webhooks = await WebhooksClient.LoadWebhooks();
-
+        Http = Factory.CreateClient("callApi");
+        webhooks = await Http.GetFromJsonAsync<List<WebhookResponse>>("/api/webhooks") ?? [];
         Logger.LogError("Xong webhooks:" + webhooks.Count().ToString());
     }
 }

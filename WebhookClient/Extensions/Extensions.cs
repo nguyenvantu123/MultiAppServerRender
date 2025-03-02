@@ -18,18 +18,11 @@ public static class Extensions
         // Application services
         builder.Services.AddOptions<WebhookClientOptions>().BindConfiguration(nameof(WebhookClientOptions));
         builder.Services.AddSingleton<HooksRepository>();
+        builder.Services.AddSingleton<WebhooksClient>();
 
         builder.Services.TryAddTransient<HttpClientAuthorizationDelegatingHandler>();
 
-        var configuration = builder.Configuration;
-
-        var url = configuration.GetSection("HostUrl");
-
-        // HTTP client registrations
-        builder.Services.AddUserAccessTokenHttpClient("ApiClient", configureClient: client =>
-        {
-            client.BaseAddress =  new(url.GetRequiredValue("WebhooksApi"));
-        }).AddApiVersion(1.0) ;
+      
     }
 
     public static void AddAuthenticationServices(this IHostApplicationBuilder builder)

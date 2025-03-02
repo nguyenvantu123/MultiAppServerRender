@@ -23,16 +23,16 @@ public class WebhooksClient
 
     public WebhooksClient(IHttpClientFactory httpClientFactory, ILogger<WebhooksClient> logger)
     {
-        _httpClient = httpClientFactory.CreateClient("ApiClient");
+        _httpClient = httpClientFactory.CreateClient("WebhooksApi");
         _logger = logger;
     }
 
-    public Task<HttpResponseMessage> AddWebHookAsync(WebhookSubscriptionRequest payload, string accessToken)
+    public Task<HttpResponseMessage> AddWebHookAsync(WebhookSubscriptionRequest payload)
     {
         return _httpClient.PostAsJsonAsync("/api/webhooks", payload);
     }
 
-    public async Task<List<WebhookResponse>> LoadWebhooks(string accessToken)
+    public async Task<List<WebhookResponse>> LoadWebhooks()
     {
         return await _httpClient.GetFromJsonAsync<List<WebhookResponse>>("/api/webhooks") ?? [];
     }

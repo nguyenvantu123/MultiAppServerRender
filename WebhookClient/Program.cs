@@ -1,9 +1,15 @@
+using Aspire.StackExchange.Redis;
 using Duende.AccessTokenManagement.OpenIdConnect;
+using Duende.Bff;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using MultiAppServer.ServiceDefaults;
 using Syncfusion.Blazor;
 using Syncfusion.Licensing;
+using WebhookClient;
 using WebhookClient.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,14 +26,41 @@ builder.Services.AddSignalR(hubOptions =>
     hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(1);
 });
 
+//builder.Services.AddMemoryCache();
+
+builder.Services.AddDistributedMemoryCache();
+
 builder.AddApplicationServices();
 builder.Services.AddDataProtection();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
-builder.Services.AddOpenIdConnectAccessTokenManagement()
-    .AddBlazorServerAccessTokenManagement<ServerSideTokenStore>();
+builder.Services
+           .AddOpenIdConnectAccessTokenManagement()
+           .AddBlazorServerAccessTokenManagement<ServerSideTokenStore>()
+           .AddScoped<AuthenticationStateProvider, BffServerAuthenticationStateProvider>();
 
-builder.Services.AddSingleton<IUserTokenStore, ServerSideTokenStore>();
+builder.Services.AddSingleton<IPostConfigureOptions<CookieAuthenticationOptions>, PostConfigureApplicationCookieTicketStore>();
+builder.Services.AddTransient<IServerTicketStore, ServerSideTicketStore>();
+builder.Services.AddTransient<ISessionRevocationService, SessionRevocationService>();
+builder.Services.AddSingleton<IHostedService, SessionCleanupHost>();
+
+
+// only add if not already in DI
+builder.Services.TryAddSingleton<IUserSessionStore, InMemoryUserSessionStore>();
+
+
+var configuration = builder.Configuration;
+
+var url = configuration.GetSection("HostUrl");
+
+builder.Services.AddUserAccessTokenHttpClient("callApi",
+    configureClient: client => client.BaseAddress = new Uri(url.GetRequiredValue("WebhooksApi")));
+
+//builder.Services.AddSingleton<IUserTokenStore, ServerSideTokenStore>();
+
+
+
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();

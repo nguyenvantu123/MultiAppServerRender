@@ -52,6 +52,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using Log = Serilog.Log;
+using Duende.IdentityServer.AspNetIdentity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -263,7 +264,8 @@ builder.Services.Configure<RequestLocalizationOptions>(
 builder.Services.AddIdentityServer()
                 .AddConfigurationStore<ApplicationDbContext>()
                 .AddOperationalStore<ApplicationDbContext>()
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<ProfileService>();
 
 //builder.Services.AddIdentityServer()
 //.AddInMemoryIdentityResources(Config.GetResources())
