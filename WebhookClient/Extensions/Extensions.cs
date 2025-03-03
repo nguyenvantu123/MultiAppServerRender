@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using static WebhookClient.ServiceDefaults.HttpClientExtensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace WebhookClient.Extensions;
@@ -20,9 +19,6 @@ public static class Extensions
         builder.Services.AddSingleton<HooksRepository>();
         builder.Services.AddSingleton<WebhooksClient>();
 
-        builder.Services.TryAddTransient<HttpClientAuthorizationDelegatingHandler>();
-
-      
     }
 
     public static void AddAuthenticationServices(this IHostApplicationBuilder builder)

@@ -36,12 +36,10 @@ else
 @code {
     List<WebhookResponse>? webhooks;
 
-    private HttpClient Http = default!;
-
     protected override async Task OnInitializedAsync()
     {
-        Http = Factory.CreateClient("callApi");
-        webhooks = await Http.GetFromJsonAsync<List<WebhookResponse>>("/api/webhooks") ?? [];
+        // Http = Factory.CreateClient("callApi");
+        webhooks = await WebhooksClient.LoadWebhooks();
         Logger.LogError("Xong webhooks:" + webhooks.Count().ToString());
     }
 }

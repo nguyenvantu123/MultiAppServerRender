@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Security.Claims;
-using Duende.Bff;
-using WebhookClient;
+
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Logging;
+using Shared;
 
 public sealed class BffServerAuthenticationStateProvider : RevalidatingServerAuthenticationStateProvider, IDisposable
 {

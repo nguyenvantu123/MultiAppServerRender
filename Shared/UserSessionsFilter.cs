@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Duende.Bff;
+namespace Shared;
 
 /// <summary>
 /// Filter to query user sessions

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Duende.Bff;
+namespace Shared;
 
 /// <summary>
 /// In-memory user session store

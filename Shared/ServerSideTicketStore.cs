@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Logging;
 
-namespace Duende.Bff;
+namespace Shared;
 
 /// <summary>
 /// IUserSession-backed ticket store
@@ -92,7 +92,7 @@ public class ServerSideTicketStore : IServerTicketStore
             _logger.LogDebug("No ticket found in store for {key}", key);
             return null;
         }
-            
+
         var ticket = session.Deserialize(_protector, _logger);
         if (ticket != null)
         {
@@ -125,7 +125,8 @@ public class ServerSideTicketStore : IServerTicketStore
         var isNew = session.SubjectId != sub || session.SessionId != sid;
         var created = isNew ? ticket.GetIssued() : session.Created;
 
-        await _store.UpdateUserSessionAsync(key, new UserSessionUpdate {
+        await _store.UpdateUserSessionAsync(key, new UserSessionUpdate
+        {
             SubjectId = ticket.GetSubjectId(),
             SessionId = ticket.GetSessionId(),
             Created = created,
@@ -147,11 +148,11 @@ public class ServerSideTicketStore : IServerTicketStore
     public async Task<IReadOnlyCollection<AuthenticationTicket>> GetUserTicketsAsync(UserSessionsFilter filter, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Getting AuthenticationTickets from store for sub {sub} sid {sid}", filter.SubjectId, filter.SessionId);
-        
+
         var list = new List<AuthenticationTicket>();
-            
+
         var sessions = await _store.GetUserSessionsAsync(filter, cancellationToken);
-        foreach(var session in sessions)
+        foreach (var session in sessions)
         {
             var ticket = session.Deserialize(_protector, _logger);
             if (ticket != null)

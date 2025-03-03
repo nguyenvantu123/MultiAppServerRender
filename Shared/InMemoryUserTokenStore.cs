@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Security.Claims;
 
-namespace WebhookClient
+namespace Shared
 {
     public class InMemoryUserTokenStore : IUserTokenStore
     {

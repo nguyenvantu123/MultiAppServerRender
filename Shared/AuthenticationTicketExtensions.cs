@@ -12,7 +12,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Duende.Bff;
+namespace Shared;
 
 /// <summary>
 ///  Extension methods for AuthenticationTicket

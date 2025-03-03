@@ -1,16 +1,17 @@
-using Aspire.StackExchange.Redis;
 using Duende.AccessTokenManagement.OpenIdConnect;
-using Duende.Bff;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using MultiAppServer.ServiceDefaults;
+using Shared;
 using Syncfusion.Blazor;
 using Syncfusion.Licensing;
 using WebhookClient;
 using WebhookClient.Components;
+using static Shared.HttpClientExtensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,8 @@ builder.Services.AddSignalR(hubOptions =>
 //builder.Services.AddMemoryCache();
 
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddScoped<HttpClientAuthorizationDelegatingHandler>();
+builder.Services.AddDataProtection();
 
 builder.AddApplicationServices();
 builder.Services.AddDataProtection();
@@ -43,23 +46,20 @@ builder.Services.AddSingleton<IPostConfigureOptions<CookieAuthenticationOptions>
 builder.Services.AddTransient<IServerTicketStore, ServerSideTicketStore>();
 builder.Services.AddTransient<ISessionRevocationService, SessionRevocationService>();
 builder.Services.AddSingleton<IHostedService, SessionCleanupHost>();
-
+builder.Services.AddScoped<WebhooksClient>();
 
 // only add if not already in DI
 builder.Services.TryAddSingleton<IUserSessionStore, InMemoryUserSessionStore>();
-
 
 var configuration = builder.Configuration;
 
 var url = configuration.GetSection("HostUrl");
 
 builder.Services.AddUserAccessTokenHttpClient("callApi",
-    configureClient: client => client.BaseAddress = new Uri(url.GetRequiredValue("WebhooksApi")));
+    configureClient: client => client.BaseAddress = new Uri(url.GetRequiredValue("WebhooksApi"))).AddApiVersion(1).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
+//builder.Services.TryAddTransient<HttpClientAuthorizationDelegatingHandler>();
 //builder.Services.AddSingleton<IUserTokenStore, ServerSideTokenStore>();
-
-
-
 
 var app = builder.Build();
 

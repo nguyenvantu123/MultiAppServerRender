@@ -23,7 +23,7 @@ public class WebhooksClient
 
     public WebhooksClient(IHttpClientFactory httpClientFactory, ILogger<WebhooksClient> logger)
     {
-        _httpClient = httpClientFactory.CreateClient("WebhooksApi");
+        _httpClient = httpClientFactory.CreateClient("callApi");
         _logger = logger;
     }
 

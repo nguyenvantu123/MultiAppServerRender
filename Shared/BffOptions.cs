@@ -1,5 +1,8 @@
-﻿namespace WebhookClient
-{
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+
+namespace Shared;
+
     public class BffOptions
     {
         /// <summary>
@@ -139,4 +142,3 @@
         /// </summary>
         Response200
     }
-}

@@ -1,9 +1,10 @@
 ﻿using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
-namespace WebhookClient
-{
-    public class OidcEvents : OpenIdConnectEvents
+namespace Shared;
+
+
+   public class OidcEvents : OpenIdConnectEvents
     {
         private readonly IUserTokenStore _store;
 
@@ -28,4 +29,3 @@ namespace WebhookClient
             await base.TokenValidated(context);
         }
     }
-}

@@ -4,7 +4,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Duende.Bff;
+namespace Shared;
+
 
 /// <summary>
 /// User session store cleanup

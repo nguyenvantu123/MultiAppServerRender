@@ -1,12 +1,12 @@
 ﻿using Duende.AccessTokenManagement.OpenIdConnect;
-using Duende.Bff;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 
-namespace WebhookClient.Extensions
+namespace Shared
 {
     public class ServerSideTokenStore(
     IStoreTokensInAuthenticationProperties tokensInAuthProperties,

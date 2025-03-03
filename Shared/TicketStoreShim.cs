@@ -9,9 +9,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using WebhookClient;
 
-namespace Duende.Bff;
+namespace Shared;
 
 /// <summary>
 /// this shim class is needed since ITicketStore is not configured in DI, rather it's a property 

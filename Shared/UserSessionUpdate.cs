@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Duende.Bff;
+namespace Shared;
 
 /// <summary>
 /// The data that can be updated for a user session

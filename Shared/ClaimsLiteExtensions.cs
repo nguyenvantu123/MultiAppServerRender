@@ -4,7 +4,7 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace Duende.Bff;
+namespace Shared;
 
 internal static class ClaimsLiteExtensions
 {

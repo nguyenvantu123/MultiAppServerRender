@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace Duende.Bff;
+namespace Shared;
 
 /// <summary>
 /// Extends ITicketStore with additional query APIs.

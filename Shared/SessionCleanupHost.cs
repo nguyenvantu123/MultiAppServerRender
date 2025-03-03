@@ -8,9 +8,8 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using WebhookClient;
 
-namespace Duende.Bff;
+namespace Shared;
 
 /// <summary>
 /// Helper to cleanup expired sessions.
