@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
 using Shared.Models;
 using System.Linq.Expressions;
+using System.Net.Http;
 using System.Net.Http.Json;
 using WebApp.Components.Pages.Admin;
 using WebApp.Constant;
@@ -18,11 +19,11 @@ namespace WebApp.Interfaces
     public class AccountApiClient
     {
         private readonly HttpClient _httpClient;
-
-        public AccountApiClient(HttpClient httpClient, IJSRuntime jsRuntime)
+        public AccountApiClient(IHttpClientFactory httpClientFactory, HttpClient httpClient, IJSRuntime jsRuntime)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("UserApi");
         }
+
 
         public async Task<ApiResponseDto<LoginViewModel>> BuildLoginViewModel(string returnUrl)
         {

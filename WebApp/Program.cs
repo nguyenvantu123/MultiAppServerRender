@@ -40,13 +40,15 @@ builder.Services.AddSignalR(hubOptions =>
 });
 
 //builder.Services.AddMemoryCache();
-
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddSingleton<AppState>();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddScoped<HttpClientAuthorizationDelegatingHandler>();
+builder.Services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 builder.Services.AddDataProtection();
-
+builder.Services.AddScoped<AccountApiClient>();
+builder.Services.AddScoped<FileApiClient>();
+builder.Services.AddBlazoredSessionStorage();
 builder.AddApplicationServices();
-builder.Services.AddDataProtection();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 builder.Services
@@ -66,16 +68,15 @@ builder.Services.AddSingleton<RedisUserRepository>();
 builder.AddRedisDistributedCache("Redis");
 // only add if not already in DI
 builder.Services.TryAddSingleton<IUserSessionStore, InMemoryUserSessionStore>();
-builder.Services.AddDataProtection();
 
 var configuration = builder.Configuration;
 
 var url = configuration.GetSection("HostUrl");
 
-builder.Services.AddUserAccessTokenHttpClient("callApi",
+builder.Services.AddUserAccessTokenHttpClient("UserApi",
     configureClient: client => client.BaseAddress = new Uri(url.GetRequiredValue("UserApi"))).AddApiVersion(1).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
-builder.Services.AddUserAccessTokenHttpClient("callApi",
+builder.Services.AddUserAccessTokenHttpClient("FileApi",
     configureClient: client => client.BaseAddress = new Uri(url.GetRequiredValue("FileApi"))).AddApiVersion(1).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddAuthorization();
@@ -163,8 +164,6 @@ app.Run();
 //builder.AddServiceDefaults();
 //builder.Services.AddFluentValidationAutoValidation();
 //builder.Services.AddSingleton<AppState>();
-
-////builder.Services.AddScoped<TokenProvider>();
 //var configuration = builder.Configuration;
 //builder.Services.AddDataProtection();
 //var url = configuration.GetSection("HostUrl");

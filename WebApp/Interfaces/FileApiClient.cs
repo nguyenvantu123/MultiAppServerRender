@@ -11,9 +11,9 @@ namespace WebApp.Interfaces
 
         private readonly HttpClient _httpClient;
 
-        public FileApiClient(HttpClient httpClient, IJSRuntime jsRuntime)
+        public FileApiClient(IHttpClientFactory httpClientFactory, HttpClient httpClient, IJSRuntime jsRuntime)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("FileApi");
         }
 
         public async Task<ApiResponseDto<string>> UploadFile(Guid? folderId, MultipartFormDataContent content)

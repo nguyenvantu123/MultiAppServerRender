@@ -3,11 +3,11 @@ namespace: multiapp
 resources:
 # - blazorapiuser
 # - blazorfiles    
-# - webapp
+- webapp
 # - blazorwebidentity
 # - blazoridentityapi
 # - webhooksapi
-- webhooksclient
+# - webhooksclient
 # - namespace.yaml
 # - dashboard.yaml
 
