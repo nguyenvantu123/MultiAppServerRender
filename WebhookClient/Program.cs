@@ -1,4 +1,3 @@
-using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Connections;
