@@ -53,6 +53,7 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using Log = Serilog.Log;
 using Duende.IdentityServer.AspNetIdentity;
+using Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 

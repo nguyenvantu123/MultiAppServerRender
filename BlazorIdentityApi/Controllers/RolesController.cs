@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using BlazorIdentityApi.Models;
+using Shared;
 
 namespace BlazorIdentityApi.Controllers
 {
@@ -17,7 +18,7 @@ namespace BlazorIdentityApi.Controllers
     [ApiController]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     [Produces("application/json", "application/problem+json")]
-    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class RolesController : ControllerBase
     {
         private readonly IIdentityService _identityService;

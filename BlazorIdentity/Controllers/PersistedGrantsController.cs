@@ -10,6 +10,7 @@ using BlazorIdentityApi.Services.Interfaces;
 using BlazorIdentityApi.UI.Api.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 
 
 namespace Skoruba.Duende.IdentityServer.Admin.UI.Api.Controllers

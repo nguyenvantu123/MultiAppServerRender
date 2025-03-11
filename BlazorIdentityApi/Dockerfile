@@ -14,6 +14,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["BlazorIdentityApi/BlazorIdentityApi.csproj", "BlazorIdentityApi/"]
 COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "MultiAppServer.ServiceDefaults/"]
+COPY ["Shared/Shared.csproj", "Shared/"]
+
 RUN dotnet restore "./BlazorIdentityApi/BlazorIdentityApi.csproj"
 COPY . .
 WORKDIR "/src/BlazorIdentityApi"

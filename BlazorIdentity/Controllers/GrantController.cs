@@ -23,6 +23,7 @@ using Microsoft.Extensions.Localization;
 using BlazorIdentityApi.Services.Interfaces;
 using BlazorIdentityApi.Dtos.PersistedGrants;
 using BlazorIdentityApi.UI.Api.Mappers;
+using Shared;
 
 namespace BlazorIdentity.Controllers
 {

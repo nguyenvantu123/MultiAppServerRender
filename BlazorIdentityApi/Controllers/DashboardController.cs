@@ -5,6 +5,7 @@ using BlazorIdentityApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 
 namespace BlazorIdentityApi.Controllers
 {
@@ -12,7 +13,7 @@ namespace BlazorIdentityApi.Controllers
     [ApiController]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     [Produces("application/json")]
-    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class DashboardController : ControllerBase
     {
         private readonly IDashboardService _dashboardService;

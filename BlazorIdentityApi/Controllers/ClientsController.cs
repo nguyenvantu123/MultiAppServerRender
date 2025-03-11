@@ -9,6 +9,7 @@ using BlazorIdentityApi.UI.Api.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 
 namespace BlazorIdentityApi.Controllers
 {
@@ -16,7 +17,7 @@ namespace BlazorIdentityApi.Controllers
     [ApiController]
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     [Produces("application/json", "application/problem+json")]
-    //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class ClientsController : ControllerBase
     {
         private readonly IClientService _clientService;
