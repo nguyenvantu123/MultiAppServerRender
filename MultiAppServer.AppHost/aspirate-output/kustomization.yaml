@@ -4,12 +4,12 @@ resources:
 # - blazorapiuser
 # - blazorfiles    
 # - webapp
-- blazorwebidentity
-- blazoridentityapi
+# - blazorwebidentity
+# - blazoridentityapi
 # - webhooksapi
 # - webhooksclient
 # - namespace.yaml
-# - dashboard.yaml
+- dashboard.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
