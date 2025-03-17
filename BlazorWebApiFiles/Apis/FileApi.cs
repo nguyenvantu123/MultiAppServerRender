@@ -34,7 +34,7 @@ public static class FileApi
     public static async Task<ApiResponseDto<string>> GetPresignedAsync(
          [AsParameters] GetPresignedUserProfileUrl queries,
          [FromServices] FileServices services,
-         IMinioClient minioClient,
+         [FromServices] IMinioClient minioClient,
          IHttpContextAccessor HttpContextAccessor
         )
     {
@@ -70,7 +70,7 @@ public static class FileApi
          [FromForm] string RelationType,
          [FromForm] Guid RelationId,
          FileServices services,
-        IMinioClient minioClient)
+       [FromServices] IMinioClient minioClient)
     {
 
         if (FormFile != null && FormFile.Length > 0)
