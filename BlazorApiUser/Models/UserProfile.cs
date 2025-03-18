@@ -24,5 +24,15 @@ namespace BlazorApiUser.Models
 
         [Column(TypeName = "nvarchar(64)")]
         public string TenantId { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string Email { get; set; }
+
+        public string AvatarUrl { get; set; }
     }
 }

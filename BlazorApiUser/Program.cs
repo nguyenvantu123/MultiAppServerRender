@@ -26,8 +26,8 @@ using BlazorApiUser.Repositories;
 using BlazorApiUser.Db;
 using BlazorApiUser.Models;
 using BlazorApiUser.Constants;
-using Aspire.Minio.Client;
 using Minio;
+using Aspire.Minio.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +36,6 @@ builder.AddRedis("Redis");
 builder.AddRabbitMqEventBus("EventBus");
 
 builder.AddServiceDefaults();
-
 builder.Services.AddSingleton<RedisUserRepository>();
 
 //builder.AddMySqlDataSource("Identitydb");

@@ -23,8 +23,9 @@ using BlazorApiUser.Models;
 using BlazorApiUser.Constants;
 using BlazorApiUser.Repositories;
 using BlazorApiUser.Extensions;
-using Minio.DataModel.Args;
 using Minio;
+using Minio.DataModel.Args;
+using Aspire.Minio.Client;
 
 public static class UsersApi
 {
@@ -282,8 +283,8 @@ public static class UsersApi
     [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponseDto<UserRolesResponse>> GetRoleByUserId(string id, [AsParameters] UserServices userServices, IMapper autoMapper)
     {
-         // write unite test for api
-                                    
+        // write unite test for api
+
         var viewModel = new List<UserRoleModel>();
         var user = await userServices.UserManager.FindByIdAsync(id);
 
@@ -389,37 +390,44 @@ public static class UsersApi
         //    return new ApiResponseDto<UserProfileViewModel>(404, "User Not Found", null);
         //}
 
-		UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
+        UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
 
         if (dataCache == null)
         {
-			UserProfile? userProfile = await userServices.ApplicationDbContext.UserProfiles.Where(x => x.UserId.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
+            UserProfile? userProfile = await userServices.ApplicationDbContext.UserProfiles.Where(x => x.UserId.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
+
+            ApplicationUser applicationUser = await userServices.ApplicationDbContext.Users.Where(x => x.Id.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
 
             if (userProfile == null)
             {
                 userProfile = new UserProfile
-				{
+                {
                     IsDarkMode = false,
                     IsNavOpen = true,
                     LastPageVisited = "/dashboard",
                     UserId = Guid.Parse(userAuth!.FindFirstValue("sub")!),
-                    Id = Guid.NewGuid()
+                    Id = Guid.NewGuid(),
+                    FirstName = applicationUser!.FirstName,
+                    LastName = applicationUser!.LastName,
+                    PhoneNumber = applicationUser!.PhoneNumber,
+                    Email = applicationUser!.Email,
+                    AvatarUrl = applicationUser!.AvatarUrl
                 };
 
-				var result = autoMapper.Map<UserProfileViewModel>(userProfile);
-				await redisUserRepository.UpdateUserProfileAsync(result);
+                var result = autoMapper.Map<UserProfileViewModel>(userProfile);
+                await redisUserRepository.UpdateUserProfileAsync(result);
 
-				await userServices.ApplicationDbContext.UserProfiles.AddAsync(userProfile);
+                await userServices.ApplicationDbContext.UserProfiles.AddAsync(userProfile);
 
-				return new ApiResponseDto<UserProfileViewModel>(200, "Success", result);
+                return new ApiResponseDto<UserProfileViewModel>(200, "Success", result);
 
             }
             else
             {
 
-				var result = autoMapper.Map<UserProfileViewModel>(userProfile);
+                var result = autoMapper.Map<UserProfileViewModel>(userProfile);
 
-				await redisUserRepository.UpdateUserProfileAsync(result);
+                await redisUserRepository.UpdateUserProfileAsync(result);
                 return new ApiResponseDto<UserProfileViewModel>(200, "Success", result);
             }
         }
@@ -431,7 +439,7 @@ public static class UsersApi
     [Authorize]
     public static async Task<ApiResponseDto<string>> UploadProfile(
          IFormFile FormFile,
-         [AsParameters] UserServices userServices, ClaimsPrincipal userAuth, [FromServices] IMinioClient minioClient)
+         [AsParameters] UserServices userServices, ClaimsPrincipal userAuth, [FromServices] IMinioClient minioClient, IConfiguration configuration)
     {
         ApplicationUser? user = await userServices.UserManager.FindByIdAsync(userId: userAuth.FindFirstValue("sub")!);
 
@@ -462,8 +470,12 @@ public static class UsersApi
 
             var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
 
-            var endpoint = minioClient.BaseUrl;
-            var fullUrl = $"{endpoint}/multiappserver/{FormFile.FileName}";
+            var configSection = configuration.GetSection("MinioClient");
+
+            var settings = new MinIoClientSettings();
+            configSection.Bind(settings);
+            var endpoint = settings.Endpoint;
+            var fullUrl = $"https://{endpoint}/multiappserver/{FormFile.FileName}";
             user.AvatarUrl = fullUrl;
             await userServices.UserManager.UpdateAsync(user);
             return new ApiResponseDto<string>(200, "Success", fullUrl);
