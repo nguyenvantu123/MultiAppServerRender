@@ -136,6 +136,32 @@ public static class FileApi
         return new ApiResponseDto<bool>(400, "File Is Require!!!", false);
     }
 
+    public static async Task<ApiResponseDto<string>> UploadProfile(
+         IFormFile FormFile,
+       [FromServices] IMinioClient minioClient)
+    {
+
+        if (FormFile != null && FormFile.Length > 0)
+        {
+
+            var memoryStream = new MemoryStream();
+            await FormFile.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+
+            PutObjectArgs putObjectArgs = new PutObjectArgs()
+                                      .WithBucket("multiappserver")
+                                      .WithStreamData(memoryStream)
+                                      .WithObject(FormFile.FileName)
+                                      .WithObjectSize(memoryStream.Length)
+                                      .WithContentType(FormFile.ContentType);
+
+            var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
+
+            return new ApiResponseDto<string>(200, "Success!!!", "");
+        }
+
+        return new ApiResponseDto<string>(400, "File Is Require!!!", "");
+    }
     //public static async Task<Results<Ok<Order>, NotFound>> GetOrderAsync(int orderId, [AsParameters] FileServices services)
     //{
     //    try

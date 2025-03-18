@@ -26,6 +26,8 @@ using BlazorApiUser.Repositories;
 using BlazorApiUser.Db;
 using BlazorApiUser.Models;
 using BlazorApiUser.Constants;
+using Aspire.Minio.Client;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +45,17 @@ builder.Services.AddSingleton<RedisUserRepository>();
 builder.AddMySqlDbContext<ApplicationDbContext>("Identitydb");
 
 builder.AddMySqlDbContext<TenantStoreDbContext>("Identitydb");
+
+
+var configSection = builder.Configuration.GetSection("MinioClient");
+
+var settings = new MinIoClientSettings();
+configSection.Bind(settings);
+
+builder.Services.AddMinio(configureClient => configureClient
+       .WithEndpoint(settings.Endpoint)
+       .WithSSL(true)
+       .WithCredentials(settings.AccessKey, settings.SecretKey));
 
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")

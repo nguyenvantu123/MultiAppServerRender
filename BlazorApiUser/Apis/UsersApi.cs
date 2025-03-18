@@ -23,6 +23,8 @@ using BlazorApiUser.Models;
 using BlazorApiUser.Constants;
 using BlazorApiUser.Repositories;
 using BlazorApiUser.Extensions;
+using Minio.DataModel.Args;
+using Minio;
 
 public static class UsersApi
 {
@@ -262,10 +264,6 @@ public static class UsersApi
         return new ApiResponseDto<List<string>>(statusCode: 200, message: "", result: new List<string>());
     }
 
-    //public static async Task<ApiResponse<List<UserDataViewModel>>> GetUser([FromServices] UserServices userServices)
-    //{
-
-    //}
     [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponseDto<UserDataViewModel>> GetUserById(string id, [AsParameters] UserServices userServices, IMapper autoMapper)
     {
@@ -284,7 +282,8 @@ public static class UsersApi
     [Authorize(Roles = Permissions.User.Update)]
     public static async Task<ApiResponseDto<UserRolesResponse>> GetRoleByUserId(string id, [AsParameters] UserServices userServices, IMapper autoMapper)
     {
-
+         // write unite test for api
+                                    
         var viewModel = new List<UserRoleModel>();
         var user = await userServices.UserManager.FindByIdAsync(id);
 
@@ -428,6 +427,51 @@ public static class UsersApi
         return new ApiResponseDto<UserProfileViewModel>(200, "Success", dataCache);
 
     }
+
+    [Authorize]
+    public static async Task<ApiResponseDto<string>> UploadProfile(
+         IFormFile FormFile,
+         [AsParameters] UserServices userServices, ClaimsPrincipal userAuth, [FromServices] IMinioClient minioClient)
+    {
+        ApplicationUser? user = await userServices.UserManager.FindByIdAsync(userId: userAuth.FindFirstValue("sub")!);
+
+        if (user == null)
+        {
+            return new ApiResponseDto<string>(404, "User Not Found", null);
+        }
+
+        if (FormFile != null)
+        {
+            // check file required greater than 100kb
+            if (FormFile.Length > 102400)
+            {
+                return new ApiResponseDto<string>(400, "File size is greater than 100kb", "");
+            }
+
+            var memoryStream = new MemoryStream();
+            await FormFile.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+
+            PutObjectArgs putObjectArgs = new PutObjectArgs()
+                                      .WithBucket("multiappserver")
+                                      .WithStreamData(memoryStream)
+                                      .WithObject(FormFile.FileName)
+                                      .WithObjectSize(memoryStream.Length)
+                                      .WithContentType(FormFile.ContentType);
+
+
+            var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
+
+            var endpoint = minioClient.BaseUrl;
+            var fullUrl = $"{endpoint}/multiappserver/{FormFile.FileName}";
+            user.AvatarUrl = fullUrl;
+            await userServices.UserManager.UpdateAsync(user);
+            return new ApiResponseDto<string>(200, "Success", fullUrl);
+        }
+
+        return new ApiResponseDto<string>(400, "File Is Require!!!", "");
+    }
+
 
     //[NonController]
     //public static async Task<bool> UpdateUserProfile()
