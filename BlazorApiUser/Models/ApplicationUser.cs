@@ -48,7 +48,7 @@ namespace BlazorApiUser.Models
         public UserProfile Profile { get; set; }
 
 
-        public string AvatarUrl { get; set; }
+        public string? AvatarUrl { get; set; }
 
         public string UserType { get; set; }
     }

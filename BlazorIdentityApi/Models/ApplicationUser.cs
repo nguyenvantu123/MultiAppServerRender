@@ -48,7 +48,7 @@ namespace BlazorIdentity.Users.Models
 
         public virtual ICollection<Message> Messages { get; set; }
 
-        public string AvatarUrl { get; set; }
+        public string? AvatarUrl { get; set; }
 
         public string UserType { get; set; }
 

@@ -276,6 +276,12 @@ namespace WebApp.Interfaces
             return apiResponse;
         }
 
+        //public async Task<List<string>> GetPermissionByUser()
+        //{
+        //    var apiResponse = await _httpClient.GetJsonAsync<List<string>>($"api/account/get-permission-by-user");
+        //    return apiResponse;
+        //}
+
         //public async Task<UserProfile> GetUserProfile()
         //{
         //    var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<UserProfile>($"api/account/get-permission-by-user");

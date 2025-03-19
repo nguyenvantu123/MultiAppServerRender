@@ -29,7 +29,7 @@ namespace WebApp.Models
 
         public bool IsActive { get; set; }
 
-        public string AvatarUrl { get; set; }
+        public string? AvatarUrl { get; set; }
     }
 
     public class UserRoleViewModel

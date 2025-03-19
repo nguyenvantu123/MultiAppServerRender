@@ -73,41 +73,138 @@
                                         <TabHeader Text="Edit Profile"></TabHeader>
                                     </ChildContent>
                                     <ContentTemplate>
-                                        <EditForm Model="@userProfileViewModel" OnValidSubmit="HandleValidSubmitProfile">
+                                        <EditForm style="margin-top: 30px" Context="editContext" Model="@userProfileViewModel" OnValidSubmit="HandleValidSubmitProfile">
                                             <DataAnnotationsValidator />
                                             <ValidationSummary />
 
-                                            <div class="form-group">
-                                                <label for="avatarUrl">Avatar URL</label>
-                                                <InputText @bind-Value="userProfileViewModel.AvatarUrl" id="avatarUrl" class="form-control" />
-                                                <ValidationMessage For="@(() => userProfileViewModel.AvatarUrl)" />
+                                            <div class="row">
+                                                <!-- Left Panel: Avatar Image -->
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="avatar">Avatar</label>
+                                                        <SfUploader @ref="uploadObj" CssClass="@CssClass" AutoUpload="true" AllowedExtensions=".png, .jpg, .jpeg">
+
+                                                            <UploaderButtons Browse="Browse"></UploaderButtons>
+                                                            <UploaderTemplates>
+                                                                <Template Context="uploadContext">
+                                                                    @if (!string.IsNullOrEmpty(base64))
+                                                                    {
+                                                                        <span class="wrapper">
+                                                                            <img class="upload-image" alt="Image" src="@base64">
+                                                                        </span>
+                                                                        <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
+                                                                        <div class="file-size">@fileSize</div>
+                                                                        <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                                                                    }
+                                                                    @*   <div>
+                                                                <img src="@uploadContext.FileInfo.Url" alt="Uploaded Image" style="width: 100px; height: 100px;" />
+                                                                <p>@uploadContext.FileInfo.Name</p>
+                                                                </div> *@
+                                                                </Template>
+                                                            </UploaderTemplates>
+
+                                                            <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+                                                        </SfUploader>
+                                                        @*       <SfUploader @ref="uploadObj" CssClass="@CssClass" AutoUpload="true" AllowedExtensions=".png, .jpg, .jpeg">
+                                                    <UploaderButtons Browse="Browse"></UploaderButtons>
+                                                    <UploaderTemplates Context="uploadContext">
+                                                    <Template>
+                                                    @if (!string.IsNullOrEmpty(base64))
+                                                    {
+                                                    <span class="wrapper">
+                                                    <img class="upload-image" alt="Image" src="@base64">
+                                                    </span>
+                                                    <div class="name file-name" title="@context.Name">@context.Name</div>
+                                                    <div class="file-size">@fileSize</div>
+                                                    <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl))
+                                                    {
+                                                    <img src="@userProfileViewModel.AvatarUrl" alt="Avatar" class="img-thumbnail" />
+                                                    }
+                                                    else
+                                                    {
+                                                    <div></div>
+                                                    }
+                                                    </Template>
+                                                    </UploaderTemplates>
+                                                    <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+                                                    </SfUploader> *@
+                                                    </div>
+                                                    @*                 <div class="avatar-preview">
+
+                                                @if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl))
+                                                {
+                                                <img src="@userProfileViewModel.AvatarUrl" alt="Avatar" class="img-thumbnail" />
+
+                                                }
+                                                else
+                                                {
+                                                <div></div>
+                                                }
+                                                </div> *@
+                                                </div>
+
+                                                <!-- Right Panel: Profile Information -->
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <label for="firstName">First Name</label>
+                                                        <InputText @bind-Value="userProfileViewModel.FirstName" id="firstName" class="form-control" />
+                                                        <ValidationMessage For="@(() => userProfileViewModel.FirstName)" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="lastName">Last Name</label>
+                                                        <InputText @bind-Value="userProfileViewModel.LastName" id="lastName" class="form-control" />
+                                                        <ValidationMessage For="@(() => userProfileViewModel.LastName)" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="email">Email</label>
+                                                        <InputText @bind-Value="userProfileViewModel.Email" id="email" class="form-control" />
+                                                        <ValidationMessage For="@(() => userProfileViewModel.Email)" />
+                                                    </div>
+                                                    <!-- Add more profile fields as needed -->
+                                                </div>
                                             </div>
 
-                                            <div class="form-group">
-                                                <label for="userName">User Name</label>
-                                                <InputText @bind-Value="userProfileViewModel.UserName" id="userName" class="form-control" />
-                                                <ValidationMessage For="@(() => userProfileViewModel.UserName)" />
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="email">Email</label>
-                                                <InputText @bind-Value="userProfileViewModel.Email" id="email" class="form-control" />
-                                                <ValidationMessage For="@(() => userProfileViewModel.Email)" />
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="firstName">First Name</label>
-                                                <InputText @bind-Value="userProfileViewModel.FirstName" id="firstName" class="form-control" />
-                                                <ValidationMessage For="@(() => userProfileViewModel.FirstName)" />
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="lastName">Last Name</label>
-                                                <InputText @bind-Value="userProfileViewModel.LastName" id="lastName" class="form-control" />
-                                                <ValidationMessage For="@(() => userProfileViewModel.LastName)" />
+                                            <div style="height:10px">
                                             </div>
                                             <SfButton IsPrimary="true" Type="Submit">Save</SfButton>
                                             <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                            @*
+                                        <div class="form-group">
+                                        <label for="avatarUrl">Avatar URL</label>
+                                        <InputText @bind-Value="userProfileViewModel.AvatarUrl" id="avatarUrl" class="form-control" />
+                                        <ValidationMessage For="@(() => userProfileViewModel.AvatarUrl)" />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <InputText @bind-Value="userProfileViewModel.Email" id="email" class="form-control" />
+                                        <ValidationMessage For="@(() => userProfileViewModel.Email)" />
+                                        </div>
+                                        <div style="height:10px">
+
+                                        </div>
+                                        <div class="form-group">
+                                        <label for="firstName">First Name</label>
+                                        <InputText @bind-Value="userProfileViewModel.FirstName" id="firstName" class="form-control" />
+                                        <ValidationMessage For="@(() => userProfileViewModel.FirstName)" />
+                                        </div>
+                                        <div style="height:10px">
+
+                                        </div>
+                                        <div class="form-group">
+                                        <label for="lastName">Last Name</label>
+                                        <InputText @bind-Value="userProfileViewModel.LastName" id="lastName" class="form-control" />
+                                        <ValidationMessage For="@(() => userProfileViewModel.LastName)" />
+                                        </div>
+                                        <div style="height:10px">
+                                        </div>
+                                        <div style="height:10px">
+                                        </div>
+                                        <SfButton IsPrimary="true" Type="Submit">Save</SfButton>
+                                        <SfButton Content="Cancel" OnClick="@cancelprofileclick" /> *@
                                         </EditForm>
                                     </ContentTemplate>
                                 </TabItem>
@@ -116,8 +213,7 @@
                                         <TabHeader Text="Change Password"></TabHeader>
                                     </ChildContent>
                                     <ContentTemplate>
-                                       // change password syncfusion blazor page
-                                        <EditForm Model="@changePasswordViewModel" OnValidSubmit="HandleValidSubmit">
+                                        <EditForm style="margin-top: 30px" Context="passwordContext" Model="@changePasswordViewModel" OnValidSubmit="HandleValidSubmit">
                                             <DataAnnotationsValidator />
                                             <ValidationSummary />
 
@@ -126,42 +222,48 @@
                                                 <InputText @bind-Value="changePasswordViewModel.CurrentPassword" id="currentPassword" class="form-control" type="password" />
                                                 <ValidationMessage For="@(() => changePasswordViewModel.CurrentPassword)" />
                                             </div>
-
+                                            <div style="height:10px">
+                                            </div>
                                             <div class="form-group">
                                                 <label for="newPassword">New Password</label>
                                                 <InputText @bind-Value="changePasswordViewModel.NewPassword" id="newPassword" class="form-control" type="password" />
                                                 <ValidationMessage For="@(() => changePasswordViewModel.NewPassword)" />
                                             </div>
-
+                                            <div style="height:10px">
+                                            </div>
                                             <div class="form-group">
                                                 <label for="confirmPassword">Confirm Password</label>
                                                 <InputText @bind-Value="changePasswordViewModel.NewPasswordConfirm" id="confirmPassword" class="form-control" type="password" />
                                                 <ValidationMessage For="@(() => changePasswordViewModel.NewPasswordConfirm)" />
                                             </div>
 
+                                            <div style="height:10px">
+                                            </div>
+
                                             <SfButton IsPrimary="true" Type="Submit">Change Password</SfButton>
                                             <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
                                         </EditForm>
                                     </ContentTemplate>
+
                                 </TabItem>
-                             @*    <TabItem>
-                                    <ChildContent>
-                                        <TabHeader Text="JavaScript"></TabHeader>
-                                    </ChildContent>
-                                    <ContentTemplate>
-                                        <div>JavaScript (JS) is an interpreted computer programming language. It was originally implemented as part of web browsers so that client-side scripts could interact with the user, control the browser, communicate asynchronously, and alter the document content that was displayed.[5] More recently, however, it has become common in both game development and the creation of desktop applications.</div>
-                                    </ContentTemplate>
-                                </TabItem> *@
+                                @*    <TabItem>
+                            <ChildContent>
+                            <TabHeader Text="JavaScript"></TabHeader>
+                            </ChildContent>
+                            <ContentTemplate>
+                            <div>JavaScript (JS) is an interpreted computer programming language. It was originally implemented as part of web browsers so that client-side scripts could interact with the user, control the browser, communicate asynchronously, and alter the document content that was displayed.[5] More recently, however, it has become common in both game development and the creation of desktop applications.</div>
+                            </ContentTemplate>
+                            </TabItem> *@
                             </TabItems>
                         </SfTab>
 
-                        <DialogTemplates>
-                            <FooterTemplate>
+                        @*        <DialogTemplates>
+                    <FooterTemplate>
 
-                                <SfButton IsPrimary Type="Syncfusion.Blazor.Popups.ButtonType.Submit">Save</SfButton>
-                                <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
-                            </FooterTemplate>
-                        </DialogTemplates>
+                    <SfButton IsPrimary Type="Syncfusion.Blazor.Popups.ButtonType.Submit">Save</SfButton>
+                    <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                    </FooterTemplate>
+                    </DialogTemplates> *@
 
                     </SfDialog>
 
@@ -312,6 +414,33 @@
     private string themeName;
     private bool Visibility { get; set; } = false;
 
+    private SfUploader uploadObj { get; set; }
+    public string CssClass = "custom-file";
+    private string base64 { get; set; }
+    private string fileSize { get; set; }
+    //Hidden:Lines
+    // private string canonicalURL { get; set; }
+
+
+    //End:Hidden
+    private async Task OnChange(UploadChangeEventArgs args)
+    {
+        base64 = string.Empty;
+        foreach (var file in args.Files)
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            using var fileStream = file.File.OpenReadStream(long.MaxValue);
+            await fileStream.CopyToAsync(memoryStream);
+            byte[] bytes = memoryStream.ToArray();
+            base64 = "data:image/png;base64," + Convert.ToBase64String(bytes);
+            fileSize = await uploadObj.BytesToSizeAsync(file.FileInfo.Size);
+        }
+    }
+    private async Task onFileRemove()
+    {
+        await uploadObj.RemoveAsync();
+    }
+
     HttpClient httpClient = new HttpClient();
     private void OnClicked()
     {
@@ -338,14 +467,14 @@
     private async Task HandleValidSubmitProfile()
     {
         var response = await accountApiClient.UpdateUserProfile(userProfileViewModel);
-        if (response.IsSuccessStatusCode)
-        {
-            await ProfileDialogObj.HideAsync();
-        }
-        else
-        {
-            // Handle error
-        }
+        // if (response.IsSuccessStatusCode)
+        // {
+        //     await ProfileDialogObj.HideAsync();
+        // }
+        // else
+        // {
+        //     // Handle error
+        // }
     }
 
     private async void cancelclick(object args)
@@ -512,9 +641,9 @@
     }
 
     /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                                                                                                                                                                                                                                        border: 0px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                        height: 1000px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border: 0px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    height: 1000px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
 
     #maintext .content {
         padding: 15px;
@@ -756,4 +885,169 @@
         color: rgba(var(--color-sf-on-background));
     }
 
+    .control_wrapper {
+        width: 1100px;
+    }
+
+    .custom-file.e-control-wrapper {
+        margin: 5px 0 -8px 0;
+    }
+
+    .custom-file .e-file-select-wrap {
+        padding: 0px;
+        margin-left: -100px
+    }
+
+    .custom-file button.e-css.e-btn.e-upload-browse-btn {
+        margin-left: 130px;
+        background: none !important;
+        border: none;
+        padding: 0 !important;
+        font-family: inherit;
+        color: #ff4081;
+        text-decoration: underline;
+        cursor: pointer;
+        box-shadow: none;
+        text-transform: capitalize;
+    }
+
+        .custom-file button.e-css.e-btn.e-upload-browse-btn:hover {
+            background: none !important;
+            border: none;
+            padding: 0 !important;
+            font-family: inherit;
+            color: #ff4081;
+            text-decoration: underline;
+            cursor: pointer;
+            box-shadow: none;
+            text-transform: capitalize;
+        }
+
+    #dropArea .e-upload-files .e-file-delete-btn.e-icons,
+    #dropArea .e-upload-files .e-file-remove-btn.e-icons,
+    #dropArea .e-upload-files .e-file-abort-btn {
+        top: 120px;
+        background-color: white;
+        border-radius: 50%;
+        font-size: 12px;
+        left: 80px;
+    }
+
+    #dropArea .e-upload-files li .e-file-remove-btn.e-icons.e-upload-icon {
+        font-size: 14px;
+        left: 20px;
+    }
+
+    #dropArea .e-upload-files li:hover .e-icons {
+        visibility: visible;
+    }
+
+    #dropArea .e-upload-files li .e-icons {
+        visibility: hidden;
+    }
+
+    #dropArea .e-upload .e-upload-files .e-icons.e-upload-icon {
+        font-family: 'Uploader_Icon';
+        speak: none;
+        font-size: 16px;
+        left: 20px;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+        #dropArea .e-upload .e-upload-files .e-icons.e-upload-icon::before {
+            content: '\e700';
+        }
+
+    #dropArea .e-upload .e-upload-files .e-icons:not(.e-uploaded):hover {
+        background-color: #e6e6e6;
+        border-color: #adadad;
+        color: #333;
+    }
+
+    #dropArea .e-upload .e-upload-files .e-upload-file-list {
+        border: 0;
+        display: inline-block;
+        width: 165px;
+    }
+
+    .upload-image {
+        width: 150px;
+        height: 150px;
+        display: inline-flex;
+        background-size: contain;
+        margin: 7px;
+        text-align: center;
+        line-height: 10;
+        border-radius: 5px;
+    }
+
+        .upload-image:after {
+            content: "";
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: inherit;
+            height: inherit;
+            background: lightgray url('http://via.placeholder.com/300?text=Loading...') no-repeat center;
+            color: transparent;
+            border-radius: 5px;
+        }
+
+    div.file-name {
+        color: rgb(14 121 32);
+        font-size: 14px;
+        padding: 3px 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 90%;
+        white-space: nowrap;
+    }
+
+    div.file-size {
+        font-size: 13px;
+        padding: 3px 10px;
+        overflow: hidden;
+    }
+
+    .progressbar {
+        background: #ff4081;
+        border: none;
+        border-radius: 10px;
+        height: 4px;
+        margin-left: 7px;
+        width: 90%;
+        top: -60px;
+        position: relative;
+    }
+
+    #dropArea progress {
+        border: none;
+        background: #fff;
+    }
+
+    progress::-webkit-progress-bar {
+        border: none;
+        background-color: #ffffff;
+    }
+
+    .material progress::-moz-progress-bar {
+        border-radius: 2px;
+        background-color: #ff4081;
+    }
+
+    .material #dropArea span a {
+        color: #ff4081;
+    }
+
+    @@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        #dropArea .e-upload .e-upload-files .e-file-remove-btn.e-icons, .e-bigger #dropArea .e-upload .e-upload-files .e-file-remove-btn.e-icons {
+            padding: 18px 25px 18px 12px;
+        }
+    }
 </style>

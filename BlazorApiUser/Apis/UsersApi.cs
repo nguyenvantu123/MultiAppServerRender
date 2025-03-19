@@ -398,28 +398,31 @@ public static class UsersApi
         {
             UserProfile? userProfile = await userServices.ApplicationDbContext.UserProfiles.Where(x => x.UserId.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
 
-            ApplicationUser applicationUser = await userServices.ApplicationDbContext.Users.Where(x => x.Id.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
+            //
+
+            //ApplicationUser applicationUser = await userServices.ApplicationDbContext.Users.Where(x => x.Id.ToString() == userAuth!.FindFirstValue("sub")!).FirstOrDefaultAsync();
 
             if (userProfile == null)
             {
-                userProfile = new UserProfile
+
+                UserProfile userProfileCreate = await userServices.ApplicationDbContext.Users.Where(x => x.Id.ToString() == userAuth!.FindFirstValue("sub")!)!.Select(x => new UserProfile
                 {
+                    FirstName = x!.FirstName,
+                    LastName = x!.LastName,
+                    PhoneNumber = x!.PhoneNumber,
+                    Email = x!.Email,
+                    AvatarUrl = x!.AvatarUrl,
                     IsDarkMode = false,
                     IsNavOpen = true,
                     LastPageVisited = "/dashboard",
                     UserId = Guid.Parse(userAuth!.FindFirstValue("sub")!),
                     Id = Guid.NewGuid(),
-                    FirstName = applicationUser!.FirstName,
-                    LastName = applicationUser!.LastName,
-                    PhoneNumber = applicationUser!.PhoneNumber,
-                    Email = applicationUser!.Email,
-                    AvatarUrl = applicationUser!.AvatarUrl
-                };
+                })!.FirstOrDefaultAsync();
 
-                var result = autoMapper.Map<UserProfileViewModel>(userProfile);
+                var result = autoMapper.Map<UserProfileViewModel>(userProfileCreate);
                 await redisUserRepository.UpdateUserProfileAsync(result);
 
-                await userServices.ApplicationDbContext.UserProfiles.AddAsync(userProfile);
+                await userServices.ApplicationDbContext.UserProfiles.AddAsync(userProfileCreate);
 
                 return new ApiResponseDto<UserProfileViewModel>(200, "Success", result);
 

@@ -33,7 +33,11 @@ namespace Shared.Models
 
         public string Email { get; set; }
 
-        public string AvatarUrl { get; set; }
+        public string? AvatarUrl { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
+
+        public string UserName { get; set; }
 
     }
 }
