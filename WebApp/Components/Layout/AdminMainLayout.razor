@@ -73,7 +73,42 @@
                                         <TabHeader Text="Edit Profile"></TabHeader>
                                     </ChildContent>
                                     <ContentTemplate>
-                                        <div>HyperText Markup Language, commonly referred to as HTML, is the standard markup language used to create web pages. Along with CSS, and JavaScript, HTML is a cornerstone technology, used by most websites to create visually engaging web pages, user interfaces for web applications, and user interfaces for many mobile applications.[1] Web browsers can read HTML files and render them into visible or audible web pages. HTML describes the structure of a website semantically along with cues for presentation, making it a markup language, rather than a programming language.</div>
+                                        <EditForm Model="@userProfileViewModel" OnValidSubmit="HandleValidSubmitProfile">
+                                            <DataAnnotationsValidator />
+                                            <ValidationSummary />
+
+                                            <div class="form-group">
+                                                <label for="avatarUrl">Avatar URL</label>
+                                                <InputText @bind-Value="userProfileViewModel.AvatarUrl" id="avatarUrl" class="form-control" />
+                                                <ValidationMessage For="@(() => userProfileViewModel.AvatarUrl)" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="userName">User Name</label>
+                                                <InputText @bind-Value="userProfileViewModel.UserName" id="userName" class="form-control" />
+                                                <ValidationMessage For="@(() => userProfileViewModel.UserName)" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <InputText @bind-Value="userProfileViewModel.Email" id="email" class="form-control" />
+                                                <ValidationMessage For="@(() => userProfileViewModel.Email)" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="firstName">First Name</label>
+                                                <InputText @bind-Value="userProfileViewModel.FirstName" id="firstName" class="form-control" />
+                                                <ValidationMessage For="@(() => userProfileViewModel.FirstName)" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="lastName">Last Name</label>
+                                                <InputText @bind-Value="userProfileViewModel.LastName" id="lastName" class="form-control" />
+                                                <ValidationMessage For="@(() => userProfileViewModel.LastName)" />
+                                            </div>
+                                            <SfButton IsPrimary="true" Type="Submit">Save</SfButton>
+                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                        </EditForm>
                                     </ContentTemplate>
                                 </TabItem>
                                 <TabItem>
@@ -81,7 +116,32 @@
                                         <TabHeader Text="Change Password"></TabHeader>
                                     </ChildContent>
                                     <ContentTemplate>
-                                        <div>Java is a set of computer software and specifications developed by Sun Microsystems, later acquired by Oracle Corporation, that provides a system for developing application software and deploying it in a cross-platform computing environment. Java is used in a wide variety of computing platforms from embedded devices and mobile phones to enterprise servers and supercomputers. While less common, Java applets run in secure, sandboxed environments to provide many features of native applications and can be embedded in HTML pages.</div>
+                                       // change password syncfusion blazor page
+                                        <EditForm Model="@changePasswordViewModel" OnValidSubmit="HandleValidSubmit">
+                                            <DataAnnotationsValidator />
+                                            <ValidationSummary />
+
+                                            <div class="form-group">
+                                                <label for="currentPassword">Current Password</label>
+                                                <InputText @bind-Value="changePasswordViewModel.CurrentPassword" id="currentPassword" class="form-control" type="password" />
+                                                <ValidationMessage For="@(() => changePasswordViewModel.CurrentPassword)" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="newPassword">New Password</label>
+                                                <InputText @bind-Value="changePasswordViewModel.NewPassword" id="newPassword" class="form-control" type="password" />
+                                                <ValidationMessage For="@(() => changePasswordViewModel.NewPassword)" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="confirmPassword">Confirm Password</label>
+                                                <InputText @bind-Value="changePasswordViewModel.NewPasswordConfirm" id="confirmPassword" class="form-control" type="password" />
+                                                <ValidationMessage For="@(() => changePasswordViewModel.NewPasswordConfirm)" />
+                                            </div>
+
+                                            <SfButton IsPrimary="true" Type="Submit">Change Password</SfButton>
+                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                        </EditForm>
                                     </ContentTemplate>
                                 </TabItem>
                              @*    <TabItem>
@@ -247,7 +307,7 @@
     [Inject] protected RedisUserRepository redisUserRepo { get; set; }
     [Inject] protected IEventBus eventBus { get; set; }
     public UserProfileViewModel? userProfileViewModel = null;
-
+    private UpdatePasswordViewModel changePasswordViewModel = new UpdatePasswordViewModel();
 
     private string themeName;
     private bool Visibility { get; set; } = false;
@@ -261,6 +321,32 @@
 
     SfDialog ProfileDialogObj;
 
+    private async Task HandleValidSubmit()
+    {
+        var response = await accountApiClient.UpdatePassword(changePasswordViewModel);
+        if (response.IsSuccessStatusCode)
+        {
+
+            await ProfileDialogObj.HideAsync();
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+
+    private async Task HandleValidSubmitProfile()
+    {
+        var response = await accountApiClient.UpdateUserProfile(userProfileViewModel);
+        if (response.IsSuccessStatusCode)
+        {
+            await ProfileDialogObj.HideAsync();
+        }
+        else
+        {
+            // Handle error
+        }
+    }
 
     private async void cancelclick(object args)
     {

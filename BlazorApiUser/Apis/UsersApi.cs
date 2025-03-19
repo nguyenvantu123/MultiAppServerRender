@@ -57,6 +57,8 @@ public static class UsersApi
 
         api.MapGet("/users/user-profile", UserProfile);
 
+        api.MapPost("/users/update-user-profile", UploadProfile).DisableAntiforgery();
+
 
         return api;
     }
@@ -438,8 +440,8 @@ public static class UsersApi
 
     [Authorize]
     public static async Task<ApiResponseDto<string>> UploadProfile(
-         IFormFile FormFile,
-         [AsParameters] UserServices userServices, ClaimsPrincipal userAuth, [FromServices] IMinioClient minioClient, IConfiguration configuration)
+           IFormFile? FormFile, [FromForm] string FirstName, [FromForm] string LastName, [FromForm] string PhoneNumber, [FromForm] string Email,
+          [AsParameters] UserServices userServices, ClaimsPrincipal userAuth, [FromServices] IMinioClient minioClient, IConfiguration configuration)
     {
         ApplicationUser? user = await userServices.UserManager.FindByIdAsync(userId: userAuth.FindFirstValue("sub")!);
 
@@ -477,8 +479,13 @@ public static class UsersApi
             var endpoint = settings.Endpoint;
             var fullUrl = $"https://{endpoint}/multiappserver/{FormFile.FileName}";
             user.AvatarUrl = fullUrl;
+            user.FirstName = FirstName;
+            user.LastName = LastName;
+            user.PhoneNumber = PhoneNumber;
+            user.Email = Email;
+
             await userServices.UserManager.UpdateAsync(user);
-            return new ApiResponseDto<string>(200, "Success", fullUrl);
+            return new ApiResponseDto<string>(200, "Success", "");
         }
 
         return new ApiResponseDto<string>(400, "File Is Require!!!", "");
