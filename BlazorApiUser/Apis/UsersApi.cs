@@ -453,13 +453,15 @@ public static class UsersApi
             return new ApiResponseDto<string>(404, "User Not Found", null);
         }
 
+        UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
+
         if (File != null)
         {
             // check file required greater than 100kb
-            if (File.Length > 102400)
-            {
-                return new ApiResponseDto<string>(400, "File size is greater than 100kb", "");
-            }
+            //if (File.Length > 102400)
+            //{
+            //    return new ApiResponseDto<string>(400, "File size is greater than 100kb", "");
+            //}
 
             var memoryStream = new MemoryStream();
             await File.CopyToAsync(memoryStream);
@@ -475,33 +477,31 @@ public static class UsersApi
 
             var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
 
-            var configSection = configuration.GetSection("MinioClient:PublicLink");
+            var configSection = configuration.GetSection("MinioClient");
 
-            var fullUrl = $"https://{configSection}/{File.FileName}";
+            var fullUrl = $"{configSection["PublicLink"]}/{File.FileName}";
             user.AvatarUrl = fullUrl;
-            user.FirstName = FirstName;
-            user.LastName = LastName;
-            user.PhoneNumber = PhoneNumber;
-            user.Email = Email;
-
-            await userServices.UserManager.UpdateAsync(user);
-
-            UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
 
             dataCache.AvatarUrl = fullUrl;
-            dataCache.FirstName = FirstName;
-            dataCache.LastName = LastName;
-            dataCache.PhoneNumber = PhoneNumber;
-            dataCache.Email = Email;
 
-            var result = autoMapper.Map<UserProfileViewModel>(dataCache);
-
-            await redisUserRepository.UpdateUserProfileAsync(result);
-
-            return new ApiResponseDto<string>(200, "Success", "");
         }
+        user.FirstName = FirstName;
+        user.LastName = LastName;
+        user.PhoneNumber = PhoneNumber;
+        user.Email = Email;
 
-        return new ApiResponseDto<string>(400, "File Is Require!!!", "");
+        await userServices.UserManager.UpdateAsync(user);
+
+        dataCache.FirstName = FirstName;
+        dataCache.LastName = LastName;
+        dataCache.PhoneNumber = PhoneNumber;
+        dataCache.Email = Email;
+
+        var result = autoMapper.Map<UserProfileViewModel>(dataCache);
+
+        await redisUserRepository.UpdateUserProfileAsync(result);
+
+        return new ApiResponseDto<string>(200, "Success", "");
     }
 
 

@@ -63,6 +63,11 @@
                     </SfDialog>
 
 
+                    <SfToast @ref="toast" Timeout="2000">
+                        <ToastPosition X="@ToastPosition"></ToastPosition>
+
+                    </SfToast>
+
                     <SfDialog Width="800" Height="500" Header="Profile" Visible="false" @ref="ProfileDialogObj">
                         <DialogPositionData X="center" Y="center"></DialogPositionData>
 
@@ -73,43 +78,117 @@
                                         <TabHeader Text="Edit Profile"></TabHeader>
                                     </ChildContent>
                                     <ContentTemplate>
-                                        <EditForm style="margin-top: 30px" Context="editContext" Model="@userProfileViewModel">
-                                            <DataAnnotationsValidator />
-                                            <ValidationSummary />
+                                        @*  <EditForm style="margin-top: 30px" Context="editContext" OnValidSubmit="@HandleValidSubmitProfile" Model="@userProfileViewModel">
+                                    <DataAnnotationsValidator />
+                                    <ValidationSummary />
 
+                                    <div class="row">
+                                    <!-- Left Panel: Avatar Image -->
+                                    <div class="col-md-4">
+                                    <div class="form-group">
+                                    <label for="avatar">Avatar</label>
+                                    <SfUploader @ref="uploadObj" CssClass="@CssClass" AutoUpload="true" AllowedExtensions=".png, .jpg, .jpeg" AllowMultiple="false">
+
+                                    <UploaderTemplates>
+                                    <Template Context="uploadContext">
+                                    @if (!string.IsNullOrEmpty(base64))
+                                    {
+                                    <span class="wrapper">
+                                    <img width="100px" height="100px" class="upload-image" alt="Image" src="@base64">
+                                    </span>
+                                    <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
+                                    <div class="file-size">@fileSize</div>
+                                    <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                                    }
+                                    </Template>
+                                    </UploaderTemplates>
+
+                                    <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+
+                                    </SfUploader>
+                                    @if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl) && string.IsNullOrEmpty(base64))
+                                    {
+                                    <img src="@userProfileViewModel.AvatarUrl" class="upload-image" alt="Image" />
+                                    }
+                                    else
+                                    {
+                                    <div></div>
+                                    }
+                                    </div>
+
+                                    </div>
+
+                                    <!-- Right Panel: Profile Information -->
+                                    <div class="col-md-8">
+                                    <div class="form-group">
+                                    <label for="firstName">First Name</label>
+                                    <InputText @bind-Value="userProfileViewModel.FirstName" id="firstName" class="form-control" />
+                                    <ValidationMessage For="@(() => userProfileViewModel.FirstName)" />
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="lastName">Last Name</label>
+                                    <InputText @bind-Value="userProfileViewModel.LastName" id="lastName" class="form-control" />
+                                    <ValidationMessage For="@(() => userProfileViewModel.LastName)" />
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <InputText @bind-Value="userProfileViewModel.Email" id="email" class="form-control" />
+                                    <ValidationMessage For="@(() => userProfileViewModel.Email)" />
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="email">PhoneNumber</label>
+                                    <InputText @bind-Value="userProfileViewModel.PhoneNumber" id="phonenumber" class="form-control" />
+                                    <ValidationMessage For="@(() => userProfileViewModel.PhoneNumber)" />
+                                    </div>
+                                    <!-- Add more profile fields as needed -->
+                                    </div>
+                                    </div>
+
+                                    <div style="height:10px">
+                                    </div>
+                                    <SfProgressButton IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile">
+                                    <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                                    <SpinTemplate>
+                                    <div class="template"></div>
+                                    </SpinTemplate>
+                                    </ProgressButtonSpinSettings>
+                                    </SfProgressButton>
+                                    <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                    </EditForm> *@
+
+                                        <EditForm style="margin-top: 30px" Context="profileContext" EditContext="@editContext" OnValidSubmit="@HandleValidSubmitProfile">
+                                            <DataAnnotationsValidator />
+                                            @*                                             <ValidationSummary />
+                                        *@
                                             <div class="row">
                                                 <!-- Left Panel: Avatar Image -->
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="avatar">Avatar</label>
-                                                        <SfUploader @ref="uploadObj" CssClass="@CssClass" AutoUpload="true" AllowedExtensions=".png, .jpg, .jpeg" MaxFileSize="102400" Multiple="false">
-
+                                                        <SfUploader @ref="uploadObj" CssClass="@CssClass" AutoUpload="true" AllowedExtensions=".png, .jpg, .jpeg" AllowMultiple="false">
                                                             <UploaderTemplates>
                                                                 <Template Context="uploadContext">
                                                                     @if (!string.IsNullOrEmpty(base64))
                                                                     {
                                                                         <span class="wrapper">
-                                                                            <img class="upload-image" alt="Image" src="@base64">
+                                                                            <img width="100px" height="100px" class="upload-image" alt="Image" src="@base64">
                                                                         </span>
                                                                         <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
                                                                         <div class="file-size">@fileSize</div>
                                                                         <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
                                                                     }
-                                                                    else if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl))
-                                                                    {
-                                                                        <img src="@userProfileViewModel.AvatarUrl" alt="Avatar" class="img-thumbnail" />
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div></div>
-                                                                    }
-
                                                                 </Template>
                                                             </UploaderTemplates>
-
                                                             <UploaderEvents ValueChange="OnChange"></UploaderEvents>
                                                         </SfUploader>
-
+                                                        @if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl) && string.IsNullOrEmpty(base64))
+                                                        {
+                                                            <img src="@userProfileViewModel.AvatarUrl" class="upload-image" alt="Image" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <div></div>
+                                                        }
                                                     </div>
                                                 </div>
 
@@ -139,16 +218,15 @@
                                                 </div>
                                             </div>
 
-                                            <div style="height:10px">
-                                            </div>
-                                            @*                                             <SfButton IsPrimary="true" OnClick="@HandleValidSubmitProfile">Save</SfButton>
- *@                                            <SfProgressButton IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile">
+                                            <div style="height:10px"></div>
+                                            <SfProgressButton IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile" Disabled="!IsFormValid">
                                                 <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
                                                     <SpinTemplate>
                                                         <div class="template"></div>
                                                     </SpinTemplate>
                                                 </ProgressButtonSpinSettings>
-                                            </SfProgressButton><SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                            </SfProgressButton>
+                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
                                         </EditForm>
                                     </ContentTemplate>
                                 </TabItem>
@@ -212,7 +290,7 @@
                     </SfDialog>
 
 
-                    <SfDialog ID="defaultDialog" Width="350" CssClass="dialog-medium" style="height: 1000px" Target="#target" ShowCloseIcon="true" @bind-Visible="Visibility">
+                    <SfDialog ID="defaultDialog" Width="350" CssClass="dialog-medium" style="height: 100%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visibility">
                         <DialogEvents OnOverlayModalClick="@OverlayClick"></DialogEvents>
                         <DialogTemplates>
                             <Header>Choose a Dialog Position</Header>
@@ -283,7 +361,8 @@
 
                                                 @if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl))
                                                 {
-                                                    <img src="@(userProfileViewModel.AvatarUrl)" width="200" height="300">
+                                                    <img style="height: 80% !important" src="@userProfileViewModel.AvatarUrl" alt="Avatar" />
+
                                                 }
                                                 else
                                                 {
@@ -362,7 +441,8 @@
     public string CssClass = "custom-file";
     private string base64 { get; set; }
     private string fileSize { get; set; }
-
+    private string ToastPosition = "Right";
+    public bool IsFormValid = false;
     private IBrowserFile selectedFile;
 
     //End:Hidden
@@ -410,20 +490,42 @@
             // Handle error
         }
     }
+    private SfToast toast;
 
     private async Task HandleValidSubmitProfile()
     {
-        using var stream = selectedFile.OpenReadStream();
-        var response = await accountApiClient.UploadProfilePictureWithDataAsync(stream, selectedFile.Name, userProfileViewModel);
+
+        if(!editContext.Validate())
+        {
+            return;
+        }
+
+        using var stream = selectedFile?.OpenReadStream();
+        var response = await accountApiClient.UploadProfilePictureWithDataAsync(stream!, selectedFile?.Name, userProfileViewModel);
         if (response.IsSuccessStatusCode)
         {
-            await sessionStorage.SetItemAsStringAsync("userProfileData", null);
 
-            await DialogObj.ShowAsync();
+            await ProfileDialogObj.HideAsync();
+
+            await sessionStorage.RemoveItemAsync("userProfileData");
+
+            var toastModel = new ToastModel
+                {
+                    Title = "Success",
+                    Content = response.Message,
+                    CssClass = "e-toast-success"
+                };
+            await toast.ShowAsync(toastModel);
         }
         else
         {
-            // Handle error
+            var toastModel = new ToastModel
+                {
+                    Title = "Error",
+                    Content = response.Message,
+                    CssClass = "e-toast-danger"
+                };
+            await toast.ShowAsync(toastModel);
         }
     }
 
@@ -502,6 +604,12 @@
         _navigationManager.Refresh(true);
 
     }
+    private EditContext editContext;
+
+    private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        IsFormValid = editContext.Validate();
+    }
 
     protected override async void OnInitialized()
     {
@@ -519,6 +627,10 @@
 
 
             await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
+
+            editContext = new EditContext(userProfileViewModel);
+            editContext.OnFieldChanged += HandleFieldChanged;
+            IsFormValid = editContext.Validate();
 
             _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
         }
@@ -590,16 +702,10 @@
         height: 500px;
     }
 
-    /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border: 0px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    height: 1000px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
-
     #maintext .content {
         padding: 15px;
         background: rgba(var(--color-sf-background));
         color: rgba(var(--color-sf-on-background));
-        height: 1000px;
         overflow-y: auto;
     }
 
@@ -1024,7 +1130,7 @@
     }
 
     .template {
-        -webkit-animation: custom-rolling 1.3s linear infinite;
-        animation: custom-rolling 1.3s linear infinite;
+        -webkit-animation: custom-rolling 2s linear infinite;
+        animation: custom-rolling 2s linear infinite;
     }
 </style>

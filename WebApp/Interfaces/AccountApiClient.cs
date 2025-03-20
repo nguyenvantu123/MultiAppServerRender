@@ -276,12 +276,17 @@ namespace WebApp.Interfaces
             return apiResponse;
         }
 
-        public async Task<ApiResponseDto<string>> UploadProfilePictureWithDataAsync(Stream fileStream, string fileName, UserProfileViewModel userProfile)
+        public async Task<ApiResponseDto<string>> UploadProfilePictureWithDataAsync(Stream? fileStream, string fileName, UserProfileViewModel userProfile)
         {
+
             using var content = new MultipartFormDataContent();
-            using var fileContent = new StreamContent(fileStream);
-            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data");
-            content.Add(fileContent, "File", fileName);
+
+            if (fileStream != null)
+            {
+                using var fileContent = new StreamContent(fileStream);
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data");
+                content.Add(fileContent, "File", fileName);
+            }
 
             // Add additional form data
             content.Add(new StringContent(userProfile.PhoneNumber), "PhoneNumber");
@@ -291,7 +296,8 @@ namespace WebApp.Interfaces
 
             var response = await _httpClient.PostAsync("api/admin/users/update-user-profile", content);
             var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<string>>();
-            return result;
+            return result!;
+
         }
 
         //public async Task<List<string>> GetPermissionByUser()
