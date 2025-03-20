@@ -443,8 +443,8 @@ public static class UsersApi
 
     [Authorize]
     public static async Task<ApiResponseDto<string>> UploadProfile(
-           IFormFile? FormFile, [FromForm] string FirstName, [FromForm] string LastName, [FromForm] string PhoneNumber, [FromForm] string Email,
-          [AsParameters] UserServices userServices, ClaimsPrincipal userAuth, [FromServices] IMinioClient minioClient, IConfiguration configuration)
+           IFormFile? File, [FromForm] string FirstName, [FromForm] string LastName, [FromForm] string PhoneNumber, [FromForm] string Email,
+          [AsParameters] UserServices userServices, ClaimsPrincipal userAuth, [FromServices] IMinioClient minioClient, IConfiguration configuration, RedisUserRepository redisUserRepository, IMapper autoMapper)
     {
         ApplicationUser? user = await userServices.UserManager.FindByIdAsync(userId: userAuth.FindFirstValue("sub")!);
 
@@ -453,34 +453,31 @@ public static class UsersApi
             return new ApiResponseDto<string>(404, "User Not Found", null);
         }
 
-        if (FormFile != null)
+        if (File != null)
         {
             // check file required greater than 100kb
-            if (FormFile.Length > 102400)
+            if (File.Length > 102400)
             {
                 return new ApiResponseDto<string>(400, "File size is greater than 100kb", "");
             }
 
             var memoryStream = new MemoryStream();
-            await FormFile.CopyToAsync(memoryStream);
+            await File.CopyToAsync(memoryStream);
             memoryStream.Position = 0;
 
             PutObjectArgs putObjectArgs = new PutObjectArgs()
                                       .WithBucket("multiappserver")
                                       .WithStreamData(memoryStream)
-                                      .WithObject(FormFile.FileName)
+                                      .WithObject(File.FileName)
                                       .WithObjectSize(memoryStream.Length)
-                                      .WithContentType(FormFile.ContentType);
+                                      .WithContentType(File.ContentType);
 
 
             var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
 
-            var configSection = configuration.GetSection("MinioClient");
+            var configSection = configuration.GetSection("MinioClient:PublicLink");
 
-            var settings = new MinIoClientSettings();
-            configSection.Bind(settings);
-            var endpoint = settings.Endpoint;
-            var fullUrl = $"https://{endpoint}/multiappserver/{FormFile.FileName}";
+            var fullUrl = $"https://{configSection}/{File.FileName}";
             user.AvatarUrl = fullUrl;
             user.FirstName = FirstName;
             user.LastName = LastName;
@@ -488,6 +485,19 @@ public static class UsersApi
             user.Email = Email;
 
             await userServices.UserManager.UpdateAsync(user);
+
+            UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
+
+            dataCache.AvatarUrl = fullUrl;
+            dataCache.FirstName = FirstName;
+            dataCache.LastName = LastName;
+            dataCache.PhoneNumber = PhoneNumber;
+            dataCache.Email = Email;
+
+            var result = autoMapper.Map<UserProfileViewModel>(dataCache);
+
+            await redisUserRepository.UpdateUserProfileAsync(result);
+
             return new ApiResponseDto<string>(200, "Success", "");
         }
 
