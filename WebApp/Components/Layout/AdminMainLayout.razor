@@ -636,7 +636,7 @@
 
             changePasswordContext = new EditContext(changePasswordViewModel);
             changePasswordContext.OnFieldChanged += HandlePasswordFieldChanged;
-            IsFormValidChangePassword = changePasswordContext.Validate();
+            // IsFormValidChangePassword = changePasswordContext.Validate();
 
             _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
         }
