@@ -58,6 +58,7 @@ public static class UsersApi
         api.MapGet("/users/user-profile", UserProfile);
 
         api.MapPost("/users/update-user-profile", UploadProfile).DisableAntiforgery();
+        api.MapPost("/users/change-password", ChangePassword).DisableAntiforgery();
 
 
         return api;
@@ -223,7 +224,7 @@ public static class UsersApi
     }
 
     [Authorize(Roles = Permissions.User.Update)]
-    public static async Task<ApiResponseDto> ResetPasswordUser(ChangePasswordCommand changePasswordCommand, [AsParameters] UserServices userServices)
+    public static async Task<ApiResponseDto> ResetPasswordUser(ResetPasswordCommand changePasswordCommand, [AsParameters] UserServices userServices)
     {
 
         var user = await userServices.UserManager.FindByIdAsync(changePasswordCommand.UserId);
@@ -496,7 +497,7 @@ public static class UsersApi
         dataCache.LastName = LastName;
         dataCache.PhoneNumber = PhoneNumber;
         dataCache.Email = Email;
-
+         
         var result = autoMapper.Map<UserProfileViewModel>(dataCache);
 
         await redisUserRepository.UpdateUserProfileAsync(result);
@@ -504,6 +505,85 @@ public static class UsersApi
         return new ApiResponseDto<string>(200, "Success", "");
     }
 
+    [Authorize]
+    public static async Task<ApiResponseDto<string>> ChangePassword(
+           [FromBody] ChangePasswordCommand changePasswordCommand,
+         [AsParameters] UserServices userServices, ClaimsPrincipal userAuth, IMapper autoMapper)
+    {
+        ApplicationUser? user = await userServices.UserManager.FindByIdAsync(userId: userAuth.FindFirstValue("sub")!);
+
+        if (user == null)
+        {
+            return new ApiResponseDto<string>(404, "User Not Found", null);
+        }
+
+        var result = await userServices.SignInManager.CheckPasswordSignInAsync(user, changePasswordCommand.CurrentPassword, lockoutOnFailure: false);
+        if (!result.Succeeded)
+        {
+            return new ApiResponseDto<string>(404, "Current password is incorrect.", null);
+
+        }
+
+        var changePasswordResult = await userServices.UserManager.ChangePasswordAsync(user, changePasswordCommand.CurrentPassword, changePasswordCommand.NewPassword);
+
+        if (!changePasswordResult.Succeeded)
+        {
+            // Handle errors
+            return new ApiResponseDto<string>(404, "Password change failed.", null);
+        }
+
+        return new ApiResponseDto<string>(200, "Password changed successfully.", null);
+
+        //UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
+
+        //if (File != null)
+        //{
+        //    // check file required greater than 100kb
+        //    //if (File.Length > 102400)
+        //    //{
+        //    //    return new ApiResponseDto<string>(400, "File size is greater than 100kb", "");
+        //    //}
+
+        //    var memoryStream = new MemoryStream();
+        //    await File.CopyToAsync(memoryStream);
+        //    memoryStream.Position = 0;
+
+        //    PutObjectArgs putObjectArgs = new PutObjectArgs()
+        //                              .WithBucket("multiappserver")
+        //                              .WithStreamData(memoryStream)
+        //                              .WithObject(File.FileName)
+        //                              .WithObjectSize(memoryStream.Length)
+        //                              .WithContentType(File.ContentType);
+
+
+        //    var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
+
+        //    var configSection = configuration.GetSection("MinioClient");
+
+        //    var fullUrl = $"{configSection["PublicLink"]}/{File.FileName}";
+        //    user.AvatarUrl = fullUrl;
+
+        //    dataCache.AvatarUrl = fullUrl;
+
+        //}
+        //user.FirstName = FirstName;
+        //user.LastName = LastName;
+        //user.PhoneNumber = PhoneNumber;
+        //user.Email = Email;
+
+        //await userServices.UserManager.UpdateAsync(user);
+
+        //dataCache.FirstName = FirstName;
+        //dataCache.LastName = LastName;
+        //dataCache.PhoneNumber = PhoneNumber;
+        //dataCache.Email = Email;
+
+        //var result = autoMapper.Map<UserProfileViewModel>(dataCache);
+
+        //await redisUserRepository.UpdateUserProfileAsync(result);
+
+        return new ApiResponseDto<string>(200, "Success", "");
+    }
 
     //[NonController]
     //public static async Task<bool> UpdateUserProfile()

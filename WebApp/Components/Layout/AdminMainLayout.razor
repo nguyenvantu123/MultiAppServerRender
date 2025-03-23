@@ -235,10 +235,10 @@
                                         <TabHeader Text="Change Password"></TabHeader>
                                     </ChildContent>
                                     <ContentTemplate>
-                                        <EditForm style="margin-top: 30px" Context="passwordContext" Model="@changePasswordViewModel">
+                                        <EditForm style="margin-top: 30px" Context="passwordContext" EditContext="changePasswordContext" OnValidSubmit="@HandleValidSubmit">
                                             <DataAnnotationsValidator />
-                                            <ValidationSummary />
-
+                                            @*                                             <ValidationSummary />
+                                        *@
                                             <div class="form-group">
                                                 <label for="currentPassword">Current Password</label>
                                                 <InputText @bind-Value="changePasswordViewModel.CurrentPassword" id="currentPassword" class="form-control" type="password" />
@@ -262,7 +262,13 @@
                                             <div style="height:10px">
                                             </div>
 
-                                            <SfButton IsPrimary="true" OnClick="@HandleValidSubmit">Change Password</SfButton>
+                                            <SfProgressButton IsPrimary="true" Content="Change Password" OnClick="@HandleValidSubmit" Disabled="!IsFormValidChangePassword">
+                                                <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                                                    <SpinTemplate>
+                                                        <div class="template"></div>
+                                                    </SpinTemplate>
+                                                </ProgressButtonSpinSettings>
+                                            </SfProgressButton>
                                             <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
                                         </EditForm>
                                     </ContentTemplate>
@@ -443,7 +449,11 @@
     private string fileSize { get; set; }
     private string ToastPosition = "Right";
     public bool IsFormValid = false;
+    public bool IsFormValidChangePassword = false;
+
     private IBrowserFile selectedFile;
+    private EditContext editContext;
+    private EditContext changePasswordContext;
 
     //End:Hidden
     private async Task OnChange(UploadChangeEventArgs args)
@@ -477,25 +487,46 @@
 
     SfDialog ProfileDialogObj;
 
+    private SfToast toast;
+
+
     private async Task HandleValidSubmit()
     {
+        if (!changePasswordContext.Validate())
+        {
+            return;
+        }
+
         var response = await accountApiClient.UpdatePassword(changePasswordViewModel);
         if (response.IsSuccessStatusCode)
         {
 
             await ProfileDialogObj.HideAsync();
+
+            var toastModel = new ToastModel
+                {
+                    Title = "Success",
+                    Content = response.Message,
+                    CssClass = "e-toast-success"
+                };
+            await toast.ShowAsync(toastModel);
         }
         else
         {
-            // Handle error
+            var toastModel = new ToastModel
+                {
+                    Title = "Error",
+                    Content = response.Message,
+                    CssClass = "e-toast-danger"
+                };
+            await toast.ShowAsync(toastModel);
         }
     }
-    private SfToast toast;
 
     private async Task HandleValidSubmitProfile()
     {
 
-        if(!editContext.Validate())
+        if (!editContext.Validate())
         {
             return;
         }
@@ -540,40 +571,6 @@
     }
 
 
-    // private async void Logout()
-    // {
-
-
-    //     // var identityServerUrl = Configuration["IdentityServer:Authority"];
-    //     // var postLogoutRedirectUri = Configuration["IdentityServer:PostLogoutRedirectUri"];
-
-    //     await sessionStorage.RemoveItemAsync("userProfileData");
-
-    //     var authResult = await HttpContextAccessor.HttpContext.AuthenticateAsync();
-    //     var idToken = authResult.Properties.GetTokenValue("id_token"); // Retrieve the ID Token
-    //     var logoutUrl = $"https://localhost:7021/connect/endsession?id_token_hint={idToken}&post_logout_redirect_uri=https://localhost:7221/signout-callback-oidc";
-
-    //     Navigation.NavigateTo(logoutUrl, forceLoad: true);
-    //     // var httpContext = HttpContextAccessor.HttpContext;
-    //     // if (httpContext != null && !httpContext.Response.HasStarted)
-    //     // {
-    //     //     await httpContext.SignOutAsync("Cookies");
-    //     //     await httpContext.SignOutAsync("oidc");
-    //     // }
-
-    //     // Navigation.NavigateTo("signout-callback-oidc");
-    // }
-
-    // private async Task Logout()
-    // {
-    //     await HttpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-    //     var idToken = await HttpContextAccessor.HttpContext?.GetTokenAsync("id_token");
-    //     var logoutUrl = $"https://localhost:7021/connect/endsession?id_token_hint={idToken}&post_logout_redirect_uri=https://localhost:7221/signout-callback-oidc";
-
-    //     UrlHelper.NavigateTo(logoutUrl, forceLoad: true);
-    // }
-
     private async void select(MenuEventArgs args)
     {
         if (args.Item.Text == "Logout")
@@ -604,12 +601,17 @@
         _navigationManager.Refresh(true);
 
     }
-    private EditContext editContext;
 
     private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
     {
         IsFormValid = editContext.Validate();
     }
+
+    private void HandlePasswordFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        IsFormValidChangePassword = changePasswordContext.Validate();
+    }
+
 
     protected override async void OnInitialized()
     {
@@ -631,6 +633,10 @@
             editContext = new EditContext(userProfileViewModel);
             editContext.OnFieldChanged += HandleFieldChanged;
             IsFormValid = editContext.Validate();
+
+            changePasswordContext = new EditContext(changePasswordViewModel);
+            changePasswordContext.OnFieldChanged += HandlePasswordFieldChanged;
+            IsFormValidChangePassword = changePasswordContext.Validate();
 
             _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
         }

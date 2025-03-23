@@ -15,6 +15,8 @@ public class UserServices(
 
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager,
+    SignInManager<ApplicationUser> signInManager,
+
     TenantStoreDbContext tenantStoreDbContext,
     IMapper mapper,
     IHttpContextAccessor httpContextAccessor,
@@ -26,6 +28,7 @@ public class UserServices(
 
     public UserManager<ApplicationUser> UserManager { get; } = userManager;
     public RoleManager<ApplicationRole> RoleManager { get; } = roleManager;
+    public SignInManager<ApplicationUser> SignInManager { get; } = signInManager;
 
     public TenantStoreDbContext TenantStoreDbContext { get; } = tenantStoreDbContext;
 
