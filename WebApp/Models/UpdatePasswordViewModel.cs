@@ -16,5 +16,7 @@ namespace WebApp.Models
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Current Password is required")]
         public string? CurrentPassword { get; set; }
+
+        public bool? LogoutAllDevice { get; set; }
     }
 }
