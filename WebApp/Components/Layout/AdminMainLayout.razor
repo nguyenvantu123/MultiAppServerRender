@@ -259,6 +259,10 @@
                                                 <ValidationMessage For="@(() => changePasswordViewModel.NewPasswordConfirm)" />
                                             </div>
 
+                                            <div class="form-group">
+                                                <SfCheckBox @bind-Checked="changePasswordViewModel.LogoutAllDevice" Label="Logout from all devices"></SfCheckBox>
+                                            </div>
+
                                             <div style="height:10px">
                                             </div>
 

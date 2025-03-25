@@ -497,7 +497,7 @@ public static class UsersApi
         dataCache.LastName = LastName;
         dataCache.PhoneNumber = PhoneNumber;
         dataCache.Email = Email;
-         
+
         var result = autoMapper.Map<UserProfileViewModel>(dataCache);
 
         await redisUserRepository.UpdateUserProfileAsync(result);
@@ -532,57 +532,13 @@ public static class UsersApi
             return new ApiResponseDto<string>(404, "Password change failed.", null);
         }
 
+        if (changePasswordCommand.LogoutAllDevice.HasValue && changePasswordCommand.LogoutAllDevice.Value)
+        {
+            await userServices.UserManager.UpdateSecurityStampAsync(user);
+        }
+
         return new ApiResponseDto<string>(200, "Password changed successfully.", null);
 
-        //UserProfileViewModel dataCache = await redisUserRepository.GetUserProfileAsync(Guid.Parse(userAuth!.FindFirstValue("sub")!));
-
-        //if (File != null)
-        //{
-        //    // check file required greater than 100kb
-        //    //if (File.Length > 102400)
-        //    //{
-        //    //    return new ApiResponseDto<string>(400, "File size is greater than 100kb", "");
-        //    //}
-
-        //    var memoryStream = new MemoryStream();
-        //    await File.CopyToAsync(memoryStream);
-        //    memoryStream.Position = 0;
-
-        //    PutObjectArgs putObjectArgs = new PutObjectArgs()
-        //                              .WithBucket("multiappserver")
-        //                              .WithStreamData(memoryStream)
-        //                              .WithObject(File.FileName)
-        //                              .WithObjectSize(memoryStream.Length)
-        //                              .WithContentType(File.ContentType);
-
-
-        //    var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
-
-        //    var configSection = configuration.GetSection("MinioClient");
-
-        //    var fullUrl = $"{configSection["PublicLink"]}/{File.FileName}";
-        //    user.AvatarUrl = fullUrl;
-
-        //    dataCache.AvatarUrl = fullUrl;
-
-        //}
-        //user.FirstName = FirstName;
-        //user.LastName = LastName;
-        //user.PhoneNumber = PhoneNumber;
-        //user.Email = Email;
-
-        //await userServices.UserManager.UpdateAsync(user);
-
-        //dataCache.FirstName = FirstName;
-        //dataCache.LastName = LastName;
-        //dataCache.PhoneNumber = PhoneNumber;
-        //dataCache.Email = Email;
-
-        //var result = autoMapper.Map<UserProfileViewModel>(dataCache);
-
-        //await redisUserRepository.UpdateUserProfileAsync(result);
-
-        return new ApiResponseDto<string>(200, "Success", "");
     }
 
     //[NonController]
