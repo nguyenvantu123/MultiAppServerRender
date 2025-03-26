@@ -88,7 +88,7 @@ jobs:
             ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
 
       - name: Install .NET Aspire Workload
-        run: dotnet workload install --sdk-version ${{ env.DOTNET_VERSION }} --install-path ~/.dotnet/workloads --all
+        run: dotnet workload install --all
 
       - name: Restore dependencies
         run: dotnet restore
