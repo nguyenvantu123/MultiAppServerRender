@@ -53,7 +53,6 @@ jobs:
 
     env:
      DOTNET_VERSION: 8.0.x
-     CACHE_KEY: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
 
     steps:
 
@@ -71,20 +70,26 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
-          key: ${{ env.CACHE_KEY }}
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-nuget
           restore-keys: |
             ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
             dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Cache Aspire Workload
+        uses: actions/cache@v3
+        with:
+          path: ~/.dotnet/workloads
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
+          restore-keys: |
+            ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
+
       - name: Install .NET Aspire Workload
         run: dotnet workload install --sdk-version ${{ env.DOTNET_VERSION }} --install-path ~/.dotnet/workloads --all
-        
-      # - name: Restore workload
-      #   run : dotnet workload restore
- 
+
       - name: Restore dependencies
         run: dotnet restore
 
