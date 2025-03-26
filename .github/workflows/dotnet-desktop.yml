@@ -50,8 +50,6 @@ jobs:
    build-test-sonar:
     runs-on: ubuntu-latest
     steps:
-      - name: Restore workload
-        run : dotnet workload restore
 
       - name : Install Aspire
         run: dotnet tool install --global Aspire
