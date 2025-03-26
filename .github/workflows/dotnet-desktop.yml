@@ -50,6 +50,11 @@ on:
 jobs:
    build-test-sonar:
     runs-on: windows-latest
+
+    env:
+     DOTNET_VERSION: 8.0.x
+     CACHE_KEY: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
+
     steps:
 
       - name: Set up JDK 17
@@ -72,7 +77,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-            dotnet-version: 8.0.x
+            dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install .NET Aspire Workload
         run: dotnet workload install --sdk-version ${{ env.DOTNET_VERSION }} --install-path ~/.dotnet/workloads --all
