@@ -1,14 +1,39 @@
 ﻿namespace WebhookClient.Services;
 
-public class WebhooksClient(HttpClient client)
+//public class WebhooksClient( )
+//{
+//    public Task<HttpResponseMessage> AddWebHookAsync(WebhookSubscriptionRequest payload, string accessToken)
+//    {
+//        _logger.LogError("day la access_token trong LoadWebhooks:" + accessToken);
+//        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+//        return client.PostAsJsonAsync("/api/webhooks", payload);
+//    }
+
+//    public async Task<List<WebhookResponse>> LoadWebhooks(string accessToken)
+//    {
+//        return await client.GetFromJsonAsync<List<WebhookResponse>>("/api/webhooks") ?? [];
+//    }
+//}
+
+public class WebhooksClient
 {
-    public Task<HttpResponseMessage> AddWebHookAsync(WebhookSubscriptionRequest payload)
+    private readonly HttpClient _httpClient;
+
+    private ILogger<WebhooksClient> _logger;
+
+    public WebhooksClient(IHttpClientFactory httpClientFactory, ILogger<WebhooksClient> logger)
     {
-        return client.PostAsJsonAsync("/api/webhooks", payload);
+        _httpClient = httpClientFactory.CreateClient("callApi");
+        _logger = logger;
     }
 
-    public async Task<IEnumerable<WebhookResponse>> LoadWebhooks()
+    public Task<HttpResponseMessage> AddWebHookAsync(WebhookSubscriptionRequest payload)
     {
-        return await client.GetFromJsonAsync<IEnumerable<WebhookResponse>>("/api/webhooks") ?? [];
+        return _httpClient.PostAsJsonAsync("/api/webhooks", payload);
+    }
+
+    public async Task<List<WebhookResponse>> LoadWebhooks()
+    {
+        return await _httpClient.GetFromJsonAsync<List<WebhookResponse>>("/api/webhooks") ?? [];
     }
 }

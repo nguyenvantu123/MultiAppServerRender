@@ -1,9 +1,9 @@
-﻿using BlazorIdentity.Users.Models;
-using Breeze.Sharp;
+﻿using Breeze.Sharp;
 using Microsoft.JSInterop;
 using MultiAppServer.ServiceDefaults;
 using Shared.Models;
 using System.Linq.Expressions;
+using System.Net.Http;
 using System.Net.Http.Json;
 using WebApp.Components.Pages.Admin;
 using WebApp.Constant;
@@ -19,11 +19,11 @@ namespace WebApp.Interfaces
     public class AccountApiClient
     {
         private readonly HttpClient _httpClient;
-
-        public AccountApiClient(HttpClient httpClient, IJSRuntime jsRuntime)
+        public AccountApiClient(IHttpClientFactory httpClientFactory, HttpClient httpClient, IJSRuntime jsRuntime)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("UserApi");
         }
+
 
         public async Task<ApiResponseDto<LoginViewModel>> BuildLoginViewModel(string returnUrl)
         {
@@ -153,9 +153,9 @@ namespace WebApp.Interfaces
             return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/admin-update-user", userViewModel);
         }
 
-        public async Task<ApiResponse<UserProfileViewModel>> GetUserProfile()
+        public async Task<ApiResponseDto<UserProfileViewModel>> GetUserProfile()
         {
-            var apiResponse = await _httpClient.GetJsonAsync<ApiResponse<UserProfileViewModel>>("api/admin/users/user-profile");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<UserProfileViewModel>>("api/admin/users/user-profile");
             return apiResponse;
 
         }
@@ -264,9 +264,9 @@ namespace WebApp.Interfaces
             return apiResponse;
         }
 
-        public async Task<ApiResponse<PermissionModel>> GetAllByRoleIdAsync(string roleId)
+        public async Task<ApiResponseDto<PermissionModel>> GetAllByRoleIdAsync(string roleId)
         {
-            var apiResponse = await _httpClient.GetJsonAsync<ApiResponse<PermissionModel>>($"api/admin/get-all-permission-by-role-id/{roleId}");
+            var apiResponse = await _httpClient.GetJsonAsync<ApiResponseDto<PermissionModel>>($"api/admin/get-all-permission-by-role-id/{roleId}");
             return apiResponse;
         }
 
@@ -275,6 +275,36 @@ namespace WebApp.Interfaces
             var apiResponse = await _httpClient.GetJsonAsync<List<string>>($"api/account/get-permission-by-user");
             return apiResponse;
         }
+
+        public async Task<ApiResponseDto<string>> UploadProfilePictureWithDataAsync(Stream? fileStream, string fileName, UserProfileViewModel userProfile)
+        {
+
+            using var content = new MultipartFormDataContent();
+
+            if (fileStream != null)
+            {
+                using var fileContent = new StreamContent(fileStream);
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data");
+                content.Add(fileContent, "File", fileName);
+            }
+
+            // Add additional form data
+            content.Add(new StringContent(userProfile.PhoneNumber), "PhoneNumber");
+            content.Add(new StringContent(userProfile.Email), "Email");
+            content.Add(new StringContent(userProfile.FirstName), "FirstName");
+            content.Add(new StringContent(userProfile.LastName), "LastName");
+
+            var response = await _httpClient.PostAsync("api/admin/users/update-user-profile", content);
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<string>>();
+            return result!;
+
+        }
+
+        //public async Task<List<string>> GetPermissionByUser()
+        //{
+        //    var apiResponse = await _httpClient.GetJsonAsync<List<string>>($"api/account/get-permission-by-user");
+        //    return apiResponse;
+        //}
 
         //public async Task<UserProfile> GetUserProfile()
         //{

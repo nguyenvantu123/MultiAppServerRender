@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using BlazorApiUser.Commands.Users;
+using BlazorApiUser.Models;
 using BlazorApiUser.Queries.Roles;
 using BlazorApiUser.Queries.Users;
-using BlazorIdentity.Models;
-using BlazorIdentity.Users.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver.Linq;
+using MultiAppServer.ServiceDefaults;
 using System.Security.Claims;
-using WebApp.Models;
 
 namespace BlazorApiUser.Apis
 {
@@ -20,7 +18,7 @@ namespace BlazorApiUser.Apis
 
             api.MapGet("/tenants", GetTenants);
 
-            api.MapGet("/tenant-by-user", GetTenantByUser);
+            //api.MapGet("/tenant-by-user", GetTenantByUser);
 
             //api.MapPost("/users/create", Create);
 
@@ -46,7 +44,7 @@ namespace BlazorApiUser.Apis
         }
 
         [Authorize(Roles = Permissions.Tenant.Read)]
-        public static async Task<ApiResponse<List<TenantDto>>> GetTenants([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
+        public static async Task<ApiResponseDto<List<TenantDto>>> GetTenants([AsParameters] GetListRoleQuery getListRoleQuery, [AsParameters] UserServices userServices)
         {
 
             //var userLst = await userServices.Mediator.Send(getListRoleQuery);
@@ -62,36 +60,36 @@ namespace BlazorApiUser.Apis
 
             List<TenantDto> tenantDto = userServices.Mapper.Map<List<TenantDto>>(itemsOnPage);
 
-            return new ApiResponse<List<TenantDto>>(200, $"{totalItems} users fetched", tenantDto, totalItems);
+            return new ApiResponseDto<List<TenantDto>>(200, $"{totalItems} users fetched", tenantDto, totalItems);
         }
 
-        [Authorize]
-        public static async Task<ApiResponse<TenantDto>> GetTenantByUser(ClaimsPrincipal userAuth, [AsParameters] UserServices userServices)
-        {
+        //[Authorize]
+        //public static async Task<ApiResponse<TenantDto>> GetTenantByUser(ClaimsPrincipal userAuth, [AsParameters] UserServices userServices)
+        //{
 
-            var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
+        //    var user = await userServices.UserManager.FindByIdAsync(userAuth!.FindFirstValue("sub")!);
 
-            if (user == null)
-            {
-                return new ApiResponse(400, $"User doesn't exist!!!!");
-            }
+        //    if (user == null)
+        //    {
+        //        return new ApiResponse(400, $"User doesn't exist!!!!");
+        //    }
 
-            if (string.IsNullOrEmpty(user.TenantId))
-            {
-                return new ApiResponse(200, "", new TenantDto { Id = "", Name = "" });
-            }
+        //    //if (string.IsNullOrEmpty(user.TenantId))
+        //    //{
+        //    //    return new ApiResponse(200, "", new TenantDto { Id = "", Name = "" });
+        //    //}
 
-            var dto = userServices.TenantStoreDbContext.AppTenantInfo.Where(x => x.Id == user.TenantId).FirstOrDefault();
+        //    var dto = userServices.TenantStoreDbContext.AppTenantInfo.Where(x => x.Id == user.TenantId).FirstOrDefault();
 
-            if (dto == null)
-            {
-                return new ApiResponse(200, "", new TenantDto { Id = "", Name = "" });
-            }
+        //    if (dto == null)
+        //    {
+        //        return new ApiResponse(200, "", new TenantDto { Id = "", Name = "" });
+        //    }
 
-            TenantDto tenantDto = userServices.Mapper.Map<TenantDto>(dto);
+        //    TenantDto tenantDto = userServices.Mapper.Map<TenantDto>(dto);
 
-            return new ApiResponse<TenantDto>(200, "", tenantDto);
-        }
+        //    return new ApiResponse<TenantDto>(200, "", tenantDto);
+        //}
 
         private static async Task<DbSet<AppTenantInfo>> Filter(GetListRoleQuery SearchQuery, UserServices userServices)
         {

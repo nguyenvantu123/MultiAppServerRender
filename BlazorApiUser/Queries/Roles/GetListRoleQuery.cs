@@ -1,7 +1,6 @@
-﻿using BlazorIdentity.Users.Models;
+﻿using BlazorApiUser.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.Models;
 
 namespace BlazorApiUser.Queries.Roles
 {

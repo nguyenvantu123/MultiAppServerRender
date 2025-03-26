@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>10426d25-59ff-4638-83dc-bd3119a3614d</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,11 +14,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
-    <ProjectReference Include="..\BlazorIdentity\BlazorIdentity.csproj" />
+    <ProjectReference Include="..\Aspire.Pomelo.EntityFrameworkCore.MySql\Aspire.Pomelo.EntityFrameworkCore.MySql.csproj" />
     <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />

@@ -14,6 +14,17 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["BlazorIdentity/BlazorIdentity.csproj", "BlazorIdentity/"]
 COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "MultiAppServer.ServiceDefaults/"]
+COPY ["Aspire.Microsoft.EntityFrameworkCore.SqlServer/Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj", "Aspire.Microsoft.EntityFrameworkCore.SqlServer/"]
+COPY ["Aspire.StackExchange.Redis/Aspire.StackExchange.Redis.csproj", "Aspire.StackExchange.Redis/"]
+COPY ["Aspire.Minio.Client/Aspire.Minio.Client.csproj", "Aspire.Minio.Client/"]
+COPY ["Aspire.MongoDb.Driver/Aspire.MongoDb.Driver.csproj", "Aspire.MongoDb.Driver/"]
+COPY ["Aspire.Pomelo.EntityFrameworkCore.MySql/Aspire.Pomelo.EntityFrameworkCore.MySql.csproj", "Aspire.Pomelo.EntityFrameworkCore.MySql/"]
+COPY ["Aspire.StackExchange.Redis.DistributedCaching/Aspire.StackExchange.Redis.DistributedCaching.csproj", "Aspire.StackExchange.Redis.DistributedCaching/"]
+COPY ["EventBus.RabbitMQ/EventBus.RabbitMQ.csproj", "EventBus.RabbitMQ/"]
+COPY ["EventBus/EventBus.csproj", "EventBus/"]
+COPY ["MultiAppServer.ServiceDefaults/MultiAppServer.ServiceDefaults.csproj", "MultiAppServer.ServiceDefaults/"]
+COPY ["Shared/Shared.csproj", "Shared/"]
+COPY ["IntegrationEventLogEF/IntegrationEventLogEF.csproj", "IntegrationEventLogEF/"]
 RUN dotnet restore "./BlazorIdentity/BlazorIdentity.csproj"
 COPY . .
 WORKDIR "/src/BlazorIdentity"
@@ -28,4 +39,5 @@ RUN dotnet publish "./BlazorIdentity.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_ENVIRONMENT Production
 ENTRYPOINT ["dotnet", "BlazorIdentity.dll"]

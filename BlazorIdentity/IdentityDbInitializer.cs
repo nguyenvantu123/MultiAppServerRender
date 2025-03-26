@@ -51,7 +51,7 @@ namespace BlazorIdentity.Users
 
             var adminRole = new ApplicationRole
             {
-                Name = Constant.SuperAdministratorRole,
+                Name = DefaultRoleNames.Administrator,
                 Description = "Administrator role with full permissions",
                 CreatedBy = "Super Admin",
                 CreatedOn = DateTime.UtcNow,
@@ -89,7 +89,7 @@ namespace BlazorIdentity.Users
             if (superUserInDb == null)
             {
                 await userManager.CreateAsync(superUser, UserConstants.DefaultPassword);
-                var result = await userManager.AddToRoleAsync(superUser, Constant.SuperAdministratorRole);
+                var result = await userManager.AddToRoleAsync(superUser, DefaultRoleNames.Administrator);
                 if (result.Succeeded)
                 {
                     logger.LogInformation("Seeded Default SuperAdmin User.");
@@ -105,7 +105,7 @@ namespace BlazorIdentity.Users
 
             var basicRole = new ApplicationRole
             {
-                Name = Constant.BasicUserRole,
+                Name = DefaultRoleNames.User,
                 Description = "User role",
                 CreatedBy = "Super Admin",
                 CreatedOn = DateTime.UtcNow,
@@ -113,7 +113,7 @@ namespace BlazorIdentity.Users
                 LastModifiedOn = DateTime.UtcNow,
                 Id = Guid.NewGuid()
             };
-            var basicRoleInDb = await roleManager.FindByNameAsync(Constant.BasicUserRole);
+            var basicRoleInDb = await roleManager.FindByNameAsync(DefaultRoleNames.User);
             if (basicRoleInDb == null)
             {
                 await roleManager.CreateAsync(basicRole);

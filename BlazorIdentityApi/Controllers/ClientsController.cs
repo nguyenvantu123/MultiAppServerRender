@@ -9,6 +9,7 @@ using BlazorIdentityApi.UI.Api.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 
 namespace BlazorIdentityApi.Controllers
 {

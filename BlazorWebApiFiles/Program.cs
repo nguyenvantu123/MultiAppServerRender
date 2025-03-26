@@ -12,6 +12,8 @@ using BlazorIdentity.Repository;
 using BlazorIdentityFiles.SeedWork;
 using BetkingLol.DataAccess.UnitOfWork;
 using Aspire.Pomelo.EntityFrameworkCore.MySql;
+using Aspire.Minio.Client;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,15 +36,15 @@ builder.Services.AddScoped<IRequestManager, RequestManager> ();
 
 builder.Services.AddScoped<FileServices>();
 
-//var configSection = builder.Configuration.GetSection("MinioClient");
+var configSection = builder.Configuration.GetSection("MinioClient");
 
-//var settings = new MinIoClientSettings();
-//configSection.Bind(settings);
+var settings = new MinIoClientSettings();
+configSection.Bind(settings);
 
-//builder.Services.AddMinio(configureClient => configureClient
-//       .WithEndpoint(settings.Endpoint)
-//       .WithSSL(false)
-//       .WithCredentials(settings.AccessKey, settings.SecretKey));
+builder.Services.AddMinio(configureClient => configureClient
+       .WithEndpoint(settings.Endpoint)
+       .WithSSL(true)
+       .WithCredentials(settings.AccessKey, settings.SecretKey));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IIdentityService, IdentityService>();

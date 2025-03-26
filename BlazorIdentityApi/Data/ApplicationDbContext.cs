@@ -17,7 +17,7 @@ namespace BlazorIdentity.Data
         ApplicationUserClaim, ApplicationUserRole, IdentityUserLogin<Guid>,
         ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
     {
-        public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
+        public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions<ApplicationDbContext> options) : base(multiTenantContextAccessor, options)
         {
             TenantInfo = (AppTenantInfo)multiTenantContextAccessor.MultiTenantContext.TenantInfo ?? new AppTenantInfo { Id = DefaultTenant.DefaultTenantId, Identifier = DefaultTenant.DefaultTenantId, Name = DefaultTenant.DefaultTenantId };
             TenantNotSetMode = TenantNotSetMode.Overwrite;

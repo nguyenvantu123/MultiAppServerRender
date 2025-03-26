@@ -1,11 +1,8 @@
 using MultiAppServer.ServiceDefaults;
 using eShop.ServiceDefaults;
-using Aspire.Microsoft.EntityFrameworkCore.SqlServer;
 using BlazorApiUser.Behaviors;
-using BlazorIdentity.Data;
 using BlazorApiUser.Repository;
 using BlazorApiUser.Commands.Users;
-using BlazorIdentity.Users.Models;
 using AutoMapper;
 using BlazorApiUser.MapperProfile;
 using Microsoft.AspNetCore.Identity;
@@ -14,8 +11,6 @@ using MediatR;
 using System.Reflection;
 using BlazorApiUser.IntegrationEvents;
 using IntegrationEventLogEF.Services;
-using BlazorIdentity.Users.Constants;
-using BlazorIdentity.Users.Data;
 using Finbuckle.MultiTenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -24,10 +19,15 @@ using Newtonsoft.Json;
 using BlazorApiUser.Filter;
 using BlazorApiUser.Apis;
 using Aspire.StackExchange.Redis;
-using BlazorIdentity.Repositories;
 using MultiAppServer.EventBus.Abstractions;
 using Shared;
 using Aspire.Pomelo.EntityFrameworkCore.MySql;
+using BlazorApiUser.Repositories;
+using BlazorApiUser.Db;
+using BlazorApiUser.Models;
+using BlazorApiUser.Constants;
+using Minio;
+using Aspire.Minio.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +36,6 @@ builder.AddRedis("Redis");
 builder.AddRabbitMqEventBus("EventBus");
 
 builder.AddServiceDefaults();
-
 builder.Services.AddSingleton<RedisUserRepository>();
 
 //builder.AddMySqlDataSource("Identitydb");
@@ -46,12 +45,25 @@ builder.AddMySqlDbContext<ApplicationDbContext>("Identitydb");
 
 builder.AddMySqlDbContext<TenantStoreDbContext>("Identitydb");
 
+
+var configSection = builder.Configuration.GetSection("MinioClient");
+
+var settings = new MinIoClientSettings();
+configSection.Bind(settings);
+
+builder.Services.AddMinio(configureClient => configureClient
+       .WithEndpoint(settings.Endpoint)
+       .WithSSL(true)
+       .WithCredentials(settings.AccessKey, settings.SecretKey));
+
 builder.Services.AddMultiTenant<AppTenantInfo>()
     .WithHostStrategy("__tenant__")
     .WithEFCoreStore<TenantStoreDbContext, AppTenantInfo>()
     .WithStaticStrategy(DefaultTenant.DefaultTenantId);
 
 builder.AddDefaultAuthentication();
+
+builder.Services.AddAntiforgery();
 
 //builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<ApplicationDbContext>>();
 
@@ -95,12 +107,11 @@ IMapper mapper = config.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddMvc(options =>
-{
-    options.Filters.Add(new MyExceptionFilterAttribute());
-    options.Filters.Add(new MyActionFilterAttribute());
-})
-               .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+//builder.Services.AddMvc(options =>
+//{
+//    options.Filters.Add(new MyExceptionFilterAttribute());
+//    options.Filters.Add(new MyActionFilterAttribute());
+//}).AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {

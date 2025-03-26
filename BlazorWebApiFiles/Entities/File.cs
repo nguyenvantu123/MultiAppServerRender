@@ -43,6 +43,6 @@ namespace BlazorIdentity.Files.Entities
 
         public FileType FileTypeData { get; set; }
 
-        public string FileUrl { get; set; }
+        public string? FileUrl { get; set; }
     }
 }

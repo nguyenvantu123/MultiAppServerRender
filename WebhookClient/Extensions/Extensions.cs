@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WebhookClient.Extensions;
 
@@ -15,11 +17,8 @@ public static class Extensions
         // Application services
         builder.Services.AddOptions<WebhookClientOptions>().BindConfiguration(nameof(WebhookClientOptions));
         builder.Services.AddSingleton<HooksRepository>();
+        builder.Services.AddSingleton<WebhooksClient>();
 
-        // HTTP client registrations
-        builder.Services.AddHttpClient<WebhooksClient>(o => o.BaseAddress = new("http://webhooks-api"))
-            .AddApiVersion(1.0)
-            .AddAuthToken();
     }
 
     public static void AddAuthenticationServices(this IHostApplicationBuilder builder)
@@ -27,8 +26,13 @@ public static class Extensions
         var configuration = builder.Configuration;
         var services = builder.Services;
 
-        var identityUrl = configuration.GetRequiredValue("IdentityUrl");
-        var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
+
+        var identitySection = configuration.GetSection("Identity");
+
+        var identityUrl = identitySection.GetRequiredValue("Url");
+        var callBackUrl = identitySection.GetRequiredValue("Url");
+
+        //var callBackUrl = configuration.GetRequiredValue("CallBackUrl");
         var sessionCookieLifetime = configuration.GetValue("SessionCookieLifetimeMinutes", 60);
 
         // Add Authentication services
@@ -50,7 +54,7 @@ public static class Extensions
         {
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             options.Authority = identityUrl.ToString();
-            options.SignedOutRedirectUri = callBackUrl.ToString();
+            //options.SignedOutRedirectUri = callBackUrl.ToString();
             options.ClientId = "webhooksclient";
             options.ClientSecret = "secret";
             options.ResponseType = "code";

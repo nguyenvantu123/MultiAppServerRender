@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Shared;
 
 namespace BlazorIdentity.Controllers
 {
@@ -204,7 +205,7 @@ namespace BlazorIdentity.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(claim);
+                return View(claim as UserClaimsDto<UserClaimDto<Guid>, Guid>);
             }
 
             await _identityService.CreateUserClaimsAsync(claim);
@@ -323,7 +324,7 @@ namespace BlazorIdentity.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(claim);
+                return View((RoleClaimsDto<RoleClaimDto<Guid>, Guid>)claim);
             }
 
             await _identityService.CreateRoleClaimsAsync(claim);

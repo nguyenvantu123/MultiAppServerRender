@@ -2,7 +2,7 @@
 @using Microsoft.Extensions.Options
 @inject IOptions<WebhookClientOptions> options
 @inject NavigationManager Nav
-@inject WebhooksClient WebhooksClient
+@inject IHttpClientFactory Factory
 
 <h2>Register a new webhook</h2>
 
@@ -45,12 +45,14 @@
         var url = $"{baseUrl}webhook-received";
 
         var payload = new WebhookSubscriptionRequest
-        {
-            Event = "OrderPaid",
-            GrantUrl = granturl,
-            Url = url,
-            Token = token
-        };
+            {
+                Event = "OrderPaid",
+                GrantUrl = granturl,
+                Url = url,
+                Token = token
+            };
+
+       
 
         var response = await WebhooksClient.AddWebHookAsync(payload);
         if (response.IsSuccessStatusCode)

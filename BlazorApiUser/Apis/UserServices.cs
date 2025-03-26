@@ -1,11 +1,11 @@
 ﻿
 
 using AutoMapper;
+using BlazorApiUser.Db;
+using BlazorApiUser.Models;
+using BlazorApiUser.Repositories;
 using BlazorApiUser.Repository;
-using BlazorIdentity.Data;
-using BlazorIdentity.Repositories;
-using BlazorIdentity.Users.Data;
-using BlazorIdentity.Users.Models;
+
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -15,6 +15,8 @@ public class UserServices(
 
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager,
+    SignInManager<ApplicationUser> signInManager,
+
     TenantStoreDbContext tenantStoreDbContext,
     IMapper mapper,
     IHttpContextAccessor httpContextAccessor,
@@ -26,6 +28,7 @@ public class UserServices(
 
     public UserManager<ApplicationUser> UserManager { get; } = userManager;
     public RoleManager<ApplicationRole> RoleManager { get; } = roleManager;
+    public SignInManager<ApplicationUser> SignInManager { get; } = signInManager;
 
     public TenantStoreDbContext TenantStoreDbContext { get; } = tenantStoreDbContext;
 

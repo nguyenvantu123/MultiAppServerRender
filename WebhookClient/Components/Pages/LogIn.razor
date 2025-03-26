@@ -1,12 +1,18 @@
 ﻿@page "/login"
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
-@inject NavigationManager Nav
 @code {
     [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
-    protected override void OnInitialized()
+    // protected override void OnInitialized()
+    // {
+
+    //     _nav.NavigateTo(returnUrl, forceLoad: true);
+    // }
+
+    protected override async Task OnInitializedAsync()
     {
         string returnUrl = ReturnUrl ?? "";
-        Nav.NavigateTo(returnUrl, replace: true);
+        _nav.NavigateTo(returnUrl, true);
+        await base.OnInitializedAsync();
     }
 }

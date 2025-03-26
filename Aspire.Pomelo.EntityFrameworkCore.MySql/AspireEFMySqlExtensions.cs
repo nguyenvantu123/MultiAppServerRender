@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MySqlConnector;
 using MySqlConnector.Logging;
 using Polly;
@@ -11,6 +12,7 @@ using Polly.Registry;
 using Polly.Retry;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
+using Pomelo.EntityFrameworkCore.MySql.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Storage.Internal;
 using System;
 using System.Collections.Generic;
@@ -67,7 +69,7 @@ namespace Aspire.Pomelo.EntityFrameworkCore.MySql
 
             configureSettings?.Invoke(settings);
 
-            builder.Services.AddDbContextPool<TContext>(ConfigureDbContext);
+            builder.Services.AddDbContext<TContext>(ConfigureDbContext);
 
             const string resilienceKey = "Microsoft.Extensions.Hosting.AspireEFMySqlExtensions.ServerVersion";
             builder.Services.AddResiliencePipeline(resilienceKey, static builder =>
@@ -92,8 +94,7 @@ namespace Aspire.Pomelo.EntityFrameworkCore.MySql
                 // use the legacy method of setting the ILoggerFactory because Pomelo EF Core doesn't use MySqlDataSource
                 if (serviceProvider.GetService<ILoggerFactory>() is { } loggerFactory)
                 {
-                    //MySqlConnectorLogManager.Provider = new MicrosoftExtensionsLoggingLoggerProvider(loggerFactory);
-
+                    MySqlConnectorLogManager.Provider = new MicrosoftExtensionsLoggingLoggerProvider(loggerFactory);
                 }
 
                 var connectionString = settings.ConnectionString ?? string.Empty;
@@ -116,6 +117,11 @@ namespace Aspire.Pomelo.EntityFrameworkCore.MySql
                 {
                     // delay validating the ConnectionString until the DbContext is configured. This ensures an exception doesn't happen until a Logger is established.
                     ConnectionStringValidation.ValidateConnectionString(settings.ConnectionString, connectionName, DefaultConfigSectionName, $"{DefaultConfigSectionName}:{typeof(TContext).Name}", isEfDesignTime: EF.IsDesignTime);
+
+                    builder.EnableStringComparisonTranslations(true);
+                    builder.CommandTimeout(300);
+                    builder.EnablePrimitiveCollectionsSupport(true);
+                    builder.TranslateParameterizedCollectionsToConstants();
 
                     // Resiliency:
                     // 1. Connection resiliency automatically retries failed database commands: https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql/wiki/Configuration-Options#enableretryonfailure
@@ -180,6 +186,10 @@ namespace Aspire.Pomelo.EntityFrameworkCore.MySql
 
                         optionsBuilder.UseMySql(serverVersion, options =>
                         {
+                            options.EnableStringComparisonTranslations(true);
+                            options.CommandTimeout(300);
+                            options.EnablePrimitiveCollectionsSupport(true);
+                            options.TranslateParameterizedCollectionsToConstants();
                             var extension = optionsBuilder.Options.FindExtension<MySqlOptionsExtension>();
 
                             if (!settings.DisableRetry)

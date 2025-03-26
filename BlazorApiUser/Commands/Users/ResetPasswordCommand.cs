@@ -24,6 +24,6 @@ namespace BlazorApiUser.Commands.Users
         [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; }
 
-
+        public string UserId { get; set; }
     }
 }

@@ -5,16 +5,14 @@ using Minio.DataModel;
 using MultiAppServer.ServiceDefaults;
 using Google.Protobuf.WellKnownTypes;
 using Minio.DataModel.Encryption;
-using BlazorIdentityFiles.Application.Commands;
-using BlazorIdentity.Files.Entities;
-using BlazorIdentity.Files.Exceptions;
 using BetkingLol.DataAccess.UnitOfWork;
 using SixLabors.ImageSharp;
-using BlazorIdentity.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using BlazorIdentity.Files.Entities;
 using BlazorIdentity.Files.Constant;
+using BlazorIdentity.Files.Exceptions;
 
 public static class FileApi
 {
@@ -36,6 +34,7 @@ public static class FileApi
     public static async Task<ApiResponseDto<string>> GetPresignedAsync(
          [AsParameters] GetPresignedUserProfileUrl queries,
          [FromServices] FileServices services,
+         [FromServices] IMinioClient minioClient,
          IHttpContextAccessor HttpContextAccessor
         )
     {
@@ -59,87 +58,110 @@ public static class FileApi
             return new ApiResponseDto<string>(400, "Not Found File", string.Empty);
         }
 
-        //string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappbucket").WithObject(objectName).WithExpiry(60 * 60));
+        string file = await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs().WithBucket("multiappserver").WithObject(objectName));
 
         return new ApiResponseDto<string>(200, "Success", "");
     }
 
-    public static async Task<ApiResponseDto<string>> UploadFile(
-         //IFormFile FormFile,
-         [FromForm] string FileType,
+    public static async Task<ApiResponseDto<bool>> UploadFile(
+         IFormFile FormFile,
+         [FromForm] FileType FileType,
          Guid? FolerId,
          [FromForm] string RelationType,
          [FromForm] Guid RelationId,
-         FileServices services)
+         FileServices services,
+       [FromServices] IMinioClient minioClient)
     {
 
-        //if (FormFile != null && FormFile.Length > 0)
-        //{
+        if (FormFile != null && FormFile.Length > 0)
+        {
 
             var memoryStream = new MemoryStream();
-            //await FormFile.CopyToAsync(memoryStream);
-            //memoryStream.Position = 0;
+            await FormFile.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
 
-            //string fileUrl = "img/file/" + FormFile.FileName;
+            PutObjectArgs putObjectArgs = new PutObjectArgs()
+                                      .WithBucket("multiappserver")
+                                      .WithStreamData(memoryStream)
+                                      .WithObject(FormFile.FileName)
+                                      .WithObjectSize(memoryStream.Length)
+                                      .WithContentType(FormFile.ContentType);
 
-            //PutObjectArgs putObjectArgs = new PutObjectArgs()
-            //                          .WithBucket("multiappbucket")
-            //                          .WithStreamData(memoryStream)
-            //                          .WithObject(fileUrl)
-            //                          .WithObjectSize(memoryStream.Length)
-            //                          .WithVersionId("1.0")
-            //                          .WithContentType(FormFile.ContentType);
+            var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
 
-            //var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
+            FileData fileData = new FileData();
 
-            //FileData fileData = new FileData();
+            fileData.Name = FormFile.FileName;
+            fileData.Size = FormFile.Length;
+            if (HttpPostedFileBaseExtensions.IsImage(FormFile))
+            {
+                var fileBytes = memoryStream.ToArray();
 
-            //fileData.Name = FormFile.FileName;
-            //fileData.Size = FormFile.Length;
-            //fileData.FileUrl = fileUrl;
-            //if (HttpPostedFileBaseExtensions.IsImage(FormFile))
-            //{
-            //    var fileBytes = memoryStream.ToArray();
+                using Image image = Image.Load(fileBytes);
 
-            //    using Image image = Image.Load(fileBytes);
+                fileData.Width = image.Width;
+                fileData.Height = image.Height;
+            }
 
-            //    fileData.Width = image.Width;
-            //    fileData.Height = image.Height;
-            //}
+            fileData.FileTypeData = FileType;
+            fileData.Ext = Path.GetExtension(FormFile.FileName);
 
-            //fileData.FileTypeData = FileType;
-            //fileData.Ext = Path.GetExtension(FormFile.FileName);
+            fileData.Mime = HttpPostedFileBaseExtensions.GetMimeType(fileData.Ext);
 
-            //fileData.Mime = HttpPostedFileBaseExtensions.GetMimeType(fileData.Ext);
+            if (FolerId != Guid.Empty)
+            {
+                fileData.FolderId = FolerId;
+            }
+            else
+            {
+                fileData.FolderId = null;
+            }
 
-            //if (FolerId.HasValue)
-            //{
-            //    fileData.FolderId = FolerId;
-            //}
-            //else
-            //{
-            //    fileData.FolderId = null;
-            //}
-
-            //services.UnitOfWork.Repository<FileData>().Add(fileData);
+            services.UnitOfWork.Repository<FileData>().Add(fileData);
 
 
-            //FileMapWithEntity fileMapWithEntity = new FileMapWithEntity();
-            //fileMapWithEntity.RelationType = RelationType;
-            //fileMapWithEntity.RelationId = RelationId;
-            //fileMapWithEntity.FileName = fileUrl;
-            //fileMapWithEntity.FileId = fileData.Id;
+            FileMapWithEntity fileMapWithEntity = new FileMapWithEntity();
+            fileMapWithEntity.RelationType = RelationType;
+            fileMapWithEntity.RelationId = RelationId;
+            fileMapWithEntity.FileName = dataUpload.ObjectName;
+            fileMapWithEntity.FileId = fileData.Id;
 
-            //services.UnitOfWork.Repository<FileMapWithEntity>().Add(fileMapWithEntity);
+            services.UnitOfWork.Repository<FileMapWithEntity>().Add(fileMapWithEntity);
 
-            //await services.UnitOfWork.SaveEntitiesAsync();
+            await services.UnitOfWork.SaveEntitiesAsync();
 
-            return new ApiResponseDto<string>(200, "Success!!!", "");
-        //}
+            return new ApiResponseDto<bool>(200, "Success!!!", true);
+        }
 
-        //return new ApiResponseDto<string>(400, "File Is Require!!!", "");
+        return new ApiResponseDto<bool>(400, "File Is Require!!!", false);
     }
 
+    public static async Task<ApiResponseDto<string>> UploadProfile(
+         IFormFile FormFile,
+       [FromServices] IMinioClient minioClient)
+    {
+
+        if (FormFile != null && FormFile.Length > 0)
+        {
+
+            var memoryStream = new MemoryStream();
+            await FormFile.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+
+            PutObjectArgs putObjectArgs = new PutObjectArgs()
+                                      .WithBucket("multiappserver")
+                                      .WithStreamData(memoryStream)
+                                      .WithObject(FormFile.FileName)
+                                      .WithObjectSize(memoryStream.Length)
+                                      .WithContentType(FormFile.ContentType);
+
+            var dataUpload = await minioClient.PutObjectAsync(putObjectArgs);
+
+            return new ApiResponseDto<string>(200, "Success!!!", "");
+        }
+
+        return new ApiResponseDto<string>(400, "File Is Require!!!", "");
+    }
     //public static async Task<Results<Ok<Order>, NotFound>> GetOrderAsync(int orderId, [AsParameters] FileServices services)
     //{
     //    try

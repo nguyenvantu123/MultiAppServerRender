@@ -1,16 +1,19 @@
-﻿@using BlazorIdentity.Repositories
+﻿@using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authentication.Cookies
 @using Microsoft.AspNetCore.Authentication.OpenIdConnect
 @using Microsoft.AspNetCore.WebUtilities
 @using MultiAppServer.EventBus.Abstractions
 @using Newtonsoft.Json
+@using WebApp.Repositories
 @using global::Shared
 @using global::Shared.Models
 @inject NavigationManager UrlHelper;
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject AppState appState
 @inherits LayoutComponentBase
-@inject IHttpContextAccessor httpContextAccessor
+@inject IHttpContextAccessor HttpContextAccessor
+@attribute [Authorize]
+
 <AuthorizeView>
     <Authorized>
 
@@ -33,30 +36,260 @@
                         </ChildContent>
                     </SfSidebar>
 
-                    @*        <SfDialog Width="350" ShowCloseIcon="true" IsModal="true" @bind-Visible="@IsVisible">
-                <DialogTemplates>
-                <Header> Logout </Header>
-                <Content> Are you want to logout all services? </Content>
-                </DialogTemplates>
-                <DialogButtons>
-                <DialogButton Content="OK" IsPrimary="true" OnClick="@OkClick" />
-                <DialogButton Content="Cancel" OnClick="@CancelClick" />
-                </DialogButtons>
-                </SfDialog> *@
-
                     <SfDialog Content="Are you want to logout all services?" Width="350" Header="Logout" Visible="false" @ref="DialogObj">
                         <DialogPositionData X="center" Y="center"></DialogPositionData>
-                        <DialogButtons>
-                            <form method="post" action="logout">
-                                @* <SfButton IsPrimary Type>Yes</SfButton> *@
-                                <SfButton Type="submit" IsPrimary="true" Content="Yes"></SfButton>
-                            </form>
 
-                            <DialogButton Content="Cancel" OnClick="@cancelclick"></DialogButton>
-                        </DialogButtons>
+                        <DialogTemplates>
+                            <FooterTemplate>
+                                <form method="post" action="account/logout" @formname="logout">
+                                    <AntiforgeryToken />
+                                    <SfButton IsPrimary Type="Syncfusion.Blazor.Popups.ButtonType.Submit">Log out</SfButton>
+                                    <SfButton Content="Cancel" OnClick="@cancelclick" />
+                                </form>
+                            </FooterTemplate>
+                        </DialogTemplates>
+
                     </SfDialog>
 
-                    <SfDialog ID="defaultDialog" Width="350" CssClass="dialog-medium" style="height: 1000px" Target="#target" ShowCloseIcon="true" @bind-Visible="Visibility">
+
+                    <SfToast @ref="toast" Timeout="2000">
+                        <ToastPosition X="@ToastPosition"></ToastPosition>
+
+                    </SfToast>
+
+                    <SfDialog Width="800" Height="500" Header="Profile" Visible="false" @ref="ProfileDialogObj">
+                        <DialogPositionData X="center" Y="center"></DialogPositionData>
+
+                        <SfTab>
+                            <TabItems>
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="Edit Profile"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        @*  <EditForm style="margin-top: 30px" Context="editContext" OnValidSubmit="@HandleValidSubmitProfile" Model="@userProfileViewModel">
+                                    <DataAnnotationsValidator />
+                                    <ValidationSummary />
+
+                                    <div class="row">
+                                    <!-- Left Panel: Avatar Image -->
+                                    <div class="col-md-4">
+                                    <div class="form-group">
+                                    <label for="avatar">Avatar</label>
+                                    <SfUploader @ref="uploadObj" CssClass="@CssClass" AutoUpload="true" AllowedExtensions=".png, .jpg, .jpeg" AllowMultiple="false">
+
+                                    <UploaderTemplates>
+                                    <Template Context="uploadContext">
+                                    @if (!string.IsNullOrEmpty(base64))
+                                    {
+                                    <span class="wrapper">
+                                    <img width="100px" height="100px" class="upload-image" alt="Image" src="@base64">
+                                    </span>
+                                    <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
+                                    <div class="file-size">@fileSize</div>
+                                    <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                                    }
+                                    </Template>
+                                    </UploaderTemplates>
+
+                                    <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+
+                                    </SfUploader>
+                                    @if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl) && string.IsNullOrEmpty(base64))
+                                    {
+                                    <img src="@userProfileViewModel.AvatarUrl" class="upload-image" alt="Image" />
+                                    }
+                                    else
+                                    {
+                                    <div></div>
+                                    }
+                                    </div>
+
+                                    </div>
+
+                                    <!-- Right Panel: Profile Information -->
+                                    <div class="col-md-8">
+                                    <div class="form-group">
+                                    <label for="firstName">First Name</label>
+                                    <InputText @bind-Value="userProfileViewModel.FirstName" id="firstName" class="form-control" />
+                                    <ValidationMessage For="@(() => userProfileViewModel.FirstName)" />
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="lastName">Last Name</label>
+                                    <InputText @bind-Value="userProfileViewModel.LastName" id="lastName" class="form-control" />
+                                    <ValidationMessage For="@(() => userProfileViewModel.LastName)" />
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <InputText @bind-Value="userProfileViewModel.Email" id="email" class="form-control" />
+                                    <ValidationMessage For="@(() => userProfileViewModel.Email)" />
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="email">PhoneNumber</label>
+                                    <InputText @bind-Value="userProfileViewModel.PhoneNumber" id="phonenumber" class="form-control" />
+                                    <ValidationMessage For="@(() => userProfileViewModel.PhoneNumber)" />
+                                    </div>
+                                    <!-- Add more profile fields as needed -->
+                                    </div>
+                                    </div>
+
+                                    <div style="height:10px">
+                                    </div>
+                                    <SfProgressButton IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile">
+                                    <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                                    <SpinTemplate>
+                                    <div class="template"></div>
+                                    </SpinTemplate>
+                                    </ProgressButtonSpinSettings>
+                                    </SfProgressButton>
+                                    <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                    </EditForm> *@
+
+                                        <EditForm style="margin-top: 30px" Context="profileContext" EditContext="@editContext" OnValidSubmit="@HandleValidSubmitProfile">
+                                            <DataAnnotationsValidator />
+                                            @*                                             <ValidationSummary />
+                                        *@
+                                            <div class="row">
+                                                <!-- Left Panel: Avatar Image -->
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="avatar">Avatar</label>
+                                                        <SfUploader @ref="uploadObj" CssClass="@CssClass" AutoUpload="true" AllowedExtensions=".png, .jpg, .jpeg" AllowMultiple="false">
+                                                            <UploaderTemplates>
+                                                                <Template Context="uploadContext">
+                                                                    @if (!string.IsNullOrEmpty(base64))
+                                                                    {
+                                                                        <span class="wrapper">
+                                                                            <img width="100px" height="100px" class="upload-image" alt="Image" src="@base64">
+                                                                        </span>
+                                                                        <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
+                                                                        <div class="file-size">@fileSize</div>
+                                                                        <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                                                                    }
+                                                                </Template>
+                                                            </UploaderTemplates>
+                                                            <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+                                                        </SfUploader>
+                                                        @if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl) && string.IsNullOrEmpty(base64))
+                                                        {
+                                                            <img src="@userProfileViewModel.AvatarUrl" class="upload-image" alt="Image" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <div></div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <!-- Right Panel: Profile Information -->
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <label for="firstName">First Name</label>
+                                                        <InputText @bind-Value="userProfileViewModel.FirstName" id="firstName" class="form-control" />
+                                                        <ValidationMessage For="@(() => userProfileViewModel.FirstName)" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="lastName">Last Name</label>
+                                                        <InputText @bind-Value="userProfileViewModel.LastName" id="lastName" class="form-control" />
+                                                        <ValidationMessage For="@(() => userProfileViewModel.LastName)" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="email">Email</label>
+                                                        <InputText @bind-Value="userProfileViewModel.Email" id="email" class="form-control" />
+                                                        <ValidationMessage For="@(() => userProfileViewModel.Email)" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="email">PhoneNumber</label>
+                                                        <InputText @bind-Value="userProfileViewModel.PhoneNumber" id="phonenumber" class="form-control" />
+                                                        <ValidationMessage For="@(() => userProfileViewModel.PhoneNumber)" />
+                                                    </div>
+                                                    <!-- Add more profile fields as needed -->
+                                                </div>
+                                            </div>
+
+                                            <div style="height:10px"></div>
+                                            <SfProgressButton IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile" Disabled="!IsFormValid">
+                                                <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                                                    <SpinTemplate>
+                                                        <div class="template"></div>
+                                                    </SpinTemplate>
+                                                </ProgressButtonSpinSettings>
+                                            </SfProgressButton>
+                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                        </EditForm>
+                                    </ContentTemplate>
+                                </TabItem>
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="Change Password"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        <EditForm style="margin-top: 30px" Context="passwordContext" EditContext="changePasswordContext" OnValidSubmit="@HandleValidSubmit">
+                                            <DataAnnotationsValidator />
+                                            @*                                             <ValidationSummary />
+                                        *@
+                                            <div class="form-group">
+                                                <label for="currentPassword">Current Password</label>
+                                                <InputText @bind-Value="changePasswordViewModel.CurrentPassword" id="currentPassword" class="form-control" type="password" />
+                                                <ValidationMessage For="@(() => changePasswordViewModel.CurrentPassword)" />
+                                            </div>
+                                            <div style="height:10px">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="newPassword">New Password</label>
+                                                <InputText @bind-Value="changePasswordViewModel.NewPassword" id="newPassword" class="form-control" type="password" />
+                                                <ValidationMessage For="@(() => changePasswordViewModel.NewPassword)" />
+                                            </div>
+                                            <div style="height:10px">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="confirmPassword">Confirm Password</label>
+                                                <InputText @bind-Value="changePasswordViewModel.NewPasswordConfirm" id="confirmPassword" class="form-control" type="password" />
+                                                <ValidationMessage For="@(() => changePasswordViewModel.NewPasswordConfirm)" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <SfCheckBox @bind-Checked="changePasswordViewModel.LogoutAllDevice" Label="Logout from all devices"></SfCheckBox>
+                                            </div>
+
+                                            <div style="height:10px">
+                                            </div>
+
+                                            <SfProgressButton IsPrimary="true" Content="Change Password" OnClick="@HandleValidSubmit" Disabled="!IsFormValidChangePassword">
+                                                <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                                                    <SpinTemplate>
+                                                        <div class="template"></div>
+                                                    </SpinTemplate>
+                                                </ProgressButtonSpinSettings>
+                                            </SfProgressButton>
+                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                        </EditForm>
+                                    </ContentTemplate>
+
+                                </TabItem>
+                                @*    <TabItem>
+                            <ChildContent>
+                            <TabHeader Text="JavaScript"></TabHeader>
+                            </ChildContent>
+                            <ContentTemplate>
+                            <div>JavaScript (JS) is an interpreted computer programming language. It was originally implemented as part of web browsers so that client-side scripts could interact with the user, control the browser, communicate asynchronously, and alter the document content that was displayed.[5] More recently, however, it has become common in both game development and the creation of desktop applications.</div>
+                            </ContentTemplate>
+                            </TabItem> *@
+                            </TabItems>
+                        </SfTab>
+
+                        @*        <DialogTemplates>
+                    <FooterTemplate>
+
+                    <SfButton IsPrimary Type="Syncfusion.Blazor.Popups.ButtonType.Submit">Save</SfButton>
+                    <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                    </FooterTemplate>
+                    </DialogTemplates> *@
+
+                    </SfDialog>
+
+
+                    <SfDialog ID="defaultDialog" Width="350" CssClass="dialog-medium" style="height: 100%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visibility">
                         <DialogEvents OnOverlayModalClick="@OverlayClick"></DialogEvents>
                         <DialogTemplates>
                             <Header>Choose a Dialog Position</Header>
@@ -124,7 +357,17 @@
                                     <Template>
                                         <SfDropDownButton CssClass="customsfdropdrown e-caret-hide" style="background:inherit">
                                             <div class="e-avatar e-avatar-small image e-avatar-circle" style="display:flex;">
-                                                <img src="data:image/sjpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQApAMBIgACEQEDEQH/xAAcAAABBAMBAAAAAAAAAAAAAAAAAgMEBwEFBgj/xAA/EAABAwICBgkCBQIDCQAAAAABAAIDBBEFIQYSEzFBUQcUMlJhcYGRoSIjM0JiscEVchaC0QglNENTkqLC4f/EABoBAQADAQEBAAAAAAAAAAAAAAACAwQBBQb/xAAlEQEAAgIBBAEEAwAAAAAAAAAAAQIDERIEITFRBTM0QYEiIzL/2gAMAwEAAhEDEQA/ALo6u7mFkfYuXZ35KQo9V+VArrDbbikGEvOte1+aYKnR9hvkgYEZiIeTcDkl9YbbcVmo/Ccue0sxlmj2jldir99PEdQc3nJo9yEFZdL3STWQ4nUYBgEuwbE0NqaphO01+LGngALXO+91TRJcSXG5cbknMkpU0sk8r5p3l8sji97j+ZxNyUhHQhCEAhCEAp+DYxiGB18VdhVS+nqIz2mnJw5OHEeBUBCD1L0babQaWYGJnNDK+nsyribuDrdpv6TnbluXWmYOFrEXyXl/olxt+D6bUTS+1PWnq0wO76uyfR1vlemWZPaN2aOHeru5hZb9i989bkpCjVW9vqgX1hvIpGwLswRY5hMKczsjyQMdXdzCFJQghbR/eKch+4Tr/VbddI2T+78pcX2idplfcge2TO6FGc9wcQCQByUjas7wTDo3FxcBcHcgzG4veGvJIPAqtf8AaEldDodSwxts2atYHkeDXEfKsqNpY8OeLAcVwPTxC2p6P5pAc6epik93av8A7IPNyBnuW40NohiOlWFUhALX1LS7yb9R/ZXFpV0bYPjjn1FJfD6x354gNm883M/kWULZK1nUp1pNo3ChUWXZYn0Y6T0MhEFLFWx8HwSjP0dYpGGdG2k9dO1ktCKOL80tRI0ADyBJK7zr7OFvTkWtc5zWtGs5xs0DMk+AXS0vR9pXVQNmjwl7WOFxtJGsJ9Cbq5NE9CcJ0Zia+GPrFbb66qUAuv8Ap7o8l019/iqLZ9eFtcHt5cxXB8SweYRYpRS0zzu1xk7yO4+ihWXqfEsPpMUopKOvp2T08gs5jxf1HI+K8+6f6LnRbGurxOc+jnbtKd7t9r2LSeY/kKzHliyF8fHu56mnfSVMNTHm+GRsgF+LSD/C9mxhjqdsgAuWB1x5Lxa/sHyXsrC3j+kUbXH6zTRg+eqFaqL2j+8U7D9y+v8AVbddN7KTu/Kch+1faWF9yB3ZM7oUZ0jgcnGykbVneCYdE8m4FxwQJ2j+8ULOyf3flYQTVHqvyJPWH8m+yywme4fkByQMnddTI+w3ySOrs5uTZmc0lotllmgdqPwnLkekekFdoNjVORdxpXPaPFpDh8gLqmvMpDHWseS1WKRhtRqkazC0ZHioXvwjaVK8p0oToUw/rWk81cW3ZSU5seTn5D41leAy4rldFdG49HNIMYFKy1JVtjmh5MzdrMHkbHyIXVLLltyttqx11HcIQhVaWhCEIBcz0g6N/wCJdH5YIQOuwHa0zjxcN7fUZey6ZC7EzE7hyY3GnlNlLNJVNpC0smdKIixwsWuJtYjzXsSk1WshawjVYA3LwFlXbNGoKnpAnxuaFhZTU8bYvpFnSm93HmQLZ+K77CWXbM/OzSCPFbIyxa0RDJbHxrMtuo1Vvb6rHWH8m+yUwbe+vlq7rK1UYt4KazsjyTfVmc3JvbObkAMkEpCi9Yfyb7IQN2Kdpsi7yUlMVX5UD1xzUOQfW5JO5TY+w3yQRoQRKOSaxOn20Ye3NzOHMKXUfhOUVRtXlGnazqdtL423oWwrqYCITsFs7OA3ea16xXpxnTdS0WjYQhCgkEIQgEIR5IMgEmwzJ3Le0kGwpdU9q1z5qNHTMht9I2lhcnmn2dtvmtmLHx7yyZcnLtBNjyT9NlrXPJSFGqt7fVXKUi6hOH1HjmVhTWdkeSCHY8kKchAx1gd0+6w47ci2WqmE9Tb3IDq57w9koTBn02vbJPqC/wDEd5oHnSCb6ALX4rHVz3h7JEH4oUxBFfZsZie0uB3+S0k8ZikLTzyW6qPxPRRauNskRvkWi4Kqy05Qtx34y1aFhjmvYHNNwVlYWwIQhdApeHxAzCR4u1u7xKixgOmjjJsXmwW3jaGMDWbgrsNOU7U5b6jSQYzL9QNkbEtIdcWGacp/w/VLf2D5LYyGusDun3SXff3ZavNMp+l/N6IMdXPeHslCcN+nVNxkU+oLu0fMoH+sDun3WVGQgmbNndCan+3bUyunNtH3vhNy/dts87b0DW0fbtFSWMaWgkXNlHMMnd+U+2VjQGuNiN4QYlAYwlosQmBI++9PSvbI3VYbk8FFqJYqVmvUyxxNH5pHho+SglQgPZdwub703XGKKllLrC7SB4my51+n+jNNPHSNxNk88jw0Nga6QXJtm4DVHunauqkqZNZ5yG4DgkwRP5hq4pHwuy4bwpsVRG/InVPIpiqiv9YGfGyjeK829ZpOpenSYvXbalwHEe6Ylqmsybm5QUC+4ZqO0uER5TMOk/3lDLLm0HM8sl14aw2IAXJQxbNljvO9S243FhFHNUVz3CkhYXvIBJaByHHyW/DSa1efnvFrdm8lcWvLWmwSWvcXNu477WWioNMtHcWeOp4rTl7v+XKTE72eAVvIgXasjbOZv1gQQrdTCmJiUrZs7oTU/wBvV1Mr705to+98JqX7pGzztvR03tH95SWxtIGQUfYyd35T4lYAAXZoFbNndCFjbR974QgiJ6m3u9EvYM8VrNIcYo9G8KmxGtdqxMFrDtPdwaPEoJuJ4lR4VSPq8RqY6enZ2pJDYeXiVVWP9L8bJHMwHDxMLn79Vdo9GjP3Kr7SrSbEdKMQNViEhbG0/ZpmOOziHgOfMrSq6uP2otk9OqxLpD0pryR/U3UrDvbSNEfzv+VzklRUVTy6rqJqh53unkMhPqSmEuLtHyU9Qr3J3MWLCQRuI3hXvgNeMTwajrQbmWIa3924/N1Q53KzOirENpQVeHPOcL9owfpdv+Rf1Uckdk8U6nTu9+9Qp49m/LsncpqTJGHsLTx3LHlx86tuHJwsgeKk00X5z6JqOIukLTlq71OAAFgqMGLvuWjqMsRHGAuL6UsQ6vgkVE11n1cguP0NzPzZdoqf6RsQ69pLLE03ZRtEI5A73fJt6LfSNy8/JOocvYHIi48U9RYtiWGy62H4jWUpH/Rnc0e24+yaCYd2ir2fbtMN6UNJaIBs8sFa0b+sRWcfVtl32inSrhOIvZT4tH/Tah5ADnO1oif7uHqFRiPDIjxUJpEpxeYeuWSNewOa4OaRcEHIhRHbz5lUb0d6f1Gj80eH4nK6XCnuAa55JNMeY/TzHDgr4jZFMxsjHBzXtDgWm4IPEKq1dLq22YQpPV2LKikXrDmF586V9JnY5pE6kp5L0FAdmwA5PkHad/A8jzVuaZYt/Q9GcQxBptJHFqxf3u+lvyQvNgyHPxPFWY4/KrJP4CEIVykJcXaPkkLIOruQPLoNBcQ/p2k9I5zrRTkwyXPB27/ysudY4u3pYc5pDmOLXA3a4cCNyT4InUvQw3rTaV4+NHcPjqXU75ZJnFkIGTda18zwW30bmjxXB6PETY7eIOLRwdx+VrulCKB+hda+VpOzdGY7bw7XAH7rHkmYrOnp9JWt81ItG4mVc4dp7i9NiD56stqaeRw14OyGj9J4fKtOhqm1tDTVkTXtiqIxIzXbY2PgqEpGxvqoWT3MTpWh9u7cX+F6VZDEIWQtYBG1oa1o3ADcs/TWtO9vV+Zw4sXHhXUy0mIVbKGhqKyS2rBGXm/gFQU8rqieSeQ3fI9z3HxJuVbXSxVCgwOOjY7OtkAtx1W2cfnV91US9DHHZ83lnvpkJh3aKW55BSCb5qxUwhCEdZV1dCmkzq3D5cCrH3lomh1OXHN0XL/Ll6EKlFu9C8Vdg2lOG1gJ2e2Eco5sf9J/e/ooWjcJVnUvUGsOYQoJ35IVDSrvpzn2GAUFIH/8RVa7gOIa0/yQqWVkdOldt9JqKhBNqWk1yPF7v9Gj3Vbq+kdma8/yCEIU0QhCEcPMGSyksOVkpBbnQ5iW2wmrw2R31Usu0jH6H/8A0H3UzpdqBFouyG9tvUsbbmBd38Kv+jbE/wCm6XUms4iGqBp5M+fZP/cB7rqumqoszCqTm6SX2AH8rH1P8ay9b4mOfU0j1KrXHI2yNsvBek8HqRV4RRVIzE1PHJz3tC82lXrofiUdPoBSVsxsykpXa9+TL/6LJ0v+ph7nz1f6q29SrrpVxPr2lT4GOvHQxiEf3HN38D0XHpyqqJKuqmqZjeSaR0jz4uNz+6aXrVjUPjpnckSDim0p7rnwSV0CEIQCw/WDCWEhwF2kcCsoQep8FeK7B6GrbICJ6eOQHzaChanovqBU6BYOb5xQ7E/5CW/sAhZp8tUeFLdJ0r5tOsVMhuWOYweADAuXQhaK+Ga3kIQhdcCEIRxlu9PrCEGWyvgcJonaskZDmkcCMwu56XJ3zYzhmud9A19hzc43/YIQsnW/Te18D93+nDHJd7HUyxdD8rGOsH1pid/aXgkeqELH0f1XufPfa/uHArDtyyheu+JMcUIQjoQhCAWRmc0IQXj0NVEn+DGs1smVUoHlcH+UIQq58rY8P//Z" width="200" height="300">
+
+                                                @if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl))
+                                                {
+                                                    <img style="height: 80% !important" src="@userProfileViewModel.AvatarUrl" alt="Avatar" />
+
+                                                }
+                                                else
+                                                {
+                                                    <img src="data:image/sjpeg;base64,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" width="200" height="300">
+                                                }
+
                                             </div>
 
                                             <DropDownMenuItems>
@@ -164,7 +407,7 @@
                 }
                 else
                 {
-                    <SfSpinner Size="40" Label="Material" Type="SpinnerType.Material" Visible="true"></SfSpinner>
+                    <SfSpinner Size="40" Label="Loading" Type="SpinnerType.Material" Visible="true"></SfSpinner>
                 }
             </div>
         </div>
@@ -180,13 +423,53 @@
     // [CascadingParameter]
     // public HttpContext? HttpContext { get; set; }
 
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
     SfSidebar sidebarObj;
     [Inject] protected AccountApiClient accountApiClient { get; set; }
     [Inject] protected RedisUserRepository redisUserRepo { get; set; }
     [Inject] protected IEventBus eventBus { get; set; }
     public UserProfileViewModel? userProfileViewModel = null;
+    private UpdatePasswordViewModel changePasswordViewModel = new UpdatePasswordViewModel();
+
     private string themeName;
     private bool Visibility { get; set; } = false;
+
+    private SfUploader uploadObj { get; set; }
+    public string CssClass = "custom-file";
+    private string base64 { get; set; }
+    private string fileSize { get; set; }
+    private string ToastPosition = "Right";
+    public bool IsFormValid = false;
+    public bool IsFormValidChangePassword = false;
+
+    private IBrowserFile selectedFile;
+    private EditContext editContext;
+    private EditContext changePasswordContext;
+
+    //End:Hidden
+    private async Task OnChange(UploadChangeEventArgs args)
+    {
+        base64 = string.Empty;
+        foreach (var file in args.Files)
+        {
+            selectedFile = file.File;
+            MemoryStream memoryStream = new MemoryStream();
+            using var fileStream = file.File.OpenReadStream(long.MaxValue);
+            await fileStream.CopyToAsync(memoryStream);
+            byte[] bytes = memoryStream.ToArray();
+            base64 = "data:image/png;base64," + Convert.ToBase64String(bytes);
+            fileSize = await uploadObj.BytesToSizeAsync(file.FileInfo.Size);
+        }
+    }
+
+    private async Task onFileRemove()
+    {
+        await uploadObj.RemoveAsync();
+        base64 = string.Empty;
+        fileSize = string.Empty;
+    }
 
     HttpClient httpClient = new HttpClient();
     private void OnClicked()
@@ -195,20 +478,90 @@
     }
     SfDialog DialogObj;
 
+    SfDialog ProfileDialogObj;
+
+    private SfToast toast;
+
+
+    private async Task HandleValidSubmit()
+    {
+        if (!changePasswordContext.Validate())
+        {
+            return;
+        }
+
+        var response = await accountApiClient.UpdatePassword(changePasswordViewModel);
+        if (response.IsSuccessStatusCode)
+        {
+
+            await ProfileDialogObj.HideAsync();
+
+            var toastModel = new ToastModel
+                {
+                    Title = "Success",
+                    Content = response.Message,
+                    CssClass = "e-toast-success"
+                };
+            await toast.ShowAsync(toastModel);
+        }
+        else
+        {
+            var toastModel = new ToastModel
+                {
+                    Title = "Error",
+                    Content = response.Message,
+                    CssClass = "e-toast-danger"
+                };
+            await toast.ShowAsync(toastModel);
+        }
+    }
+
+    private async Task HandleValidSubmitProfile()
+    {
+
+        if (!editContext.Validate())
+        {
+            return;
+        }
+
+        using var stream = selectedFile?.OpenReadStream();
+        var response = await accountApiClient.UploadProfilePictureWithDataAsync(stream!, selectedFile?.Name, userProfileViewModel);
+        if (response.IsSuccessStatusCode)
+        {
+
+            await ProfileDialogObj.HideAsync();
+
+            await sessionStorage.RemoveItemAsync("userProfileData");
+
+            var toastModel = new ToastModel
+                {
+                    Title = "Success",
+                    Content = response.Message,
+                    CssClass = "e-toast-success"
+                };
+            await toast.ShowAsync(toastModel);
+        }
+        else
+        {
+            var toastModel = new ToastModel
+                {
+                    Title = "Error",
+                    Content = response.Message,
+                    CssClass = "e-toast-danger"
+                };
+            await toast.ShowAsync(toastModel);
+        }
+    }
+
     private async void cancelclick(object args)
     {
         await DialogObj.HideAsync();
     }
 
-    // private async void okclick(object args)
-    // {
-    //     // await LogOutService.LogOutAsync(httpContextAccessor.HttpContext!);
-
-    //     // await httpClient.PostAsync("https://localhost:7221/logout", null);
-
-    //     // _navigationManager.Refresh(true);
-
-    // }
+    private async void cancelprofileclick(object args)
+    {
+        await ProfileDialogObj.HideAsync();
+    }
 
 
     private async void select(MenuEventArgs args)
@@ -216,6 +569,11 @@
         if (args.Item.Text == "Logout")
         {
             await DialogObj.ShowAsync();
+        }
+
+        if (args.Item.Text == "User")
+        {
+            await ProfileDialogObj.ShowAsync();
         }
     }
 
@@ -237,6 +595,17 @@
 
     }
 
+    private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        IsFormValid = editContext.Validate();
+    }
+
+    private void HandlePasswordFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        IsFormValidChangePassword = changePasswordContext.Validate();
+    }
+
+
     protected override async void OnInitialized()
     {
 
@@ -253,6 +622,14 @@
 
 
             await sessionStorage.SetItemAsStringAsync("userProfileData", JsonConvert.SerializeObject(userProfile.Result));
+
+            editContext = new EditContext(userProfileViewModel);
+            editContext.OnFieldChanged += HandleFieldChanged;
+            IsFormValid = editContext.Validate();
+
+            changePasswordContext = new EditContext(changePasswordViewModel);
+            changePasswordContext.OnFieldChanged += HandlePasswordFieldChanged;
+            // IsFormValidChangePassword = changePasswordContext.Validate();
 
             _navigationManager.NavigateTo(userProfile.Result.LastPageVisited);
         }
@@ -271,6 +648,10 @@
         this.Visibility = false;
     }
 
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
 
     public async void ToolbarClicked(Syncfusion.Blazor.Navigations.ClickEventArgs args)
 
@@ -320,16 +701,10 @@
         height: 500px;
     }
 
-    /*     #wrapper .sidebar-menu .e-menu-container {
-                                                                                                                                                                                                                                        border: 0px;
-                                                                                                                                                                                                                                        height: 1000px;
-                                                                                                                                                                                                                                    } */
-
     #maintext .content {
         padding: 15px;
         background: rgba(var(--color-sf-background));
         color: rgba(var(--color-sf-on-background));
-        height: 1000px;
         overflow-y: auto;
     }
 
@@ -565,4 +940,196 @@
         color: rgba(var(--color-sf-on-background));
     }
 
+    .control_wrapper {
+        width: 1100px;
+    }
+
+    .custom-file.e-control-wrapper {
+        margin: 5px 0 -8px 0;
+    }
+
+    .custom-file .e-file-select-wrap {
+        padding: 0px;
+        margin-left: -100px
+    }
+
+    .custom-file button.e-css.e-btn.e-upload-browse-btn {
+        margin-left: 130px;
+        background: none !important;
+        border: none;
+        padding: 0 !important;
+        font-family: inherit;
+        color: #ff4081;
+        text-decoration: underline;
+        cursor: pointer;
+        box-shadow: none;
+        text-transform: capitalize;
+    }
+
+        .custom-file button.e-css.e-btn.e-upload-browse-btn:hover {
+            background: none !important;
+            border: none;
+            padding: 0 !important;
+            font-family: inherit;
+            color: #ff4081;
+            text-decoration: underline;
+            cursor: pointer;
+            box-shadow: none;
+            text-transform: capitalize;
+        }
+
+    #dropArea .e-upload-files .e-file-delete-btn.e-icons,
+    #dropArea .e-upload-files .e-file-remove-btn.e-icons,
+    #dropArea .e-upload-files .e-file-abort-btn {
+        top: 120px;
+        background-color: white;
+        border-radius: 50%;
+        font-size: 12px;
+        left: 80px;
+    }
+
+    #dropArea .e-upload-files li .e-file-remove-btn.e-icons.e-upload-icon {
+        font-size: 14px;
+        left: 20px;
+    }
+
+    #dropArea .e-upload-files li:hover .e-icons {
+        visibility: visible;
+    }
+
+    #dropArea .e-upload-files li .e-icons {
+        visibility: hidden;
+    }
+
+    #dropArea .e-upload .e-upload-files .e-icons.e-upload-icon {
+        font-family: 'Uploader_Icon';
+        speak: none;
+        font-size: 16px;
+        left: 20px;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+        #dropArea .e-upload .e-upload-files .e-icons.e-upload-icon::before {
+            content: '\e700';
+        }
+
+    #dropArea .e-upload .e-upload-files .e-icons:not(.e-uploaded):hover {
+        background-color: #e6e6e6;
+        border-color: #adadad;
+        color: #333;
+    }
+
+    #dropArea .e-upload .e-upload-files .e-upload-file-list {
+        border: 0;
+        display: inline-block;
+        width: 165px;
+    }
+
+    .upload-image {
+        width: 150px;
+        height: 150px;
+        display: inline-flex;
+        background-size: contain;
+        margin: 7px;
+        text-align: center;
+        line-height: 10;
+        border-radius: 5px;
+    }
+
+        .upload-image:after {
+            content: "";
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: inherit;
+            height: inherit;
+            background: lightgray url('http://via.placeholder.com/300?text=Loading...') no-repeat center;
+            color: transparent;
+            border-radius: 5px;
+        }
+
+    div.file-name {
+        color: rgb(14 121 32);
+        font-size: 14px;
+        padding: 3px 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 90%;
+        white-space: nowrap;
+    }
+
+    div.file-size {
+        font-size: 13px;
+        padding: 3px 10px;
+        overflow: hidden;
+    }
+
+    .progressbar {
+        background: #ff4081;
+        border: none;
+        border-radius: 10px;
+        height: 4px;
+        margin-left: 7px;
+        width: 90%;
+        top: -60px;
+        position: relative;
+    }
+
+    #dropArea progress {
+        border: none;
+        background: #fff;
+    }
+
+    progress::-webkit-progress-bar {
+        border: none;
+        background-color: #ffffff;
+    }
+
+    .material progress::-moz-progress-bar {
+        border-radius: 2px;
+        background-color: #ff4081;
+    }
+
+    .material #dropArea span a {
+        color: #ff4081;
+    }
+
+    @@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        #dropArea .e-upload .e-upload-files .e-file-remove-btn.e-icons, .e-bigger #dropArea .e-upload .e-upload-files .e-file-remove-btn.e-icons {
+            padding: 18px 25px 18px 12px;
+        }
+    }
+
+    @@keyframes custom-rolling {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+    }
+
+    .template {
+        border: 2px solid green;
+        border-style: dotted;
+        border-radius: 50%;
+        border-top-color: transparent;
+        border-bottom-color: transparent;
+        height: 16px;
+        width: 16px;
+    }
+
+    .template {
+        -webkit-animation: custom-rolling 2s linear infinite;
+        animation: custom-rolling 2s linear infinite;
+    }
 </style>

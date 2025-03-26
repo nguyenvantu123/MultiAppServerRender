@@ -51,7 +51,6 @@ namespace BlazorIdentity.Files.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("FileUrl")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<Guid?>("FolderId")

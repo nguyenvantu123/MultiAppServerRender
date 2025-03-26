@@ -1,4 +1,6 @@
-﻿namespace BlazorIdentity.Users.Services
+﻿using System.Text.RegularExpressions;
+
+namespace BlazorIdentity.Users.Services
 {
     public class RedirectService : IRedirectService
     {

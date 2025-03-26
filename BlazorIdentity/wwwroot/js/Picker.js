@@ -16,7 +16,7 @@
         var value = valueAccessor();
         if (ko.utils.unwrapObservable(value)) {
             $(element).modal('show');
-        } else {&
+        } else {
             $(element).modal('hide');
         }
     }

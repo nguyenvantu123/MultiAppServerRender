@@ -1,5 +1,12 @@
-﻿@inject WebhooksClient WebhooksClient
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authorization
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@inject ILogger<RegisteredHooks> Logger
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpClientFactory Factory
 
+
+@attribute [Authorize]
 @if (webhooks is null)
 {
     <div class="grid-placeholder">Loading...</div>
@@ -11,6 +18,14 @@ else if (webhooks.Any())
         <PropertyColumn Sortable="@true" Title="Destination" Property="@(hook => hook.DestUrl)" />
         <PropertyColumn Sortable="@true" Title="Token" Property="@(hook => hook.Token)" />
     </QuickGrid> *@
+
+    <SfGrid DataSource="@webhooks" AllowPaging="true" AllowSorting="true">
+        <GridColumns>
+            <GridColumn Field=@nameof(WebhookResponse.Date) HeaderText="Date" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(WebhookResponse.DestUrl) HeaderText="DestUrl" Width="150"></GridColumn>
+            <GridColumn Field=@nameof(WebhookResponse.Token) HeaderText="Token" TextAlign="TextAlign.Right" Width="130"></GridColumn>
+        </GridColumns>
+    </SfGrid>
 }
 else
 {
@@ -18,10 +33,12 @@ else
 }
 
 @code {
-    IQueryable<WebhookResponse>? webhooks;
+    List<WebhookResponse>? webhooks;
 
     protected override async Task OnInitializedAsync()
     {
-        webhooks = (await WebhooksClient.LoadWebhooks()).AsQueryable();
+        // Http = Factory.CreateClient("callApi");
+        webhooks = await WebhooksClient.LoadWebhooks();
+        Logger.LogError("Xong webhooks:" + webhooks.Count().ToString());
     }
 }

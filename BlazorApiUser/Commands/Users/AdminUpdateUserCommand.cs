@@ -30,7 +30,7 @@ namespace BlazorApiUser.Commands.Users
 
         public bool IsActive { get; set; }
 
-        public string AvatarUrl { get; set; }
+        public string? AvatarUrl { get; set; }
 
         public bool RememberMe { get; set; }
         //public AdminUpdateUserCommand()

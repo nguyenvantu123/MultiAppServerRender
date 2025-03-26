@@ -1,4 +1,5 @@
 ﻿@using BlazorIdentity.Localization
+@using BlazorIdentity.Users.Constants
 @using Duende.IdentityServer.Extensions
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -26,8 +27,11 @@
     <title>Duende IdentityServer</title>
     <link rel="icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
     <link rel="shortcut icon" type="image/x-icon" href="~/images/skoruba-icon.png" />
-    <script src="~/js/FormMvcHelpers.js" asp-append-version="true"></script>
+
+    <script src="~/js/knockout-3.5.1.js" asp-append-version="true"></script>
     <script src="~/js/Picker.js" asp-append-version="true"></script>
+    <script src="~/js/CryptoUtils.js" asp-append-version="true"></script>
+    <script src="~/js/FormMvcHelpers.js" asp-append-version="true"></script>
 
     <link href="~/dist/css/bundle.min.css" asp-append-version="true" rel="stylesheet" />
     @await Html.PartialAsync("Common/ThemeResources")
@@ -42,7 +46,7 @@
         <h3 class="menu-logo my-0 mr-md-auto font-weight-normal"><a class="logo" asp-area="" asp-controller="Home" asp-action="Index">Duende IdentityServer</a></h3>
 
         <!--Menu item -->
-        @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(name) && (User.IsInRole("Administrator")))
+        @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(name) && (User.IsInRole(role: DefaultRoleNames.Administrator)))
         {
             <!--Menu item -->
             <div class="menu-item my-2 my-md-0 mr-md-3 dropdown">
@@ -81,10 +85,6 @@
                 <div class="dropdown-menu">
                     <a class="dropdown-item" asp-controller="Manage" asp-action="Index">@Localizer["ManageProfile"]</a>
                     <a class="dropdown-item" asp-controller="Manage" asp-action="PersonalData">@Localizer["ManagePersonalData"]</a>
-                    @*   @if (hasExternalLogins)
-                {
-                <a class="dropdown-item" asp-controller="Manage" asp-action="ExternalLogins">@Localizer["ExternalLogins"]</a>
-                } *@
                     <a class="dropdown-item" asp-controller="Manage" asp-action="TwoFactorAuthentication">@Localizer["2FA"]</a>
                     <a class="dropdown-item" asp-controller="Manage" asp-action="ChangePassword">@Localizer["ChangePassword"]</a>
                     <a class="dropdown-item" asp-controller="Grants" asp-action="Index">@Localizer["Grants"]</a>
@@ -121,9 +121,7 @@
         </footer>
     </div>
 
-    <script src="~/js/knockout-3.5.1.js" asp-append-version="true"></script>
     <script src="~/js/bundle.min.js" asp-append-version="true"></script>
-    <script src="~/js/CryptoUtils.js" asp-append-version="true"></script>
 
     @await Html.PartialAsync("Common/Notification")
     @await RenderSectionAsync("scripts", required: false)

@@ -7,6 +7,7 @@ using BlazorIdentityApi.UI.Api.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 
 namespace BlazorIdentityApi.Controllers
 {
@@ -15,6 +16,7 @@ namespace BlazorIdentityApi.Controllers
     [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
     [Produces("application/json", "application/problem+json")]
     [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+
     public class PersistedGrantsController : ControllerBase
     {
         private readonly IPersistedGrantService _persistedGrantsService;

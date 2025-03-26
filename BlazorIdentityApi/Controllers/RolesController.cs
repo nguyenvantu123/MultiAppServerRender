@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using BlazorIdentityApi.Models;
+using Shared;
 
 namespace BlazorIdentityApi.Controllers
 {

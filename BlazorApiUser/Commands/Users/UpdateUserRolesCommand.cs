@@ -1,4 +1,4 @@
-﻿using BlazorIdentity.Users.Models;
+﻿using BlazorApiUser.Models;
 using MediatR;
 
 namespace BlazorApiUser.Commands.Users

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: blazorfiles
-        image: registry.digitalocean.com/multiappserverregistry/multiappserver/blazorfiles:latest
+        image: nguyenvantu/blazorfiles:2a7e8c115b31f741fb69f1005e9c17bb49a858e801c7ee4eaa952cdc42e46ea7
         imagePullPolicy: IfNotPresent
         ports:
         - name: http

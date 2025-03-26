@@ -1,6 +1,5 @@
 using AutoMapper;
-using BlazorIdentity.Models;
-using BlazorIdentity.Users.Models;
+using BlazorApiUser.Models;
 using Shared.Models;
 
 

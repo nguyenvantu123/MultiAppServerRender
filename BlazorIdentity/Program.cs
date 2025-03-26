@@ -8,6 +8,7 @@ using LazyCache;
 using Finbuckle.MultiTenant;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System;
+using System.Diagnostics;
 using Finbuckle.MultiTenant.Abstractions;
 using BlazorIdentity.Users.Configuration;
 using BlazorIdentity.Users.Services;
@@ -46,10 +47,31 @@ using MultiAppServer.EventBus.Abstractions;
 using Aspire.Pomelo.EntityFrameworkCore.MySql;
 using CatalogDb;
 using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Interfaces;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
+using Log = Serilog.Log;
+using Duende.IdentityServer.AspNetIdentity;
+using Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+    .MinimumLevel.Override("System", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
+    .CreateLogger();
+
+builder.Logging.AddSerilog();
 
 var configuration = builder.Configuration;
 
@@ -68,6 +90,23 @@ builder.Services.AddControllers(options =>
     options.Conventions.Add(new CustomActionNameConvention(parameterTransformer));
     options.Conventions.Add(new RouteTokenTransformerConvention(parameterTransformer));
 });
+
+//builder.Services.AddAuthorizationPolicies(options.Admin, Security.AuthorizationConfigureAction); 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
+        policy => policy.RequireRole(DefaultRoleNames.Administrator));
+
+    //authorizationAction?.Invoke(options);
+});
+
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
+//        policy =>
+//            policy.RequireRole(DefaultRoleNames.Administrator);
+//});
+
 
 var profileTypes = new HashSet<Type>
             {
@@ -111,15 +150,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
 
 var smtpConfiguration = configuration.GetSection(nameof(SmtpConfiguration)).Get<SmtpConfiguration>();
 var sendGridConfiguration = configuration.GetSection(nameof(SendGridConfiguration)).Get<SendGridConfiguration>();
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
-        policy =>
-            policy.RequireAssertion(context => context.User.HasClaim(c => c.Value == "Administrator")
-    ));
-});
-
 
 if (sendGridConfiguration != null && !string.IsNullOrWhiteSpace(sendGridConfiguration.ApiKey))
 {
@@ -233,8 +263,8 @@ builder.Services.Configure<RequestLocalizationOptions>(
     });
 
 builder.Services.AddIdentityServer()
-                .AddConfigurationStore<ConfigurationDbContext>()
-                .AddOperationalStore<PersistedGrantDbContext>()
+                .AddConfigurationStore<ApplicationDbContext>()
+                .AddOperationalStore<ApplicationDbContext>()
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddProfileService<ProfileService>();
 

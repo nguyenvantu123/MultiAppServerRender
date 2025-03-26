@@ -15,9 +15,6 @@ internal static class Extensions
 
         builder.AddRabbitMqEventBus("EventBus").AddEventBusSubscriptions();
 
-        //builder.AddSqlServerDbContext<WebhooksContext>("webhooksdb");
-        //builder.Services.AddMigration<WebhooksContext>();
-
         builder.AddMySqlDbContext<WebhooksContext>("webhooksdb");
 
 

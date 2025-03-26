@@ -6,15 +6,17 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BlazorIdentity.Interfaces;
 using Duende.IdentityServer.EntityFramework.Entities;
 using System.Reflection;
+using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Interfaces;
 
 namespace BlazorIdentity.Data
 {
 
     public class ApplicationDbContext : MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, Guid,
         ApplicationUserClaim, ApplicationUserRole, IdentityUserLogin<Guid>,
-        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext
+        ApplicationRoleClaim, IdentityUserToken<Guid>>, IMultiTenantDbContext, IPersistedGrantDbContext,IConfigurationDbContext
     {
-        public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions options) : base(multiTenantContextAccessor, options)
+        public ApplicationDbContext(IMultiTenantContextAccessor multiTenantContextAccessor, DbContextOptions<ApplicationDbContext> options) : base(multiTenantContextAccessor, options)
         {
             TenantInfo = (AppTenantInfo)multiTenantContextAccessor.MultiTenantContext.TenantInfo ?? new AppTenantInfo { Id = DefaultTenant.DefaultTenantId, Identifier = DefaultTenant.DefaultTenantId, Name = DefaultTenant.DefaultTenantId };
             TenantNotSetMode = TenantNotSetMode.Overwrite;

@@ -13,6 +13,7 @@
     <PackageReference Include="Duende.IdentityServer" Version="7.1.0" />
     <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="7.1.0" />
     <PackageReference Include="Finbuckle.MultiTenant" Version="9.0.0" />
+    <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Finbuckle.MultiTenant.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FormatWith" Version="3.0.1" />
@@ -25,6 +26,7 @@
     <ProjectReference Include="..\Aspire.Microsoft.EntityFrameworkCore.SqlServer\Aspire.Microsoft.EntityFrameworkCore.SqlServer.csproj" />
     <ProjectReference Include="..\Aspire.Pomelo.EntityFrameworkCore.MySql\Aspire.Pomelo.EntityFrameworkCore.MySql.csproj" />
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -275,6 +275,9 @@ namespace BlazorIdentity.Data.Migrations.ApplicationDb
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
+                    b.Property<string>("UserType")
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -444,10 +447,19 @@ namespace BlazorIdentity.Data.Migrations.ApplicationDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("longtext");
+
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
                     b.Property<string>("Culture")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FirstName")
                         .HasColumnType("longtext");
 
                     b.Property<bool>("IsDarkMode")
@@ -459,11 +471,17 @@ namespace BlazorIdentity.Data.Migrations.ApplicationDb
                     b.Property<bool>("IsNavOpen")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("LastName")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("LastPageVisited")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("LastUpdatedDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("TenantId")
                         .IsRequired()

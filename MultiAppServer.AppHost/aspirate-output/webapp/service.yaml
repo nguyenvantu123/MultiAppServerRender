@@ -4,7 +4,8 @@ kind: Service
 metadata:
   name: webapp
 spec:
-  type: LoadBalancer
+  type: ClusterIP
+  sessionAffinity: ClientIP
   selector:
     app: webapp
   ports:

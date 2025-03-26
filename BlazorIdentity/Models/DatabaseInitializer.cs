@@ -56,7 +56,9 @@ namespace BlazorIdentity.Users.Models
         {
             if ((await _userManager.FindByNameAsync(DefaultUserNames.User)) == null)
             {
-                await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Multiapp", "nguyenvantu0207943@gmail.com", "0334336232");
+                await EnsureRoleAsync(DefaultRoleNames.User, _entityPermissions.GetAllPermissionValues());
+
+                await CreateUserAsync(DefaultUserNames.User, UserConstants.DefaultPassword, "User", "Multiapp", "nguyenvantu0207943@gmail.com", "0334336232", new string[] { DefaultRoleNames.User }, DefaultRoleNames.User);
             }
 
             if (_tenantStoreDbContext.AppTenantInfo.Count() < 2)
@@ -91,7 +93,7 @@ namespace BlazorIdentity.Users.Models
         public async Task EnsureAdminIdentitiesAsync()
         {
             await EnsureRoleAsync(DefaultRoleNames.Administrator, _entityPermissions.GetAllPermissionValues());
-            await CreateUserAsync(DefaultUserNames.Administrator, UserConstants.DefaultPassword, "Admin", "MultiApp", "nguyenvantu020794@gmail.com", "0334336232", new string[] { DefaultRoleNames.Administrator });
+            await CreateUserAsync(DefaultUserNames.Administrator, UserConstants.DefaultPassword, "Admin", "MultiApp", "nguyenvantu020794@gmail.com", "0334336232", new string[] { DefaultRoleNames.Administrator }, DefaultRoleNames.Administrator);
 
             ApplicationRole adminRole = await _roleManager.FindByNameAsync(DefaultRoleNames.Administrator);
             var AllClaims = _entityPermissions.GetAllPermissionValues().Distinct();
@@ -138,10 +140,8 @@ namespace BlazorIdentity.Users.Models
             }
         }
 
-        private async Task<ApplicationUser> CreateUserAsync(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string[] roles = null)
+        private async Task<ApplicationUser> CreateUserAsync(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string[] roles = null, string userType = null)
         {
-
-            //var dataDCMM = _context.Users.Where(x => x.UserName == userName).Select(x => x.Id).FirstOrDefault();
 
             ApplicationUser applicationUser = await _userManager.FindByNameAsync(userName);
 
@@ -159,7 +159,8 @@ namespace BlazorIdentity.Users.Models
                     CreatedOn = DateTime.Now,
                     LastModifiedBy = "super admin",
                     LastModifiedOn = DateTime.Now,
-                    IsDeleted = false
+                    IsDeleted = false,
+                    UserType = userType
                 };
 
                 var result = _userManager.CreateAsync(applicationUser, password).Result;
