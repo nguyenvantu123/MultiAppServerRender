@@ -43,7 +43,7 @@ on:
       branches: [ "dev" ]
       paths:
            - "WebApp/**"
-           - ".github/workflows/dotnet-desktop.yml"
+           - ".github/workflows/dotnet-desktop.yaml"
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -66,13 +66,13 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
             dotnet-version: 8.0.x
-      
-      # - name: Restore workload
-      #   run : dotnet workload restore
- 
-      # - name : Install Aspire
-      #   run: dotnet tool install --global Aspire
 
+      - name : Install Aspire
+        run: dotnet workload install aspire
+      
+      - name: Restore workload
+        run : dotnet workload restore
+ 
       - name: Restore dependencies
         run: dotnet restore
 
