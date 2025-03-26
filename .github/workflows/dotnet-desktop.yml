@@ -56,12 +56,6 @@ jobs:
         with:
             dotnet-version: 8.0.x
 
-      - name: Restore workload
-        run : dotnet workload restore
-
-      - name : Install Aspire
-        run: dotnet tool install --global Aspire
-
       - name: Restore dependencies
         run: dotnet restore
 
