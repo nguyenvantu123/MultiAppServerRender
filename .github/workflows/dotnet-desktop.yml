@@ -1,4 +1,4 @@
-﻿# This workflow uses actions that are not certified by GitHub.
+# This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
@@ -36,22 +36,22 @@
 # For a complete CI/CD sample to get started with GitHub Action workflows for Desktop Applications,
 # refer to https://github.com/microsoft/github-actions-for-desktop-apps
 
-name: WebApp Deploy
+name: Build Code
 
 on:
-  push:
-      branches: [ "dev" ]
-      paths:
-           - "WebApp/**"
-           - ".github/workflows/dotnet-desktop.yml"
   pull_request:
+    branches: [ "dev" ]
     types: [opened, synchronize, reopened]
 
 jobs:
    build-test-sonar:
     runs-on: windows-latest
-    steps:
 
+    env:
+     DOTNET_VERSION: 8.0.x
+
+    steps:
+      - uses: actions/checkout@v2
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -62,17 +62,38 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+      - name: Restore NuGet Packages
+        uses: actions/cache@v3
         with:
-            dotnet-version: 8.0.x
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-nuget
+          restore-keys: |
+            ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-
 
-      - name : Install Aspire
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache Aspire Workload
+        uses: actions/cache@v3
+        with:
+          path: ~/.dotnet/workloads
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
+          restore-keys: |
+            ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
+
+      - name: Install .NET Aspire Workload
         run: dotnet workload install aspire
-      
-      - name: Restore workload
-        run : dotnet workload restore
- 
+
+      - name: Save NuGet Packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ env.CACHE_KEY }}
+          save-paths: |
+            ~/.nuget/packages
+
       - name: Restore dependencies
         run: dotnet restore
 
@@ -82,16 +103,47 @@ jobs:
       - name: Run Unit Tests
         run: dotnet test --no-build --configuration Release --logger trx --results-directory "TestResults"
 
-      - name: Install SonarScanner
-        run: dotnet tool install --global dotnet-sonarscanner
-
-      - name: Run SonarQube Analysis
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
         run: |
-         .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyenvantu123_MultiAppServerRender" /o:"nguyenvantu123" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"19nguyenvantu94_MultiAppServerRender" /o:"19nguyenvantu94" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      - name: Update GitHub Status
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const { context } = require('@actions/github');
+            const status = context.payload.check_run.conclusion === 'success' ? 'success' : 'failure';
+            await github.repos.createCommitStatus({
+              ...context.repo,
+              sha: context.sha,
+              state: status,
+              context: 'CI Pipeline',
+              description: status === 'success' ? 'All checks passed' : 'Some checks failed',
+              target_url: context.payload.check_run.html_url
+            });
 
 
    # deploy:
