@@ -38,7 +38,6 @@ public class UsersApiTests
     private readonly Mock<IMultiTenantContextAccessor> _multiTenantContextAccessorMock;
     private readonly UserServices _userServices;
 
-    private readonly Mock<SignInManager<ApplicationUser>> _signInManagerMock;
 
 
     public UsersApiTests()
@@ -48,8 +47,6 @@ public class UsersApiTests
         _roleManagerMock = new Mock<RoleManager<ApplicationRole>>(
             Mock.Of<IRoleStore<ApplicationRole>>(), null, null, null, null);
         // mock for  SignInManager 
-        _signInManagerMock = new Mock<SignInManager<ApplicationUser>>(
-           Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null);
         _mediatorMock = new Mock<IMediator>();
         _mapperMock = new Mock<IMapper>();
         _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
@@ -66,7 +63,7 @@ public class UsersApiTests
             Mock.Of<ILogger<UserServices>>(),
             _userManagerMock.Object,
             _roleManagerMock.Object,
-            _signInManagerMock.Object,
+            null, // Add the missing SignInManager mock here
             _tenantStoreDbContextMock.Object,
             _mapperMock.Object,
             _httpContextAccessorMock.Object,
