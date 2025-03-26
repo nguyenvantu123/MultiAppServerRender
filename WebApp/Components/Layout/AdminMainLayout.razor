@@ -36,17 +36,6 @@
                         </ChildContent>
                     </SfSidebar>
 
-                    @*        <SfDialog Width="350" ShowCloseIcon="true" IsModal="true" @bind-Visible="@IsVisible">
-                <DialogTemplates>
-                <Header> Logout </Header>
-                <Content> Are you want to logout all services? </Content>
-                </DialogTemplates>
-                <DialogButtons>
-                <DialogButton Content="OK" IsPrimary="true" OnClick="@OkClick" />
-                <DialogButton Content="Cancel" OnClick="@CancelClick" />
-                </DialogButtons>
-                </SfDialog> *@
-
                     <SfDialog Content="Are you want to logout all services?" Width="350" Header="Logout" Visible="false" @ref="DialogObj">
                         <DialogPositionData X="center" Y="center"></DialogPositionData>
 
