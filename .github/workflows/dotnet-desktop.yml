@@ -43,7 +43,7 @@ on:
       branches: [ "dev" ]
       paths:
            - "WebApp/**"
-           - ".github/workflows/dotnet-desktop.yaml"
+           - ".github/workflows/dotnet-desktop.yml"
   pull_request:
     types: [opened, synchronize, reopened]
 
