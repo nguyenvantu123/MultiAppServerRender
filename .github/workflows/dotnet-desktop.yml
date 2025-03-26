@@ -67,8 +67,8 @@ jobs:
         with:
             dotnet-version: 8.0.x
 
-      # - name : Install Aspire
-      #   run: dotnet workload install aspire
+      - name : Install Aspire
+        run: dotnet workload install aspire
       
       # - name: Restore workload
       #   run : dotnet workload restore
