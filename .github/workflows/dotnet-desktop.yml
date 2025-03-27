@@ -100,8 +100,7 @@ jobs:
         uses: actions/github-script@v3
         with:
           script: |
-            const github = require('@actions/github');
-            const context = github.context;
+            const { context, github } = require('@actions/github');
             const status = context.payload.check_run.conclusion === 'success' ? 'success' : 'failure';
             await github.repos.createCommitStatus({
               ...context.repo,
@@ -111,3 +110,4 @@ jobs:
               description: status === 'success' ? 'All checks passed' : 'Some checks failed',
               target_url: context.payload.check_run.html_url
             });
+ 
