@@ -1,57 +1,19 @@
-﻿# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# This workflow will build, test, sign and package a WPF or Windows Forms desktop application
-# built on .NET Core.
-# To learn how to migrate your existing application to .NET Core,
-# refer to https://docs.microsoft.com/en-us/dotnet/desktop-wpf/migration/convert-project-from-net-framework
-#
-# To configure this workflow:
-#
-# 1. Configure environment variables
-# GitHub sets default environment variables for every workflow run.
-# Replace the variables relative to your project in the "env" section below.
-#
-# 2. Signing
-# Generate a signing certificate in the Windows Application
-# Packaging Project or add an existing signing certificate to the project.
-# Next, use PowerShell to encode the .pfx file using Base64 encoding
-# by running the following Powershell script to generate the output string:
-#
-# $pfx_cert = Get-Content '.\SigningCertificate.pfx' -Encoding Byte
-# [System.Convert]::ToBase64String($pfx_cert) | Out-File 'SigningCertificate_Encoded.txt'
-#
-# Open the output file, SigningCertificate_Encoded.txt, and copy the
-# string inside. Then, add the string to the repo as a GitHub secret
-# and name it "Base64_Encoded_Pfx."
-# For more information on how to configure your signing certificate for
-# this workflow, refer to https://github.com/microsoft/github-actions-for-desktop-apps#signing
-#
-# Finally, add the signing certificate password to the repo as a secret and name it "Pfx_Key".
-# See "Build the Windows Application Packaging project" below to see how the secret is used.
-#
-# For more information on GitHub Actions, refer to https://github.com/features/actions
-# For a complete CI/CD sample to get started with GitHub Action workflows for Desktop Applications,
-# refer to https://github.com/microsoft/github-actions-for-desktop-apps
-
-name: WebApp Deploy
+name: Build Code
 
 on:
-  push:
-      branches: [ "dev" ]
-      paths:
-           - "WebApp/**"
-           - ".github/workflows/dotnet-desktop.yml"
   pull_request:
+    branches: [ "dev" ]
     types: [opened, synchronize, reopened]
 
 jobs:
-   build-test-sonar:
+  build-test-sonar:
     runs-on: windows-latest
-    steps:
 
+    env:
+      DOTNET_VERSION: 8.0.x
+
+    steps:
+      - uses: actions/checkout@v2
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -62,17 +24,36 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+      - name: Restore NuGet Packages
+        uses: actions/cache@v3
         with:
-            dotnet-version: 8.0.x
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-nuget
+          restore-keys: |
+            ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-
 
-      - name : Install Aspire
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache Aspire Workload
+        uses: actions/cache@v3
+        with:
+          path: ~/.dotnet/workloads
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
+          restore-keys: |
+            ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-aspire
+
+      - name: Install .NET Aspire Workload
         run: dotnet workload install aspire
-      
-      - name: Restore workload
-        run : dotnet workload restore
- 
+
+      - name: Save NuGet Packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-nuget
+
       - name: Restore dependencies
         run: dotnet restore
 
@@ -82,42 +63,53 @@ jobs:
       - name: Run Unit Tests
         run: dotnet test --no-build --configuration Release --logger trx --results-directory "TestResults"
 
-      - name: Install SonarScanner
-        run: dotnet tool install --global dotnet-sonarscanner
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
-      - name: Run SonarQube Analysis
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+
+      - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
         run: |
-         .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyenvantu123_MultiAppServerRender" /o:"nguyenvantu123" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"19nguyenvantu94_MultiAppServerRender" /o:"19nguyenvantu94" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
-
-   # deploy:
-   #   runs-on: ubuntu-latest
-   #   steps:
-   #   - name: Login to Docker Hub
-   #     uses: docker/login-action@v3
-   #     with:
-   #       username: nguyenvantu
-   #       password: ${{ secrets.DOCKERHUB_TOKEN }}
-   #   - name: Build container image
-   #     run: docker build -f WebApp/Dockerfile -t webapp:$(echo $GITHUB_SHA | head -c7) .
-   #   - name: Log in to DigitalOcean Container Registry with short-lived credentials
-   #     run: doctl registry login --expiry-seconds 1200
-   #   - name: Push image to Docker Hub
-   #     run: docker push webapp:$(echo $GITHUB_SHA | head -c7) nguyenvantu/webapp:$(echo $GITHUB_SHA | head -c7)
-   #   - name: Install doctl
-   #     uses: digitalocean/action-doctl@v2
-   #     with:
-   #      token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-   #   - name: Update deployment file
-   #     run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|image|nguyenvantu/webapp:'${TAG}'|' MultiAppServer.AppHost/aspirate-output/webapp/deployment.yaml
-   #   - name: Save DigitalOcean kubeconfig with short-lived credentials
-   #     run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
-   #   - name: Deploy to DigitalOcean Kubernetes
-   #     run: kubectl replace -f MultiAppServer.AppHost/aspirate-output/webapp/deployment.yaml
-   #   - name: Verify deployment
-   #     run: kubectl rollout status deployment/webapp
-      
+      - name: Update GitHub Status
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log(context);
+            const checkRun = context.payload.check_run;
+            if (checkRun && checkRun.conclusion) {
+              const status = checkRun.conclusion === 'success' ? 'success' : 'failure';
+              await github.repos.createCommitStatus({
+                ...context.repo,
+                sha: context.sha,
+                state: status,
+                context: 'CI Pipeline',
+                description: status === 'success' ? 'All checks passed' : 'Some checks failed',
+                target_url: checkRun.html_url
+              });
+            } else {
+              console.error("The 'check_run' object or 'conclusion' property is undefined.");
+            }
