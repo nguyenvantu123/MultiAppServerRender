@@ -99,12 +99,17 @@ jobs:
         with:
           script: |
             console.log(context);
-            const status = context.payload.check_run.conclusion === 'success' ? 'success' : 'failure';
-            await github.repos.createCommitStatus({
-              ...context.repo,
-              sha: context.sha,
-              state: status,
-              context: 'CI Pipeline',
-              description: status === 'success' ? 'All checks passed' : 'Some checks failed',
-              target_url: context.payload.check_run.html_url
-            });
+            const checkRun = context.payload.check_run;
+            if (checkRun && checkRun.conclusion) {
+              const status = checkRun.conclusion === 'success' ? 'success' : 'failure';
+              await github.repos.createCommitStatus({
+                ...context.repo,
+                sha: context.sha,
+                state: status,
+                context: 'CI Pipeline',
+                description: status === 'success' ? 'All checks passed' : 'Some checks failed',
+                target_url: checkRun.html_url
+              });
+            } else {
+              console.error("The 'check_run' object or 'conclusion' property is undefined.");
+            }
