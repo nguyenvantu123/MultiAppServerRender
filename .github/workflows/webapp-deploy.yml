@@ -29,15 +29,11 @@ jobs:
     - name: Build container image
       run: docker build -f WebApp/Dockerfile -t webapp:$(echo $GITHUB_SHA | head -c7) .
 
-    - name: Log in to DigitalOcean Container Registry with short-lived credentials
-      run: doctl registry login --expiry-seconds 1200
-
     - name: Tag Image  
       run: docker tag webapp:$(echo $GITHUB_SHA | head -c7) nguyenvantu/webapp:$(echo $GITHUB_SHA | head -c7)
 
     - name: Push image to Docker Hub
       run: docker push nguyenvantu/webapp:$(echo $GITHUB_SHA | head -c7)
-
 
     - name: Update deployment file
       run: |
