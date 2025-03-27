@@ -38,7 +38,7 @@ jobs:
     - name: Update deployment file
       run: |
         TAG=$(echo $GITHUB_SHA | head -c7)
-        sed -i 's|image|nguyenvantu/webapp:'${TAG}'|' MultiAppServer.AppHost/aspirate-output/webapp/deployment.yaml
+        sed -i 's|nguyenvantu/webapp:.*|nguyenvantu/webapp:'${TAG}'|' MultiAppServer.AppHost/aspirate-output/webapp/deployment.yaml
 
     - name: Save DigitalOcean kubeconfig with short-lived credentials
       run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
