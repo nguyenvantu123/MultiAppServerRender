@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: blazorfiles
+  namespace: multiapp
+
   labels:
     app: blazorfiles
 spec:
