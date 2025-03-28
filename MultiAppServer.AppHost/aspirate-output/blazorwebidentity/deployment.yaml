@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: blazorwebidentity
+  namespace: multiapp
+
   labels:
     app: blazorwebidentity
 spec:
