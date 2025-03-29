@@ -44,7 +44,7 @@
                                 <form method="post" action="account/logout" @formname="logout">
                                     <AntiforgeryToken />
                                     <SfButton IsPrimary Type="Syncfusion.Blazor.Popups.ButtonType.Submit">Log out</SfButton>
-                                    <SfButton Content="Cancel" OnClick="@cancelclick" />
+                                    <SfButton Type="button" Content="Cancel" OnClick="@cancelclick" />
                                 </form>
                             </FooterTemplate>
                         </DialogTemplates>
@@ -208,14 +208,14 @@
                                             </div>
 
                                             <div style="height:10px"></div>
-                                            <SfProgressButton IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile" Disabled="!IsFormValid">
+                                            <SfProgressButton Type="submit" IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile" Disabled="!IsFormValid">
                                                 <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
                                                     <SpinTemplate>
                                                         <div class="template"></div>
                                                     </SpinTemplate>
                                                 </ProgressButtonSpinSettings>
                                             </SfProgressButton>
-                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                            <SfButton Type="button" Content="Cancel" OnClick="@cancelprofileclick" />
                                         </EditForm>
                                     </ContentTemplate>
                                 </TabItem>
@@ -255,14 +255,14 @@
                                             <div style="height:10px">
                                             </div>
 
-                                            <SfProgressButton IsPrimary="true" Content="Change Password" OnClick="@HandleValidSubmit" Disabled="!IsFormValidChangePassword">
+                                            <SfProgressButton Type="submit" IsPrimary="true" Content="Change Password" OnClick="@HandleValidSubmit" Disabled="!IsFormValidChangePassword">
                                                 <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
                                                     <SpinTemplate>
                                                         <div class="template"></div>
                                                     </SpinTemplate>
                                                 </ProgressButtonSpinSettings>
                                             </SfProgressButton>
-                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                            <SfButton Type="button" Content="Cancel" OnClick="@cancelprofileclick" />
                                         </EditForm>
                                     </ContentTemplate>
 
@@ -497,21 +497,21 @@
             await ProfileDialogObj.HideAsync();
 
             var toastModel = new ToastModel
-                {
-                    Title = "Success",
-                    Content = response.Message,
-                    CssClass = "e-toast-success"
-                };
+            {
+                Title = "Success",
+                Content = response.Message,
+                CssClass = "e-toast-success"
+            };
             await toast.ShowAsync(toastModel);
         }
         else
         {
             var toastModel = new ToastModel
-                {
-                    Title = "Error",
-                    Content = response.Message,
-                    CssClass = "e-toast-danger"
-                };
+            {
+                Title = "Error",
+                Content = response.Message,
+                CssClass = "e-toast-danger"
+            };
             await toast.ShowAsync(toastModel);
         }
     }
@@ -534,21 +534,21 @@
             await sessionStorage.RemoveItemAsync("userProfileData");
 
             var toastModel = new ToastModel
-                {
-                    Title = "Success",
-                    Content = response.Message,
-                    CssClass = "e-toast-success"
-                };
+            {
+                Title = "Success",
+                Content = response.Message,
+                CssClass = "e-toast-success"
+            };
             await toast.ShowAsync(toastModel);
         }
         else
         {
             var toastModel = new ToastModel
-                {
-                    Title = "Error",
-                    Content = response.Message,
-                    CssClass = "e-toast-danger"
-                };
+            {
+                Title = "Error",
+                Content = response.Message,
+                CssClass = "e-toast-danger"
+            };
             await toast.ShowAsync(toastModel);
         }
     }
