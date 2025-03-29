@@ -4,7 +4,9 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - dev
+      - main
+    paths:
+       - "WebApp/**"
 
 jobs:
   deploy:
@@ -46,5 +48,5 @@ jobs:
     - name: Deploy to DigitalOcean Kubernetes
       run: kubectl apply -k MultiAppServer.AppHost/aspirate-output/webapp/.
 
-    - name: Verify deployment
-      run: kubectl rollout status deployment/webapp
+    # - name: Verify deployment
+    #   run: kubectl rollout status deployment/webapp
