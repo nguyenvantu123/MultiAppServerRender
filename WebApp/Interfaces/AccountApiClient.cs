@@ -86,11 +86,11 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto> UpdatePassword(UpdatePasswordViewModel parameters)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/update-password", parameters);
+            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/admin/users/change-password", parameters);
         }
         public async Task<ApiResponseDto> AdminChangePassword(ChangePasswordViewModel parameters)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>($"api/account/addmin-user-password-reset", parameters);
+            return await _httpClient.PostJsonAsync<ApiResponseDto>($"api/account/admin-user-password-reset", parameters);
         }
 
         public async Task<ApiResponseDto> ForgotPassword(ForgotPasswordViewModel parameters)

@@ -447,7 +447,7 @@
     private IBrowserFile selectedFile;
     private EditContext editContext;
     private EditContext changePasswordContext;
-
+    private bool isSubmitting = false;
     //End:Hidden
     private async Task OnChange(UploadChangeEventArgs args)
     {
@@ -490,29 +490,44 @@
             return;
         }
 
-        var response = await accountApiClient.UpdatePassword(changePasswordViewModel);
-        if (response.IsSuccessStatusCode)
+        if (isSubmitting)
         {
-
-            await ProfileDialogObj.HideAsync();
-
-            var toastModel = new ToastModel
-            {
-                Title = "Success",
-                Content = response.Message,
-                CssClass = "e-toast-success"
-            };
-            await toast.ShowAsync(toastModel);
+            return;
         }
-        else
+
+        isSubmitting = true;
+
+        try
         {
-            var toastModel = new ToastModel
+            // Your form submission logic here
+            var response = await accountApiClient.UpdatePassword(changePasswordViewModel);
+            if (response.IsSuccessStatusCode)
             {
-                Title = "Error",
-                Content = response.Message,
-                CssClass = "e-toast-danger"
-            };
-            await toast.ShowAsync(toastModel);
+
+                await ProfileDialogObj.HideAsync();
+
+                var toastModel = new ToastModel
+                    {
+                        Title = "Success",
+                        Content = response.Message,
+                        CssClass = "e-toast-success"
+                    };
+                await toast.ShowAsync(toastModel);
+            }
+            else
+            {
+                var toastModel = new ToastModel
+                    {
+                        Title = "Error",
+                        Content = response.Message,
+                        CssClass = "e-toast-danger"
+                    };
+                await toast.ShowAsync(toastModel);
+            }
+        }
+        finally
+        {
+            isSubmitting = false;
         }
     }
 
@@ -534,21 +549,21 @@
             await sessionStorage.RemoveItemAsync("userProfileData");
 
             var toastModel = new ToastModel
-            {
-                Title = "Success",
-                Content = response.Message,
-                CssClass = "e-toast-success"
-            };
+                {
+                    Title = "Success",
+                    Content = response.Message,
+                    CssClass = "e-toast-success"
+                };
             await toast.ShowAsync(toastModel);
         }
         else
         {
             var toastModel = new ToastModel
-            {
-                Title = "Error",
-                Content = response.Message,
-                CssClass = "e-toast-danger"
-            };
+                {
+                    Title = "Error",
+                    Content = response.Message,
+                    CssClass = "e-toast-danger"
+                };
             await toast.ShowAsync(toastModel);
         }
     }
@@ -573,6 +588,7 @@
 
         if (args.Item.Text == "User")
         {
+            changePasswordViewModel = new UpdatePasswordViewModel();
             await ProfileDialogObj.ShowAsync();
         }
     }
