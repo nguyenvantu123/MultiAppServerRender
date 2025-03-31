@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="FluentValidation" Version="11.9.2" />
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
@@ -21,6 +22,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="29.1.33" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,9 +33,11 @@
     <ProjectReference Include="..\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\IntegrationEventLogEF\IntegrationEventLogEF.csproj" />
     <ProjectReference Include="..\MultiAppServer.ServiceDefaults\MultiAppServer.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CQRS\Command\" />
     <Folder Include="Data\Migrations\" />
   </ItemGroup>
 

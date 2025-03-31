@@ -1,0 +1,63 @@
+﻿using BlazorIdentity.Files.Application.Queries;
+using BlazorIdentity.Files.Constant;
+using BlazorIdentity.Files.CQRS.Query;
+using BlazorIdentity.Files.Entities;
+using BlazorIdentity.Files.Excel;
+using BlazorIdentity.Files.Response;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Minio;
+using Minio.DataModel.Args;
+using MultiAppServer.ServiceDefaults;
+using Shared;
+
+namespace BlazorIdentity.Files.Apis
+{
+    public static class DocumentManagerApi
+    {
+        [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+        public static RouteGroupBuilder MapDocumentApiV1(this IEndpointRouteBuilder app)
+        {
+            var api = app.MapGroup("api/documents").HasApiVersion(1.0);
+
+            api.MapGet("/document-type", GetListDocument);
+            api.MapGet("/export-excel", ExportDocumentListToExcel); // Add this line
+
+            return api;
+        }
+
+        [Authorize]
+        public static async Task<ApiResponseDto<List<DocumentResponse>>> GetListDocument(
+             [AsParameters] GetListDocumentQuery queries, [FromServices] IMediator mediator
+            )
+        {
+            return await mediator.Send(queries);
+        }
+
+        [Authorize]
+        public static async Task<IActionResult> ExportDocumentListToExcel(
+             [AsParameters] GetListDocumentQuery queries, [FromServices] IMediator mediator)
+        {
+            var result = await mediator.Send(queries);
+
+            // Generate the Excel file using the template
+            var excelGenerator = new ExcelGenerator();
+
+            var cellDataList = new List<ExcelCellData>
+            {
+                new ExcelCellData { CellAddress = "A8", Value = "Value1" },
+                new ExcelCellData { CellAddress = "B8", Value = "Value2" },
+                // Add more cell data as needed
+            };
+
+            var templatePath = "path/to/your/template.xlsx"; // Update with the actual template path
+            var excelFile = excelGenerator.GenerateExcelFromTemplate<DocumentResponse>(templatePath: templatePath, data: result.Result, startRow: 2, cellDataList);
+
+            return new FileContentResult(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            {
+                FileDownloadName = "DocumentList.xlsx"
+            };
+        }
+    }
+}
