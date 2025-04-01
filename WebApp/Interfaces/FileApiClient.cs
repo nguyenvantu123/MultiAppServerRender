@@ -43,7 +43,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<List<DocumentsTypes>>> GetDocumentType(int pageSize, int currentPage, string search)
         {
-            return await _httpClient.GetJsonAsync<ApiResponseDto<List<DocumentsTypes>>>($"api/admin/users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<DocumentsTypes>>>($"api/admins/document-type?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
         }
     }
 }

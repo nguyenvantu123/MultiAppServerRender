@@ -37,7 +37,7 @@ namespace BlazorIdentity.Files.CQRS.Query
 
             if (request.PageNumber > 0)
             {
-                query = query.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
+                query = query.Skip((request.PageNumber.Value - 1) * request.PageSize!.Value).Take(request.PageSize!.Value);
             }
 
             var documents = await query.ToListAsync(cancellationToken);

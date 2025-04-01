@@ -16,6 +16,7 @@ using Aspire.Minio.Client;
 using Minio;
 using BlazorApiUser.MapperProfile;
 using AutoMapper;
+using BlazorIdentity.Files.Apis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,9 +59,9 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining(typeof(Program));
 
-    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
-    cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
-    cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
 });
 
 var config = new AutoMapper.MapperConfiguration(cfg =>
@@ -91,6 +92,12 @@ app.MapDefaultEndpoints();
 var files = app.NewVersionedApi("Files");
 
 files.MapFilesApiV1()
+      .RequireAuthorization();
+
+
+var documentsType = app.NewVersionedApi("DocumentsType");
+
+documentsType.MapDocumentApiV1()
       .RequireAuthorization();
 
 app.UseDefaultOpenApi();
