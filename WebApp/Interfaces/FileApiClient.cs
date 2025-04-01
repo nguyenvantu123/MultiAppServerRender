@@ -40,5 +40,10 @@ namespace WebApp.Interfaces
         {
             return await _httpClient.GetFromJsonAsync<ApiResponseDto<string>>($"/api/files/get-presigned-url?RelationType={presignedUserProfileUrl.RelationType}&ObjectName={presignedUserProfileUrl.ObjectName}&RelationId={(presignedUserProfileUrl.RelationId.HasValue ? presignedUserProfileUrl.RelationId.Value.ToString() : "")}");
         }
+
+        public async Task<ApiResponseDto<List<DocumentsTypes>>> GetDocumentType(int pageSize, int currentPage, string search)
+        {
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<DocumentsTypes>>>($"api/admin/users?pageSize={pageSize}&pageNumber={currentPage}&search={search}");
+        }
     }
 }

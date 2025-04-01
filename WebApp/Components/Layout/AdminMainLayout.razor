@@ -25,12 +25,9 @@
                     @*Initialize the Sidebar component*@
                     <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="userProfileViewModel.IsNavOpen" Type="@SidebarType.Auto">
                         <ChildContent>
-                            @*                             <ToolbarEvents Clicked="@ToolbarClicked"></ToolbarEvents>
-                        *@                            <div class="main-menu">
+                            <div class="main-menu">
                                 <div>
                                     <AdminNavMenu />
-                                    @*                                 <SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
-                                *@
                                 </div>
                             </div>
                         </ChildContent>
@@ -429,21 +426,21 @@
                 await ProfileDialogObj.HideAsync();
 
                 var toastModel = new ToastModel
-                    {
-                        Title = "Success",
-                        Content = response.Message,
-                        CssClass = "e-toast-success"
-                    };
+                {
+                    Title = "Success",
+                    Content = response.Message,
+                    CssClass = "e-toast-success"
+                };
                 await toast.ShowAsync(toastModel);
             }
             else
             {
                 var toastModel = new ToastModel
-                    {
-                        Title = "Error",
-                        Content = response.Message,
-                        CssClass = "e-toast-danger"
-                    };
+                {
+                    Title = "Error",
+                    Content = response.Message,
+                    CssClass = "e-toast-danger"
+                };
                 await toast.ShowAsync(toastModel);
             }
         }
@@ -471,21 +468,21 @@
             await sessionStorage.RemoveItemAsync("userProfileData");
 
             var toastModel = new ToastModel
-                {
-                    Title = "Success",
-                    Content = response.Message,
-                    CssClass = "e-toast-success"
-                };
+            {
+                Title = "Success",
+                Content = response.Message,
+                CssClass = "e-toast-success"
+            };
             await toast.ShowAsync(toastModel);
         }
         else
         {
             var toastModel = new ToastModel
-                {
-                    Title = "Error",
-                    Content = response.Message,
-                    CssClass = "e-toast-danger"
-                };
+            {
+                Title = "Error",
+                Content = response.Message,
+                CssClass = "e-toast-danger"
+            };
             await toast.ShowAsync(toastModel);
         }
     }

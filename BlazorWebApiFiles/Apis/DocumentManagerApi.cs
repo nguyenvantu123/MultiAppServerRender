@@ -55,7 +55,7 @@ namespace BlazorIdentity.Files.Apis
             };
 
             var templatePath = "path/to/your/template.xlsx"; // Update with the actual template path
-            var excelFile = excelGenerator.GenerateExcelFromTemplate<DocumentResponse>(templatePath: templatePath, data: result.Result, startRow: 2, cellDataList);
+            var excelFile = excelGenerator.GenerateExcelFromTemplate<DocumentResponse>(templatePath: templatePath, data: result.Result, startRow: 2, cellDataList, null);
 
             return new FileContentResult(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {

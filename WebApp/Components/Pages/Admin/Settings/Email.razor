@@ -1,4 +1,4 @@
-﻿@page "/admin/settings/email"
+﻿@page "/admin/document/documenttype"
 @using System.Security.Authentication
 @using WebApp.Constant
 @using WebApp.Settings
@@ -14,7 +14,7 @@
 
 @* <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
  *@
-<PageTitle>EmailSettings</PageTitle>
+<PageTitle>Document Types</PageTitle>
 
 @* @if (settings == null)
 {
@@ -106,26 +106,15 @@ else
     </MudDialog>
 }
  *@
-@code {
+@* @code {
 
-    protected Dictionary<SettingKey, TenantSettingModels> settings;
-
-    // [Inject] private NavigationManager navigationManager { get; set; }
 
     [Inject] IApiClient apiClient { get; set; }
 
     [Inject] AccountApiClient accountApiClient { get; set; }
 
-    // [Inject] protected IViewNotifier viewNotifier { get; set; }
-
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
 
-    // private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-    // {
-    // new BreadcrumbItem("BreadCrumbAdmin", href: "/admin"),
-    // new BreadcrumbItem("BreadCrumbAdminSettings", href: "/admin/settings"),
-    // new BreadcrumbItem("BreadCrumbAdminSettingsEmail", href: "/admin/settings/email")
-    // };
 
     protected bool isSendEmailDialogOpen = false;
     protected EmailDto email { get; set; } = new();
@@ -209,3 +198,4 @@ else
         apiClient.CancelChanges();
     }
 }
+ *@

@@ -1,11 +1,13 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Syncfusion.XlsIO;
+using System.Reflection;
+using static Syncfusion.XlsIO.Implementation.HtmlSaveOptions;
 
 namespace BlazorIdentity.Files.Excel
 {
     public class ExcelGenerator
     {
-        public byte[] GenerateExcelFromTemplate<T>(string templatePath, List<T> data, int startRow, List<ExcelCellData>? cellDataList)
+        public byte[] GenerateExcelFromTemplate<T>(string templatePath, List<T> data, int startRow, List<ExcelCellData>? cellDataList, List<T>? replaceText)
         {
             // Load the template Excel file
             using ExcelEngine excelEngine = new ExcelEngine();
@@ -21,6 +23,22 @@ namespace BlazorIdentity.Files.Excel
 
             // Start populating data from the second row (assuming the first row is the header)
             var mappings = ExcelMappingHelper.GetColumnMappings<T>(worksheet, startRow);
+
+            if (replaceText != null && replaceText.Any())
+            {
+                foreach (var item in replaceText)
+                {
+                    if (item != null)
+                    {
+                        var properties = typeof(T).GetProperties();
+                        foreach (var property in properties)
+                        {
+                            var value = property?.GetValue(item);
+                            worksheet.Replace($"#{property.Name}#", value?.ToString());
+                        }
+                    }
+                }
+            }
 
             // Fill each cell in the list
             if (cellDataList != null && cellDataList.Any())
