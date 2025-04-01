@@ -28,4 +28,7 @@ public interface IRepository<T> where T : IEntityBase
     IQueryable<T> GetQueryCustomQuery(Expression<Func<T, bool>> where);
 
     T Refresh(T entity);
+
+    Task<T> FindAsync(Expression<Func<T, bool>> predicate);
+
 }

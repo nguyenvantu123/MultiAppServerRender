@@ -1,4 +1,5 @@
-﻿using BlazorIdentity.Files.Application.Queries;
+﻿using BlazorIdentity.Files.Application.Commands;
+using BlazorIdentity.Files.Application.Queries;
 using BlazorIdentity.Files.Constant;
 using BlazorIdentity.Files.CQRS.Query;
 using BlazorIdentity.Files.Entities;
@@ -10,19 +11,21 @@ using Microsoft.EntityFrameworkCore;
 using Minio;
 using Minio.DataModel.Args;
 using MultiAppServer.ServiceDefaults;
-using Shared;
 
 namespace BlazorIdentity.Files.Apis
 {
     public static class DocumentManagerApi
     {
-        [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+        //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
         public static RouteGroupBuilder MapDocumentApiV1(this IEndpointRouteBuilder app)
         {
-            var api = app.MapGroup("api/documents").HasApiVersion(1.0);
+            var api = app.MapGroup("api/admins").HasApiVersion(1.0);
 
             api.MapGet("/document-type", GetListDocument);
             api.MapGet("/export-excel", ExportDocumentListToExcel); // Add this line
+            api.MapPost("/document-type", CreateDocumentType); // Add this line
+            api.MapPut("/document-type", UpdateDocumentType); // Add this line
+
 
             return api;
         }
@@ -58,6 +61,20 @@ namespace BlazorIdentity.Files.Apis
             {
                 FileDownloadName = "DocumentList.xlsx"
             };
+        }
+
+        // create new document type using cqrs
+        //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+        public static async Task<ApiResponseDto<bool>> CreateDocumentType(
+            [FromBody] CreateDocumentTypeCommand command, [FromServices] IMediator mediator)
+        {
+            return await mediator.Send(command);
+        }
+
+        public static async Task<ApiResponseDto<bool>> UpdateDocumentType(
+         [FromBody] CreateDocumentTypeCommand command, [FromServices] IMediator mediator)
+        {
+            return await mediator.Send(command);
         }
     }
 }

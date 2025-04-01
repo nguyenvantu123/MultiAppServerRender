@@ -2,7 +2,6 @@
 using AutoMapper;
 using BlazorIdentity.Files.Entities;
 using BlazorIdentity.Files.Response;
-using Shared.Models;
 
 
 namespace BlazorApiUser.MapperProfile

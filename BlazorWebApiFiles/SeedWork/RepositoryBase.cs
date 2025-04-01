@@ -133,5 +133,11 @@ public abstract class RepositoryBase<T, TC> : IRepository<T>
         DataContext.Entry(entity).GetDatabaseValues().ToObject();
     }
 
+    public async Task<T> FindAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await Dbset.FirstOrDefaultAsync(predicate);
+
+    }
+
     #endregion
 }
