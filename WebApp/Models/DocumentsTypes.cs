@@ -7,10 +7,10 @@
 
         public string Description { get; set; }
 
-        public string LinkUrl { get; set; }
-
         public bool IsActive { get; set; }
 
-        public bool FileActive { get; set; }
+        public string LinkUrl { get; set; }
+
+        public bool FileActive { get; set; } = true;
     }
 }

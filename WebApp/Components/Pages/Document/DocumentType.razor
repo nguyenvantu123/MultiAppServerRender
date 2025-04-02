@@ -4,12 +4,14 @@
 @using System.Net.Http.Headers
 @using WebApp.Components.Dialogs
 @using WebApp.Constant
+@using Syncfusion.Blazor.Grids
+
 @attribute [Authorize]
 @layout AdminMainLayout
 
 <SfBreadcrumb>
     <BreadcrumbItems>
-        <BreadcrumbItem Text="BreadCrumbAdmin" Url="/admin" />
+        <BreadcrumbItem Text="BreadCrumbAdmin" Url="/dashboard" />
         <BreadcrumbItem Text="BreadCrumbDocumentType" Url="/admin/document-types" />
     </BreadcrumbItems>
 </SfBreadcrumb>
@@ -28,11 +30,11 @@ else
         <GridEditSettings AllowAdding="true" AllowEditing="true"></GridEditSettings>
 
         <GridPageSettings CurrentPage="@pageIndex" PageSize="@pageSize" EnableQueryString="true" PageSizes="@TablePageConstant.RowPerPage"></GridPageSettings>
-        <GridEvents PageChanging="PageChangingHandler" OnLoad="LoadHandler" TValue="DocumentsTypes"></GridEvents>
+        <GridEvents OnActionBegin="OnActionBegin" PageChanging="PageChangingHandler" OnLoad="LoadHandler" TValue="DocumentsTypes"></GridEvents>
 
         <GridColumns>
             @*             <GridColumn HeaderText="Actions" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Left" Width="100"></GridColumn>
- *@            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+        *@            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
             <GridColumn Field=@nameof(DocumentsTypes.Description) HeaderText="Description" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center"></GridColumn>
             <GridColumn Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center"></GridColumn>
             <GridColumn Field=@nameof(DocumentsTypes.IsActive) HeaderText="Active" TextAlign="TextAlign.Center" DisplayAsCheckBox="true"> </GridColumn>
@@ -40,52 +42,69 @@ else
     </SfGrid>
 }
 
-<SfDialog @bind-Visible="@isDialogVisible" Width="500px" Header="Add Document Type">
+<SfDialog @bind-Visible="@isDialogVisible" Width="600px" Header="Add Document Type" ShowCloseIcon="true" IsModal="true" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
     <DialogTemplates>
         <Content>
             <EditForm Model="@newDocumentType" OnValidSubmit="HandleValidSubmit">
                 <DataAnnotationsValidator />
-                <ValidationSummary />
+                @*                 <ValidationSummary />
+                *@
+                <div class="p-3">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Name</label>
+                        <InputText id="Name" class="form-control" @bind-Value="newDocumentType.Name" />
+                    </div>
 
-                <div class="form-group">
-                    <label for="Name">Name</label>
-                    <InputText id="Name" class="form-control" @bind-Value="newDocumentType.Name" />
-                </div>
-                <div class="form-group">
-                    <label for="Description">Description</label>
-                    <InputText id="Description" class="form-control" @bind-Value="newDocumentType.Description" />
-                </div>
-                <div class="form-group">
-                    <label for="LinkUrl">Link URL</label>
-                    <InputText id="LinkUrl" class="form-control" @bind-Value="newDocumentType.LinkUrl" />
-                    <label for="FileActive">Active File</label>
-                    <SfSwitch @bind-Checked="newDocumentType.FileActive" OnLabel="Active" OffLabel="Deactive"></SfSwitch>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Description</label>
+                        <InputText id="Description" class="form-control" @bind-Value="newDocumentType.Description" />
+                    </div>
 
-                </div>
-                <div class="form-group">
-                    <label for="IsActive">Active</label>
-                    @*                     <InputCheckbox id="IsActive" class="form-control" @bind-Value="newDocumentType.IsActive" />
-*@               
-                       <SfSwitch @bind-Checked="newDocumentType.IsActive" OnLabel="Active" OffLabel="Deactive"></SfSwitch>
-                </div>
-                <div class="form-group">
-                    <label for="File">File</label>
-                    <InputFile id="File" OnChange="HandleFileSelected" />
-                </div>
+                    <div class="mb-3">
+                        <label for="File" class="form-label">File</label>
+                        <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc, .docx" AllowMultiple="false">
+                            <UploaderTemplates>
+                                <Template Context="uploadContext">
+                                    @if (!string.IsNullOrEmpty(fileName))
+                                    {
 
-                <button type="submit" class="btn btn-primary">Save</button>
+                                        <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
+                                        <div class="file-size">@fileSize</div>
+                                        <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                                    }
+                                </Template>
+                            </UploaderTemplates>
+                            <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+                        </SfUploader>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="IsActive" class="form-label">Active</label>
+                        <div class="d-flex flex-column align-items-start">
+                            <SfSwitch id="IsActive" @bind-Checked="newDocumentType.IsActive" CssClass="custom-switch"></SfSwitch>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" @onclick="() => isDialogVisible = false">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
             </EditForm>
         </Content>
     </DialogTemplates>
 </SfDialog>
+
 @code {
 
     [Inject] FileApiClient apiClient { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
     private DocumentsTypes newDocumentType = new DocumentsTypes();
-    private IBrowserFile selectedFile;
+    private SfUploader uploader;
     private bool isDialogVisible = false;
-
+    private string fileSize { get; set; }
+    private string fileName { get; set; }
     private bool _loaded = false;
 
     [CascadingParameter]
@@ -100,7 +119,40 @@ else
 
     protected int totalItemsCount { get; set; } = 0;
 
+    public class UploadFiles
+    {
+        public string Name { get; set; }
+        public double Size { get; set; }
+        public string Type { get; set; }
+        public IBrowserFile File { get; set; }
+    }
+
+    public class CustomBrowserFile : IBrowserFile
+    {
+        private readonly Stream _stream;
+
+        public CustomBrowserFile(string name, string contentType, long size, Stream stream)
+        {
+            Name = name;
+            ContentType = contentType;
+            Size = size;
+            _stream = stream;
+        }
+
+        public string Name { get; }
+        public DateTimeOffset LastModified => DateTimeOffset.Now;
+        public long Size { get; }
+        public string ContentType { get; }
+
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default)
+        {
+            return _stream;
+        }
+    }
+
+    private List<UploadFiles> uploadedFiles = new List<UploadFiles>();
     protected List<DocumentsTypes> documentTypes { get; set; }
+    private IBrowserFile selectedFile;
 
     private bool _canCreateUsers = true;
     private bool _canSearchUsers = true;
@@ -122,25 +174,38 @@ else
 
     private async Task HandleValidSubmit()
     {
-        var response = await apiClient.CreateDocumentType(selectedFile, newDocumentType.Name, newDocumentType.Description, newDocumentType.IsActive);
-        if (response.IsSuccessStatusCode)
+        if (uploadedFiles.Count > 0)
         {
-            // newDocumentType.LinkUrl = response.Result;
-            documentTypes.Add(newDocumentType);
-            isDialogVisible = false;
-            StateHasChanged();
-        }
-        else
-        {
-            // Handle error
+            var response = await apiClient.CreateDocumentType(selectedFile, newDocumentType.Name, newDocumentType.Description, newDocumentType.IsActive);
+            if (response.IsSuccessStatusCode)
+            {
+                documentTypes.Add(newDocumentType);
+                isDialogVisible = false;
+                StateHasChanged();
+            }
+            else
+            {
+                // Handle error
+            }
         }
     }
 
-    private void HandleFileSelected(InputFileChangeEventArgs e)
+    private async Task OnChange(UploadChangeEventArgs args)
     {
-        selectedFile = e.File;
+        foreach (var file in args.Files)
+        {
+            selectedFile = file.File;
+            fileName = file.FileInfo.Name;
+            fileSize = await uploader.BytesToSizeAsync(file.FileInfo.Size);
+        }
     }
 
+    private async Task onFileRemove()
+    {
+        await uploader.RemoveAsync();
+        fileSize = string.Empty;
+        fileName = string.Empty;
+    }
 
     protected override async Task OnInitializedAsync()
     {
