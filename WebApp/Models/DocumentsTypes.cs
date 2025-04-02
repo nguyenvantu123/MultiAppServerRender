@@ -10,5 +10,7 @@
         public string LinkUrl { get; set; }
 
         public bool IsActive { get; set; }
+
+        public bool FileActive { get; set; }
     }
 }

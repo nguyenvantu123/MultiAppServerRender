@@ -5,12 +5,14 @@ using BlazorIdentity.Files.CQRS.Query;
 using BlazorIdentity.Files.Entities;
 using BlazorIdentity.Files.Excel;
 using BlazorIdentity.Files.Response;
+using BlazorIdentityFiles.Application.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Minio;
 using Minio.DataModel.Args;
 using MultiAppServer.ServiceDefaults;
+using System.Net.Http.Headers;
 
 namespace BlazorIdentity.Files.Apis
 {
@@ -65,9 +67,34 @@ namespace BlazorIdentity.Files.Apis
 
         // create new document type using cqrs
         //[Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+        [Authorize]
         public static async Task<ApiResponseDto<bool>> CreateDocumentType(
-            [FromBody] CreateDocumentTypeCommand command, [FromServices] IMediator mediator)
+     IFormFile? file, [FromForm] string name, [FromForm] string? description, [FromForm] bool isActive, [FromServices] IMediator mediator)
         {
+            string fileUrl = string.Empty;
+
+            if (file != null)
+            {
+                var content = new MultipartFormDataContent();
+                var fileContent = new StreamContent(file.OpenReadStream());
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                content.Add(fileContent, "file", file.FileName);
+
+                var response = await mediator.Send(new UploadFileCommand { Content = content });
+                if (response.IsSuccessStatusCode)
+                {
+                    fileUrl = response.Result;
+                }
+            }
+
+            var command = new CreateDocumentTypeCommand
+            {
+                Name = name,
+                Description = description,
+                IsActive = isActive,
+                LinkUrl = fileUrl
+            };
+
             return await mediator.Send(command);
         }
 

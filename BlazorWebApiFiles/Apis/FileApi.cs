@@ -6,7 +6,6 @@ using MultiAppServer.ServiceDefaults;
 using Google.Protobuf.WellKnownTypes;
 using Minio.DataModel.Encryption;
 using BetkingLol.DataAccess.UnitOfWork;
-using SixLabors.ImageSharp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -93,15 +92,15 @@ public static class FileApi
 
             fileData.Name = FormFile.FileName;
             fileData.Size = FormFile.Length;
-            if (HttpPostedFileBaseExtensions.IsImage(FormFile))
-            {
-                var fileBytes = memoryStream.ToArray();
+            //if (HttpPostedFileBaseExtensions.IsImage(FormFile))
+            //{
+            //    var fileBytes = memoryStream.ToArray();
 
-                using Image image = Image.Load(fileBytes);
+            //    using Image image = Image.Load(fileBytes);
 
-                fileData.Width = image.Width;
-                fileData.Height = image.Height;
-            }
+            //    fileData.Width = image.Width;
+            //    fileData.Height = image.Height;
+            //}
 
             fileData.FileTypeData = FileType;
             fileData.Ext = Path.GetExtension(FormFile.FileName);

@@ -1,6 +1,7 @@
 ﻿@page "/document-types"
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Net
+@using System.Net.Http.Headers
 @using WebApp.Components.Dialogs
 @using WebApp.Constant
 @attribute [Authorize]
@@ -23,145 +24,67 @@
 else
 {
 
-    <SfGrid DataSource="@documentTypes" AllowPaging="true">
-
-        <GridTemplates>
-            <ToolbarTemplate>
-                @*    <SfToolbar>
-            <ToolbarEvents Clicked="ToolbarClickHandler"></ToolbarEvents>
-            <ToolbarItems>
-            <ToolbarItem Type="@ItemType.Button" PrefixIcon="e-chevron-up icon" Id="collapseall" Text="Collapse All"></ToolbarItem>
-            <ToolbarItem Type="@ItemType.Button" PrefixIcon="e-chevron-down icon" Id="ExpandAll" Text="Expand All"></ToolbarItem>
-            </ToolbarItems>
-            </SfToolbar> *@
-            </ToolbarTemplate>
-        </GridTemplates>
+    <SfGrid DataSource="@documentTypes" Toolbar="@(new List<string>() { "Add" })" AllowPaging="true">
+        <GridEditSettings AllowAdding="true" AllowEditing="true"></GridEditSettings>
 
         <GridPageSettings CurrentPage="@pageIndex" PageSize="@pageSize" EnableQueryString="true" PageSizes="@TablePageConstant.RowPerPage"></GridPageSettings>
         <GridEvents PageChanging="PageChangingHandler" OnLoad="LoadHandler" TValue="DocumentsTypes"></GridEvents>
 
         <GridColumns>
-            <GridColumn HeaderText="Actions" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Left" Width="100"></GridColumn>
-            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+            @*             <GridColumn HeaderText="Actions" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Left" Width="100"></GridColumn>
+ *@            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
             <GridColumn Field=@nameof(DocumentsTypes.Description) HeaderText="Description" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center"></GridColumn>
             <GridColumn Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center"></GridColumn>
             <GridColumn Field=@nameof(DocumentsTypes.IsActive) HeaderText="Active" TextAlign="TextAlign.Center" DisplayAsCheckBox="true"> </GridColumn>
         </GridColumns>
     </SfGrid>
-    @*  <MudTable @ref="table" ServerData="ServerReload" Hover="true" Elevation="25" HorizontalScrollbar="true" RowsPerPage="@pageSize" Items="users" FixedHeader="true" Dense="true" @bind-user="users">
-
-        <ToolBarContent>
-            <div class="justify-center mud-text-align-center">
-                @if (_canCreateUsers)
-                {
-                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-
-                        <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface">Register New User</MudButton>
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reload" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-                        @if (_canExportUsers)
-                        {
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;">Export</MudButton>
-                        }
-                    </MudHidden>
-
-                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-                        <MudTooltip Text="Register New User">
-                            <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => InvokeModal())" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface"></MudButton>
-                        </MudTooltip>
-                        <MudTooltip Text="Reload">
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reload" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
-                        </MudTooltip>
-                        @if (_canExportUsers)
-                        {
-                            <MudTooltip Text="Export">
-                                <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;"></MudButton>
-                            </MudTooltip>
-                        }
-                    </MudHidden>
-                }
-                else
-                {
-                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-                        <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reload" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary">Reload</MudButton>
-                        @if (_canExportUsers)
-                        {
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;">Export</MudButton>
-                        }
-                    </MudHidden>
-
-                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-                        <MudTooltip Text="Reload">
-                            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Reload" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary"></MudButton>
-                        </MudTooltip>
-                        @if (_canExportUsers)
-                        {
-                            <MudTooltip Text="Export">
-                                <MudButton DisableElevation Variant="Variant.Filled" OnClick="ExportToExcel" StartIcon="@Icons.Custom.FileFormats.FileExcel" IconColor="Color.Secondary" Color="Color.Surface" Style="margin-left: 5px;"></MudButton>
-                            </MudTooltip>
-                        }
-                    </MudHidden>
-                }
-            </div>
-            <MudSpacer />
-        </ToolBarContent>
-
-        <HeaderContent>
-            <MudTh>Actions</MudTh>
-            <MudTh Class="fixed-column position">First Name</MudTh>
-            <MudTh Class="fixed-column position2">Last Name</MudTh>
-            <MudTh>UserName</MudTh>
-            <MudTh>Email</MudTh>
-            <MudTh>PhoneNumber</MudTh>
-            <MudTh>Email Confirmation</MudTh>
-            <MudTh>Active</MudTh>
-
-        </HeaderContent>
-
-        <RowTemplate>
-            <MudTd DataLabel="Actions">
-                <MudMenu Label="Actions" Variant="Variant.Filled" DisableElevation="true" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary">
-                    @if (_canUpdateRoles)
-                    {
-                        <MudMenuItem OnClick="(()=>InvokeModal(context.Id.ToString()))">Edit User</MudMenuItem>
-                    }
-                    @if (_canViewRoles)
-                    {
-                        <MudMenuItem OnClick="(()=>ManageRoles(context.Id.ToString(), context.UserName))">Manage Roles</MudMenuItem>
-                    }
-                    @if (_canDeleteRoles)
-                    {
-                        <MudMenuItem @onclick="@(() => Delete(@context.Id.ToString()))">Delete</MudMenuItem>
-                    }
-                </MudMenu>
-            </MudTd>
-            <MudTd Class="fixed-column position" DataLabel="FirstName">
-                <MudHighlighter Text="@context.FirstName" HighlightedText="@_searchString" />
-            </MudTd>
-            <MudTd Class="fixed-column position2" DataLabel="LastName">
-                <MudHighlighter Text="@context.LastName" HighlightedText="@_searchString" />
-            </MudTd>
-            <MudTd DataLabel="UserName">
-                <MudHighlighter Text="@context.UserName" HighlightedText="@_searchString" />
-            </MudTd>
-            <MudTd DataLabel="Email">
-                <MudHighlighter Text="@context.Email" HighlightedText="@_searchString" />
-            </MudTd>
-            <MudTd DataLabel="PhoneNumber">
-                <MudHighlighter Text="@context.PhoneNumber" HighlightedText="@_searchString" />
-            </MudTd>
-            <MudTd DataLabel="EmailConfirmed"><MudCheckBox T="bool" Value="@context.EmailConfirmed" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
-            <MudTd DataLabel="Active"><MudCheckBox T="bool" Value="@context.IsActive" ReadOnly Color="Color.Secondary"></MudCheckBox></MudTd>
-        </RowTemplate>
-        <PagerContent>
-            <MudTablePager HorizontalAlignment="HorizontalAlignment.Left" PageSizeOptions="@TablePageConstant.RowPerPage" RowsPerPageString="Rows per page" />
-        </PagerContent>
-    </MudTable> *@
 }
+
+<SfDialog @bind-Visible="@isDialogVisible" Width="500px" Header="Add Document Type">
+    <DialogTemplates>
+        <Content>
+            <EditForm Model="@newDocumentType" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="Name">Name</label>
+                    <InputText id="Name" class="form-control" @bind-Value="newDocumentType.Name" />
+                </div>
+                <div class="form-group">
+                    <label for="Description">Description</label>
+                    <InputText id="Description" class="form-control" @bind-Value="newDocumentType.Description" />
+                </div>
+                <div class="form-group">
+                    <label for="LinkUrl">Link URL</label>
+                    <InputText id="LinkUrl" class="form-control" @bind-Value="newDocumentType.LinkUrl" />
+                    <label for="FileActive">Active File</label>
+                    <SfSwitch @bind-Checked="newDocumentType.FileActive" OnLabel="Active" OffLabel="Deactive"></SfSwitch>
+
+                </div>
+                <div class="form-group">
+                    <label for="IsActive">Active</label>
+                    @*                     <InputCheckbox id="IsActive" class="form-control" @bind-Value="newDocumentType.IsActive" />
+*@               
+                       <SfSwitch @bind-Checked="newDocumentType.IsActive" OnLabel="Active" OffLabel="Deactive"></SfSwitch>
+                </div>
+                <div class="form-group">
+                    <label for="File">File</label>
+                    <InputFile id="File" OnChange="HandleFileSelected" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
 @code {
-    // private MudTable<UserDataViewModel> table;
 
     [Inject] FileApiClient apiClient { get; set; }
     [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+    private DocumentsTypes newDocumentType = new DocumentsTypes();
+    private IBrowserFile selectedFile;
+    private bool isDialogVisible = false;
 
     private bool _loaded = false;
 
@@ -179,13 +102,6 @@ else
 
     protected List<DocumentsTypes> documentTypes { get; set; }
 
-    // protected UserDataViewModel user { get; set; }
-
-    // protected List<SelectItem<Guid>> roleSelections { get; set; } = new();
-    // protected UserDataViewModel currentUser { get; set; } = new UserDataViewModel();
-    // protected RegisterViewModel newUserViewModel { get; set; } = new RegisterViewModel();
-    // protected ChangePasswordViewModel changePasswordViewModel { get; set; } = new ChangePasswordViewModel();
-
     private bool _canCreateUsers = true;
     private bool _canSearchUsers = true;
     private bool _canExportUsers = true;
@@ -195,13 +111,44 @@ else
 
     public string _searchString;
 
+    public void OnActionBegin(ActionEventArgs<DocumentsTypes> args)
+    {
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+        {
+            isDialogVisible = true;
+            args.Cancel = true;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await apiClient.CreateDocumentType(selectedFile, newDocumentType.Name, newDocumentType.Description, newDocumentType.IsActive);
+        if (response.IsSuccessStatusCode)
+        {
+            // newDocumentType.LinkUrl = response.Result;
+            documentTypes.Add(newDocumentType);
+            isDialogVisible = false;
+            StateHasChanged();
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             var user = (await authenticationStateTask).User;
 
-            var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri); //you can use IURIHelper for older versions
+            var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
 
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageSize", out var pageSizeData))
             {
@@ -212,13 +159,6 @@ else
             {
                 pageIndex = Convert.ToInt16(pageIndexData.First());
             }
-
-            // _canCreateUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Create).FirstOrDefault() != null;
-            // // _canSearchUsers = (await _authorizationService.AuthorizeAsync(state.User, PermissionsWebApp.User.Search)).Succeeded;
-            // _canExportUsers = user.Claims.Where(x => x.Value == PermissionsWebApp.User.Export).FirstOrDefault() != null;
-            // _canViewRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Read).FirstOrDefault() != null;
-            // _canUpdateRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Update).FirstOrDefault() != null;
-            // _canDeleteRoles = user.Claims.Where(x => x.Value == PermissionsWebApp.Role.Delete).FirstOrDefault() != null;
 
             await LoadDocumentType();
         }
@@ -276,48 +216,11 @@ else
         await LoadDocumentType();
     }
 
-    // private async Task InvokeModal(string id = null)
-    // {
-    //     var parameters = new DialogParameters();
-
-    //     if (id != null)
-    //     {
-    //         user = users!.Where(c => c.Id.ToString() == id).FirstOrDefault()!;
-    //         if (user != null)
-    //         {
-    //             parameters.Add(nameof(RegisterUser.RegisterUserModel), new RegisterViewModel
-    //                 {
-    //                     Id = user.Id,
-    //                     UserName = user.UserName,
-    //                     FirstName = user.FirstName,
-    //                     LastName = user.LastName,
-    //                     Email = user.Email,
-    //                     PhoneNumber = user.PhoneNumber,
-    //                     ActivateUser = user.IsActive,
-    //                     AutoConfirmEmail = user.EmailConfirmed
-    //                 });
-    //         }
-    //     }
-
-    //     var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = true };
-    //     var dialog = _dialogService.Show<RegisterUser>(id == Guid.Empty.ToString() ? "Create" : "Edit", parameters, options);
-    //     var result = await dialog.Result;
-    //     if (!result!.Canceled)
-    //     {
-    //         await LoadUsers();
-    //         await table.ReloadServerData();
-    //     }
-    // }
-
     private void ViewProfile(string userId)
     {
         _navigationManager.NavigateTo($"/admin/user-profile/{userId}");
     }
 
-    // protected async Task Reload()
-    // {
-
-    // }
 
     private async Task ExportToExcel()
     {

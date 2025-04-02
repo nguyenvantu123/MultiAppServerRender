@@ -27,12 +27,20 @@ namespace BlazorIdentity.Files.CQRS.Command
             var documentType = new DocumentsType
             {
                 Name = request.Name,
-                Description = request.Description,
+                Description = request.Description!,
                 IsActive = request.IsActive
             };
 
             _unitOfWork.Repository<DocumentsType>().Add(documentType);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var documentsFiles = new DocumentsFiles
+            {
+                Name = request.Name,
+                IsActive = request.FileActive,
+                FilePath = request.LinkUrl,
+                DocumentsTypeId = documentType.Id,
+            };
 
             return new ApiResponseDto<bool>(200, "Document type created successfully", true, 0);
         }
