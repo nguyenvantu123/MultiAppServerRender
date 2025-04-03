@@ -25,7 +25,7 @@ namespace BlazorIdentity.Files.Apis
 
             api.MapGet("/document-type", GetListDocument);
             api.MapGet("/export-excel", ExportDocumentListToExcel); // Add this line
-            api.MapPost("/document-type", CreateDocumentType); // Add this line
+            api.MapPost("/document-type", CreateDocumentType).DisableAntiforgery(); // Add this line
             api.MapPut("/document-type", UpdateDocumentType); // Add this line
 
 

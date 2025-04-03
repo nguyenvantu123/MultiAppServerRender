@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlazorIdentity.Files.Application.Queries;
+using BlazorIdentity.Files.Constant;
 using BlazorIdentity.Files.Entities;
 using BlazorIdentity.Files.Response;
 using BlazorIdentityFiles.SeedWork;
@@ -40,7 +41,7 @@ namespace BlazorIdentity.Files.CQRS.Query
                 query = query.Skip((request.PageNumber.Value - 1) * request.PageSize!.Value).Take(request.PageSize!.Value);
             }
 
-            var documents = await query.ToListAsync(cancellationToken);
+            List<DocumentsType> documents = await query.ToListAsync(cancellationToken);
             var data = _mapper.Map<List<DocumentResponse>>(documents);
 
             return new ApiResponseDto<List<DocumentResponse>>(200, "Success", data, count);

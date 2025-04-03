@@ -40,7 +40,7 @@ namespace BlazorIdentity.Files.CQRS.Command
             {
                 return new ApiResponseDto<string>(400, "File uploaded failed!!!", fileName);
             }
-            return new ApiResponseDto<string>(200, "File upload success!!!");
+            return new ApiResponseDto<string>(200, "File upload success!!!", fileName);
         }
     }
 }

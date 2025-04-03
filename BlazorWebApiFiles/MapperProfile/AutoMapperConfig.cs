@@ -12,11 +12,8 @@ namespace BlazorApiUser.MapperProfile
         public AutoMapperConfig()
         {
             // Add as many of these lines as you need to map your objects
-            CreateMap<DocumentResponse, DocumentsType>();
-            //CreateMap<AppTenantInfo, TenantDto>();
+            CreateMap<DocumentsType, DocumentResponse>();
 
-            //CreateMap<UserProfile, UserProfileViewModel>();
-            //CreateMap<UserDto, User>();
         }
 
         //public static IMapper Initialize()

@@ -33,11 +33,20 @@ else
         <GridEvents OnActionBegin="OnActionBegin" PageChanging="PageChangingHandler" OnLoad="LoadHandler" TValue="DocumentsTypes"></GridEvents>
 
         <GridColumns>
-            @*             <GridColumn HeaderText="Actions" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Left" Width="100"></GridColumn>
-        *@            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
-            <GridColumn Field=@nameof(DocumentsTypes.Description) HeaderText="Description" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center"></GridColumn>
-            <GridColumn Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center"></GridColumn>
-            <GridColumn Field=@nameof(DocumentsTypes.IsActive) HeaderText="Active" TextAlign="TextAlign.Center" DisplayAsCheckBox="true"> </GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.Description) HeaderText="Description" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center" IsFrozen="true" Freeze="FreezeDirection.Left"></GridColumn>
+            <GridColumn HeaderText="Active" TextAlign="TextAlign.Center" Width="100">
+                <Template>
+                    <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Disabled="true"></SfSwitch>
+                </Template>
+            </GridColumn>
+
+            <GridColumn Field=@nameof(DocumentsTypes.InsertedBy) AllowEditing="false"  HeaderText="InsertedBy" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.InsertedAt) HeaderText="InsertedAt" TextAlign="TextAlign.Center" AllowEditing="false"></GridColumn>
+
+            <GridColumn Field=@nameof(DocumentsTypes.UpdatedBy) HeaderText="UpdatedBy" TextAlign="TextAlign.Center" AllowEditing="false"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.UpdatedAt) HeaderText="UpdatedAt" TextAlign="TextAlign.Center" AllowEditing="false"></GridColumn>
         </GridColumns>
     </SfGrid>
 }
@@ -45,7 +54,7 @@ else
 <SfDialog @bind-Visible="@isDialogVisible" Width="600px" Header="Add Document Type" ShowCloseIcon="true" IsModal="true" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
     <DialogTemplates>
         <Content>
-            <EditForm Model="@newDocumentType" OnValidSubmit="HandleValidSubmit">
+            <EditForm Model="@newDocumentType">
                 <DataAnnotationsValidator />
                 @*                 <ValidationSummary />
                 *@
@@ -88,7 +97,13 @@ else
 
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-secondary me-2" @onclick="() => isDialogVisible = false">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <SfProgressButton Type="submit" IsPrimary="true" Content="Save" OnClick="@HandleValidSubmit">
+                            <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                                <SpinTemplate>
+                                    <div class="template"></div>
+                                </SpinTemplate>
+                            </ProgressButtonSpinSettings>
+                        </SfProgressButton>
                     </div>
                 </div>
             </EditForm>
@@ -150,9 +165,8 @@ else
         }
     }
 
-    private List<UploadFiles> uploadedFiles = new List<UploadFiles>();
     protected List<DocumentsTypes> documentTypes { get; set; }
-    private IBrowserFile selectedFile;
+    private IBrowserFile? selectedFile;
 
     private bool _canCreateUsers = true;
     private bool _canSearchUsers = true;
@@ -174,7 +188,7 @@ else
 
     private async Task HandleValidSubmit()
     {
-        if (uploadedFiles.Count > 0)
+        if (selectedFile != null)
         {
             var response = await apiClient.CreateDocumentType(selectedFile, newDocumentType.Name, newDocumentType.Description, newDocumentType.IsActive);
             if (response.IsSuccessStatusCode)
@@ -203,6 +217,7 @@ else
     private async Task onFileRemove()
     {
         await uploader.RemoveAsync();
+        selectedFile = null;
         fileSize = string.Empty;
         fileName = string.Empty;
     }
@@ -301,3 +316,20 @@ else
         //     : _localizer["Filtered Users exported"], Severity.Success);
     }
 }
+
+<style>
+    .template {
+        border: 2px solid green;
+        border-style: dotted;
+        border-radius: 50%;
+        border-top-color: transparent;
+        border-bottom-color: transparent;
+        height: 16px;
+        width: 16px;
+    }
+
+    .template {
+        -webkit-animation: custom-rolling 2s linear infinite;
+        animation: custom-rolling 2s linear infinite;
+    }
+</style>
