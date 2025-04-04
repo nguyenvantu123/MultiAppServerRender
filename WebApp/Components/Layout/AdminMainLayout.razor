@@ -25,12 +25,9 @@
                     @*Initialize the Sidebar component*@
                     <SfSidebar class="sidebar-menu" MediaQuery="(min-width: 600px)" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @bind-IsOpen="userProfileViewModel.IsNavOpen" Type="@SidebarType.Auto">
                         <ChildContent>
-                            @*                             <ToolbarEvents Clicked="@ToolbarClicked"></ToolbarEvents>
-                        *@                            <div class="main-menu">
+                            <div class="main-menu">
                                 <div>
                                     <AdminNavMenu />
-                                    @*                                 <SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
-                                *@
                                 </div>
                             </div>
                         </ChildContent>
@@ -44,7 +41,7 @@
                                 <form method="post" action="account/logout" @formname="logout">
                                     <AntiforgeryToken />
                                     <SfButton IsPrimary Type="Syncfusion.Blazor.Popups.ButtonType.Submit">Log out</SfButton>
-                                    <SfButton Content="Cancel" OnClick="@cancelclick" />
+                                    <SfButton Type="button" Content="Cancel" OnClick="@cancelclick" />
                                 </form>
                             </FooterTemplate>
                         </DialogTemplates>
@@ -67,84 +64,6 @@
                                         <TabHeader Text="Edit Profile"></TabHeader>
                                     </ChildContent>
                                     <ContentTemplate>
-                                        @*  <EditForm style="margin-top: 30px" Context="editContext" OnValidSubmit="@HandleValidSubmitProfile" Model="@userProfileViewModel">
-                                    <DataAnnotationsValidator />
-                                    <ValidationSummary />
-
-                                    <div class="row">
-                                    <!-- Left Panel: Avatar Image -->
-                                    <div class="col-md-4">
-                                    <div class="form-group">
-                                    <label for="avatar">Avatar</label>
-                                    <SfUploader @ref="uploadObj" CssClass="@CssClass" AutoUpload="true" AllowedExtensions=".png, .jpg, .jpeg" AllowMultiple="false">
-
-                                    <UploaderTemplates>
-                                    <Template Context="uploadContext">
-                                    @if (!string.IsNullOrEmpty(base64))
-                                    {
-                                    <span class="wrapper">
-                                    <img width="100px" height="100px" class="upload-image" alt="Image" src="@base64">
-                                    </span>
-                                    <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
-                                    <div class="file-size">@fileSize</div>
-                                    <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
-                                    }
-                                    </Template>
-                                    </UploaderTemplates>
-
-                                    <UploaderEvents ValueChange="OnChange"></UploaderEvents>
-
-                                    </SfUploader>
-                                    @if (!string.IsNullOrEmpty(userProfileViewModel.AvatarUrl) && string.IsNullOrEmpty(base64))
-                                    {
-                                    <img src="@userProfileViewModel.AvatarUrl" class="upload-image" alt="Image" />
-                                    }
-                                    else
-                                    {
-                                    <div></div>
-                                    }
-                                    </div>
-
-                                    </div>
-
-                                    <!-- Right Panel: Profile Information -->
-                                    <div class="col-md-8">
-                                    <div class="form-group">
-                                    <label for="firstName">First Name</label>
-                                    <InputText @bind-Value="userProfileViewModel.FirstName" id="firstName" class="form-control" />
-                                    <ValidationMessage For="@(() => userProfileViewModel.FirstName)" />
-                                    </div>
-                                    <div class="form-group">
-                                    <label for="lastName">Last Name</label>
-                                    <InputText @bind-Value="userProfileViewModel.LastName" id="lastName" class="form-control" />
-                                    <ValidationMessage For="@(() => userProfileViewModel.LastName)" />
-                                    </div>
-                                    <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <InputText @bind-Value="userProfileViewModel.Email" id="email" class="form-control" />
-                                    <ValidationMessage For="@(() => userProfileViewModel.Email)" />
-                                    </div>
-                                    <div class="form-group">
-                                    <label for="email">PhoneNumber</label>
-                                    <InputText @bind-Value="userProfileViewModel.PhoneNumber" id="phonenumber" class="form-control" />
-                                    <ValidationMessage For="@(() => userProfileViewModel.PhoneNumber)" />
-                                    </div>
-                                    <!-- Add more profile fields as needed -->
-                                    </div>
-                                    </div>
-
-                                    <div style="height:10px">
-                                    </div>
-                                    <SfProgressButton IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile">
-                                    <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
-                                    <SpinTemplate>
-                                    <div class="template"></div>
-                                    </SpinTemplate>
-                                    </ProgressButtonSpinSettings>
-                                    </SfProgressButton>
-                                    <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
-                                    </EditForm> *@
-
                                         <EditForm style="margin-top: 30px" Context="profileContext" EditContext="@editContext" OnValidSubmit="@HandleValidSubmitProfile">
                                             <DataAnnotationsValidator />
                                             @*                                             <ValidationSummary />
@@ -208,14 +127,14 @@
                                             </div>
 
                                             <div style="height:10px"></div>
-                                            <SfProgressButton IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile" Disabled="!IsFormValid">
+                                            <SfProgressButton Type="submit" IsPrimary="true" Content="Submit" OnClick="@HandleValidSubmitProfile" Disabled="!IsFormValid">
                                                 <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
                                                     <SpinTemplate>
                                                         <div class="template"></div>
                                                     </SpinTemplate>
                                                 </ProgressButtonSpinSettings>
                                             </SfProgressButton>
-                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                            <SfButton Type="button" Content="Cancel" OnClick="@cancelprofileclick" />
                                         </EditForm>
                                     </ContentTemplate>
                                 </TabItem>
@@ -230,21 +149,21 @@
                                         *@
                                             <div class="form-group">
                                                 <label for="currentPassword">Current Password</label>
-                                                <InputText @bind-Value="changePasswordViewModel.CurrentPassword" id="currentPassword" class="form-control" type="password" />
+                                                <InputText EnablePasswordVisibilityToggle @bind-Value="changePasswordViewModel.CurrentPassword" id="currentPassword" class="form-control" type="password" />
                                                 <ValidationMessage For="@(() => changePasswordViewModel.CurrentPassword)" />
                                             </div>
                                             <div style="height:10px">
                                             </div>
                                             <div class="form-group">
                                                 <label for="newPassword">New Password</label>
-                                                <InputText @bind-Value="changePasswordViewModel.NewPassword" id="newPassword" class="form-control" type="password" />
+                                                <InputText EnablePasswordVisibilityToggle @bind-Value="changePasswordViewModel.NewPassword" id="newPassword" class="form-control" type="password" />
                                                 <ValidationMessage For="@(() => changePasswordViewModel.NewPassword)" />
                                             </div>
                                             <div style="height:10px">
                                             </div>
                                             <div class="form-group">
                                                 <label for="confirmPassword">Confirm Password</label>
-                                                <InputText @bind-Value="changePasswordViewModel.NewPasswordConfirm" id="confirmPassword" class="form-control" type="password" />
+                                                <InputText EnablePasswordVisibilityToggle @bind-Value="changePasswordViewModel.NewPasswordConfirm" id="confirmPassword" class="form-control" type="password" />
                                                 <ValidationMessage For="@(() => changePasswordViewModel.NewPasswordConfirm)" />
                                             </div>
 
@@ -255,14 +174,14 @@
                                             <div style="height:10px">
                                             </div>
 
-                                            <SfProgressButton IsPrimary="true" Content="Change Password" OnClick="@HandleValidSubmit" Disabled="!IsFormValidChangePassword">
+                                            <SfProgressButton Type="submit" IsPrimary="true" Content="Change Password" OnClick="@HandleValidSubmit" Disabled="!IsFormValidChangePassword">
                                                 <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
                                                     <SpinTemplate>
                                                         <div class="template"></div>
                                                     </SpinTemplate>
                                                 </ProgressButtonSpinSettings>
                                             </SfProgressButton>
-                                            <SfButton Content="Cancel" OnClick="@cancelprofileclick" />
+                                            <SfButton Type="button" Content="Cancel" OnClick="@cancelprofileclick" />
                                         </EditForm>
                                     </ContentTemplate>
 
@@ -447,7 +366,7 @@
     private IBrowserFile selectedFile;
     private EditContext editContext;
     private EditContext changePasswordContext;
-
+    private bool isSubmitting = false;
     //End:Hidden
     private async Task OnChange(UploadChangeEventArgs args)
     {
@@ -490,29 +409,44 @@
             return;
         }
 
-        var response = await accountApiClient.UpdatePassword(changePasswordViewModel);
-        if (response.IsSuccessStatusCode)
+        if (isSubmitting)
         {
+            return;
+        }
 
-            await ProfileDialogObj.HideAsync();
+        isSubmitting = true;
 
-            var toastModel = new ToastModel
+        try
+        {
+            // Your form submission logic here
+            var response = await accountApiClient.UpdatePassword(changePasswordViewModel);
+            if (response.IsSuccessStatusCode)
+            {
+
+                await ProfileDialogObj.HideAsync();
+
+                var toastModel = new ToastModel
                 {
                     Title = "Success",
                     Content = response.Message,
                     CssClass = "e-toast-success"
                 };
-            await toast.ShowAsync(toastModel);
-        }
-        else
-        {
-            var toastModel = new ToastModel
+                await toast.ShowAsync(toastModel);
+            }
+            else
+            {
+                var toastModel = new ToastModel
                 {
                     Title = "Error",
                     Content = response.Message,
                     CssClass = "e-toast-danger"
                 };
-            await toast.ShowAsync(toastModel);
+                await toast.ShowAsync(toastModel);
+            }
+        }
+        finally
+        {
+            isSubmitting = false;
         }
     }
 
@@ -534,21 +468,21 @@
             await sessionStorage.RemoveItemAsync("userProfileData");
 
             var toastModel = new ToastModel
-                {
-                    Title = "Success",
-                    Content = response.Message,
-                    CssClass = "e-toast-success"
-                };
+            {
+                Title = "Success",
+                Content = response.Message,
+                CssClass = "e-toast-success"
+            };
             await toast.ShowAsync(toastModel);
         }
         else
         {
             var toastModel = new ToastModel
-                {
-                    Title = "Error",
-                    Content = response.Message,
-                    CssClass = "e-toast-danger"
-                };
+            {
+                Title = "Error",
+                Content = response.Message,
+                CssClass = "e-toast-danger"
+            };
             await toast.ShowAsync(toastModel);
         }
     }
@@ -573,6 +507,7 @@
 
         if (args.Item.Text == "User")
         {
+            changePasswordViewModel = new UpdatePasswordViewModel();
             await ProfileDialogObj.ShowAsync();
         }
     }

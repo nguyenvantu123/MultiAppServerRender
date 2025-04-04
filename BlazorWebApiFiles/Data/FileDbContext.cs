@@ -21,6 +21,12 @@ namespace BlazorIdentity.Files.Data
 
         public DbSet<FileMapWithEntity> FileMapWithEntities { get; set; }
 
+        public DbSet<DocumentsType> DocumentsType { get; set; }
+
+        public DbSet<DocumentsFiles> DocumentsFiles { get; set; }
+
+
+
         public bool HasActiveTransaction => _currentTransaction != null;
 
         //public FileDbContext(DbContextOptions<FileDbContext> options) : base(options) { }
