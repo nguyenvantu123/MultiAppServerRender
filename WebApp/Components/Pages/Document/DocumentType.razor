@@ -26,7 +26,7 @@
 else
 {
 
-    <SfGrid DataSource="@documentTypes" Toolbar="@(new List<string>() { "Add" })" AllowPaging="true">
+    <SfGrid DataSource="@documentTypes" Toolbar="@(new List<string>() { "Add", "Update" })" AllowPaging="true">
         <GridEditSettings AllowAdding="true" AllowEditing="true"></GridEditSettings>
 
         <GridPageSettings CurrentPage="@pageIndex" PageSize="@pageSize" EnableQueryString="true" PageSizes="@TablePageConstant.RowPerPage"></GridPageSettings>
@@ -34,19 +34,18 @@ else
 
         <GridColumns>
             <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
-            <GridColumn Field=@nameof(DocumentsTypes.Description) HeaderText="Description" TextAlign="TextAlign.Center"></GridColumn>
-            <GridColumn Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center" IsFrozen="true" Freeze="FreezeDirection.Left"></GridColumn>
-            <GridColumn HeaderText="Active" TextAlign="TextAlign.Center" Width="100">
+            <GridColumn Freeze="FreezeDirection.Left" Field=@nameof(DocumentsTypes.Description) HeaderText="Description" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn AllowEditing="false" Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center" IsFrozen="true" Freeze="FreezeDirection.Left"></GridColumn>
+            <GridColumn AllowEditing="true" HeaderText="Active" TextAlign="TextAlign.Center" Width="100">
                 <Template>
-                    <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Disabled="true"></SfSwitch>
+                    <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive"></SfSwitch>
                 </Template>
             </GridColumn>
 
-            <GridColumn Field=@nameof(DocumentsTypes.InsertedBy) AllowEditing="false"  HeaderText="InsertedBy" TextAlign="TextAlign.Center"></GridColumn>
-            <GridColumn Field=@nameof(DocumentsTypes.InsertedAt) HeaderText="InsertedAt" TextAlign="TextAlign.Center" AllowEditing="false"></GridColumn>
-
-            <GridColumn Field=@nameof(DocumentsTypes.UpdatedBy) HeaderText="UpdatedBy" TextAlign="TextAlign.Center" AllowEditing="false"></GridColumn>
-            <GridColumn Field=@nameof(DocumentsTypes.UpdatedAt) HeaderText="UpdatedAt" TextAlign="TextAlign.Center" AllowEditing="false"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.InsertedBy) AllowEditing="false" HeaderText="InsertedBy"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.InsertedAt) HeaderText="InsertedAt" AllowEditing="false"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.UpdatedBy) HeaderText="UpdatedBy" AllowEditing="false"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.UpdatedAt) HeaderText="UpdatedAt" AllowEditing="false"></GridColumn>
         </GridColumns>
     </SfGrid>
 }
