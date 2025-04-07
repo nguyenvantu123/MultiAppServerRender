@@ -26,7 +26,7 @@ namespace BlazorIdentity.Files.Apis
             api.MapGet("/document-type", GetListDocument);
             api.MapGet("/export-excel", ExportDocumentListToExcel); // Add this line
             api.MapPost("/document-type", CreateDocumentType).DisableAntiforgery(); // Add this line
-            api.MapPut("/document-type", UpdateDocumentType); // Add this line
+            api.MapPut("/document-type/{id}", UpdateDocumentType); // Add this line
 
 
             return api;
@@ -99,8 +99,15 @@ namespace BlazorIdentity.Files.Apis
         }
 
         public static async Task<ApiResponseDto<bool>> UpdateDocumentType(
-         [FromBody] CreateDocumentTypeCommand command, [FromServices] IMediator mediator)
+      Guid id, [FromBody] UpdateDocumentTypeCommand command, [FromServices] IMediator mediator)
         {
+            if (id != command.Id)
+            {
+                return new ApiResponseDto<bool>(400, "Id is not null", false, 0);
+            }
+
+            command.Id = id;
+
             return await mediator.Send(command);
         }
     }

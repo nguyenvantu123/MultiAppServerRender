@@ -46,5 +46,11 @@ namespace WebApp.Interfaces
 
             return responseData ?? new ApiResponseDto<bool>(500, "Error", false);
         }
+
+        public async Task<HttpResponseMessage> UpdateDocumentType(DocumentsTypes documentType)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/documenttypes/{documentType.Id}", documentType);
+            return response;
+        }
     }
 }

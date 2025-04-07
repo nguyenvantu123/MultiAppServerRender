@@ -16,20 +16,21 @@ namespace BlazorIdentity.Files.CQRS.Command
 
         public async Task<ApiResponseDto<bool>> Handle(UpdateDocumentTypeCommand request, CancellationToken cancellationToken)
         {
-            var documentType = await _unitOfWork.Repository<DocumentsType>().FindAsync(dt => dt.Id == request.Id);
-
+            var documentType = await _unitOfWork.Repository<DocumentsType>().GetByIdAsync(request.Id);
             if (documentType == null)
             {
-                return new ApiResponseDto<bool>(404, "Document type not found", false, 0);
+                return new ApiResponseDto<bool>(400, "Document type not found", false, 0);
             }
 
+            documentType.Name = request.Name;
             documentType.Description = request.Description;
             documentType.IsActive = request.IsActive;
+            documentType.UpdatedAt = DateTime.UtcNow;
 
             _unitOfWork.Repository<DocumentsType>().Update(documentType);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new ApiResponseDto<bool>(200, "Document type updated successfully", true, 0);
+            return new ApiResponseDto<bool>(200, "Success!!!", true, 1);
         }
     }
 }
