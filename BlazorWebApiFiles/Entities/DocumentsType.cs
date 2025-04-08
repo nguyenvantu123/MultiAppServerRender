@@ -10,5 +10,7 @@ namespace BlazorIdentity.Files.Entities
         public string Code { get; set; }
 
         public string Description { get; set; }
+
+        public virtual ICollection<DocumentsFiles> DocumentsFiles { get; set; }
     }
 }

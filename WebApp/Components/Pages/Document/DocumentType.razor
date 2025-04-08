@@ -35,13 +35,41 @@ else
         <GridColumns>
             <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
             <GridColumn Freeze="FreezeDirection.Left" Field=@nameof(DocumentsTypes.Description) HeaderText="Description" TextAlign="TextAlign.Center"></GridColumn>
-            <GridColumn AllowEditing="false" Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center" IsFrozen="true" Freeze="FreezeDirection.Left"></GridColumn>
-            <GridColumn AllowEditing="true" HeaderText="Active" TextAlign="TextAlign.Center" Width="100">
+            <GridColumn AllowEditing="false" Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center" IsFrozen="true" Freeze="FreezeDirection.Left">
+
+                <Template>
+
+                    @if (!string.IsNullOrEmpty(((DocumentsTypes)context).LinkUrl))
+                    {
+                        <a href="@((DocumentsTypes)context).LinkUrl" target="_blank">@((DocumentsTypes)context).LinkUrl</a>
+                    }
+                    @{
+                        var data = (DocumentsTypes)context;
+                    }
+
+                    <SfDropDownButton CssClass="e-small e-round" Items="@ActionItems">
+                        <DropDownMenuItems>
+                            <DropDownButtonEvents ItemSelected="@(args => OnActionSelected(args, data))"></DropDownButtonEvents>
+                            <DropDownMenuItem IconCss="fas fa-user" Text="User"></DropDownMenuItem>
+                            <DropDownMenuItem IconCss="fas fa-inbox" Text="Inbox"></DropDownMenuItem>
+                            <DropDownMenuItem IconCss="fas fa-tasks" Text="Task Manager"></DropDownMenuItem>
+                            <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support"></DropDownMenuItem>
+                            <DropDownMenuItem IconCss="fas fa-sign-out-alt" Text="Logout"></DropDownMenuItem>
+                        </DropDownMenuItems>
+                    </SfDropDownButton>
+
+
+                </Template>
+            </GridColumn>
+            <GridColumn AllowEditing="true" HeaderText="Status" TextAlign="TextAlign.Center" Width="100">
                 <EditTemplate>
                     <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Title="Toggle Active Status"></SfSwitch>
                 </EditTemplate>
                 <Template>
-                    <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Disabled="true" Title="@( ((DocumentsTypes)context).IsActive ? "Active" : "Inactive" )"></SfSwitch>
+                    <SfTooltip Position="Position.TopCenter" ShowCloseIcon="true">
+                        <span>@((DocumentsTypes)context).IsActive?"Active": "Inactive"</span>
+                    </SfTooltip>
+                    <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Disabled="true" Title="Status"></SfSwitch>
                 </Template>
             </GridColumn>
 
@@ -53,6 +81,38 @@ else
         </GridColumns>
     </SfGrid>
 }
+
+<SfDialog @bind-Visible="ShowUploadDialog" Header="Upload File" Width="400px">
+    <DialogTemplates>
+        <Content>
+            <SfUploader AllowedExtensions=".docx, .doc" AutoUpload="false"></SfUploader>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+<SfDialog @bind-Visible="ShowHistoryDialog" Header="Upload History" Width="700px">
+    <DialogTemplates>
+        <Content>
+            <SfGrid DataSource="@SelectedHistory">
+                <GridColumns>
+                    <GridColumn Field="UploadTime" HeaderText="Upload Time" Type="ColumnType.DateTime" Format="g"></GridColumn>
+
+                    <GridColumn HeaderText="File Name">
+                        <Template>
+                            @{
+                                var history = context as UploadHistoryModel;
+                            }
+                            <a href="@history.FileUrl" target="_blank">@history.FileName</a>
+                        </Template>
+                    </GridColumn>
+
+                    <GridColumn Field="Status" HeaderText="Status"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+
+        </Content>
+    </DialogTemplates>
+</SfDialog>
 
 <SfDialog @bind-Visible="@isDialogVisible" Width="600px" Header="Add Document Type" ShowCloseIcon="true" IsModal="true" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
     <DialogTemplates>
@@ -143,6 +203,48 @@ else
         public double Size { get; set; }
         public string Type { get; set; }
         public IBrowserFile File { get; set; }
+    }
+
+    public bool ShowUploadDialog { get; set; }
+    public bool ShowHistoryDialog { get; set; }
+    public DocumentsTypes SelectedDoc { get; set; }
+
+    public List<DropDownMenuItem> ActionItems = new()
+{
+    new DropDownMenuItem { Text = "Upload File" },
+    new DropDownMenuItem { Text = "View History" }
+};
+
+    public List<UploadHistoryModel> SelectedHistory { get; set; } = new();
+
+    private void OnActionSelected(MenuEventArgs args, DocumentsTypes data)
+    {
+        if (args.Item.Text == "Upload File")
+        {
+            ShowUploadDialog = true;
+        }
+        else if (args.Item.Text == "View History")
+        {
+            SelectedHistory = LoadHistoryByDoc(SelectedDoc);
+            ShowHistoryDialog = true;
+        }
+    }
+
+    private List<UploadHistoryModel> LoadHistoryByDoc(DocumentsTypes doc)
+    {
+        return new List<UploadHistoryModel>
+        {
+            new UploadHistoryModel { UploadTime = DateTime.Now.AddMinutes(-10), FileName = "Sample1.pdf", Status = "Success", FileUrl = doc.LinkUrl },
+            new UploadHistoryModel { UploadTime = DateTime.Now.AddHours(-1), FileName = "Sample2.docx", Status = "Failed", FileUrl = "#" }
+        };
+    }
+
+    public class UploadHistoryModel
+    {
+        public DateTime UploadTime { get; set; }
+        public string FileName { get; set; }
+        public string Status { get; set; }
+        public string FileUrl { get; set; }
     }
 
     public class CustomBrowserFile : IBrowserFile
