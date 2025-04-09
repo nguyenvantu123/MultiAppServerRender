@@ -26,7 +26,7 @@
 else
 {
 
-    <SfGrid DataSource="@documentTypes" Toolbar="@(new List<string>() { "Add", "Update" , "Cancel" })" AllowPaging="true">
+    <SfGrid DataSource="@documentTypes" Toolbar="@(new List<string>() { "Add", "Update", "Cancel" })" AllowPaging="true">
         <GridEditSettings AllowAdding="true" AllowEditing="true"></GridEditSettings>
 
         <GridPageSettings CurrentPage="@pageIndex" PageSize="@pageSize" EnableQueryString="true" PageSizes="@TablePageConstant.RowPerPage"></GridPageSettings>
@@ -35,7 +35,7 @@ else
         <GridColumns>
             <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
             <GridColumn Freeze="FreezeDirection.Left" Field=@nameof(DocumentsTypes.Description) HeaderText="Description" TextAlign="TextAlign.Center"></GridColumn>
-            <GridColumn AllowEditing="false" Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center" IsFrozen="true" Freeze="FreezeDirection.Left">
+            <GridColumn AllowEditing="false" Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center">
 
                 <Template>
 
@@ -43,10 +43,14 @@ else
                     {
                         <a href="@((DocumentsTypes)context).LinkUrl" target="_blank">@((DocumentsTypes)context).LinkUrl</a>
                     }
+                    else
+                    {
+                        <span class="text-danger">No File</span>
+                    }
+
                     @{
                         var data = (DocumentsTypes)context;
                     }
-
                     <SfDropDownButton CssClass="e-small e-round" Items="@ActionItems">
                         <DropDownMenuItems>
                             <DropDownButtonEvents ItemSelected="@(args => OnActionSelected(args, data))"></DropDownButtonEvents>
@@ -58,7 +62,6 @@ else
                         </DropDownMenuItems>
                     </SfDropDownButton>
 
-
                 </Template>
             </GridColumn>
             <GridColumn AllowEditing="true" HeaderText="Status" TextAlign="TextAlign.Center" Width="100">
@@ -66,8 +69,8 @@ else
                     <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Title="Toggle Active Status"></SfSwitch>
                 </EditTemplate>
                 <Template>
-                    <SfTooltip Position="Position.TopCenter" ShowCloseIcon="true">
-                        <span>@((DocumentsTypes)context).IsActive?"Active": "Inactive"</span>
+                    <SfTooltip Position="Position.TopCenter">
+                        <span>@(((DocumentsTypes)context).IsActive ? "Active" : "Inactive")</span>
                     </SfTooltip>
                     <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Disabled="true" Title="Status"></SfSwitch>
                 </Template>
