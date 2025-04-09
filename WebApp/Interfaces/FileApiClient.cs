@@ -58,15 +58,15 @@ namespace WebApp.Interfaces
             return await _httpClient.GetFromJsonAsync<ApiResponseDto<List<string>>>($"api/documents/{documentId}/history");
         }
 
-        public async Task<ApiResponseDto<bool>> UploadFileAgain(Guid documentId, IBrowserFile file)
+        public async Task<ApiResponseDto<string>> UploadFileAgain(Guid documentId, IBrowserFile file)
         {
             var content = new MultipartFormDataContent();
             content.Add(new StreamContent(file.OpenReadStream()), "file", file.Name);
 
             var response = await _httpClient.PostAsync($"api/documents/{documentId}/upload-again", content);
-            var responseData = await response.Content.ReadFromJsonAsync<ApiResponseDto<bool>>();
+            var responseData = await response.Content.ReadFromJsonAsync<ApiResponseDto<string>>();
 
-            return responseData ?? new ApiResponseDto<bool>(500, "Error", false);
+            return responseData ?? new ApiResponseDto<string>(500, "Error", "");
         }
     }
 }

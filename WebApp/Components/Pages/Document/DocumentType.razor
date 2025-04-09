@@ -33,35 +33,26 @@ else
         <GridEvents OnActionBegin="OnActionBegin" PageChanging="PageChangingHandler" OnLoad="LoadHandler" TValue="DocumentsTypes"></GridEvents>
 
         <GridColumns>
-            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" IsFrozen="true" Freeze="FreezeDirection.Left" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" TextAlign="TextAlign.Center" Width="100"></GridColumn>
             <GridColumn Freeze="FreezeDirection.Left" Field=@nameof(DocumentsTypes.Description) HeaderText="Description" TextAlign="TextAlign.Center"></GridColumn>
-            <GridColumn AllowEditing="false" Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center">
-
+            <GridColumn AllowEditing="false" Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl"
+                        TextAlign="TextAlign.Center" HeaderTextAlign="TextAlign.Center">
                 <Template>
-
-                    @if (!string.IsNullOrEmpty(((DocumentsTypes)context).LinkUrl))
-                    {
-                        <a href="@((DocumentsTypes)context).LinkUrl" target="_blank">@((DocumentsTypes)context).LinkUrl</a>
-                    }
-                    else
-                    {
-                        <span class="text-danger">No File</span>
-                    }
-
                     @{
                         var data = (DocumentsTypes)context;
                     }
-                    <SfDropDownButton CssClass="e-small e-round" Items="@ActionItems">
+                    @if (!string.IsNullOrEmpty(data.LinkUrl))
+                    {
+                        <a href="@data.LinkUrl" target="_blank" style="text-decoration: underline; float:left">
+                            @data.LinkUrl
+                        </a>
+                    }
+
+                    <SfDropDownButton style="float:right" CssClass="e-small e-round" Items="@ActionItems">
                         <DropDownMenuItems>
                             <DropDownButtonEvents ItemSelected="@(args => OnActionSelected(args, data))"></DropDownButtonEvents>
-                            <DropDownMenuItem IconCss="fas fa-user" Text="User"></DropDownMenuItem>
-                            <DropDownMenuItem IconCss="fas fa-inbox" Text="Inbox"></DropDownMenuItem>
-                            <DropDownMenuItem IconCss="fas fa-tasks" Text="Task Manager"></DropDownMenuItem>
-                            <DropDownMenuItem IconCss="fas fa-phone-volume" Text="Support"></DropDownMenuItem>
-                            <DropDownMenuItem IconCss="fas fa-sign-out-alt" Text="Logout"></DropDownMenuItem>
                         </DropDownMenuItems>
                     </SfDropDownButton>
-
                 </Template>
             </GridColumn>
             <GridColumn AllowEditing="true" HeaderText="Status" TextAlign="TextAlign.Center" Width="100">
@@ -70,7 +61,9 @@ else
                 </EditTemplate>
                 <Template>
                     <SfTooltip Position="Position.TopCenter">
-                        <span>@(((DocumentsTypes)context).IsActive ? "Active" : "Inactive")</span>
+                        <ContentTemplate>
+                            @(((DocumentsTypes)context).IsActive ? "Active" : "Inactive")
+                        </ContentTemplate>
                     </SfTooltip>
                     <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Disabled="true" Title="Status"></SfSwitch>
                 </Template>
@@ -88,12 +81,40 @@ else
 <SfDialog @bind-Visible="ShowUploadDialog" Header="Upload File" Width="400px">
     <DialogTemplates>
         <Content>
-            <SfUploader AllowedExtensions=".docx, .doc" AutoUpload="false"></SfUploader>
+            @*   <SfUploader AllowedExtensions=".docx, .doc" AutoUpload="false"></SfUploader> *@
+
+            <label for="File" class="form-label">File</label>
+            <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc, .docx" AllowMultiple="false">
+                <UploaderTemplates>
+                    <Template Context="uploadContext">
+                        @if (!string.IsNullOrEmpty(fileName))
+                        {
+
+                            <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
+                            <div class="file-size">@fileSize</div>
+                            <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                        }
+                    </Template>
+                </UploaderTemplates>
+                <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+            </SfUploader>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary me-2" @onclick="() => ShowUploadDialog = false">Cancel</button>
+                <SfProgressButton Type="submit" IsPrimary="true" Content="Save" OnClick="@HandleUploadFile">
+                    <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                        <SpinTemplate>
+                            <div class="template"></div>
+                        </SpinTemplate>
+                    </ProgressButtonSpinSettings>
+                </SfProgressButton>
+            </div>
         </Content>
+
     </DialogTemplates>
 </SfDialog>
 
-<SfDialog @bind-Visible="ShowHistoryDialog" Header="Upload History" Width="700px">
+<SfDialog @bind-Visible="ShowHistoryDialog" ShowCloseIcon="true" Header="Upload History" Width="700px">
     <DialogTemplates>
         <Content>
             <SfGrid DataSource="@SelectedHistory">
@@ -220,25 +241,14 @@ else
 
     public List<UploadHistoryModel> SelectedHistory { get; set; } = new();
 
-    private void OnActionSelected(MenuEventArgs args, DocumentsTypes data)
-    {
-        if (args.Item.Text == "Upload File")
-        {
-            ShowUploadDialog = true;
-        }
-        else if (args.Item.Text == "View History")
-        {
-            SelectedHistory = LoadHistoryByDoc(SelectedDoc);
-            ShowHistoryDialog = true;
-        }
-    }
+
 
     private List<UploadHistoryModel> LoadHistoryByDoc(DocumentsTypes doc)
     {
         return new List<UploadHistoryModel>
         {
-            new UploadHistoryModel { UploadTime = DateTime.Now.AddMinutes(-10), FileName = "Sample1.pdf", Status = "Success", FileUrl = doc.LinkUrl },
-            new UploadHistoryModel { UploadTime = DateTime.Now.AddHours(-1), FileName = "Sample2.docx", Status = "Failed", FileUrl = "#" }
+            new UploadHistoryModel { UploadTime = DateTime.Now.AddMinutes(-10), FileName = "Sample1.pdf", Status = "Inactive", FileUrl = doc.LinkUrl },
+            new UploadHistoryModel { UploadTime = DateTime.Now.AddHours(-1), FileName = "Sample2.docx", Status = "Active", FileUrl = "#" }
         };
     }
 
@@ -285,19 +295,40 @@ else
 
     public string _searchString;
 
+    private async void OnActionSelected(MenuEventArgs args, DocumentsTypes data)
+    {
+        SelectedDoc = data;
+        if (args.Item.Text == "Upload File")
+        {
+            ShowUploadDialog = true;
+            isDialogVisible = true;
+            args.Cancel = true;
+            await onFileRemove();
+        }
+        else if (args.Item.Text == "View History")
+        {
+         
+            SelectedHistory = LoadHistoryByDoc(data);
+            ShowHistoryDialog = true;
+        }
+    }
+
     public async void OnActionBegin(ActionEventArgs<DocumentsTypes> args)
     {
         if (args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
         {
             isDialogVisible = true;
             args.Cancel = true;
+
+            await onFileRemove();
+
         }
-        else if (args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
-        {
-            isDialogVisible = true;
-            newDocumentType = args.Data;
-            args.Cancel = true;
-        }
+        // else if (args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+        // {
+        //     isDialogVisible = true;
+        //     newDocumentType = args.Data;
+        //     args.Cancel = true;
+        // }
         else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
         {
             // Handle the update logic here
@@ -329,6 +360,30 @@ else
             {
                 documentTypes.Add(newDocumentType);
                 isDialogVisible = false;
+                StateHasChanged();
+            }
+            else
+            {
+                // Handle error
+            }
+        }
+    }
+
+    private async Task HandleUploadFile()
+    {
+        if (selectedFile != null)
+        {
+            var response = await apiClient.UploadFileAgain(SelectedDoc.Id, selectedFile);
+            if (response.IsSuccessStatusCode)
+            {
+                var index = documentTypes.FindIndex(d => d.Id == SelectedDoc.Id);
+
+              
+                if (index != -1)
+                {
+                    documentTypes[index].LinkUrl = response.Result;
+                }
+                ShowUploadDialog = false;
                 StateHasChanged();
             }
             else
