@@ -25,7 +25,6 @@ namespace BlazorIdentity.Files.CQRS.Command
             documentType.Name = request.Name;
             documentType.Description = request.Description;
             documentType.IsActive = request.IsActive;
-            documentType.UpdatedAt = DateTime.UtcNow;
 
             _unitOfWork.Repository<DocumentsType>().Update(documentType);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

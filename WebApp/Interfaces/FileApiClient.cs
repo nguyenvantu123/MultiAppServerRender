@@ -49,8 +49,24 @@ namespace WebApp.Interfaces
 
         public async Task<HttpResponseMessage> UpdateDocumentType(DocumentsTypes documentType)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/documenttypes/{documentType.Id}", documentType);
+            var response = await _httpClient.PutAsJsonAsync($"api/admins/document-type/{documentType.Id}", documentType);
             return response;
+        }
+
+        public async Task<ApiResponseDto<List<string>>> GetUploadHistory(Guid documentId)
+        {
+            return await _httpClient.GetFromJsonAsync<ApiResponseDto<List<string>>>($"api/documents/{documentId}/history");
+        }
+
+        public async Task<ApiResponseDto<bool>> UploadFileAgain(Guid documentId, IBrowserFile file)
+        {
+            var content = new MultipartFormDataContent();
+            content.Add(new StreamContent(file.OpenReadStream()), "file", file.Name);
+
+            var response = await _httpClient.PostAsync($"api/documents/{documentId}/upload-again", content);
+            var responseData = await response.Content.ReadFromJsonAsync<ApiResponseDto<bool>>();
+
+            return responseData ?? new ApiResponseDto<bool>(500, "Error", false);
         }
     }
 }

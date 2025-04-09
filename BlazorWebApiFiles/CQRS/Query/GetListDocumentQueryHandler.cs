@@ -41,7 +41,8 @@ namespace BlazorIdentity.Files.CQRS.Query
                 query = query.Skip((request.PageNumber.Value - 1) * request.PageSize!.Value).Take(request.PageSize!.Value);
             }
 
-            List<DocumentsType> documents = await query.ToListAsync(cancellationToken);
+            List<DocumentsType> documents = await query.Include(dt => dt.DocumentsFiles.Where(df => df.IsActive)).ToListAsync(cancellationToken);
+
             var data = _mapper.Map<List<DocumentResponse>>(documents);
 
             return new ApiResponseDto<List<DocumentResponse>>(200, "Success", data, count);

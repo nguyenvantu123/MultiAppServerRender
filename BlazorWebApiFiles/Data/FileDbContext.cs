@@ -47,6 +47,12 @@ namespace BlazorIdentity.Files.Data
             //modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
             //modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
             //modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
+
+            modelBuilder.Entity<DocumentsType>()
+                .HasMany(dt => dt.DocumentsFiles)
+                .WithOne(df => df.DocumentsType)
+                .HasForeignKey(df => df.DocumentsTypeId);
+
             modelBuilder.UseIntegrationEventLogs();
         }
 
