@@ -13,6 +13,7 @@ using Minio;
 using Minio.DataModel.Args;
 using MultiAppServer.ServiceDefaults;
 using System.Net.Http.Headers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BlazorIdentity.Files.Apis
 {
@@ -27,6 +28,8 @@ namespace BlazorIdentity.Files.Apis
             api.MapGet("/export-excel", ExportDocumentListToExcel); // Add this line
             api.MapPost("/document-type", CreateDocumentType).DisableAntiforgery(); // Add this line
             api.MapPut("/document-type/{id}", UpdateDocumentType); // Add this line
+            api.MapPost("/document-type/{id}/upload-again", UploadAgain).DisableAntiforgery(); // Add this line
+            api.MapGet("/document-type/{id}/history", UploadHistory); // Add this line
 
 
             return api;
@@ -109,6 +112,55 @@ namespace BlazorIdentity.Files.Apis
             command.Id = id;
 
             return await mediator.Send(command);
+        }
+
+        public static async Task<ApiResponseDto<string>> UploadAgain(
+     Guid id, IFormFile? file, [FromServices] IMediator mediator)
+        {
+
+            string fileUrl = string.Empty;
+
+            if (file != null)
+            {
+                var content = new MultipartFormDataContent();
+                var fileContent = new StreamContent(file.OpenReadStream());
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                content.Add(fileContent, "file", file.FileName);
+
+                var response = await mediator.Send(new UploadFileCommand { Content = content });
+                if (response.IsSuccessStatusCode)
+                {
+                    fileUrl = response.Result;
+
+                    var command = new UploadAgainCommand
+                    {
+                        Id = id,
+                        FilePath = fileUrl
+                    };
+
+                    return await mediator.Send(command);
+                }
+            }
+
+            return new ApiResponseDto<string>(400, "File is not null", string.Empty, 0);
+
+        }
+
+        public static async Task<ApiResponseDto<List<UploadHistoryResponse>>> UploadHistory(Guid id, [FromServices] IMediator mediator)
+        {
+            var query = new GetUploadHistoryQuery
+            {
+                Id = id
+            };
+            var result = await mediator.Send(query);
+            if (result.IsSuccessStatusCode)
+            {
+                return result;
+            }
+            else
+            {
+                return new ApiResponseDto<List<UploadHistoryResponse>>(400, "Error", null, 0);
+            }
         }
     }
 }

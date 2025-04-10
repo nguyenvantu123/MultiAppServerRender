@@ -126,7 +126,7 @@ else
                             @{
                                 var history = context as UploadHistoryModel;
                             }
-                            <a href="@history.FileUrl" target="_blank">@history.FileName</a>
+                            <a href="@history.FileName" target="_blank">@history.FileName</a>
                         </Template>
                     </GridColumn>
 
@@ -243,21 +243,31 @@ else
 
 
 
-    private List<UploadHistoryModel> LoadHistoryByDoc(DocumentsTypes doc)
+    private async Task LoadHistoryByDoc(DocumentsTypes doc)
     {
-        return new List<UploadHistoryModel>
+        var result = await _fileApiClient.GetUploadHistory(doc.Id);
+
+        if (result.IsSuccessStatusCode)
         {
-            new UploadHistoryModel { UploadTime = DateTime.Now.AddMinutes(-10), FileName = "Sample1.pdf", Status = "Inactive", FileUrl = doc.LinkUrl },
-            new UploadHistoryModel { UploadTime = DateTime.Now.AddHours(-1), FileName = "Sample2.docx", Status = "Active", FileUrl = "#" }
-        };
+            SelectedHistory = result.Result;
+
+            return;
+        }
+
+        else
+        {
+            // Handle error
+            // viewNotifier.Show(result.Message, ViewNotifierType.Error, L["Operation Failed"]);
+
+        }
     }
 
     public class UploadHistoryModel
     {
+        public Guid Id { get; set; }
         public DateTime UploadTime { get; set; }
         public string FileName { get; set; }
-        public string Status { get; set; }
-        public string FileUrl { get; set; }
+        public bool Status { get; set; }
     }
 
     public class CustomBrowserFile : IBrowserFile
@@ -301,14 +311,12 @@ else
         if (args.Item.Text == "Upload File")
         {
             ShowUploadDialog = true;
-            isDialogVisible = true;
             args.Cancel = true;
             await onFileRemove();
         }
         else if (args.Item.Text == "View History")
         {
-         
-            SelectedHistory = LoadHistoryByDoc(data);
+            await LoadHistoryByDoc(data);
             ShowHistoryDialog = true;
         }
     }
@@ -378,7 +386,6 @@ else
             {
                 var index = documentTypes.FindIndex(d => d.Id == SelectedDoc.Id);
 
-              
                 if (index != -1)
                 {
                     documentTypes[index].LinkUrl = response.Result;
@@ -405,7 +412,10 @@ else
 
     private async Task onFileRemove()
     {
-        await uploader.RemoveAsync();
+        if (uploader != null)
+        {
+            await uploader.RemoveAsync();
+        }
         selectedFile = null;
         fileSize = string.Empty;
         fileName = string.Empty;

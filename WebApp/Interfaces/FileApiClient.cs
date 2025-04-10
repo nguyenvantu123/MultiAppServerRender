@@ -5,6 +5,7 @@ using MultiAppServer.ServiceDefaults;
 using System.Net.Http.Headers;
 using WebApp.Extensions;
 using WebApp.Models;
+using static WebApp.Components.Pages.Document.DocumentType;
 
 namespace WebApp.Interfaces
 {
@@ -53,17 +54,22 @@ namespace WebApp.Interfaces
             return response;
         }
 
-        public async Task<ApiResponseDto<List<string>>> GetUploadHistory(Guid documentId)
+        public async Task<ApiResponseDto<List<UploadHistoryModel>>> GetUploadHistory(Guid documentId)
         {
-            return await _httpClient.GetFromJsonAsync<ApiResponseDto<List<string>>>($"api/documents/{documentId}/history");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<UploadHistoryModel>>>($"api/admin/document-type/{documentId}/history");
         }
 
         public async Task<ApiResponseDto<string>> UploadFileAgain(Guid documentId, IBrowserFile file)
         {
             var content = new MultipartFormDataContent();
-            content.Add(new StreamContent(file.OpenReadStream()), "file", file.Name);
+            if (file != null)
+            {
+                var fileContent = new StreamContent(file.OpenReadStream());
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                content.Add(fileContent, "file", file.Name);
+            }
 
-            var response = await _httpClient.PostAsync($"api/documents/{documentId}/upload-again", content);
+            var response = await _httpClient.PostAsync($"api/admin/document-type/{documentId}/upload-again", content);
             var responseData = await response.Content.ReadFromJsonAsync<ApiResponseDto<string>>();
 
             return responseData ?? new ApiResponseDto<string>(500, "Error", "");
