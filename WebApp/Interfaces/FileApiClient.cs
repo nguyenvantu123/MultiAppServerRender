@@ -56,7 +56,7 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto<List<UploadHistoryModel>>> GetUploadHistory(Guid documentId)
         {
-            return await _httpClient.GetJsonAsync<ApiResponseDto<List<UploadHistoryModel>>>($"api/admin/document-type/{documentId}/history");
+            return await _httpClient.GetJsonAsync<ApiResponseDto<List<UploadHistoryModel>>>($"api/admins/document-type/{documentId}/history");
         }
 
         public async Task<ApiResponseDto<string>> UploadFileAgain(Guid documentId, IBrowserFile file)

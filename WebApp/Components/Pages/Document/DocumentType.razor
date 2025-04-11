@@ -20,8 +20,7 @@
 
 @if (!_loaded)
 {
-    <LoadingBackground>
-    </LoadingBackground>
+    <SfSpinner Size="40" Label="Loading" Type="SpinnerType.Material" Visible="true"></SfSpinner>
 }
 else
 {
@@ -60,10 +59,12 @@ else
                     <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Title="Toggle Active Status"></SfSwitch>
                 </EditTemplate>
                 <Template>
-                    <SfTooltip Position="Position.TopCenter">
-                        <ContentTemplate>
-                            @(((DocumentsTypes)context).IsActive ? "Active" : "Inactive")
-                        </ContentTemplate>
+                    @{
+                        var history = context as DocumentsTypes;
+
+                        string contentActive = history!.IsActive ? "Active" : "Inactive";
+                    }
+                    <SfTooltip Position="Position.TopCenter" Content="@contentActive">
                     </SfTooltip>
                     <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Disabled="true" Title="Status"></SfSwitch>
                 </Template>
@@ -78,7 +79,7 @@ else
     </SfGrid>
 }
 
-<SfDialog @bind-Visible="ShowUploadDialog" Header="Upload File" Width="400px">
+<SfDialog @bind-Visible="ShowUploadDialog" Header="Upload File" Width="400px" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
     <DialogTemplates>
         <Content>
             @*   <SfUploader AllowedExtensions=".docx, .doc" AutoUpload="false"></SfUploader> *@
@@ -114,25 +115,41 @@ else
     </DialogTemplates>
 </SfDialog>
 
-<SfDialog @bind-Visible="ShowHistoryDialog" ShowCloseIcon="true" Header="Upload History" Width="700px">
+<SfDialog @bind-Visible="ShowHistoryDialog" ShowCloseIcon="true" Header="Upload History" Width="700px" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
     <DialogTemplates>
         <Content>
-            <SfGrid DataSource="@SelectedHistory">
-                <GridColumns>
-                    <GridColumn Field="UploadTime" HeaderText="Upload Time" Type="ColumnType.DateTime" Format="g"></GridColumn>
 
-                    <GridColumn HeaderText="File Name">
-                        <Template>
-                            @{
-                                var history = context as UploadHistoryModel;
-                            }
-                            <a href="@history.FileName" target="_blank">@history.FileName</a>
-                        </Template>
-                    </GridColumn>
+            <SfSpinner Size="40" Label="Loading" Type="SpinnerType.Material" Visible="@(!_loadHistory)"></SfSpinner>
 
-                    <GridColumn Field="Status" HeaderText="Status"></GridColumn>
-                </GridColumns>
-            </SfGrid>
+            @if (_loadHistory)
+            {
+                <SfGrid DataSource="@SelectedHistory">
+                    <GridColumns>
+                        <GridColumn Field="InsertedAt" HeaderText="Upload Time" Type="ColumnType.DateTime" Format="g"></GridColumn>
+
+                        <GridColumn HeaderText="File Name">
+                            <Template>
+                                @{
+                                    var history = context as UploadHistoryModel;
+                                }
+                                <a href="@history!.Name" target="_blank">@history.Name</a>
+                            </Template>
+                        </GridColumn>
+
+                        <GridColumn TextAlign="TextAlign.Center" HeaderText="Status">
+                            <Template>
+                                @{
+                                    var history = context as UploadHistoryModel;
+                                    string contentActive = history!.IsActive ? "Active" : "Inactive";
+                                }
+
+                                <SfTooltip Position="Position.TopCenter" Content="@contentActive"></SfTooltip>
+                                <SfSwitch @bind-Checked="history!.IsActive" Title="Status"></SfSwitch>
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            }
 
         </Content>
     </DialogTemplates>
@@ -208,6 +225,7 @@ else
     private string fileSize { get; set; }
     private string fileName { get; set; }
     private bool _loaded = false;
+    private bool _loadHistory = false;
 
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
@@ -242,32 +260,12 @@ else
     public List<UploadHistoryModel> SelectedHistory { get; set; } = new();
 
 
-
-    private async Task LoadHistoryByDoc(DocumentsTypes doc)
-    {
-        var result = await _fileApiClient.GetUploadHistory(doc.Id);
-
-        if (result.IsSuccessStatusCode)
-        {
-            SelectedHistory = result.Result;
-
-            return;
-        }
-
-        else
-        {
-            // Handle error
-            // viewNotifier.Show(result.Message, ViewNotifierType.Error, L["Operation Failed"]);
-
-        }
-    }
-
     public class UploadHistoryModel
     {
         public Guid Id { get; set; }
-        public DateTime UploadTime { get; set; }
-        public string FileName { get; set; }
-        public bool Status { get; set; }
+        public DateTime InsertedAt { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public class CustomBrowserFile : IBrowserFile
@@ -305,7 +303,7 @@ else
 
     public string _searchString;
 
-    private async void OnActionSelected(MenuEventArgs args, DocumentsTypes data)
+    private async Task OnActionSelected(MenuEventArgs args, DocumentsTypes data)
     {
         SelectedDoc = data;
         if (args.Item.Text == "Upload File")
@@ -316,8 +314,15 @@ else
         }
         else if (args.Item.Text == "View History")
         {
-            await LoadHistoryByDoc(data);
             ShowHistoryDialog = true;
+
+            _loadHistory = false; // Show Spinner
+            StateHasChanged();
+
+            await LoadHistoryByDoc(data); // Load your history
+
+            _loadHistory = true;  // Hide Spinner
+            StateHasChanged();
         }
     }
 
@@ -445,7 +450,21 @@ else
         {
             _loaded = true;
         }
-        ;
+    }
+
+    private async Task LoadHistoryByDoc(DocumentsTypes doc)
+    {
+        var result = await _fileApiClient.GetUploadHistory(doc.Id);
+
+        if (result.IsSuccessStatusCode)
+        {
+            SelectedHistory = result.Result;
+        }
+        else
+        {
+            // Handle error
+            // viewNotifier.Show(result.Message, ViewNotifierType.Error, L["Operation Failed"]);
+        }
     }
 
     protected async Task LoadDocumentType()
