@@ -1,4 +1,4 @@
-name: WebApp Deploy
+name: BlazorIdentityApi Deploy
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-       - "WebApp/**"
+       - "BlazorIdentityApi/**"
 
 jobs:
   deploy:
@@ -29,24 +29,24 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build container image
-      run: docker build -f WebApp/Dockerfile -t webapp:$(echo $GITHUB_SHA | head -c7) .
+      run: docker build -f BlazorIdentityApi/Dockerfile -t blazoridentityapi:$(echo $GITHUB_SHA | head -c7) .
 
     - name: Tag Image  
-      run: docker tag webapp:$(echo $GITHUB_SHA | head -c7) nguyenvantu/webapp:$(echo $GITHUB_SHA | head -c7)
+      run: docker tag blazoridentityapi:$(echo $GITHUB_SHA | head -c7) nguyenvantu/blazoridentityapi:$(echo $GITHUB_SHA | head -c7)
 
     - name: Push image to Docker Hub
-      run: docker push nguyenvantu/webapp:$(echo $GITHUB_SHA | head -c7)
+      run: docker push nguyenvantu/blazoridentityapi:$(echo $GITHUB_SHA | head -c7)
 
     - name: Update deployment file
       run: |
         TAG=$(echo $GITHUB_SHA | head -c7)
-        sed -i 's|nguyenvantu/webapp:.*|nguyenvantu/webapp:'${TAG}'|' MultiAppServer.AppHost/aspirate-output/webapp/deployment.yaml
+        sed -i 's|nguyenvantu/blazoridentityapi:.*|nguyenvantu/blazoridentityapi:'${TAG}'|' MultiAppServer.AppHost/aspirate-output/blazoridentityapi/deployment.yaml
 
     - name: Save DigitalOcean kubeconfig with short-lived credentials
       run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
 
     - name: Deploy to DigitalOcean Kubernetes
-      run: kubectl apply -k MultiAppServer.AppHost/aspirate-output/webapp/.
+      run: kubectl apply -k MultiAppServer.AppHost/aspirate-output/blazoridentityapi/.
 
     # - name: Verify deployment
     #   run: kubectl rollout status deployment/webapp
