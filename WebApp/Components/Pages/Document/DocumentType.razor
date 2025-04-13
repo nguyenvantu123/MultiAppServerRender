@@ -2,13 +2,14 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Net
 @using System.Net.Http.Headers
+@using Syncfusion.Blazor.DocumentEditor
 @using WebApp.Components.Dialogs
 @using WebApp.Constant
 @using Syncfusion.Blazor.Grids
-
 @attribute [Authorize]
 @layout AdminMainLayout
-
+@inject IConfiguration Configuration
+@inject IJSRuntime JS
 <SfBreadcrumb>
     <BreadcrumbItems>
         <BreadcrumbItem Text="BreadCrumbAdmin" Url="/dashboard" />
@@ -40,18 +41,38 @@ else
                     @{
                         var data = (DocumentsTypes)context;
                     }
+
                     @if (!string.IsNullOrEmpty(data.LinkUrl))
                     {
-                        <a href="@data.LinkUrl" target="_blank" style="text-decoration: underline; float:left">
-                            @data.LinkUrl
-                        </a>
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; overflow: hidden;">
+                            <div style="display: flex; align-items: center; overflow: hidden; flex-grow: 1;">
+                                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                    <path d="M3 3C3 1.34315 4.34315 0 6 0H16.7574C17.553 0 18.3161 0.316071 18.8787 0.87868L26.1213 8.12132C26.6839 8.68393 27 9.44699 27 10.2426V27C27 28.6569 25.6569 30 24 30H6C4.34315 30 3 28.6569 3 27V3Z" fill="#4889EF" />
+                                    <path d="M17.5 11H25V10.5042C25 9.76949 24.7304 9.0603 24.2422 8.51114L19.9463 3.67818C18.9974 2.61074 17.6374 2 16.2092 2H16V9.5C16 10.3284 16.6716 11 17.5 11Z" fill="#D6E5FE" />
+                                    <path d="M10.3044 12H10.8868H11.104H11.6817L12.6231 16.3922L13.3963 12H15L13.5719 19H12.777H12.5552H11.8943L10.993 15.0093L10.1103 19H9.44945H9.22761H8.42808L7 12H8.60832L9.38188 16.3816L10.3044 12Z" fill="white" />
+                                    <rect x="7" y="21" width="16" height="2" rx="1" fill="white" />
+                                    <rect x="7" y="25" width="11" height="2" rx="1" fill="white" />
+                                </svg>
+                                <div class="file-name-text" style="margin-left: 10px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                                    @data.Name
+                                </div>
+                            </div>
+                            <SfDropDownButton CssClass="e-small e-round" Items="@ActionItems">
+                                <DropDownMenuItems>
+                                    <DropDownButtonEvents ItemSelected="@(args => OnActionSelected(args, data))"></DropDownButtonEvents>
+                                </DropDownMenuItems>
+                            </SfDropDownButton>
+                        </div>
+                    }
+                    else
+                    {
+                        <SfDropDownButton style="float:righ" CssClass="e-small e-round" Items="@ActionItems">
+                            <DropDownMenuItems>
+                                <DropDownButtonEvents ItemSelected="@(args => OnActionSelected(args, data))"></DropDownButtonEvents>
+                            </DropDownMenuItems>
+                        </SfDropDownButton>
                     }
 
-                    <SfDropDownButton style="float:right" CssClass="e-small e-round" Items="@ActionItems">
-                        <DropDownMenuItems>
-                            <DropDownButtonEvents ItemSelected="@(args => OnActionSelected(args, data))"></DropDownButtonEvents>
-                        </DropDownMenuItems>
-                    </SfDropDownButton>
                 </Template>
             </GridColumn>
             <GridColumn AllowEditing="true" HeaderText="Status" TextAlign="TextAlign.Center" Width="100">
@@ -155,6 +176,24 @@ else
     </DialogTemplates>
 </SfDialog>
 
+<SfDialog Width="90%" Height="90%" IsModal="true" @bind-Visible="@DialogVisible">
+    <DialogTemplates>
+        <Content>
+            <!-- ... title bar ... -->
+            <div>
+                <SfSpinner @bind-Visible="@ShowSpinner" @ref="_spinner" ZIndex="1100" CssClass="e-spin-overlay"></SfSpinner>
+
+                <SfDocumentEditorContainer @ref="Container" EnableToolbar="true" Height="600px" ServiceUrl="/api/documenteditor/">
+                    <DocumentEditorContainerEvents Created="OnOpen"></DocumentEditorContainerEvents>
+                </SfDocumentEditorContainer>
+            </div>
+        </Content>
+
+    </DialogTemplates>
+    <DialogEvents Opened="OnOpen"></DialogEvents>
+
+</SfDialog>
+
 <SfDialog @bind-Visible="@isDialogVisible" Width="600px" Header="Add Document Type" ShowCloseIcon="true" IsModal="true" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
     <DialogTemplates>
         <Content>
@@ -226,9 +265,20 @@ else
     private string fileName { get; set; }
     private bool _loaded = false;
     private bool _loadHistory = false;
+    private bool ShowDiv { get; set; } = false;
+    private bool ShowSpinner { get; set; } = false;
+    private bool DialogVisible { get; set; } = false;
+    internal SfSpinner _spinner;
+    private string openLinkUrl { get; set; } = string.Empty;
 
+    private Guid openLinkId { get; set; } = Guid.Empty;
+    private bool IsReadOnlyMode { get; set; } = true;
+    private bool IsEditMode { get; set; } = true;
+    internal bool ReadOnly { get; set; }
+    internal bool ShowProperties { get; set; } = false;
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
+    private string[] Items = new string[] { };
 
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -238,6 +288,9 @@ else
     public int pageIndex { get; set; } = 1;
 
     protected int totalItemsCount { get; set; } = 0;
+
+    private SfDocumentEditorContainer Container;
+    private string ApiBaseUrl => Configuration["HostUrl:FileApi"];
 
     public class UploadFiles
     {
@@ -253,8 +306,9 @@ else
 
     public List<DropDownMenuItem> ActionItems = new()
 {
+    new DropDownMenuItem { Text = "View And Edit File" },
     new DropDownMenuItem { Text = "Upload File" },
-    new DropDownMenuItem { Text = "View History" }
+    new DropDownMenuItem { Text = "View History" },
 };
 
     public List<UploadHistoryModel> SelectedHistory { get; set; } = new();
@@ -266,6 +320,71 @@ else
         public DateTime InsertedAt { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
+    }
+
+    public void Print(object args)
+    {
+        SfDocumentEditor documentEditor = Container.DocumentEditor;
+        documentEditor.PrintAsync();
+    }
+
+    public void OnExport(object args)
+    {
+        SfDocumentEditor documentEditor = Container.DocumentEditor;
+        documentEditor.SaveAsync(openLinkUrl, FormatType.Docx);
+    }
+
+    // public void OnDocumentChange()
+    // {
+    //     string name = Container.DocumentEditor.DocumentName;
+    //     if (name != "")
+    //     {
+    //         DocumentName = name;
+    //     }
+    // }
+
+    public async void OnCreated(object args)
+    {
+        SfDocumentEditor documentEditor = Container.DocumentEditor;
+        Container.ResizeAsync();
+        if (documentEditor != null)
+        {
+            await documentEditor.ResizeAsync();
+            await documentEditor.OpenAsync(openLinkUrl);
+
+
+            ReadOnly = false;
+            Items = new string[30] { "New", "Open", "Separator", "Undo", "Redo", "Separator", "Image", "Table", "Hyperlink", "Bookmark", "TableOfContents", "Separator", "Header", "Footer", "PageSetup", "PageNumber", "Break", "InsertFootnote", "InsertEndnote", "Separator", "Find", "Separator", "Comments", "TrackChanges", "Separator", "LocalClipboard", "RestrictEditing", "Separator", "FormFields", "UpdateFields" };
+            documentEditor.EnableContextMenu = true;
+
+            ReadOnly = true;
+            ShowProperties = false;
+            await documentEditor.FitPageAsync(PageFitType.FitPageWidth);
+        }
+        await this._spinner.HideAsync();
+    }
+
+    // private async Task OnOpen()
+    // {
+    //     await JS.InvokeVoidAsync("setDocumentEditorInstance", Container.DocumentEditor);
+
+    //     // You pass this from wherever (set via bind or parameter)
+    //     string presignedUrl = openLinkUrl;
+
+    //     ShowSpinner = true;
+
+    //     // Call your backend to fetch docx from R2 and convert to JSON
+    //     var json = await Http.GetStringAsync($"/api/documenteditor/load-from-url?url={Uri.EscapeDataString(presignedUrl)}");
+
+    //     // Load JSON into editor
+    //     await JS.InvokeVoidAsync("loadDocumentIntoEditor", json);
+
+    //     ShowSpinner = false;
+    // }
+
+    private void OnClose()
+    {
+        this.DialogVisible = false;
     }
 
     public class CustomBrowserFile : IBrowserFile
@@ -323,6 +442,57 @@ else
 
             _loadHistory = true;  // Hide Spinner
             StateHasChanged();
+        }
+
+        else if (args.Item.Text == "View And Edit File")
+        {
+            ShowSpinner = true;
+            StateHasChanged();
+
+            openLinkUrl = data.LinkUrl; // Presigned URL
+            openLinkId = data.Id;
+
+            IsReadOnlyMode = false;
+            IsEditMode = true;
+            DialogVisible = true;
+
+
+        }
+    }
+
+    private async Task OnOpen()
+    {
+        // await JS.InvokeVoidAsync("setDocumentEditorInstance", Container.DocumentEditor);
+
+        if (!string.IsNullOrEmpty(openLinkUrl))
+        {
+            try
+            {
+                ShowSpinner = true;
+                StateHasChanged();
+
+                // var json = await _fileApiClient.GetContentDocx(openLinkUrl);
+
+                HttpClient httpClient = new HttpClient();
+                Stream stream = await httpClient.GetStreamAsync(openLinkUrl);
+                MemoryStream memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                await Container.DocumentEditor.OpenAsync(memoryStream, ImportFormatType.Docx);
+
+                stream.Dispose();
+                stream = null;
+                memoryStream.Dispose();
+                memoryStream = null;
+                httpClient.Dispose();
+                httpClient = null;
+            }
+            finally
+            {
+                ShowSpinner = false;
+                StateHasChanged();
+            }
         }
     }
 
@@ -549,5 +719,4 @@ else
     .template {
         -webkit-animation: custom-rolling 2s linear infinite;
         animation: custom-rolling 2s linear infinite;
-    }
 </style>

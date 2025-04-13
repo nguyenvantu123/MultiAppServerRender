@@ -1,4 +1,6 @@
-﻿using BlazorIdentity.Files.Application.Commands;
+﻿using Azure;
+using Azure.Core;
+using BlazorIdentity.Files.Application.Commands;
 using BlazorIdentity.Files.Application.Queries;
 using BlazorIdentity.Files.Constant;
 using BlazorIdentity.Files.CQRS.Query;
@@ -12,7 +14,14 @@ using Microsoft.EntityFrameworkCore;
 using Minio;
 using Minio.DataModel.Args;
 using MultiAppServer.ServiceDefaults;
+using Newtonsoft.Json;
+using Syncfusion.Blazor;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.EJ2.DocumentEditor;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Web;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BlazorIdentity.Files.Apis
@@ -29,7 +38,10 @@ namespace BlazorIdentity.Files.Apis
             api.MapPost("/document-type", CreateDocumentType).DisableAntiforgery(); // Add this line
             api.MapPut("/document-type/{id}", UpdateDocumentType); // Add this line
             api.MapPost("/document-type/{id}/upload-again", UploadAgain).DisableAntiforgery(); // Add this line
-            api.MapGet("/document-type/{id}/history", UploadHistory); // Add this line
+            api.MapGet("/document-type/{id}/history", UploadHistory);
+
+            api.MapGet("/document-type/{fileUrl}/get-content-file", LoadFromPresignedUrl).DisableAntiforgery();
+            // Add this line
 
 
             return api;
@@ -161,6 +173,74 @@ namespace BlazorIdentity.Files.Apis
             {
                 return new ApiResponseDto<List<UploadHistoryResponse>>(400, "Error", null, 0);
             }
+        }
+
+
+        public static async Task<ApiResponseDto<string>> LoadFromPresignedUrl(string fileUrl)
+        {
+            //using var httpClient = new HttpClient();
+
+            //string decodedFileName = HttpUtility.UrlDecode(fileUrl);
+            //var response = await httpClient.GetAsync(decodedFileName);
+            //if (!response.IsSuccessStatusCode)
+            //{
+            //    return new ApiResponseDto<string>(400, "", null);
+            //}
+
+            //await using var inputStream = await response.Content.ReadAsStreamAsync();
+            //using var memoryStream = new MemoryStream();
+            //await inputStream.CopyToAsync(memoryStream);
+            //memoryStream.Position = 0;
+
+            //var wordDocument = WordDocument.Load(memoryStream, FormatType.Docx);
+            //string sfdtText = JsonConvert.SerializeObject(wordDocument);
+            //wordDocument.Dispose();
+
+            //return new ApiResponseDto<string>(200, "", sfdtText);
+
+            if (string.IsNullOrWhiteSpace(fileUrl))
+                return new ApiResponseDto<string>(400, "", "Presigned URL is required");
+
+            try
+            {
+
+                string decodedFileName = HttpUtility.UrlDecode(fileUrl);
+                //using var httpClient = new HttpClient();
+                //// Step 1: Download DOCX from presigned URL
+                //var response = await httpClient.GetAsync(decodedFileName);
+                //if (!response.IsSuccessStatusCode)
+                //    return new ApiResponseDto<string>(400, "", null);
+
+                //var stream = await response.Content.ReadAsStreamAsync();
+                //stream.Position = 0;
+
+                //using WordDocument wordDoc = new WordDocument(stream, FormatType.Docx);
+                //string sfdtText = WordDocument.SaveAsSfdt(wordDoc); // From Syncfusion.EJ2.DocumentEditor
+                //wordDoc.Dispose();
+                //return new ApiResponseDto<string>(200, "", sfdtText);
+
+                using var httpClient = new HttpClient();
+
+               var response = await httpClient.GetAsync(decodedFileName);
+                if (!response.IsSuccessStatusCode)
+                    return new ApiResponseDto<string>(400, "", null);
+
+                var stream = await response.Content.ReadAsStreamAsync();
+                if (stream.CanSeek) stream.Position = 0;
+
+                using Syncfusion.DocIO.DLS.WordDocument document = new Syncfusion.DocIO.DLS.WordDocument(stream, Syncfusion.DocIO.FormatType.Docx);
+
+                var sfdt = new  SfdtExport().ExportToSfdt(document); // ✅ Works in latest versions
+
+                return new ApiResponseDto<string>(200, "", sfdt);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponseDto<string>(500, "", ex.Message);
+
+                //return StatusCode(500, $"Error processing file: {ex.Message}");
+            }
+
         }
     }
 }

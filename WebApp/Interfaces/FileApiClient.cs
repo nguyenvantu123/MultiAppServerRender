@@ -74,5 +74,14 @@ namespace WebApp.Interfaces
 
             return responseData ?? new ApiResponseDto<string>(500, "Error", "");
         }
+
+        public async Task<ApiResponseDto<string>> GetContentDocx(string fileUrl)
+        {
+         /// document - type /{ fileUrl}/ get - content - file
+            var response = await _httpClient.GetAsync($"/api/admins/document-type/{Uri.EscapeDataString(fileUrl)}/get-content-file");
+            var responseData = await response.Content.ReadFromJsonAsync<ApiResponseDto<string>>();
+
+            return responseData ?? new ApiResponseDto<string>(500, "Error", "");
+        }
     }
 }

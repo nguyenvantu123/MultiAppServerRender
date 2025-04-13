@@ -5,7 +5,10 @@ using BlazorIdentity.Files.Entities;
 using BlazorIdentity.Files.Response;
 using BlazorIdentityFiles.SeedWork;
 using Microsoft.EntityFrameworkCore;
+using Minio;
+using Minio.DataModel.Args;
 using MultiAppServer.ServiceDefaults;
+using System.IO;
 
 namespace BlazorIdentity.Files.CQRS.Query
 {
@@ -13,11 +16,13 @@ namespace BlazorIdentity.Files.CQRS.Query
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMinioClient _minioClient;
 
-        public GetListDocumentQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetListDocumentQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IMinioClient minioClient)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _minioClient = minioClient;
         }
 
         public async Task<ApiResponseDto<List<DocumentResponse>>> Handle(GetListDocumentQuery request, CancellationToken cancellationToken)
@@ -44,6 +49,20 @@ namespace BlazorIdentity.Files.CQRS.Query
             List<DocumentsType> documents = await query.Include(dt => dt.DocumentsFiles.Where(df => df.IsActive)).ToListAsync(cancellationToken);
 
             var data = _mapper.Map<List<DocumentResponse>>(documents);
+
+            foreach (var item in data)
+            {
+                if (!string.IsNullOrEmpty(item.LinkUrl))
+                {
+                    PresignedGetObjectArgs presignedGetObjectArgs = new PresignedGetObjectArgs()
+                        .WithBucket("multiappserver")
+                        .WithObject(item.LinkUrl)
+                        .WithExpiry(60 * 60 * 3); // 1 day
+
+                    item.LinkUrl = await _minioClient.PresignedGetObjectAsync(presignedGetObjectArgs);
+
+                }
+            }
 
             return new ApiResponseDto<List<DocumentResponse>>(200, "Success", data, count);
         }

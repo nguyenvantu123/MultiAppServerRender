@@ -21,7 +21,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="29.1.33" />
+    <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.EJ2.WordEditor.AspNet.Core" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="29.1.37" />
   </ItemGroup>
 
   <ItemGroup>

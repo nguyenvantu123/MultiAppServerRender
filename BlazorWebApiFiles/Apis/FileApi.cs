@@ -12,6 +12,8 @@ using System.Security.Claims;
 using BlazorIdentity.Files.Entities;
 using BlazorIdentity.Files.Constant;
 using BlazorIdentity.Files.Exceptions;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
 
 public static class FileApi
 {
@@ -21,6 +23,7 @@ public static class FileApi
 
         api.MapGet("/get-presigned-url", GetPresignedAsync);
         api.MapPost("/upload-file", UploadFile).DisableAntiforgery();
+
         //api.MapGet("{orderId:int}", GetOrderAsync);
         //api.MapGet("/", GetOrdersByUserAsync);
         //api.MapGet("/cardtypes", GetCardTypesAsync);
@@ -161,4 +164,5 @@ public static class FileApi
 
         return new ApiResponseDto<string>(400, "File Is Require!!!", "");
     }
+
 }

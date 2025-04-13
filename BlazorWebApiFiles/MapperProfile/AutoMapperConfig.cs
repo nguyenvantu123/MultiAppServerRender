@@ -13,7 +13,8 @@ namespace BlazorApiUser.MapperProfile
         {
             // Add as many of these lines as you need to map your objects
             CreateMap<DocumentsType, DocumentResponse>()
-                .ForMember(dst => dst.LinkUrl, opt => opt.MapFrom(src => src.DocumentsFiles!.Where(x => x.IsActive).FirstOrDefault()!.FilePath));
+                .ForMember(dst => dst.LinkUrl, opt => opt.MapFrom(src => src.DocumentsFiles!.Where(x => x.IsActive).FirstOrDefault()!.FilePath))
+                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.DocumentsFiles!.Where(x => x.IsActive).FirstOrDefault()!.Name));
 
         }
 
