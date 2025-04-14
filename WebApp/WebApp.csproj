@@ -48,7 +48,6 @@
     <PackageReference Include="Syncfusion.Blazor.Layouts" Version="27.2.2" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="27.2.3" />
     <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="27.2.2" />
-    <PackageReference Include="Syncfusion.EJ2.WordEditor.AspNet.Core" Version="27.2.2" />
     <PackageReference Include="Syncfusion.Licensing" Version="27.2.2" />
   </ItemGroup>
 

@@ -60,7 +60,6 @@ namespace BlazorIdentity.Files.CQRS.Query
                         .WithExpiry(60 * 60 * 3); // 1 day
 
                     item.LinkUrl = await _minioClient.PresignedGetObjectAsync(presignedGetObjectArgs);
-
                 }
             }
 

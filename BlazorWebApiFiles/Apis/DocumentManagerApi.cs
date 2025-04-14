@@ -40,7 +40,7 @@ namespace BlazorIdentity.Files.Apis
             api.MapPost("/document-type/{id}/upload-again", UploadAgain).DisableAntiforgery(); // Add this line
             api.MapGet("/document-type/{id}/history", UploadHistory);
 
-            api.MapGet("/document-type/{fileUrl}/get-content-file", LoadFromPresignedUrl).DisableAntiforgery();
+            //api.MapGet("/document-type/{fileUrl}/get-content-file", LoadFromPresignedUrl).DisableAntiforgery();
             // Add this line
 
 
@@ -176,71 +176,36 @@ namespace BlazorIdentity.Files.Apis
         }
 
 
-        public static async Task<ApiResponseDto<string>> LoadFromPresignedUrl(string fileUrl)
-        {
-            //using var httpClient = new HttpClient();
+        //public static async Task<ApiResponseDto<string>> LoadFromPresignedUrl(string fileUrl)
+        //{
+        //    if (string.IsNullOrWhiteSpace(fileUrl))
+        //        return new ApiResponseDto<string>(400, "", "Presigned URL is required");
 
-            //string decodedFileName = HttpUtility.UrlDecode(fileUrl);
-            //var response = await httpClient.GetAsync(decodedFileName);
-            //if (!response.IsSuccessStatusCode)
-            //{
-            //    return new ApiResponseDto<string>(400, "", null);
-            //}
+        //    try
+        //    {
 
-            //await using var inputStream = await response.Content.ReadAsStreamAsync();
-            //using var memoryStream = new MemoryStream();
-            //await inputStream.CopyToAsync(memoryStream);
-            //memoryStream.Position = 0;
+        //        string decodedFileName = HttpUtility.UrlDecode(fileUrl);
 
-            //var wordDocument = WordDocument.Load(memoryStream, FormatType.Docx);
-            //string sfdtText = JsonConvert.SerializeObject(wordDocument);
-            //wordDocument.Dispose();
+        //        using var httpClient = new HttpClient();
 
-            //return new ApiResponseDto<string>(200, "", sfdtText);
+        //       var response = await httpClient.GetAsync(decodedFileName);
+        //        if (!response.IsSuccessStatusCode)
+        //            return new ApiResponseDto<string>(400, "", null);
 
-            if (string.IsNullOrWhiteSpace(fileUrl))
-                return new ApiResponseDto<string>(400, "", "Presigned URL is required");
+        //        var stream = await response.Content.ReadAsStreamAsync();
+        //        if (stream.CanSeek) stream.Position = 0;
 
-            try
-            {
+        //        using Syncfusion.DocIO.DLS.WordDocument document = new Syncfusion.DocIO.DLS.WordDocument(stream, Syncfusion.DocIO.FormatType.Docx);
 
-                string decodedFileName = HttpUtility.UrlDecode(fileUrl);
-                //using var httpClient = new HttpClient();
-                //// Step 1: Download DOCX from presigned URL
-                //var response = await httpClient.GetAsync(decodedFileName);
-                //if (!response.IsSuccessStatusCode)
-                //    return new ApiResponseDto<string>(400, "", null);
+        //        var sfdt = new  SfdtExport().ExportToSfdt(document); // ✅ Works in latest versions
 
-                //var stream = await response.Content.ReadAsStreamAsync();
-                //stream.Position = 0;
+        //        return new ApiResponseDto<string>(200, "", sfdt);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ApiResponseDto<string>(500, "", ex.Message);
+        //    }
 
-                //using WordDocument wordDoc = new WordDocument(stream, FormatType.Docx);
-                //string sfdtText = WordDocument.SaveAsSfdt(wordDoc); // From Syncfusion.EJ2.DocumentEditor
-                //wordDoc.Dispose();
-                //return new ApiResponseDto<string>(200, "", sfdtText);
-
-                using var httpClient = new HttpClient();
-
-               var response = await httpClient.GetAsync(decodedFileName);
-                if (!response.IsSuccessStatusCode)
-                    return new ApiResponseDto<string>(400, "", null);
-
-                var stream = await response.Content.ReadAsStreamAsync();
-                if (stream.CanSeek) stream.Position = 0;
-
-                using Syncfusion.DocIO.DLS.WordDocument document = new Syncfusion.DocIO.DLS.WordDocument(stream, Syncfusion.DocIO.FormatType.Docx);
-
-                var sfdt = new  SfdtExport().ExportToSfdt(document); // ✅ Works in latest versions
-
-                return new ApiResponseDto<string>(200, "", sfdt);
-            }
-            catch (Exception ex)
-            {
-                return new ApiResponseDto<string>(500, "", ex.Message);
-
-                //return StatusCode(500, $"Error processing file: {ex.Message}");
-            }
-
-        }
+        //}
     }
 }

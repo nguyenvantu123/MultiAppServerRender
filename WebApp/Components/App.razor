@@ -48,17 +48,6 @@
   
     <script>navigator.serviceWorker.register('service-worker.js');</script>
 
-    <script>
-        window.setDocumentEditorInstance = function (editor) {
-            window.documentEditor = editor;
-        };
-
-        window.loadDocumentIntoEditor = function (jsonText) {
-            if (window.documentEditor) {
-                window.documentEditor.open(jsonText);
-            }
-        };
-        </script>
 </body>
 
 </html>
