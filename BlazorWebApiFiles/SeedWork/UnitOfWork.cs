@@ -101,10 +101,12 @@ namespace BetkingLol.DataAccess.UnitOfWork
                             entity.InsertedAt = DateTime.UtcNow;
                             entity.UpdatedById = userId;
                             entity.UpdatedAt = DateTime.UtcNow;
+                            entity.InsertedBy = userName;
                             break;
                         case EntityState.Modified:
                             entity.UpdatedById = userId;
                             entity.UpdatedAt = DateTime.UtcNow;
+                            entity.UpdatedBy = userName;
                             break;
                         case EntityState.Detached:
                             break;

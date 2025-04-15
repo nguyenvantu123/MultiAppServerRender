@@ -14,6 +14,9 @@ using BetkingLol.DataAccess.UnitOfWork;
 using Aspire.Pomelo.EntityFrameworkCore.MySql;
 using Aspire.Minio.Client;
 using Minio;
+using BlazorApiUser.MapperProfile;
+using AutoMapper;
+using BlazorIdentity.Files.Apis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +38,6 @@ builder.Services.AddScoped<IFilesQueries, FilesQueries>();
 builder.Services.AddScoped<IRequestManager, RequestManager> ();
 
 builder.Services.AddScoped<FileServices>();
-
 var configSection = builder.Configuration.GetSection("MinioClient");
 
 var settings = new MinIoClientSettings();
@@ -57,10 +59,18 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining(typeof(Program));
 
-    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
-    cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
-    cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
+    //cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
 });
+
+var config = new AutoMapper.MapperConfiguration(cfg =>
+{
+    cfg.AddProfile(new AutoMapperConfig());
+});
+IMapper mapper = config.CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
 var withApiVersioning = builder.Services.AddApiVersioning();
@@ -82,6 +92,12 @@ app.MapDefaultEndpoints();
 var files = app.NewVersionedApi("Files");
 
 files.MapFilesApiV1()
+      .RequireAuthorization();
+
+
+var documentsType = app.NewVersionedApi("DocumentsType");
+
+documentsType.MapDocumentApiV1()
       .RequireAuthorization();
 
 app.UseDefaultOpenApi();

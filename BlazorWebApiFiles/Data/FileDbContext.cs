@@ -21,6 +21,12 @@ namespace BlazorIdentity.Files.Data
 
         public DbSet<FileMapWithEntity> FileMapWithEntities { get; set; }
 
+        public DbSet<DocumentsType> DocumentsType { get; set; }
+
+        public DbSet<DocumentsFiles> DocumentsFiles { get; set; }
+
+
+
         public bool HasActiveTransaction => _currentTransaction != null;
 
         //public FileDbContext(DbContextOptions<FileDbContext> options) : base(options) { }
@@ -41,6 +47,12 @@ namespace BlazorIdentity.Files.Data
             //modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
             //modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
             //modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
+
+            modelBuilder.Entity<DocumentsType>()
+                .HasMany(dt => dt.DocumentsFiles)
+                .WithOne(df => df.DocumentsType)
+                .HasForeignKey(df => df.DocumentsTypeId);
+
             modelBuilder.UseIntegrationEventLogs();
         }
 
