@@ -57,7 +57,7 @@ namespace BlazorIdentity.Files.CQRS.Query
                     PresignedGetObjectArgs presignedGetObjectArgs = new PresignedGetObjectArgs()
                         .WithBucket("multiappserver")
                         .WithObject(item.LinkUrl)
-                        .WithExpiry(60 * 60 * 3); // 1 day
+                        .WithExpiry(60 * 60 * 24); // 1 day
 
                     item.LinkUrl = await _minioClient.PresignedGetObjectAsync(presignedGetObjectArgs);
                 }
