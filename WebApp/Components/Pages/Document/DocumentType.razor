@@ -168,14 +168,11 @@ else
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
                 <h5>Editing @SelectedDoc?.Name</h5>
                 <div>
-                    <SfButton OnClick="LoadTestDocument">Load Test Doc</SfButton>
-                    <SfButton OnClick="DebugContent">Debug Content</SfButton>
-                    @*                     <SfButton OnClick="SaveDocument" IsPrimary="true">Save</SfButton>
- *@                    <SfButton OnClick="OnClose">Close</SfButton>
+                    <SfButton OnClick="OnClose">Close</SfButton>
                 </div>
             </div>
             <SfSpinner @bind-Visible="@ShowSpinner" @ref="_spinner" ZIndex="1100" CssClass="e-spin-overlay"></SfSpinner>
-            <SfDocumentEditorContainer @ref="container" EnableToolbar="true" Height="600px" Width="100%">
+            <SfDocumentEditorContainer Height="90%" @ref="container" EnableToolbar="true" ShowPropertiesPane="false">
                 <DocumentEditorContainerEvents Created="OnLoad"></DocumentEditorContainerEvents>
             </SfDocumentEditorContainer>
         </Content>
@@ -283,17 +280,18 @@ else
 
             // await container.DocumentEditor.Ensủe();
             // await container.DocumentEditor.Ensure();
-            await container.DocumentEditor.ResizeAsync();
 
-            bool isModuleLoaded = await JS.InvokeAsync<bool>("typeof sfBlazor !== 'undefined' && typeof sfBlazor.DocumentEditor !== 'undefined'");
-            if (!isModuleLoaded)
-            {
-                throw new Exception("Syncfusion DocumentEditor JavaScript module is not loaded.");
-            }
+            // bool isModuleLoaded = await JS.InvokeAsync<bool>("typeof sfBlazor !== 'undefined' && typeof sfBlazor.DocumentEditor !== 'undefined'");
+            // if (!isModuleLoaded)
+            // {
+            //     throw new Exception("Syncfusion DocumentEditor JavaScript module is not loaded.");
+            // }
+            await container.DocumentEditor.ResizeAsync();
+            await container.ResizeAsync();
 
             string fileUrl = "https://pub-099bf3e5b08b4cecbb00bb8494263863.r2.dev/QDC08123456.docx";
 
-            using (var request = new HttpRequestMessage(HttpMethod.Get, fileUrl))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, openLinkUrl))
             {
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
                 using (var response = await Http.SendAsync(request))
@@ -326,10 +324,9 @@ else
                         wordDocument.Dispose();
 
                         await container.DocumentEditor.OpenAsync(sfdt);
-                        // await container.DocumentEditor.Re();
-
-                        var documentContent = await container.DocumentEditor.SerializeAsync();
-                        Console.WriteLine($"Document SFDT: {documentContent.Substring(0, Math.Min(100, documentContent.Length))}...");
+             
+                        // var documentContent = await container.DocumentEditor.SerializeAsync();
+                        // Console.WriteLine($"Document SFDT: {documentContent.Substring(0, Math.Min(100, documentContent.Length))}...");
                     }
                 }
             }
@@ -720,24 +717,8 @@ else
 }
 
 <style>
-    .template {
-        border: 2px solid green;
-        border-style: dotted;
-        border-radius: 50%;
-        border-top-color: transparent;
-        border-bottom-color: transparent;
-        height: 16px;
-        width: 16px;
-    }
 
-    .template {
-        -webkit-animation: custom-rolling 2s linear infinite;
-        animation: custom-rolling 2s linear infinite;
-    }
-
-    .e-documenteditor-container {
-        min-height: 500px !important;
-        width: 100% !important;
-        border: 1px solid #ccc;
+    #editor {
+        display: block;
     }
 </style>
