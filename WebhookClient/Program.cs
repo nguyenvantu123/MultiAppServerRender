@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5ccnRTRmNeVkR0V0o=");
+SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF1cX2hIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdEBjXH9WcHZQR2FbWUZxWUlfZA==");
 //builder.Services.AddHttpContextAccessor();
 builder.Services.AddLogging();
 builder.Services.AddSignalR(hubOptions =>
