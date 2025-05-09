@@ -86,11 +86,11 @@ namespace WebApp.Interfaces
 
         public async Task<ApiResponseDto> UpdatePassword(UpdatePasswordViewModel parameters)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/account/update-password", parameters);
+            return await _httpClient.PostJsonAsync<ApiResponseDto>("api/admin/users/change-password", parameters);
         }
         public async Task<ApiResponseDto> AdminChangePassword(ChangePasswordViewModel parameters)
         {
-            return await _httpClient.PostJsonAsync<ApiResponseDto>($"api/account/addmin-user-password-reset", parameters);
+            return await _httpClient.PostJsonAsync<ApiResponseDto>($"api/account/admin-user-password-reset", parameters);
         }
 
         public async Task<ApiResponseDto> ForgotPassword(ForgotPasswordViewModel parameters)
@@ -299,29 +299,5 @@ namespace WebApp.Interfaces
             return result!;
 
         }
-
-        //public async Task<List<string>> GetPermissionByUser()
-        //{
-        //    var apiResponse = await _httpClient.GetJsonAsync<List<string>>($"api/account/get-permission-by-user");
-        //    return apiResponse;
-        //}
-
-        //public async Task<UserProfile> GetUserProfile()
-        //{
-        //    var apiResponse = await _httpClient.GetNewtonsoftJsonAsync<UserProfile>($"api/account/get-permission-by-user");
-        //    return apiResponse;
-        //}
     }
-
-    //public async Task<ApiResponseDto<RoleDto>> GetRoleByName(string roleName)
-    //{
-    //    //Http.GetFromJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}")
-    //    return await _httpClient.GetJsonAsync<ApiResponseDto<RoleDto>>($"api/admin/role/{roleName}");
-    //}
-
-    //public async Task<ApiResponseDto<List<TenantDto>>> GetListTenant(int pageSize, int pageNumber, string searchText)
-    //{
-    //    return await _httpClient.GetNewtonsoftJsonAsync<ApiResponseDto<List<TenantDto>>($"api/admin/tenants?pageSize={pageSize}&pageNumber={pageNumber}&pageSize={searchText}");
-
-    //}
 }

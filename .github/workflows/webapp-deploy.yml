@@ -4,11 +4,13 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - dev
+      - main
+    paths:
+       - "WebApp/**"
 
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'dev'
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
 
     steps:
@@ -46,5 +48,5 @@ jobs:
     - name: Deploy to DigitalOcean Kubernetes
       run: kubectl apply -k MultiAppServer.AppHost/aspirate-output/webapp/.
 
-    - name: Verify deployment
-      run: kubectl rollout status deployment/webapp
+    # - name: Verify deployment
+    #   run: kubectl rollout status deployment/webapp

@@ -353,44 +353,44 @@ else
     //     }
     // }
 
-    private async Task SingleUpload(InputFileChangeEventArgs e)
-    {
-        //TODO upload the files to the server
+    // private async Task SingleUpload(InputFileChangeEventArgs e)
+    // {
+    //     //TODO upload the files to the server
 
-        _loaded = false;
+    //     _loaded = false;
 
-        FileUploadEntry fileUploadEntry = new FileUploadEntry(e.File);
+    //     FileUploadEntry fileUploadEntry = new FileUploadEntry(e.File);
 
-        using var ms = new MemoryStream();
-        await fileUploadEntry.WriteToStreamAsync(ms);
+    //     using var ms = new MemoryStream();
+    //     await fileUploadEntry.WriteToStreamAsync(ms);
 
-        MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent
-        {
-        // Send form text values here
-        {new StringContent("0"),"FileType"},
-        {new StringContent("UserProfile"),"RelationType" },
-        {new StringContent(userViewModel.Id.ToString()),"RelationId" },
-        { new ByteArrayContent(ms.GetBuffer()), "\"uploadedFile\"", fileUploadEntry.Name }
-        };
-        try
-        {
-            var data = await _fileApiClient.UploadFile(null, multipartFormDataContent);
+    //     MultipartFormDataContent multipartFormDataContent = new MultipartFormDataContent
+    //     {
+    //     // Send form text values here
+    //     {new StringContent("0"),"FileType"},
+    //     {new StringContent("UserProfile"),"RelationType" },
+    //     {new StringContent(userViewModel.Id.ToString()),"RelationId" },
+    //     { new ByteArrayContent(ms.GetBuffer()), "\"uploadedFile\"", fileUploadEntry.Name }
+    //     };
+    //     try
+    //     {
+    //         var data = await _fileApiClient.UploadFile(null, multipartFormDataContent);
 
-            if (data.IsSuccessStatusCode)
-            {
-                ImageDataUrl = await GetPresisignedUrl(data.Result);
-            }
-        }
-        catch (Exception ex)
-        {
-            // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
-        }
+    //         if (data.IsSuccessStatusCode)
+    //         {
+    //             ImageDataUrl = await GetPresisignedUrl(data.Result);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         // viewNotifier.Show(ex.GetBaseException().Message, ViewNotifierType.Error, L["Operation Failed"]);
+    //     }
 
-        finally
-        {
-            _loaded = true;
-        }
-    }
+    //     finally
+    //     {
+    //         _loaded = true;
+    //     }
+    // }
 
     public async Task<string> GetPresisignedUrl(string objectName)
     {
