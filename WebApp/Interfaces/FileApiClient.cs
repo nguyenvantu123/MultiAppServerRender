@@ -69,7 +69,7 @@ namespace WebApp.Interfaces
                 content.Add(fileContent, "file", file.Name);
             }
 
-            var response = await _httpClient.PostAsync($"api/admin/document-type/{documentId}/upload-again", content);
+            var response = await _httpClient.PostAsync($"api/admins/document-type/{documentId}/upload-again", content);
             var responseData = await response.Content.ReadFromJsonAsync<ApiResponseDto<string>>();
 
             return responseData ?? new ApiResponseDto<string>(500, "Error", "");
