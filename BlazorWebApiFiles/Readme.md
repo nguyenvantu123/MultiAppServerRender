@@ -9,6 +9,8 @@ add-migration GenerateApplicationTenantDB1 -OutputDir  Data/Migrations/TenantSto
 
 update-database -StartupProject BlazorWebApiFiles  -Context FileDbContext
 
+remove-migration -StartupProject BlazorWebApiFiles  -Context FileDbContext
+
 
 update-database -StartupProject BlazorIdentityUsers  -Context TenantStoreDbContext
 

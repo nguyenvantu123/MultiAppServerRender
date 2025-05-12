@@ -23,6 +23,125 @@ namespace BlazorIdentity.Files.Data.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("BlazorIdentity.Files.Entities.DocumentsFiles", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("DocumentsTypeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("InsertedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("InsertedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("InsertedById")
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("RequestedHashCode")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentsTypeId");
+
+                    b.ToTable("DocumentsFiles", "Files");
+                });
+
+            modelBuilder.Entity("BlazorIdentity.Files.Entities.DocumentsType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("InsertedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("InsertedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("InsertedById")
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("RequestedHashCode")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DocumentsType", "Files");
+                });
+
             modelBuilder.Entity("BlazorIdentity.Files.Entities.FileData", b =>
                 {
                     b.Property<Guid>("Id")
@@ -279,6 +398,17 @@ namespace BlazorIdentity.Files.Data.Migrations
                     b.HasKey("EventId");
 
                     b.ToTable("IntegrationEventLog", "Files");
+                });
+
+            modelBuilder.Entity("BlazorIdentity.Files.Entities.DocumentsFiles", b =>
+                {
+                    b.HasOne("BlazorIdentity.Files.Entities.DocumentsType", "DocumentsType")
+                        .WithMany()
+                        .HasForeignKey("DocumentsTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DocumentsType");
                 });
 
             modelBuilder.Entity("BlazorIdentity.Files.Entities.FileData", b =>

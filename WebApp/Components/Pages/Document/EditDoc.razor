@@ -1,0 +1,50 @@
+﻿@page "/editdoc"
+@using Syncfusion.Blazor.DocumentEditor
+@inject IHttpClientFactory ClientFactory
+
+<h3>Syncfusion Document Editor</h3>
+
+@if (isLoading)
+{
+    <p><em>Loading document...</em></p>
+}
+else
+{
+    <SfDocumentEditorContainer @ref="container" EnableToolbar="true" Height="600px" />
+}
+
+@code {
+    private SfDocumentEditorContainer container;
+    private bool isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(500); // Wait for DOM to be ready
+            await LoadDocxFromUrl();
+        }
+    }
+
+    private async Task LoadDocxFromUrl()
+    {
+        try
+        {
+            var fileUrl = "https://pub-099bf3e5b08b4cecbb00bb8494263863.r2.dev/QDC08123456.docx";
+            using var client = ClientFactory.CreateClient();
+            using var stream = await client.GetStreamAsync(fileUrl);
+            var memStream = new MemoryStream();
+            await stream.CopyToAsync(memStream);
+            memStream.Position = 0;
+
+            await container?.DocumentEditor?.OpenAsync(memStream, ImportFormatType.Docx);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Failed to load docx: {ex.Message}");
+        }
+
+        isLoading = false;
+        StateHasChanged();
+    }
+}

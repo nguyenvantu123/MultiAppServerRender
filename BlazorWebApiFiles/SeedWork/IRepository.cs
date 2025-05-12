@@ -15,10 +15,10 @@ public interface IRepository<T> where T : IEntityBase
     void Delete(IList<T> entities);
     void Delete(Expression<Func<T, bool>> where);
 
-    T GetById(Guid id);
-    ValueTask<T> GetByIdAsync(Guid id);
-    IQueryable<T> GetQueryById(Guid id);
-    Task<TResult> GetPropertyByRecordId<TResult>(Guid id, Expression<Func<T, TResult>> selector);
+    T? GetById(Guid id);
+    ValueTask<T?> GetByIdAsync(Guid id);
+    IQueryable<T?> GetQueryById(Guid id);
+    Task<TResult?> GetPropertyByRecordId<TResult>(Guid id, Expression<Func<T, TResult?>> selector);
 
     IQueryable<T> GetQuery(bool withDeleted = false);
     IQueryable<T> GetQuery(Expression<Func<T, bool>> where);
@@ -27,5 +27,8 @@ public interface IRepository<T> where T : IEntityBase
     IQueryable<T> GetQueryCustomQuery();
     IQueryable<T> GetQueryCustomQuery(Expression<Func<T, bool>> where);
 
-    T Refresh(T entity);
+    T? Refresh(T entity);
+
+    Task<T?> FindAsync(Expression<Func<T?, bool>> predicate);
+
 }

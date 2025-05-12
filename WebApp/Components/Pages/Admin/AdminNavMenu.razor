@@ -75,65 +75,65 @@
             if (!MainMenuItems.Any())
             {
                 MainMenuItems.Add(new MenuItem
-                    {
-                        Text = "Dashboard",
-                        IconCss = "fas fa-chart-line",
-                        Items = new List<MenuItem>
+                {
+                    Text = "Dashboard",
+                    IconCss = "fas fa-chart-line",
+                    Items = new List<MenuItem>
                     {
                         new MenuItem{ Text = "Marketing", Url= "/dashboard" },
                         new MenuItem{ Text = "Sale" ,  Url= "/dashboard"},
                     }
-                    });
+                });
 
                 MainMenuItems.Add(new MenuItem
-                    {
-                        Text = "Setting",
-                        IconCss = "fas fa-tools",
-                        Items = new List<MenuItem>
+                {
+                    Text = "Setting",
+                    IconCss = "fas fa-tools",
+                    Items = new List<MenuItem>
                     {
                         new MenuItem{ Text = "MainSettings" },
                         new MenuItem{ Text = "Email" },
                     }
-                    });
-
-                // MainMenuItems.Add(new MenuItem
-                //     {
-                //         Text = "Dashboard",
-                //         IconCss = "fas fa-chart-line",
-                //         Items = new List<MenuItem>
-                //         {
-                //             new MenuItem{ Text = "Marketing" },
-                //             new MenuItem{ Text = "Sale" },
-                //         }
-                //     });
+                });
 
                 MainMenuItems.Add(new MenuItem
-                    {
-                        Text = "Monotoring",
-                        IconCss = "fas fa-history",
-                        Items = new List<MenuItem>
+                {
+                    Text = "Monotoring",
+                    IconCss = "fas fa-history",
+                    Items = new List<MenuItem>
                     {
                         new MenuItem{ Text = "History" },
                         new MenuItem{ Text = "Notes" },
                     }
-                    });
+                });
+
+                // add menu for management document type
+                MainMenuItems.Add(new MenuItem
+                {
+                    Text = "Document Management",
+                    IconCss = "fas fa-file-alt",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem{ Text = "Document Types", Url= "/document-types", IconCss = "fas fa-file-alt" },
+                    }
+                });
 
                 if (user.Claims.Where(x => x.Value == PermissionsWebApp.User.Read).FirstOrDefault() != null)
                 {
                     MainMenuItems.Add(new MenuItem
-                        {
-                            Text = "Account",
-                            IconCss = "fas fa-users",
-                        });
+                    {
+                        Text = "Account",
+                        IconCss = "fas fa-users",
+                    });
                 }
 
                 if (user.Claims.Where(x => x.Value == PermissionsWebApp.Tenant.Read).FirstOrDefault() != null)
                 {
                     MainMenuItems.Add(new MenuItem
-                        {
-                            Text = "MultiTenancy",
-                            IconCss = "fas fa-balance-scale",
-                        });
+                    {
+                        Text = "MultiTenancy",
+                        IconCss = "fas fa-balance-scale",
+                    });
                 }
 
             }

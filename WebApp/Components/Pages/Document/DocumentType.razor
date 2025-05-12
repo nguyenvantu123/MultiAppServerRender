@@ -1,0 +1,724 @@
+﻿@page "/document-types"
+@using Microsoft.AspNetCore.WebUtilities
+@using System.Net
+@using System.Net.Http.Headers
+@using System.Text.Json
+@using Syncfusion.Blazor.DocumentEditor
+@using Syncfusion.DocIO.DLS
+@using Syncfusion.EJ2.DocumentEditor
+@using WebApp.Components.Dialogs
+@using WebApp.Constant
+@using Syncfusion.Blazor.Grids
+@attribute [Authorize]
+@layout AdminMainLayout
+@inject IConfiguration Configuration
+@inject IJSRuntime JS
+@inject HttpClient Http
+@inject NavigationManager _navigationManager
+
+<SfBreadcrumb>
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="BreadCrumbAdmin" Url="/dashboard" />
+        <BreadcrumbItem Text="BreadCrumbDocumentType" Url="/admin/document-types" />
+    </BreadcrumbItems>
+</SfBreadcrumb>
+
+<PageTitle>Documents Type</PageTitle>
+
+@if (!_loaded)
+{
+    <SfSpinner Size="40" Label="Loading" Type="SpinnerType.Material" Visible="true"></SfSpinner>
+}
+else
+{
+    <SfGrid DataSource="@documentTypes" Toolbar="@(new List<string>() { "Add", "Update", "Cancel" })" AllowPaging="true">
+        <GridEditSettings AllowAdding="true" AllowEditing="true"></GridEditSettings>
+        <GridPageSettings CurrentPage="@pageIndex" PageSize="@pageSize" EnableQueryString="true" PageSizes="@TablePageConstant.RowPerPage"></GridPageSettings>
+        <GridEvents OnActionBegin="OnActionBegin" PageChanging="PageChangingHandler" OnLoad="LoadHandler" TValue="DocumentsTypes"></GridEvents>
+        <GridColumns>
+            <GridColumn Field=@nameof(DocumentsTypes.Name) HeaderText="Name" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+            <GridColumn Freeze="FreezeDirection.Left" Field=@nameof(DocumentsTypes.Description) HeaderText="Description" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn AllowEditing="false" Field=@nameof(DocumentsTypes.LinkUrl) HeaderText="LinkUrl" TextAlign="TextAlign.Center" HeaderTextAlign="TextAlign.Center">
+                <Template>
+                    @{
+                        var data = (DocumentsTypes)context;
+                    }
+                    @if (!string.IsNullOrEmpty(data.LinkUrl))
+                    {
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; overflow: hidden;">
+                            <div style="display: flex; align-items: center; overflow: hidden; flex-grow: 1;">
+                                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                    <path d="M3 3C3 1.34315 4.34315 0 6 0H16.7574C17.553 0 18.3161 0.316071 18.8787 0.87868L26.1213 8.12132C26.6839 8.68393 27 9.44699 27 10.2426V27C27 28.6569 25.6569 30 24 30H6C4.34315 30 3 28.6569 3 27V3Z" fill="#4889EF" />
+                                    <path d="M17.5 11H25V10.5042C25 9.76949 24.7304 9.0603 24.2422 8.51114L19.9463 3.67818C18.9974 2.61074 17.6374 2 16.2092 2H16V9.5C16 10.3284 16.6716 11 17.5 11Z" fill="#D6E5FE" />
+                                    <path d="M10.3044 12H10.8868H11.104H11.6817L12.6231 16.3922L13.3963 12H15L13.5719 19H12.777H12.5552H11.8943L10.993 15.0093L10.1103 19H9.44945H9.22761H8.42808L7 12H8.60832L9.38188 16.3816L10.3044 12Z" fill="white" />
+                                    <rect x="7" y="21" width="16" height="2" rx="1" fill="white" />
+                                    <rect x="7" y="25" width="11" height="2" rx="1" fill="white" />
+                                </svg>
+                                <div class="file-name-text" style="margin-left: 10px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                                    @data.Name
+                                </div>
+                            </div>
+                            <SfDropDownButton CssClass="e-small e-round" Items="@ActionItems">
+                                <DropDownMenuItems>
+                                    <DropDownButtonEvents ItemSelected="@(args => OnActionSelected(args, data))"></DropDownButtonEvents>
+                                </DropDownMenuItems>
+                            </SfDropDownButton>
+                        </div>
+                    }
+                    else
+                    {
+                        <SfDropDownButton style="float:right" CssClass="e-small e-round" Items="@ActionItems">
+                            <DropDownMenuItems>
+                                <DropDownButtonEvents ItemSelected="@(args => OnActionSelected(args, data))"></DropDownButtonEvents>
+                            </DropDownMenuItems>
+                        </SfDropDownButton>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn AllowEditing="true" HeaderText="Status" TextAlign="TextAlign.Center" Width="100">
+                <EditTemplate>
+                    <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Title="Toggle Active Status"></SfSwitch>
+                </EditTemplate>
+                <Template>
+                    @{
+                        var history = context as DocumentsTypes;
+                        string contentActive = history!.IsActive ? "Active" : "Inactive";
+                    }
+                    <SfTooltip Position="Position.TopCenter" Content="@contentActive">
+                    </SfTooltip>
+                    <SfSwitch @bind-Checked="((DocumentsTypes)context).IsActive" Disabled="true" Title="Status"></SfSwitch>
+                </Template>
+            </GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.InsertedBy) AllowEditing="false" HeaderText="InsertedBy"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.InsertedAt) HeaderText="InsertedAt" AllowEditing="false"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.UpdatedBy) HeaderText="UpdatedBy" AllowEditing="false"></GridColumn>
+            <GridColumn Field=@nameof(DocumentsTypes.UpdatedAt) HeaderText="UpdatedAt" AllowEditing="false"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+
+<SfDialog @bind-Visible="ShowUploadDialog" Header="Upload File" Width="400px" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
+    <DialogTemplates>
+        <Content>
+            <label for="File" class="form-label">File</label>
+            <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".docx" AllowMultiple="false">
+                <UploaderTemplates>
+                    <Template Context="uploadContext">
+                        @if (!string.IsNullOrEmpty(fileName))
+                        {
+                            <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
+                            <div class="file-size">@fileSize</div>
+                            <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                        }
+                    </Template>
+                </UploaderTemplates>
+                <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+            </SfUploader>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary me-2" @onclick="() => ShowUploadDialog = false">Cancel</button>
+                <SfProgressButton Type="submit" IsPrimary="true" Content="Save" OnClick="@HandleUploadFile">
+                    <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                        <SpinTemplate>
+                            <div class="template"></div>
+                        </SpinTemplate>
+                    </ProgressButtonSpinSettings>
+                </SfProgressButton>
+            </div>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+<SfDialog @bind-Visible="ShowHistoryDialog" ShowCloseIcon="true" Header="Upload History" Width="700px" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
+    <DialogTemplates>
+        <Content>
+            <SfSpinner Size="40" Label="Loading" Type="SpinnerType.Material" Visible="@(!_loadHistory)"></SfSpinner>
+            @if (_loadHistory)
+            {
+                <SfGrid DataSource="@SelectedHistory">
+                    <GridColumns>
+                        <GridColumn Field="InsertedAt" HeaderText="Upload Time" Type="ColumnType.DateTime" Format="g"></GridColumn>
+                        <GridColumn HeaderText="File Name">
+                            <Template>
+                                @{
+                                    var history = context as UploadHistoryModel;
+                                }
+                                <a href="@history!.Name" target="_blank">@history.Name</a>
+                            </Template>
+                        </GridColumn>
+                        <GridColumn TextAlign="TextAlign.Center" HeaderText="Status">
+                            <Template>
+                                @{
+                                    var history = context as UploadHistoryModel;
+                                    string contentActive = history!.IsActive ? "Active" : "Inactive";
+                                }
+                                <SfTooltip Position="Position.TopCenter" Content="@contentActive"></SfTooltip>
+                                <SfSwitch @bind-Checked="history!.IsActive" Title="Status"></SfSwitch>
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            }
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+<SfDialog Width="90%" Height="90%" IsModal="true" @bind-Visible="@DialogVisible">
+    <DialogTemplates>
+        <Content>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+                <h5>Editing @SelectedDoc?.Name</h5>
+                <div>
+                    <SfButton OnClick="OnClose">Close</SfButton>
+                </div>
+            </div>
+            <SfSpinner @bind-Visible="@ShowSpinner" @ref="_spinner" ZIndex="1100" CssClass="e-spin-overlay"></SfSpinner>
+            <SfDocumentEditorContainer Height="90%" @ref="container" EnableToolbar="true" ShowPropertiesPane="false">
+                <DocumentEditorContainerEvents Created="OnLoad"></DocumentEditorContainerEvents>
+            </SfDocumentEditorContainer>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+<SfDialog @bind-Visible="@isDialogVisible" Width="600px" Header="Add Document Type" ShowCloseIcon="true" IsModal="true" AnimationSettings="@(new DialogAnimationSettings { Effect = DialogEffect.Zoom })">
+    <DialogTemplates>
+        <Content>
+            <EditForm Model="@newDocumentType">
+                <DataAnnotationsValidator />
+                <div class="p-3">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Name</label>
+                        <InputText id="Name" class="form-control" @bind-Value="newDocumentType.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Description</label>
+                        <InputText id="Description" class="form-control" @bind-Value="newDocumentType.Description" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="File" class="form-label">File</label>
+                        <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".docx" AllowMultiple="false">
+                            <UploaderTemplates>
+                                <Template Context="uploadContext">
+                                    @if (!string.IsNullOrEmpty(fileName))
+                                    {
+                                        <div class="name file-name" title="@uploadContext.Name">@uploadContext.Name</div>
+                                        <div class="file-size">@fileSize</div>
+                                        <span class="e-icons e-file-remove-btn" id="removeIcon" title="Remove" @onclick="@onFileRemove"></span>
+                                    }
+                                </Template>
+                            </UploaderTemplates>
+                            <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+                        </SfUploader>
+                    </div>
+                    <div class="mb-3">
+                        <label for="IsActive" class="form-label">Active</label>
+                        <div class="d-flex flex-column align-items-start">
+                            <SfSwitch id="IsActive" @bind-Checked="newDocumentType.IsActive" CssClass="custom-switch"></SfSwitch>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" @onclick="() => isDialogVisible = false">Cancel</button>
+                        <SfProgressButton Type="submit" IsPrimary="true" Content="Save" OnClick="@HandleValidSubmit">
+                            <ProgressButtonSpinSettings Position="SpinPosition.Right" Width="20">
+                                <SpinTemplate>
+                                    <div class="template"></div>
+                                </SpinTemplate>
+                            </ProgressButtonSpinSettings>
+                        </SfProgressButton>
+                    </div>
+                </div>
+            </EditForm>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+@code {
+    [Inject] FileApiClient apiClient { get; set; }
+    [Inject] protected IStringLocalizer<Localizer.Global> L { get; set; }
+    private DocumentsTypes newDocumentType = new DocumentsTypes();
+    private SfUploader uploader;
+    private bool isDialogVisible = false;
+    private string fileSize { get; set; }
+    private string fileName { get; set; }
+    private bool _loaded = false;
+    private bool _loadHistory = false;
+    private bool ShowSpinner { get; set; } = false;
+    private bool DialogVisible { get; set; } = false;
+    internal SfSpinner _spinner;
+    private string openLinkUrl { get; set; } = string.Empty;
+    private Guid openLinkId { get; set; } = Guid.Empty;
+    private bool IsReadOnlyMode { get; set; } = true;
+    private bool IsEditMode { get; set; } = true;
+    internal bool ReadOnly { get; set; }
+    internal bool ShowProperties { get; set; } = false;
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+    private string[] Items = new string[] { };
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    SfDocumentEditorContainer container;
+
+    public int pageSize { get; set; } = 10;
+    public int pageIndex { get; set; } = 1;
+    protected int totalItemsCount { get; set; } = 0;
+    private string ApiBaseUrl => Configuration["HostUrl:FileApi"];
+
+    public class UploadFiles
+    {
+        public string Name { get; set; }
+        public double Size { get; set; }
+        public string Type { get; set; }
+        public IBrowserFile File { get; set; }
+    }
+
+    public async Task OnLoad(object args)
+    {
+        try
+        {
+            ShowSpinner = true;
+            StateHasChanged();
+
+            // await container.DocumentEditor.Ensủe();
+            // await container.DocumentEditor.Ensure();
+
+            // bool isModuleLoaded = await JS.InvokeAsync<bool>("typeof sfBlazor !== 'undefined' && typeof sfBlazor.DocumentEditor !== 'undefined'");
+            // if (!isModuleLoaded)
+            // {
+            //     throw new Exception("Syncfusion DocumentEditor JavaScript module is not loaded.");
+            // }
+            await container.DocumentEditor.ResizeAsync();
+            await container.ResizeAsync();
+
+            // string fileUrl = "https://pub-099bf3e5b08b4cecbb00bb8494263863.r2.dev/QDC08123456.docx";
+
+            using (var request = new HttpRequestMessage(HttpMethod.Get, openLinkUrl))
+            {
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
+                using (var response = await Http.SendAsync(request))
+                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new Exception($"Failed to fetch file: {response.ReasonPhrase}");
+                    }
+
+                    var contentType = response.Content.Headers.ContentType?.MediaType;
+                    if (contentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                    {
+                        throw new Exception($"Invalid file type: {contentType}. Expected .docx.");
+                    }
+
+                    byte[] fileBytes = await response.Content.ReadAsByteArrayAsync();
+                    if (fileBytes.Length == 0)
+                    {
+                        throw new Exception("Downloaded file is empty.");
+                    }
+
+                    Console.WriteLine($"Downloaded file size: {fileBytes.Length} bytes");
+
+                    using (var memoryStream = new MemoryStream(fileBytes))
+                    {
+                        memoryStream.Position = 0;
+
+                        var wordDocument = Syncfusion.EJ2.DocumentEditor.WordDocument.Load(memoryStream, Syncfusion.EJ2.DocumentEditor.FormatType.Docx);
+                        string sfdt = Newtonsoft.Json.JsonConvert.SerializeObject(wordDocument);
+                        wordDocument.Dispose();
+
+                        await container.DocumentEditor.OpenAsync(sfdt);
+             
+                        // var documentContent = await container.DocumentEditor.SerializeAsync();
+                        // Console.WriteLine($"Document SFDT: {documentContent.Substring(0, Math.Min(100, documentContent.Length))}...");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading document: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", $"Failed to load document: {ex.Message}");
+        }
+        finally
+        {
+            ShowSpinner = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadTestDocument()
+    {
+        try
+        {
+            ShowSpinner = true;
+            StateHasChanged();
+
+            string currentEnvironment = Environment.CurrentDirectory;
+
+            string filePathFileName = Path.Combine(currentEnvironment, "wwwroot", "141242121421421421421242142142.docx");
+
+            byte[] fileBytes = File.ReadAllBytes(filePathFileName);
+            using (var memoryStream = new MemoryStream(fileBytes))
+            {
+                memoryStream.Position = 0;
+                var wordDocument = Syncfusion.EJ2.DocumentEditor.WordDocument.Load(memoryStream, Syncfusion.EJ2.DocumentEditor.FormatType.Docx);
+                string sfdt = Newtonsoft.Json.JsonConvert.SerializeObject(wordDocument);
+                wordDocument.Dispose();
+
+                await container.DocumentEditor.OpenAsync(sfdt);
+                // await container.DocumentEditor.RefreshAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading test document: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", $"Failed to load test document: {ex.Message}");
+        }
+        finally
+        {
+            ShowSpinner = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task DebugContent()
+    {
+        try
+        {
+            var sfdt = await container.DocumentEditor.SerializeAsync();
+            Console.WriteLine($"SFDT Content: {sfdt}");
+            await JS.InvokeVoidAsync("alert", $"Document SFDT: {sfdt.Substring(0, Math.Min(100, sfdt.Length))}...");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error debugging content: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", $"Error debugging content: {ex.Message}");
+        }
+    }
+
+    // private async Task SaveDocument()
+    // {
+    //     try
+    //     {
+    //         ShowSpinner = true;
+    //         StateHasChanged();
+
+    //         var editor = container.DocumentEditor;
+    //         object base64Data = await editor.SaveAsBlob(FormatType.Docx);
+    //         var documentContent = JsonSerializer.Deserialize<Dictionary<string, string>>(base64Data.ToString());
+    //         byte[] data = Convert.FromBase64String(documentContent["data"]);
+
+    //         var uploadUrlResponse = await apiClient.GetPresignedUrlForUpload(openLinkId);
+    //         if (!uploadUrlResponse.IsSuccessStatusCode)
+    //         {
+    //             throw new Exception("Failed to get upload URL.");
+    //         }
+    //         string uploadPresignedUrl = uploadUrlResponse.Result;
+
+    //         using (var content = new ByteArrayContent(data))
+    //         {
+    //             content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    //             var response = await Http.PutAsync(uploadPresignedUrl, content);
+    //             if (!response.IsSuccessStatusCode)
+    //             {
+    //                 throw new Exception($"Upload failed: {response.ReasonPhrase}");
+    //             }
+    //         }
+
+    //         var updateResponse = await apiClient.UpdateDocumentLinkUrl(openLinkId, uploadPresignedUrl);
+    //         if (updateResponse.IsSuccessStatusCode)
+    //         {
+    //             var index = documentTypes.FindIndex(d => d.Id == openLinkId);
+    //             if (index != -1)
+    //             {
+    //                 documentTypes[index].LinkUrl = uploadPresignedUrl;
+    //             }
+    //             await JS.InvokeVoidAsync("alert", "Document saved successfully!");
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine($"Error saving document: {ex.Message}");
+    //         await JS.InvokeVoidAsync("alert", $"Failed to save document: {ex.Message}");
+    //     }
+    //     finally
+    //     {
+    //         ShowSpinner = false;
+    //         StateHasChanged();
+    //     }
+    // }
+
+    public bool ShowUploadDialog { get; set; }
+    public bool ShowHistoryDialog { get; set; }
+    public DocumentsTypes SelectedDoc { get; set; }
+
+    public List<DropDownMenuItem> ActionItems = new()
+    {
+        new DropDownMenuItem { Text = "View And Edit File" },
+        new DropDownMenuItem { Text = "Upload File" },
+        new DropDownMenuItem { Text = "View History" },
+    };
+
+    public List<UploadHistoryModel> SelectedHistory { get; set; } = new();
+
+    public class UploadHistoryModel
+    {
+        public Guid Id { get; set; }
+        public DateTime InsertedAt { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+    }
+
+    private void OnClose()
+    {
+        DialogVisible = false;
+    }
+
+    public class CustomBrowserFile : IBrowserFile
+    {
+        private readonly Stream _stream;
+        public CustomBrowserFile(string name, string contentType, long size, Stream stream)
+        {
+            Name = name;
+            ContentType = contentType;
+            Size = size;
+            _stream = stream;
+        }
+        public string Name { get; }
+        public DateTimeOffset LastModified => DateTimeOffset.Now;
+        public long Size { get; }
+        public string ContentType { get; }
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default)
+        {
+            return _stream;
+        }
+    }
+
+    protected List<DocumentsTypes> documentTypes { get; set; }
+    private IBrowserFile? selectedFile;
+
+    private bool _canCreateUsers = true;
+    private bool _canSearchUsers = true;
+    private bool _canExportUsers = true;
+    private bool _canViewRoles = true;
+    private bool _canDeleteRoles = true;
+    private bool _canUpdateRoles = true;
+
+    private async Task OnActionSelected(MenuEventArgs args, DocumentsTypes data)
+    {
+        SelectedDoc = data;
+        if (args.Item.Text == "Upload File")
+        {
+            ShowUploadDialog = true;
+            args.Cancel = true;
+            await onFileRemove();
+        }
+        else if (args.Item.Text == "View History")
+        {
+            ShowHistoryDialog = true;
+            _loadHistory = false;
+            StateHasChanged();
+            await LoadHistoryByDoc(data);
+            _loadHistory = true;
+            StateHasChanged();
+        }
+        else if (args.Item.Text == "View And Edit File")
+        {
+            ShowSpinner = true;
+            StateHasChanged();
+
+            // var response = await apiClient.GetPresignedUrl(data.Id);
+            // if (response.IsSuccessStatusCode)
+            // {
+            openLinkUrl = data.LinkUrl;
+            openLinkId = data.Id;
+            IsReadOnlyMode = false;
+            IsEditMode = true;
+            DialogVisible = true;
+            // }
+            // else
+            // {
+            //     Console.WriteLine("Failed to fetch presigned URL");
+            //     await JS.InvokeVoidAsync("alert", "Failed to fetch presigned URL");
+            //     ShowSpinner = false;
+            //     StateHasChanged();
+            // }
+        }
+    }
+
+    public async void OnActionBegin(ActionEventArgs<DocumentsTypes> args)
+    {
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+        {
+            isDialogVisible = true;
+            args.Cancel = true;
+            await onFileRemove();
+        }
+        else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            var updatedDocumentType = args.Data;
+            var response = await apiClient.UpdateDocumentType(updatedDocumentType);
+            if (response.IsSuccessStatusCode)
+            {
+                var index = documentTypes.FindIndex(d => d.Id == updatedDocumentType.Id);
+                if (index != -1)
+                {
+                    documentTypes[index] = updatedDocumentType;
+                }
+            }
+            else
+            {
+                // Handle error
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (selectedFile != null)
+        {
+            var response = await apiClient.CreateDocumentType(selectedFile, newDocumentType.Name, newDocumentType.Description, newDocumentType.IsActive);
+            if (response.IsSuccessStatusCode)
+            {
+                documentTypes.Add(newDocumentType);
+                isDialogVisible = false;
+                StateHasChanged();
+            }
+            else
+            {
+                // Handle error
+            }
+        }
+    }
+
+    private async Task HandleUploadFile()
+    {
+        if (selectedFile != null)
+        {
+            var response = await apiClient.UploadFileAgain(SelectedDoc.Id, selectedFile);
+            if (response.IsSuccessStatusCode)
+            {
+                var index = documentTypes.FindIndex(d => d.Id == SelectedDoc.Id);
+                if (index != -1)
+                {
+                    documentTypes[index].LinkUrl = response.Result;
+                }
+                ShowUploadDialog = false;
+                StateHasChanged();
+            }
+            else
+            {
+                // Handle error
+            }
+        }
+    }
+
+    private async Task OnChange(UploadChangeEventArgs args)
+    {
+        foreach (var file in args.Files)
+        {
+            if (Path.GetExtension(file.FileInfo.Name).ToLower() != ".docx")
+            {
+                await JS.InvokeVoidAsync("alert", "Only .docx files are supported.");
+                await uploader.RemoveAsync();
+                return;
+            }
+            selectedFile = file.File;
+            fileName = file.FileInfo.Name;
+            fileSize = await uploader.BytesToSizeAsync(file.FileInfo.Size);
+        }
+    }
+
+    private async Task onFileRemove()
+    {
+        if (uploader != null)
+        {
+            await uploader.RemoveAsync();
+        }
+        selectedFile = null;
+        fileSize = string.Empty;
+        fileName = string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = (await authenticationStateTask).User;
+            var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageSize", out var pageSizeData))
+            {
+                pageSize = Convert.ToInt16(pageSizeData.First());
+            }
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageIndex", out var pageIndexData))
+            {
+                pageIndex = Convert.ToInt16(pageIndexData.First());
+            }
+
+            await LoadDocumentType();
+        }
+        finally
+        {
+            _loaded = true;
+        }
+    }
+
+    private async Task LoadHistoryByDoc(DocumentsTypes doc)
+    {
+        var result = await apiClient.GetUploadHistory(doc.Id);
+        if (result.IsSuccessStatusCode)
+        {
+            SelectedHistory = result.Result;
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+
+    protected async Task LoadDocumentType()
+    {
+        try
+        {
+            var result = await apiClient.GetDocumentType(pageSize, pageIndex, "");
+            documentTypes = result.Result;
+            totalItemsCount = (int)result.Count;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading document types: {ex.Message}");
+        }
+        finally
+        {
+            _loaded = true;
+        }
+    }
+
+    public async void PageChangingHandler(GridPageChangingEventArgs args)
+    {
+        await OnPage(args.CurrentPage, args.CurrentPageSize);
+    }
+
+    public async void LoadHandler(object args)
+    {
+        await OnPage(pageIndex, pageSize);
+    }
+
+    protected async Task OnPage(int index, int size)
+    {
+        pageSize = size;
+        pageIndex = index;
+        await LoadDocumentType();
+    }
+
+    private void ViewProfile(string userId)
+    {
+        _navigationManager.NavigateTo($"/admin/user-profile/{userId}");
+    }
+}
+
+<style>
+
+    #editor {
+        display: block;
+    }
+</style>

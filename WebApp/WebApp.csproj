@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -18,6 +18,9 @@
     <EmbeddedResource Remove="Services\UserProfile\**" />
     <None Remove="Response\**" />
     <None Remove="Services\UserProfile\**" />
+    <Content Update="wwwroot\141242121421421421421242142142.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\js\knockout-3.5.1.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -43,8 +46,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Syncfusion.Blazor" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.Blazor.Charts" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.Blazor.Layouts" Version="27.2.2" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="27.2.3" />
+    <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.EJ2.WordEditor.AspNet.Core" Version="27.2.2" />
     <PackageReference Include="Syncfusion.Licensing" Version="27.2.2" />
   </ItemGroup>
 
@@ -63,6 +70,9 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Content Update="wwwroot\cookieHelper.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\QDC08.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

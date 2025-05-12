@@ -93,23 +93,3 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"19nguyenvantu94_MultiAppServerRender" /o:"19nguyenvantu94" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
-      - name: Update GitHub Status
-        uses: actions/github-script@v6
-        with:
-          script: |
-            console.log(context);
-            const checkRun = context.payload.check_run;
-            if (checkRun && checkRun.conclusion) {
-              const status = checkRun.conclusion === 'success' ? 'success' : 'failure';
-              await github.repos.createCommitStatus({
-                ...context.repo,
-                sha: context.sha,
-                state: status,
-                context: 'CI Pipeline',
-                description: status === 'success' ? 'All checks passed' : 'Some checks failed',
-                target_url: checkRun.html_url
-              });
-            } else {
-              console.error("The 'check_run' object or 'conclusion' property is undefined.");
-            }

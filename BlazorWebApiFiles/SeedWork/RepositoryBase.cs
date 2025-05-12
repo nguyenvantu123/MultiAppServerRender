@@ -67,25 +67,25 @@ public abstract class RepositoryBase<T, TC> : IRepository<T>
         }
     }
 
-    public virtual T GetById(Guid id)
+    public virtual T? GetById(Guid id)
     {
         return Dbset.Find(id);
     }
 
-    public virtual ValueTask<T> GetByIdAsync(Guid id)
+    public virtual ValueTask<T?> GetByIdAsync(Guid id)
     {
         return Dbset.FindAsync(id);
     }
 
-    public IQueryable<T> GetQueryById(Guid id)
+    public IQueryable<T?> GetQueryById(Guid id)
     {
         return GetQuery(m => m.Id == id);
     }
 
     // Example: unitOfWork.ExampleRepository.GetPropertyByRecordId(id, m => m.Id)
-    public Task<TResult> GetPropertyByRecordId<TResult>(Guid id, Expression<Func<T, TResult>> selector)
+    public Task<TResult?> GetPropertyByRecordId<TResult>(Guid id, Expression<Func<T, TResult?>> selector)
     {
-        return GetQueryById(id).Select(selector).FirstOrDefaultAsync();
+        return GetQueryById(id).Select(selector!).FirstOrDefaultAsync();
     }
 
     public IQueryable<T> GetQuery(bool withDeleted = false)
@@ -120,7 +120,7 @@ public abstract class RepositoryBase<T, TC> : IRepository<T>
     //    await DataContext.BulkInsertAsync(entity);
     //}
 
-    public T Refresh(T entity)
+    public T? Refresh(T entity)
     {
         DataContext.Entry(entity).State = EntityState.Detached;
         return GetById(entity.Id);
@@ -130,7 +130,13 @@ public abstract class RepositoryBase<T, TC> : IRepository<T>
     {
         //Dbset.Attach(entity);
         DataContext.Entry(entity).State = EntityState.Modified;
-        DataContext.Entry(entity).GetDatabaseValues().ToObject();
+        DataContext.Entry(entity).GetDatabaseValues()!.ToObject();
+    }
+
+    public async Task<T?> FindAsync(Expression<Func<T?, bool>> predicate)
+    {
+        return await Dbset.FirstOrDefaultAsync(predicate);
+
     }
 
     #endregion
