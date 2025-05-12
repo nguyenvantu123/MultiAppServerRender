@@ -16,7 +16,8 @@ namespace BlazorIdentity.Files.CQRS.Command
 
         public async Task<ApiResponseDto<bool>> Handle(UpdateDocumentTypeCommand request, CancellationToken cancellationToken)
         {
-            var documentType = await _unitOfWork.Repository<DocumentsType>().GetByIdAsync(request.Id);
+            DocumentsType? documentType = await _unitOfWork.Repository<DocumentsType>().GetByIdAsync(request.Id);
+
             if (documentType == null)
             {
                 return new ApiResponseDto<bool>(400, "Document type not found", false, 0);

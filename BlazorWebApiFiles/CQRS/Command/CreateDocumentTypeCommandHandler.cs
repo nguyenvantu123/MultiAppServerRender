@@ -16,10 +16,10 @@ namespace BlazorIdentity.Files.CQRS.Command
 
         public async Task<ApiResponseDto<bool>> Handle(CreateDocumentTypeCommand request, CancellationToken cancellationToken)
         {
-            var existingDocumentType = await _unitOfWork.Repository<DocumentsType>()
-                   .FindAsync(dt => dt.Name == request.Name);
+            DocumentsType? existingDocumentType = await _unitOfWork.Repository<DocumentsType>()
+                   .FindAsync(dt => dt!.Name == request.Name);
 
-            if (existingDocumentType != null)
+            if (!string.IsNullOrEmpty(existingDocumentType!.Name))
             {
                 return new ApiResponseDto<bool>(400, "Document type with the same name already exists", false, 0);
             }
